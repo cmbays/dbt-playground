@@ -2,6 +2,29 @@
 
 Standards for version control, branching, commits, and releases.
 
+## Workflow: GitHub Flow
+
+This project uses **GitHub Flow** (simple, not Git Flow):
+
+```text
+main (always deployable)
+  │
+  ├── feat/add-model ──→ PR ──→ merge ──→ delete branch
+  ├── fix/broken-test ──→ PR ──→ merge ──→ delete branch
+  ├── docs/update-readme ──→ PR ──→ merge ──→ delete branch
+  │
+  └── tag v0.2.0 (when milestone reached)
+```
+
+**Key principles:**
+
+- `main` is always deployable
+- All work on feature branches
+- **ALL changes merge via PR** (never push directly to main)
+- Delete branches after merge
+- Tag releases directly on main
+- No `develop` or `release/` branches
+
 ## Branch Naming
 
 ### Format
@@ -12,11 +35,11 @@ Standards for version control, branching, commits, and releases.
 
 | Prefix | Purpose | Example |
 |--------|---------|---------|
-| `feat/` | New features or content | `feat/shopping-dialogue-page` |
-| `fix/` | Bug fixes | `fix/navigation-link-broken` |
+| `feat/` | New features or content | `feat/add-patients-model` |
+| `fix/` | Bug fixes | `fix/broken-test` |
 | `docs/` | Documentation changes | `docs/update-architecture` |
-| `refactor/` | Code restructuring | `refactor/shared-js-cleanup` |
-| `style/` | CSS/styling changes | `style/flashcard-hover-effects` |
+| `refactor/` | Code restructuring | `refactor/cleanup-staging` |
+| `style/` | CSS/styling changes | `style/format-sql` |
 | `chore/` | Maintenance tasks | `chore/update-dependencies` |
 
 ### Guidelines
@@ -131,16 +154,64 @@ git show v0.3.0
 - At version milestones
 - Before major refactoring (restore point)
 
+### When NOT to Tag
+
+Not every merge requires a version bump. These accumulate in `[Unreleased]`:
+
+| Change Type | Version Bump? | Example |
+|-------------|---------------|---------|
+| New feature | MINOR | Adding staging models |
+| Bug fix | PATCH | Fixing broken test |
+| Docs only | No | Updating README |
+| Chores | No | Dependency updates |
+| Refactors | No (usually) | Code cleanup |
+| Style/format | No | SQL formatting |
+
+**Rule**: Tag when there's meaningful user-facing change or milestone completion.
+
+## Branch Hygiene
+
+### Delete After Merge
+
+Always delete branches after merging to keep the repo tidy:
+
+```bash
+# Delete local branch
+git branch -d feat/my-feature
+
+# Delete remote branch
+git push origin --delete feat/my-feature
+
+# Prune stale remote tracking branches
+git fetch --prune
+```
+
+### GitHub Auto-Delete
+
+Enable "Automatically delete head branches" in repo settings to auto-cleanup after PR merge.
+
+### Periodic Cleanup
+
+```bash
+# List merged branches (safe to delete)
+git branch --merged main
+
+# Delete all merged local branches except main
+git branch --merged main | grep -v "main" | xargs git branch -d
+```
+
 ## Protected Operations
 
 ### NEVER Do Without Explicit Approval
 
+- `git push origin main` (direct push to main)
 - `git push --force` or `git push -f`
 - `git reset --hard`
 - `git checkout .` or `git restore .`
 - `git clean -f`
 - `git branch -D`
 - Force push to main/master
+- `gh pr merge` without PR review
 
 ### Always Get Approval For
 

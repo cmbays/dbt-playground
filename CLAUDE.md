@@ -132,7 +132,7 @@ Store in `temp/` during active development:
 2. **Skip the planning step** - plan before implementing
 3. **Assume understanding** - ask questions if the pattern isn't clear
 4. **Commit without testing** - verify functionality before finalizing
-5. **Commit directly to main** - always use feature branches and PRs
+5. **Push or merge directly to main** - ALL changes go through feature branches and PRs, no exceptions
 6. **Execute git write operations directly** - all git commit/push/merge/tag must go through git-master
 7. **Bypass git-master enforcement** - the hook blocks direct git writes for safety
 
