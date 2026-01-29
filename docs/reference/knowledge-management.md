@@ -1,172 +1,139 @@
-# Knowledge Management System
+---
+audience: [sage, multi-agent]
+priority: medium
+size: medium
+last_updated: 2026-01-28
+status: active
+tags: [learning, knowledge, patterns, sage]
+---
 
-**Purpose**: Define how learnings, patterns, and documentation are organized across the project to prevent duplication and ensure discoverability.
+# Knowledge Management
 
-**Applies to**: All agents creating or updating documentation
+**Purpose**: Cross-agent reference for how knowledge is captured, organized, and maintained in this project.
+
+**Owner**: Sage persona
 
 ---
 
-## Single-Source-of-Truth Hierarchy
+## Knowledge Hierarchy
 
-To prevent knowledge duplication, follow this hierarchy when documenting patterns:
-
-### Tier 1: Executable Skills (`.claude/skills/learned-pattern-*.md`)
-
-**When**: Pattern is an actionable, repeatable workflow
-
-**Contains**:
-- Step-by-step process
-- When to use criteria
-- Expected outputs
-- Examples
-
-**Example**: `learned-pattern-agent-handoff.md`
-
-### Tier 2: Technical Reference (`docs/reference/LEARNINGS.md`)
-
-**When**: Pattern is a decision framework, best practice, or technical insight
-
-**Contains**:
-- Quick technical reference
-- "When to apply" guidance
-- Real examples from codebase
-- Cross-references to skills and FOR_CHRIS docs
-
-**Example**: "When to Create TDDs" decision framework
-
-### Tier 3: Educational Narratives (`archive/FOR_CHRIS_docs/*.md`)
-
-**When**: Pattern has high educational value and meets decision rubric (≥2 criteria)
-
-**Contains**:
-- Engaging, narrative explanations
-- "Why" behind decisions
-- Analogies and anecdotes
-- Technical deep-dives with code examples
-- Transferable meta-lessons
-
-**Example**: `agent-orchestration-comparison.md`
-
-### Decision Flow
+Knowledge flows from session-specific to permanent, with increasing quality gates:
 
 ```
-1. Is the pattern an executable workflow?
-   └─→ YES: Create skill (.claude/skills/learned-pattern-*.md)
-       └─→ Add quick reference entry in LEARNINGS.md linking to skill
-           └─→ If meets FOR_CHRIS rubric (≥2 criteria), create narrative doc
-
-   └─→ NO: Is it a technical insight/decision framework?
-       └─→ YES: Document in LEARNINGS.md
-           └─→ If meets FOR_CHRIS rubric (≥2 criteria), create narrative doc
-
-       └─→ NO: Is it a bug pattern?
-           └─→ YES: Document in docs/TESTING.md#bug-learnings
-               └─→ Link from LEARNINGS.md if broadly applicable
-
-           └─→ NO: One-off learning, note in session digest only
+Session Work → LEARNINGS.md → Learned Skills → FOR_CHRIS docs
+(temporary)    (proven ≥2x)   (executable)    (educational)
 ```
 
----
+### Tier 1: Technical Patterns (`docs/reference/LEARNINGS.md`)
 
-## Cross-Referencing Guidelines
+**Purpose**: Quick reference for proven patterns and decision frameworks
 
-**Always link between tiers**:
+**Quality Bar**: Pattern must be proven in ≥2 real implementations
 
-- Skills → Link to from LEARNINGS.md
-- LEARNINGS.md → Link to skills and FOR_CHRIS docs
-- FOR_CHRIS docs → Link to LEARNINGS.md entries and skills
+**Format**: Concise, actionable, with code examples
 
-**Never duplicate content** - Use cross-references instead.
+**When to Add**:
+- Pattern used successfully in multiple features
+- Decision framework that guides future choices
+- Common pitfall with prevention strategy
 
-**Wiki-link format**:
+### Tier 2: Learned Skills (`.claude/skills/learned-pattern-*.md`)
 
-```markdown
-[[path/to/file.md]]           # Link to entire file
-[[path/to/file.md#section]]   # Link to specific section
-```
+**Purpose**: Executable workflows extracted from proven patterns
 
----
+**Quality Bar**: Workflow must be repeatable and self-contained
 
-## When to Invoke Sage
+**Format**: Step-by-step instructions with clear inputs/outputs
 
-Other personas should trigger Sage in these scenarios:
+**When to Add**:
+- Workflow used ≥2 times with consistent success
+- Process that other agents should follow
+- Automation opportunity identified
 
-### Automatic Triggers
+### Tier 3: Educational Narratives (`docs/for_chris/*.md`)
 
-| Trigger | From Persona | Sage Action |
-|---------|--------------|-------------|
-| Version milestone complete | Documenter | Extract patterns from milestone work |
-| Bug fixed with root cause | Tester | Document bug pattern for prevention |
-| Workflow experiment complete | Developer | Evaluate if pattern is reusable |
+**Purpose**: Deep-dive explanations for learning and future reference
 
-### Manual Triggers
+**Quality Bar**: Must meet decision rubric (≥2 criteria)
 
-| Scenario | When to Invoke |
-|----------|----------------|
-| End of significant session | >5 files modified OR >50 lines changed |
-| Pattern discovery | Same pattern observed ≥2 times |
-| Educational documentation needed | Complex decision with high learning value |
+**Format**: Engaging narrative with analogies and context
 
-### Invocation Examples
-
-```
-sage: Review this session and extract learnings
-sage: Document the bug pattern from issue #42
-sage: v0.4 is complete - create milestone learning documentation
-```
+**When to Add** (Decision Rubric - need ≥2):
+1. Significant architectural decision with trade-offs
+2. Novel pattern not in existing resources
+3. Workflow change affecting future development
+4. Multiple approaches evaluated with clear winner
+5. High educational value
 
 ---
 
-## Learning Artifact Locations
+## Single Source of Truth
 
-### Files Created by Sage
+Each type of knowledge has ONE authoritative location:
 
-| Artifact | Location | Purpose |
-|----------|----------|---------|
-| Learned Pattern Skills | `.claude/skills/learned-pattern-*.md` | Executable workflows |
-| Technical Reference | `docs/reference/LEARNINGS.md` | Quick reference for patterns |
-| Bug Patterns | `docs/TESTING.md#bug-learnings` | Prevention strategies |
-| Educational Docs | `archive/FOR_CHRIS_docs/*.md` | Engaging narratives |
-| FOR_CHRIS Index | `archive/FOR_CHRIS_docs/README.md` | Topic index |
-| Learning Digests | `temp/LEARNING_DIGEST_[DATE].md` | Session summaries |
-
-### Files Modified by Sage
-
-| File | Updates |
-|------|---------|
-| `docs/reference/LEARNINGS.md` | Adds new patterns |
-| `docs/TESTING.md` | Adds bug learnings |
-| `archive/FOR_CHRIS_docs/README.md` | Updates index |
+| Knowledge Type | Location | Owner |
+|----------------|----------|-------|
+| Technical Patterns | `docs/reference/LEARNINGS.md` | Sage |
+| Executable Workflows | `.claude/skills/learned-pattern-*.md` | Sage |
+| Educational Narratives | `docs/for_chris/*.md` | Sage |
+| Bug Patterns | `docs/standards/TESTING.md#bug-learnings` | Tester/Sage |
+| FOR_CHRIS Index | `docs/for_chris/README.md` | Sage |
 
 ---
 
-## Pattern Quality Bar
+## Cross-Reference Guidelines
 
-**All patterns must be**:
+**DO**:
+- Link to authoritative source
+- Reference specific sections/anchors
+- Keep links up to date
 
-- **Proven ≥2 times** in real implementations (not theoretical)
-- **Generalizable** beyond specific context
-- **Actionable** with clear "when to apply" guidance
-- **Documented with real examples** from this codebase
-
----
-
-## Sage vs. Documenter
-
-| Aspect | Sage | Documenter |
-|--------|------|------------|
-| Focus | Cross-session patterns | Version-specific facts |
-| Trigger | Proactive pattern extraction | Reactive version updates |
-| Artifacts | LEARNINGS.md, FOR_CHRIS docs, skills | CHANGELOG.md, living docs |
-| Timing | After learnings proven | During/after version completion |
-
-**Both run in parallel** after feature completion.
+**DON'T**:
+- Duplicate content across documents
+- Create parallel versions of same information
+- Let documents drift out of sync
 
 ---
 
-**Last Updated**: 2026-01-25
-**Related Documentation**:
+## Sage Workflows
+
+### 1. Session Learning Curation
+
+**Trigger**: End of significant session or milestone
+
+**Process**:
+1. Review session context and changes
+2. Identify patterns worth capturing
+3. Check if pattern already documented
+4. Add to LEARNINGS.md if proven ≥2x
+5. Create learned skill if workflow is repeatable
+6. Create FOR_CHRIS doc if rubric met
+
+### 2. Pattern Extraction
+
+**Trigger**: Same approach used successfully ≥2 times
+
+**Process**:
+1. Document pattern in LEARNINGS.md
+2. Extract executable workflow to learned skill
+3. Cross-reference in both locations
+
+### 3. Educational Documentation
+
+**Trigger**: Decision rubric met (≥2 criteria)
+
+**Process**:
+1. Use FOR_CHRIS template
+2. Write engaging narrative
+3. Cross-reference technical docs
+4. Update docs/for_chris/README.md index
+
+---
+
+## Related Documentation
 
 - `.claude/agents/sage.md` - Sage persona definition
-- `docs/reference/LEARNINGS.md` - Technical patterns reference
-- `archive/FOR_CHRIS_docs/README.md` - Educational docs index
+- `docs/reference/LEARNINGS.md` - Technical patterns
+- `docs/for_chris/README.md` - Educational docs index
+- `.claude/skills/learning-curation.md` - Curation workflow
+- `.claude/templates/for-chris-doc-template.md` - FOR_CHRIS template

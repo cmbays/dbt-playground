@@ -6,8 +6,8 @@
 
 **Related Documentation**:
 - Executable workflows: `.claude/skills/learned-pattern-*.md`
-- Deep-dive narratives: `archive/FOR_CHRIS_docs/`
-- Bug-specific patterns: `docs/TESTING.md#bug-learnings`
+- Educational narratives: `docs/for_chris/`
+- Bug-specific patterns: `docs/standards/TESTING.md#bug-learnings`
 
 ---
 
