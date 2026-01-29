@@ -64,3 +64,21 @@ sources:
 
       - name: careplans
         description: Care plan assignments (bridge table)
+
+      - name: allergies
+        description: Patient allergies and reactions
+
+      - name: immunizations
+        description: Patient immunization records
+
+      - name: devices
+        description: Medical devices used by patients
+
+      - name: imaging_studies
+        description: Medical imaging studies (X-rays, MRIs, etc.)
+
+      - name: payer_transitions
+        description: Patient insurance payer transitions over time
+
+      - name: supplies
+        description: Medical supplies used during encounters

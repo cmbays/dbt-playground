@@ -8,12 +8,13 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: Foundation Complete (v0.1)
+**Status**: Environment Ready (v0.2)
 
-- dbt project initialized (DuckDB + Synthea)
-- dbt-mcp integration configured
+- dbt 1.11.2 + DuckDB 1.10.0 working
+- 16 Synthea source tables defined
+- dbt-mcp configured (restart Claude Code for MCP tools)
 
-**Next**: v0.2 - Build staging models from Synthea data.
+**Next**: v0.3 - Build 9 staging models from Synthea data.
 
 ## Project Structure
 
