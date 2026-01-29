@@ -148,14 +148,57 @@ Store in `temp/` during active development:
 8. **Use git-master for git operations** - invoke `git:` prefix or `/commit`, `/branch` commands
 9. **Include CHANGELOG updates** - every feat/fix PR must update CHANGELOG.md before merge
 
+## Development Environment
+
+### Python Package Management
+
+**Use `uv` exclusively** for Python package management:
+
+```bash
+# Install packages
+uv pip install <package>
+
+# Install from requirements
+uv pip install -r requirements.txt
+
+# Run Python tools without installing
+uvx <tool-name>
+```
+
+**Why uv?**
+
+- 10-100x faster than pip
+- Better dependency resolution
+- Consistent with modern Python tooling
+- `uvx` allows running tools without global installs
+
+**Never use:**
+
+- `pip install` directly
+- `pip3 install`
+- `python -m pip`
+
+### Pre-commit Hooks
+
+The project uses husky + lint-staged for automated linting on commit:
+
+| File Type | Linter | Auto-fix |
+|-----------|--------|----------|
+| Markdown (`.md`) | markdownlint-cli2 | Yes |
+| YAML (`.yml`, `.yaml`) | yamllint | No |
+| SQL (`.sql`) | sqlfluff | No (run manually) |
+
+To fix SQL issues manually: `npm run lint:sql:fix`
+
 ## Technical Standards
 
-### SQL/dbt (When Added)
+### SQL/dbt
 
 - Clear model naming: `stg_`, `int_`, `fct_`, `dim_` prefixes
 - Document all models with descriptions
 - Add tests for critical data quality rules
 - Use CTEs for readability
+- Lowercase SQL keywords (enforced by sqlfluff)
 
 ### Documentation
 

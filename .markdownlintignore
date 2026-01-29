@@ -1,0 +1,19 @@
+# Node modules (already handled via CLI)
+node_modules/
+
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# dbt packages (external dependencies)
+dbt_project/dbt_packages/
+
+# dbt target directory (compiled)
+dbt_project/target/
+
+# Archive directory
+archive/
+
+# Temp files we don't want to lint
+temp/

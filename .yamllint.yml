@@ -1,0 +1,84 @@
+# yamllint configuration for dbt projects
+---
+extends: default
+
+# Ignore patterns for external/generated files
+ignore: |
+  node_modules/
+  .venv/
+  venv/
+  dbt_project/dbt_packages/
+  dbt_project/target/
+  dbt_project/logs/
+
+rules:
+  # Line length - dbt YAML can have long descriptions
+  line-length:
+    max: 200
+    allow-non-breakable-inline-mappings: true
+
+  # Indentation - standard 2 spaces
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+  # Comments - allow inline comments
+  comments:
+    require-starting-space: true
+    ignore-shebangs: true
+    min-spaces-from-content: 1
+
+  # Truthy values - be flexible for dbt
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'on', 'off']
+    check-keys: false
+
+  # Document start - don't require --- for simple files
+  document-start: disable
+
+  # Document end - don't require ...
+  document-end: disable
+
+  # Empty lines
+  empty-lines:
+    max: 2
+    max-start: 0
+    max-end: 1
+
+  # Key duplicates - important for dbt config
+  key-duplicates: enable
+
+  # New line at end of file
+  new-line-at-end-of-file: enable
+
+  # Trailing spaces
+  trailing-spaces: enable
+
+  # Brackets - allow spaces inside
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  # Braces - allow spaces inside
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  # Colons - require space after
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+
+  # Commas - require space after
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
+
+  # Hyphens - require space after
+  hyphens:
+    max-spaces-after: 1
+
+  # Quoted strings - be flexible
+  quoted-strings: disable

@@ -8,8 +8,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
-    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.venv\" \"#dbt_project/dbt_packages\" \"#dbt_project/target\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\" \"#.venv\" \"#dbt_project/dbt_packages\" \"#dbt_project/target\"",
+    "lint:yaml": "./scripts/lint-yaml.sh dbt_project/*.yml dbt_project/models/ .github/",
+    "lint:sql": "./scripts/lint-sql.sh dbt_project/models/ dbt_project/macros/ dbt_project/tests/ dbt_project/analyses/",
+    "lint:sql:fix": "./scripts/fix-sql.sh dbt_project/models/ dbt_project/macros/ dbt_project/tests/ dbt_project/analyses/",
+    "lint": "npm run lint:md && npm run lint:yaml && npm run lint:sql",
     "prepare": "husky"
   },
   "repository": {
@@ -36,6 +40,13 @@
     "markdownlint-cli2": "^0.17.0"
   },
   "lint-staged": {
-    "*.md": "markdownlint-cli2 --fix"
+    "*.md": "markdownlint-cli2 --fix",
+    "dbt_project/**/*.yml": "./scripts/lint-yaml.sh",
+    "dbt_project/**/*.yaml": "./scripts/lint-yaml.sh",
+    ".github/**/*.yml": "./scripts/lint-yaml.sh",
+    "dbt_project/models/**/*.sql": "./scripts/lint-sql.sh",
+    "dbt_project/macros/**/*.sql": "./scripts/lint-sql.sh",
+    "dbt_project/tests/**/*.sql": "./scripts/lint-sql.sh",
+    "dbt_project/analyses/**/*.sql": "./scripts/lint-sql.sh"
   }
 }

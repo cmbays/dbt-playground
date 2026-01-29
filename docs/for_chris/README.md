@@ -33,7 +33,8 @@ Create a FOR_CHRIS doc when ≥2 of these criteria are met:
 
 | Document | Topic | Date |
 |----------|-------|------|
-| _No documents yet_ | - | - |
+| [PROJECT_ONBOARDING.md](PROJECT_ONBOARDING.md) | Project setup, workflow, roadmap | 2026-01-29 |
+| [KIMBALL_DIMENSIONAL_MODELING.md](KIMBALL_DIMENSIONAL_MODELING.md) | Dimensional modeling principles | 2026-01-28 |
 
 ---
 
