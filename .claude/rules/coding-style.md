@@ -1,204 +1,295 @@
 # Coding Style Rules
 
-Standards for HTML, CSS, and JavaScript in this project.
+Standards for SQL, YAML, and Python in this dbt project.
 
-## HTML Standards
+## SQL Standards
 
 ### Structure
 
-- Use semantic HTML5 elements (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`)
-- Consistent 2-space indentation
-- Comments for major sections: `<!-- Navigation -->`, `<!-- Main Content -->`
-- Version comment at top: `<!-- Version: vX.Y.Z - Updated: YYYY-MM-DD -->`
+- Use CTEs (Common Table Expressions) for readability
+- One CTE per logical step
+- Final SELECT at the end of the model
+- Consistent 4-space indentation
 
-### Naming
+### Naming Conventions
 
-- Lowercase with hyphens for IDs and classes: `flashcard-container`, `jlpt-filter`
-- Meaningful names that describe purpose, not appearance: `primary-action` not `blue-button`
+- **Models**: `stg_`, `int_`, `fct_`, `dim_` prefixes
+- **Columns**: snake_case (e.g., `patient_id`, `encounter_date`)
+- **CTEs**: Descriptive names (e.g., `source`, `renamed`, `filtered`)
+- **Aliases**: Full table aliases, not single letters
 
-### Accessibility
+```sql
+-- Good
+select
+    patients.patient_id,
+    encounters.encounter_date
+from patients
+left join encounters
+    on patients.patient_id = encounters.patient_id
 
-- All images have `alt` attributes
-- Form inputs have associated `<label>` elements
-- Interactive elements are keyboard accessible
-- Color is not the only indicator of state
-- Proper heading hierarchy (h1 → h2 → h3)
+-- Avoid
+select
+    p.patient_id,
+    e.encounter_date
+from patients p
+left join encounters e
+    on p.patient_id = e.patient_id
+```
 
-### Links
+### CTE Pattern
 
-- External links use `target="_blank" rel="noopener noreferrer"`
-- Internal navigation verified after any structural changes
-- Breadcrumbs for nested pages
+```sql
+with source as (
+    select * from {{ source('synthea_raw', 'patients') }}
+),
 
-## CSS Standards
+renamed as (
+    select
+        id as patient_id,
+        first as first_name,
+        last as last_name,
+        birthdate as birth_date
+    from source
+),
+
+final as (
+    select
+        patient_id,
+        first_name,
+        last_name,
+        birth_date,
+        current_timestamp as _loaded_at
+    from renamed
+)
+
+select * from final
+```
+
+### Formatting
+
+- Keywords in lowercase (`select`, `from`, `where`)
+- One column per line in SELECT
+- Commas at the beginning of lines (leading commas)
+- Align column definitions
+
+```sql
+select
+    patient_id
+    , first_name
+    , last_name
+    , birth_date
+    , current_timestamp as _loaded_at
+from source
+where birth_date is not null
+```
+
+### Comments
+
+```sql
+-- Model: stg_synthea__patients
+-- Description: Staging model for patient demographics
+-- Source: synthea_raw.patients
+
+{#
+    Multi-line Jinja comments for
+    complex explanations
+#}
+```
+
+## YAML Standards
+
+### Model Documentation
+
+```yaml
+version: 2
+
+models:
+  - name: stg_synthea__patients
+    description: Staging model for patient demographics
+    columns:
+      - name: patient_id
+        description: Unique patient identifier (UUID)
+        data_tests:
+          - unique
+          - not_null
+      - name: birth_date
+        description: Patient date of birth
+```
+
+### Source Definitions
+
+```yaml
+sources:
+  - name: synthea_raw
+    description: Raw Synthea synthetic healthcare data
+    schema: main
+    tables:
+      - name: patients
+        description: Patient demographics
+        columns:
+          - name: Id
+            description: Unique patient identifier
+```
+
+### Formatting
+
+- 2-space indentation
+- Use quotes for strings with special characters
+- List items aligned
+- One blank line between major sections
+
+## dbt Best Practices
+
+### Model Layers
+
+| Layer | Prefix | Purpose |
+|-------|--------|---------|
+| Staging | `stg_` | 1:1 with source, renamed/retyped |
+| Intermediate | `int_` | Business logic, joins |
+| Facts | `fct_` | Measures, events |
+| Dimensions | `dim_` | Descriptive attributes |
+
+### Ref and Source Usage
+
+```sql
+-- Always use ref() for model dependencies
+select * from {{ ref('stg_synthea__patients') }}
+
+-- Always use source() for raw data
+select * from {{ source('synthea_raw', 'patients') }}
+```
+
+### Jinja Macros
+
+- Use for repeated logic
+- Document parameters
+- Keep macros focused
+
+```sql
+{% macro calculate_age(birth_date, reference_date) %}
+    date_diff('year', {{ birth_date }}, {{ reference_date }})
+{% endmacro %}
+```
+
+## Python Standards
 
 ### Organization
 
-- Use `css/shared.css` for all shared styles
-- Page-specific styles in `<style>` tags only when necessary
-- Custom properties (CSS variables) defined in shared.css
-
-### Custom Properties
-
-```css
-:root {
-  /* Colors */
-  --color-primary: #...;
-  --color-secondary: #...;
-  --color-background: #...;
-  --color-text: #...;
-
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 2rem;
-  --spacing-xl: 4rem;
-
-  /* Typography */
-  --font-family-base: ...;
-  --font-family-japanese: ...;
-  --font-size-base: 1rem;
-}
-```
-
-### Responsive Design
-
-- Mobile-first approach
-- Breakpoints:
-  - Small: 320px - 767px
-  - Medium: 768px - 1023px
-  - Large: 1024px+
-- Use `rem` units for typography, `em` for component spacing
-- Flexible layouts with flexbox/grid
-
-### Naming Convention (BEM-inspired)
-
-```css
-.component { }
-.component__element { }
-.component--modifier { }
-
-/* Examples */
-.flashcard { }
-.flashcard__front { }
-.flashcard__back { }
-.flashcard--flipped { }
-```
-
-## JavaScript Standards
-
-### Organization
-
-- Use `js/shared.js` for common functionality
-- Page-specific scripts in `<script>` tags or dedicated files
-- Vanilla JavaScript only (no frameworks currently)
+- Scripts in `scripts/` directory
+- Use virtual environment (`.venv/`)
+- Follow PEP 8 style guide
 
 ### Naming
 
-- camelCase for variables and functions: `filterByLevel`, `currentCard`
-- PascalCase for classes/constructors: `FlashcardManager`
-- UPPER_SNAKE_CASE for constants: `MAX_CARDS`, `JLPT_LEVELS`
-- Descriptive names that describe action: `handleFilterChange`, `renderCard`
+- snake_case for functions and variables
+- PascalCase for classes
+- UPPER_SNAKE_CASE for constants
 
-### Functions
+```python
+# Constants
+DEFAULT_TARGET = 'dev'
+MAX_THREADS = 4
 
-- Clear function names that describe actions
-- Single responsibility per function
-- JSDoc comments for public functions:
+# Functions
+def load_synthea_data(file_path: str) -> None:
+    """Load Synthea CSV data into DuckDB."""
+    pass
 
-```javascript
-/**
- * Filters kanji array by JLPT level
- * @param {Array} kanji - Array of kanji objects
- * @param {string} level - JLPT level (N5-N1)
- * @returns {Array} Filtered kanji array
- */
-function filterByLevel(kanji, level) { }
+# Classes
+class DataLoader:
+    """Handles data loading operations."""
+    pass
 ```
 
-### Error Handling
+### Type Hints
 
-- Try/catch for JSON parsing, audio loading, external resources
-- Graceful degradation for missing features
-- User-friendly error messages (not technical jargon)
+```python
+def get_model_path(model_name: str, layer: str = 'staging') -> str:
+    """
+    Get the file path for a dbt model.
 
-### DOM Manipulation
+    Args:
+        model_name: Name of the model
+        layer: Model layer (staging, intermediate, marts)
 
-- Prefer `textContent` over `innerHTML` for text
-- Sanitize any dynamic HTML content
-- Cache DOM references for repeated access
-- Use event delegation where appropriate
-
-### State Management
-
-- localStorage for user preferences and progress
-- Validate stored data before use
-- Clear naming for storage keys: `jlpt-filter-level`, `flashcard-progress`
+    Returns:
+        Full path to the model file
+    """
+    return f"models/{layer}/{model_name}.sql"
+```
 
 ## File Organization
 
 ### Naming
 
-- Lowercase with hyphens: `story-morning.html`, `kanji-data.js`
-- Descriptive names: `shopping-dialogue.html` not `page2.html`
-- Consistent patterns within directories
+- Lowercase with underscores for SQL: `stg_synthea__patients.sql`
+- Lowercase with hyphens for Python: `load-data.py`
+- Descriptive names that indicate purpose
 
 ### Directory Structure
 
 ```
-topics/[topic-name]/
-├── index.html
-├── phrases.html
-├── dialogue.html
-├── story.html
-├── manga.html
-├── quiz.html
-└── tips.html
-```
-
-## Comments
-
-### When to Comment
-
-- Complex logic that isn't self-evident
-- Workarounds with explanation
-- TODO items with context
-- Version information
-
-### When NOT to Comment
-
-- Self-explanatory code
-- Every function (only public/complex ones)
-- Removed code (delete it, don't comment out)
-
-### Format
-
-```javascript
-// Single line for brief notes
-
-/*
- * Multi-line for longer explanations
- * that need more context
- */
-
-// TODO: Description of what needs to be done
-// FIXME: Description of known issue
+dbt_project/
+├── models/
+│   ├── staging/
+│   │   └── synthea/
+│   │       ├── _synthea__sources.yml
+│   │       ├── _synthea__models.yml
+│   │       └── stg_synthea__patients.sql
+│   ├── intermediate/
+│   │   └── healthcare/
+│   │       └── int_encounters__enriched.sql
+│   └── marts/
+│       └── core/
+│           ├── _core__models.yml
+│           ├── dim_patients.sql
+│           └── fct_encounters.sql
+├── macros/
+│   └── healthcare_utils.sql
+├── tests/
+│   └── assert_valid_dates.sql
+└── seeds/
+    └── ref_codes.csv
 ```
 
 ## Code Quality
 
 ### Avoid
 
-- Global variables (use closures or modules)
-- Magic numbers (use named constants)
-- Deep nesting (refactor to functions)
-- Copy-paste code (extract to functions)
-- Over-engineering for hypothetical futures
+- SELECT * in final models (explicit columns only)
+- Hardcoded values (use variables or seeds)
+- Overly complex CTEs (break into intermediate models)
+- Duplicated logic (extract to macros)
 
 ### Prefer
 
-- Small, focused functions
-- Early returns to reduce nesting
-- Descriptive variable names over comments
-- Existing patterns from shared resources
+- Explicit column selection
+- Descriptive aliases
+- Documentation for every model
+- Tests for critical columns
+- Incremental models for large datasets
+
+## Testing Standards
+
+### Required Tests
+
+- `unique` and `not_null` on primary keys
+- `accepted_values` on categorical columns
+- `relationships` for foreign keys
+
+```yaml
+columns:
+  - name: patient_id
+    data_tests:
+      - unique
+      - not_null
+  - name: gender
+    data_tests:
+      - accepted_values:
+          values: ['M', 'F', 'O']
+  - name: organization_id
+    data_tests:
+      - relationships:
+          to: ref('dim_organizations')
+          field: organization_id
+```

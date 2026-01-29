@@ -40,7 +40,7 @@ Every piece of information should live in ONE authoritative location. Other docu
 | Coding standards | `.claude/rules/*.md` |
 | Project structure | `docs/PROJECT_STRUCTURE.md` |
 | Architecture | `docs/ARCHITECTURE.md` |
-| Japanese content | `docs/CONTENT_STANDARDS.md` |
+| dbt conventions | `docs/CONTENT_STANDARDS.md` |
 | UI/UX patterns | `docs/DESIGN_PRINCIPLES.md` |
 | Testing approach | `docs/TESTING.md` |
 | Task management | `docs/PROJECT_BOARD_GUIDE.md` |
@@ -344,7 +344,7 @@ These events trigger Sage persona for learning extraction:
 
 2. IF rubric met:
    - Copy `.claude/templates/for-chris-doc-template.md`
-   - Choose topic-based filename (e.g., `kanji-module-architecture.md`)
+   - Choose topic-based filename (e.g., `staging-layer-architecture.md`)
 
 3. FILL all sections:
    - What We Built

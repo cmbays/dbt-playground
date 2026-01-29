@@ -1,5 +1,6 @@
 ---
 name: dbt-developer
+prefix: "dbt-dev:"
 description: Implement SQL models, macros, incremental strategies, dbt best practices
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: opus

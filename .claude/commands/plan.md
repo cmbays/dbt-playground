@@ -75,15 +75,15 @@ If issues arise:
 ## Example
 
 ```
-/plan Add JLPT level filtering to vocabulary display
+/plan Add customer lifetime value metrics to the marts layer
 ```
 
 Would create a plan covering:
 
-- Data structure changes
-- UI filter component
-- JavaScript filter logic
-- localStorage persistence
+- Data model changes
+- Required staging sources
+- Intermediate model logic
+- Mart model structure
 - Testing approach
 
 ## Persona Integration

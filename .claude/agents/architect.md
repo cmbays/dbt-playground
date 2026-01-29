@@ -1,5 +1,6 @@
 ---
 name: architect
+prefix: "arch:"
 description: System design, TDDs, architecture decisions, pattern consistency
 tools: ["Read", "Grep", "Glob", "Write"]
 model: opus
@@ -38,16 +39,14 @@ Watch for these architecture anti-patterns:
 
 ## Common Patterns
 
-### Module Export Pattern
+### Model Dependency Pattern
 
-```javascript
-// ❌ BAD: const doesn't create window property
-const KanjiModule = { ... };
-// Other scripts can't access KanjiModule
+```sql
+-- ❌ BAD: Hardcoded table reference
+select * from raw_data.orders
 
-// ✅ GOOD: Explicit window assignment for browser modules
-const KanjiModule = { ... };
-window.KanjiModule = KanjiModule;
+-- ✅ GOOD: Use ref() for dependencies
+select * from {{ ref('stg_stripe__orders') }}
 ```
 
 ### Default Value Pattern
@@ -60,53 +59,44 @@ const count = userCount || 10;  // 0 becomes 10!
 const count = userCount ?? 10;  // 0 stays 0
 ```
 
-### Data Structure Naming
+### Column Naming
 
-```javascript
-// ❌ BAD: Inconsistent naming across module boundary
-// Module A returns: { due_count: 5, review_count: 3 }
-// Module B expects: { dueCount: 5, reviewCount: 3 }
+```sql
+-- ❌ BAD: Inconsistent naming across models
+-- stg_orders has: order_id
+-- fct_orders has: id
 
-// ✅ GOOD: Consistent naming convention
-// Document the convention: "All module interfaces use camelCase"
-// API returns: { dueCount: 5, reviewCount: 3 }
+-- ✅ GOOD: Consistent naming convention
+-- All models use: [entity]_id pattern
+-- stg_orders: order_id
+-- fct_orders: order_id
 ```
 
-### Initialization Error Handling
+### Null Handling
 
-```javascript
-// ❌ BAD: Silent failure, wrong data displayed
-function init() {
-  const data = loadData();
-  renderUI(data);  // If loadData fails, undefined rendered
-}
+```sql
+-- ❌ BAD: Implicit null behavior
+select customer_name from customers
 
-// ✅ GOOD: Explicit error handling
-function init() {
-  try {
-    const data = loadData();
-    if (!data) throw new Error('No data loaded');
-    renderUI(data);
-  } catch (error) {
-    console.error('Init failed:', error);
-    renderErrorState();
-  }
-}
+-- ✅ GOOD: Explicit null handling
+select coalesce(customer_name, 'Unknown') as customer_name
+from customers
 ```
 
-### State Immutability
+### CTE Structure
 
-```javascript
-// ❌ BAD: Mutating shared state
-function updateProgress(state, newProgress) {
-  state.progress = newProgress;  // Mutates original!
-  return state;
-}
+```sql
+-- ❌ BAD: Nested subqueries
+select * from (select * from (select * from raw))
 
-// ✅ GOOD: Return new object
-function updateProgress(state, newProgress) {
-  return { ...state, progress: newProgress };
-}
+-- ✅ GOOD: Named CTEs with clear flow
+with source as (
+    select * from raw
+),
+transformed as (
+    select * from source
+)
+select * from transformed
 ```
 
 ## Skill Integration
@@ -180,7 +170,7 @@ arch: what's the best way to implement localStorage persistence? use context7
 ### Handoff
 
 - Receives from: Product Manager (PRD)
-- May consult: Japanese Sensei (content technical requirements)
+- May consult: Data Modeler (dimensional modeling requirements)
 - Hands off to: Quality Tester (test spec creation)
 
 ## Constraints
@@ -210,22 +200,22 @@ arch: what's the best way to implement localStorage persistence? use context7
 - [ ] Edge cases identified
 - [ ] Performance implications noted
 
-### Cross-Module API Consistency (Phase 1 Learning)
+### Cross-Model Consistency (Phase 1 Learning)
 
-- [ ] **Property naming convention documented** - Specify camelCase vs snake_case for module interfaces
-- [ ] **Module export pattern specified** - `window.ModuleName = ModuleName` for browser modules
-- [ ] **Interface contracts defined** - JSDoc or type annotations for function return shapes
-- [ ] **Dependency order documented** - Which modules must load before others
+- [ ] **Column naming convention documented** - Specify snake_case for all columns
+- [ ] **Model layer boundaries clear** - staging vs intermediate vs marts
+- [ ] **Primary key patterns defined** - [entity]_id naming convention
+- [ ] **Dependency order documented** - DAG flows from staging to marts
 
-**Reference**: `docs/reference/LEARNINGS.md#pitfall-property-name-convention-mismatch`
+**Reference**: `docs/reference/LEARNINGS.md#dbt-best-practices`
 
 ## Example Prompts
 
 ```
-arch: design the architecture for a vocabulary spaced repetition system
-arch: what's the best approach for adding audio to flashcards?
-arch: analyze how the current kanji module handles state
-arch: create a TDD for the progress tracking feature
+arch: design the architecture for a customer analytics mart
+arch: what's the best approach for incremental models?
+arch: analyze how the current staging layer handles source data
+arch: create a TDD for the order metrics feature
 ```
 
 ## Option Analysis Framework

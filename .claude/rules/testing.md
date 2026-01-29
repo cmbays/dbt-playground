@@ -1,70 +1,93 @@
 # Testing Rules
 
-Standards for testing, verification, and quality assurance.
+Standards for testing, verification, and quality assurance in dbt projects.
 
 ## Testing Philosophy
 
-- Test early, test often
-- Prefer manual verification for UI; automated for logic
-- Document test results for version history
-- Regression testing after any structural changes
+- Test data quality at every layer
+- Prefer generic tests for common patterns; singular tests for complex logic
+- Document test failures and their resolutions
+- Run tests after every model change
 
 ## Test Categories
 
 | Category | Purpose | When to Use |
 |----------|---------|-------------|
-| **Unit** | Test individual functions | JavaScript logic |
-| **Integration** | Test component interactions | Multi-file features |
-| **Manual** | Visual/UX verification | All UI changes |
-| **Regression** | Ensure no breakage | After any change |
-| **Cross-browser** | Browser compatibility | Before deployment |
+| **Schema Tests** | Validate column properties | Every model |
+| **Data Tests** | Validate business rules | Critical models |
+| **Singular Tests** | Complex custom validation | Edge cases |
+| **Source Freshness** | Monitor data timeliness | Production pipelines |
+| **Unit Tests** | Test macros and logic | Reusable code |
 
-## Manual Testing Checklist
+## dbt Test Types
 
-### HTML/CSS
+### Schema Tests (Generic)
 
-- [ ] Chrome renders correctly
-- [ ] Firefox renders correctly
-- [ ] Safari renders correctly
-- [ ] Mobile (320px - 767px) works
-- [ ] Tablet (768px - 1023px) works
-- [ ] Desktop (1024px+) works
+```yaml
+version: 2
 
-### JavaScript
+models:
+  - name: stg_synthea__patients
+    columns:
+      - name: patient_id
+        data_tests:
+          - unique
+          - not_null
+      - name: gender
+        data_tests:
+          - accepted_values:
+              values: ['M', 'F', 'O']
+      - name: birth_date
+        data_tests:
+          - not_null
+```
 
-- [ ] No console errors
-- [ ] Event handlers work
-- [ ] Edge cases handled
-- [ ] Error states display correctly
-- [ ] localStorage works
+### Data Tests (Custom)
 
-### Navigation
+```yaml
+models:
+  - name: fct_encounters
+    data_tests:
+      - dbt_utils.expression_is_true:
+          expression: "total_claim_cost >= 0"
+      - dbt_utils.recency:
+          datepart: day
+          field: encounter_date
+          interval: 365
+```
 
-- [ ] All internal links work
-- [ ] Breadcrumbs correct
-- [ ] Back button behavior expected
-- [ ] No broken links
+### Singular Tests
 
-### Accessibility
+```sql
+-- tests/assert_valid_encounter_dates.sql
+-- Ensure encounter end dates are after start dates
 
-- [ ] Keyboard navigation works
-- [ ] Focus states visible
-- [ ] Screen reader compatible
-- [ ] Color contrast sufficient
+select
+    encounter_id,
+    start_timestamp,
+    stop_timestamp
+from {{ ref('stg_synthea__encounters') }}
+where stop_timestamp < start_timestamp
+```
 
-### Japanese Content
+### Relationship Tests
 
-- [ ] Furigana displays correctly
-- [ ] Romaji toggles work
-- [ ] Audio plays (if applicable)
-- [ ] JLPT level accurate
+```yaml
+columns:
+  - name: patient_id
+    data_tests:
+      - relationships:
+          to: ref('dim_patients')
+          field: patient_id
+```
 
 ## Test Documentation
 
 ### Location
 
-- Active testing: `temp/v[X.Y]_TESTING.md`
-- Archived: `archive/v[X.Y]/docs/TESTING.md`
+- Schema tests: `models/<layer>/<source>/_<source>__models.yml`
+- Singular tests: `tests/`
+- Test results: `temp/v[X.Y]_TESTING.md`
 
 ### Template
 
@@ -75,104 +98,113 @@ Standards for testing, verification, and quality assurance.
 YYYY-MM-DD
 
 ## Summary
-[Pass/Fail] - [X/Y checks passing]
+[Pass/Fail] - [X/Y tests passing]
 
-## Browser Testing
-| Browser | Version | Status | Notes |
-|---------|---------|--------|-------|
-| Chrome | X.Y | Pass | |
-| Firefox | X.Y | Pass | |
-| Safari | X.Y | Pass | |
+## dbt Test Results
 
-## Responsive Testing
-| Breakpoint | Status | Notes |
-|------------|--------|-------|
-| Mobile (320px) | Pass | |
-| Tablet (768px) | Pass | |
-| Desktop (1024px) | Pass | |
+| Model | Tests | Pass | Fail | Warn |
+|-------|-------|------|------|------|
+| stg_synthea__patients | 5 | 5 | 0 | 0 |
+| fct_encounters | 8 | 7 | 1 | 0 |
 
-## Feature Testing
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Feature 1 | Pass | |
-| Feature 2 | Pass | |
+## Failed Tests
+| Test | Model | Error | Resolution |
+|------|-------|-------|------------|
+| not_null | fct_encounters.provider_id | 3 nulls found | Added where clause |
 
-## Issues Found
-- Issue 1: Description (fixed)
-- Issue 2: Description (deferred to vX.Y)
+## Warnings
+| Test | Model | Issue | Action |
+|------|-------|-------|--------|
+| freshness | source.patients | 2 days stale | Expected during dev |
 
-## Regression Checks
-- [ ] Existing features still work
-- [ ] Navigation unchanged
-- [ ] No visual regressions
+## Data Quality Checks
+- [ ] Primary keys unique
+- [ ] Foreign keys valid
+- [ ] No orphaned records
+- [ ] Date ranges reasonable
+- [ ] Numeric values within bounds
 
 ## Sign-Off
 Ready for deployment: Yes/No
 Tester: [name/date]
 ```
 
-## TDD Workflow
+## TDD Workflow for dbt
 
 ### Red-Green-Refactor
 
-1. **RED**: Write failing test/define criteria
-2. **GREEN**: Implement minimum to pass
-3. **REFACTOR**: Clean up, tests still pass
+1. **RED**: Write failing test in YAML or singular test file
+2. **GREEN**: Implement model to pass test
+3. **REFACTOR**: Optimize model, ensure tests still pass
 
-### Test-First for JavaScript
+### Test-First Example
 
-```javascript
-// 1. Define expected behavior
-describe('filterByLevel', () => {
-  test('returns only kanji matching level', () => {
-    const kanji = [
-      { character: '日', level: 'N5' },
-      { character: '語', level: 'N4' }
-    ];
-    const result = filterByLevel(kanji, 'N5');
-    expect(result).toHaveLength(1);
-    expect(result[0].character).toBe('日');
-  });
-});
-
-// 2. Implement function
-function filterByLevel(kanji, level) {
-  return kanji.filter(k => k.level === level);
-}
+```yaml
+# 1. Define expected behavior first
+models:
+  - name: stg_synthea__patients
+    columns:
+      - name: patient_id
+        data_tests:
+          - unique
+          - not_null
+      - name: birth_date
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "birth_date <= current_date"
 ```
 
-## Edge Cases to Test
+```sql
+-- 2. Implement model to pass tests
+with source as (
+    select * from {{ source('synthea_raw', 'patients') }}
+),
 
-### User Input
+renamed as (
+    select
+        id as patient_id,
+        birthdate as birth_date
+    from source
+    where birthdate is not null
+      and birthdate <= current_date
+)
 
-- Empty input
-- Very long input
-- Special characters
-- Unicode/Japanese characters
-- HTML injection attempts
+select * from renamed
+```
 
-### Data Handling
+## Data Quality Edge Cases
 
-- Missing data
-- Malformed JSON
-- Corrupted localStorage
-- Network failures (if applicable)
+### Primary Keys
 
-### UI States
+- Uniqueness across partitions
+- No nulls
+- Consistent format (UUID vs integer)
 
-- Loading state
-- Empty state (no data)
-- Error state
-- Success state
-- Hover/focus states
+### Foreign Keys
 
-### Boundaries
+- Referential integrity
+- No orphaned records
+- Graceful null handling
 
-- First item
-- Last item
-- Single item
-- Maximum items
-- Zero items
+### Dates and Timestamps
+
+- Valid date ranges
+- No future dates where inappropriate
+- Timezone consistency
+- End date >= Start date
+
+### Numeric Values
+
+- Non-negative where required
+- Within reasonable bounds
+- Precision/scale appropriate
+
+### Categorical Values
+
+- Only expected values
+- Consistent casing
+- No leading/trailing whitespace
 
 ## Bug Documentation
 
@@ -182,84 +214,112 @@ function filterByLevel(kanji, level) {
 ## Bug: [Short Description]
 
 ### Environment
-- Browser: [name/version]
-- Device: [type]
+- dbt version: X.Y.Z
+- DuckDB version: X.Y.Z
 - Date: YYYY-MM-DD
 
-### Steps to Reproduce
-1. Step 1
-2. Step 2
-3. Step 3
-
-### Expected Behavior
-[What should happen]
-
-### Actual Behavior
-[What actually happens]
-
-### Screenshots
-[If applicable]
-
-### Possible Cause
-[If known]
+### Test That Failed
+```sql
+-- The failing test
+select * from {{ ref('model') }}
+where condition_violated
 ```
 
-### After Fixed
+### Root Cause
 
-Add to `docs/TESTING.md` learning log:
+[What caused the data quality issue]
 
-```markdown
-## Bug Learnings
+### Resolution
 
-### [Bug Title] - vX.Y
-- **Root Cause**: [What caused it]
-- **Fix**: [How it was fixed]
-- **Prevention**: [How to avoid in future]
+[How it was fixed in the model]
+
+### Prevention
+
+[Tests added to prevent recurrence]
+
 ```
 
 ## Performance Testing
 
 ### Metrics to Check
 
-- Page load time
-- Time to interactive
-- JavaScript execution time
-- Memory usage (for long sessions)
+- Model build time
+- Test execution time
+- Row counts per model
+- Data freshness
 
-### Tools
+### dbt Commands
 
-- Browser DevTools (Performance tab)
-- Lighthouse audit
-- Network throttling tests
+```bash
+# Time a specific model
+dbt run --select model_name --profile-start-time
+
+# Run with timing info
+dbt run --select staging --threads 4
+
+# Check row counts
+dbt run-operation log_row_counts --args '{models: ["stg_synthea__patients"]}'
+```
 
 ## Verification Before Deployment
 
 ### Pre-Deploy Checklist
 
-- [ ] All manual tests pass
-- [ ] No console errors
-- [ ] No broken links
-- [ ] Version stamp updated
-- [ ] Living docs updated
-- [ ] Temp files cleaned (with approval)
-- [ ] Git status clean
-- [ ] Ready for tagging
+- [ ] All dbt tests pass (`dbt test`)
+- [ ] Models compile (`dbt compile`)
+- [ ] Documentation generated (`dbt docs generate`)
+- [ ] No warnings on critical models
+- [ ] Source freshness acceptable
+- [ ] Row counts reasonable
+- [ ] Version documented in CHANGELOG
 
 ## Continuous Testing
 
-### After Every Change
+### After Every Model Change
 
-- Visual check in browser
-- Console for errors
-- Quick navigation test
+```bash
+# Run tests for changed model and downstream
+dbt test --select model_name+
+```
 
 ### Before Every Commit
 
-- Run through feature checklist
-- Regression spot-check
+```bash
+# Full test suite
+dbt test
+
+# Build and test in one command
+dbt build
+```
 
 ### Before Every Release
 
-- Full test suite
-- Cross-browser check
-- Complete regression test
+```bash
+# Full build with all tests
+dbt build --full-refresh
+
+# Generate documentation
+dbt docs generate
+dbt docs serve
+```
+
+## dbt_expectations Examples
+
+```yaml
+# Advanced data quality tests
+columns:
+  - name: encounter_date
+    data_tests:
+      - dbt_expectations.expect_column_values_to_be_of_type:
+          column_type: date
+      - dbt_expectations.expect_column_values_to_be_between:
+          min_value: "'2000-01-01'"
+          max_value: "current_date"
+
+  - name: total_claim_cost
+    data_tests:
+      - dbt_expectations.expect_column_values_to_be_between:
+          min_value: 0
+          max_value: 1000000
+          strictly: false
+```

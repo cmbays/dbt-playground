@@ -21,9 +21,9 @@ Git worktrees allow multiple working directories from a single repository:
 
 ```
 Main Repository
-├── japanese-study-site/           # Main worktree (main branch)
-├── japanese-study-site-feat-a/    # Worktree for feat/feature-a
-└── japanese-study-site-feat-b/    # Worktree for feat/feature-b
+├── dbt-playground/           # Main worktree (main branch)
+├── dbt-playground-feat-a/    # Worktree for feat/feature-a
+└── dbt-playground-feat-b/    # Worktree for feat/feature-b
 ```
 
 Each worktree has its own:
@@ -46,7 +46,7 @@ But shares:
 |----------|--------|
 | Two independent topics | No shared files, parallel safe |
 | Long-running feature | Don't block other work |
-| Parallel kanji data updates | Data files isolated |
+| Parallel staging models | Model files isolated |
 | A/B testing implementations | Compare approaches |
 | Review while developing | Keep review context separate |
 
@@ -154,8 +154,8 @@ Choose [1/2/3]:
 
 ```bash
 # Create worktree directories
-git worktree add ../japanese-study-site-feat-a feat/feature-a
-git worktree add ../japanese-study-site-feat-b feat/feature-b
+git worktree add ../dbt-playground-feat-a feat/feature-a
+git worktree add ../dbt-playground-feat-b feat/feature-b
 
 # Verify creation
 git worktree list
@@ -171,7 +171,7 @@ Create worktree registry for tracking:
   "created": "2026-01-25T10:00:00Z",
   "worktrees": [
     {
-      "path": "../japanese-study-site-feat-a",
+      "path": "../dbt-playground-feat-a",
       "branch": "feat/feature-a",
       "status": "active",
       "owner": "developer-1",
@@ -179,7 +179,7 @@ Create worktree registry for tracking:
       "created": "2026-01-25T10:00:00Z"
     },
     {
-      "path": "../japanese-study-site-feat-b",
+      "path": "../dbt-playground-feat-b",
       "branch": "feat/feature-b",
       "status": "active",
       "owner": "developer-2",
@@ -198,11 +198,11 @@ Work proceeds in each worktree independently:
 
 ```bash
 # In worktree A
-cd ../japanese-study-site-feat-a
+cd ../dbt-playground-feat-a
 # Make changes, commit, push
 
 # In worktree B
-cd ../japanese-study-site-feat-b
+cd ../dbt-playground-feat-b
 # Make changes, commit, push
 ```
 
@@ -212,8 +212,8 @@ After features are merged:
 
 ```bash
 # Remove worktrees
-git worktree remove ../japanese-study-site-feat-a
-git worktree remove ../japanese-study-site-feat-b
+git worktree remove ../dbt-playground-feat-a
+git worktree remove ../dbt-playground-feat-b
 
 # Prune stale references
 git worktree prune
@@ -275,7 +275,7 @@ When one worktree needs to modify a shared file:
 For large shared files with distinct sections:
 
 ```
-1. Define sections: "feat/a owns .flashcard-*, feat/b owns .quiz-*"
+1. Define sections: "feat/a owns stg_stripe__*, feat/b owns stg_shopify__*"
 2. Document in registry
 3. Each worktree only modifies their section
 4. Merge order doesn't matter

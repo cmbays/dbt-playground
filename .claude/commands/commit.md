@@ -12,8 +12,8 @@ Create a validated git commit through git: with Conventional Commits enforcement
 ## Examples
 
 ```
-/commit "feat(kanji): add JLPT level filtering"
-/commit "fix(nav): correct broken link to home-life index"
+/commit "feat(staging): add Stripe payments model"
+/commit "fix(marts): correct null handling in dim_customers"
 /commit "docs: update CLAUDE.md with git: integration"
 /commit  # Interactive mode - will prompt for details
 ```
@@ -35,17 +35,17 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 | Type | Purpose | Example |
 |------|---------|---------|
-| `feat` | New feature | `feat(shopping): add quiz page` |
-| `fix` | Bug fix | `fix(nav): correct broken link` |
+| `feat` | New feature | `feat(staging): add payments model` |
+| `fix` | Bug fix | `fix(marts): correct null handling` |
 | `docs` | Documentation | `docs: update CLAUDE.md` |
-| `style` | Formatting/CSS | `style(flashcard): improve hover` |
-| `refactor` | Code restructure | `refactor(shared-js): extract audio` |
-| `test` | Tests | `test(kanji): add filter tests` |
+| `style` | Formatting/SQL | `style(models): improve CTE format` |
+| `refactor` | Code restructure | `refactor(macros): extract logic` |
+| `test` | Tests | `test(staging): add schema tests` |
 | `chore` | Maintenance | `chore: update dependencies` |
 
 ### Scope (Optional)
 
-Area of codebase: `kanji`, `shopping`, `shared-css`, `nav`, etc.
+Area of codebase: `staging`, `marts`, `macros`, `sources`, etc.
 
 ## Commit Workflow
 
@@ -131,15 +131,15 @@ When invoked without message (`/commit`), git: prompts:
 ### Feature Work
 
 ```
-/commit "feat(kanji): add stroke order animation"
-/commit "feat(shopping): implement price comparison"
+/commit "feat(staging): add customer events model"
+/commit "feat(marts): implement order metrics"
 ```
 
 ### Bug Fixes
 
 ```
-/commit "fix(audio): handle missing audio gracefully"
-/commit "fix(quiz): correct scoring calculation"
+/commit "fix(staging): handle null dates gracefully"
+/commit "fix(marts): correct metric calculation"
 ```
 
 ### Documentation

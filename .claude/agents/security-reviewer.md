@@ -1,5 +1,6 @@
 ---
 name: security-reviewer
+prefix: "security:"
 description: Security vulnerabilities, OWASP Top 10, remediation guidance
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: opus
@@ -97,7 +98,7 @@ Watch for these security anti-patterns:
 | **Components** | Medium | Third-party scripts, CDN resources |
 | **Logging** | Low | Console.log with sensitive data |
 
-### For This Project (Static Japanese Learning Site)
+### For This Project (dbt Analytics Playground)
 
 **High Priority:**
 
@@ -209,10 +210,10 @@ Watch for these security anti-patterns:
 ## Example Prompts
 
 ```
-security: review the new flashcard implementation
-security: check localStorage handling in kanji module
-security: audit external script loading
-security: evaluate XSS risk in dialogue rendering
+security: review the new staging model implementation
+security: check for PII exposure in mart models
+security: audit database connection handling
+security: evaluate data access patterns in macros
 ```
 
 ## Common Vulnerabilities to Watch

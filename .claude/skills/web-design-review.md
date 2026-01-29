@@ -47,11 +47,9 @@ Key pages to cover:
 | Page | Path |
 |------|------|
 | Landing | `/content/index.html` |
-| Topic index | `/content/topics/{topic}/index.html` |
-| Phrases | `/content/topics/{topic}/phrases.html` |
-| Dialogue | `/content/topics/{topic}/dialogue.html` |
-| Story | `/content/topics/{topic}/story.html` |
-| Kanji study | `/content/kanji/index.html` |
+| dbt docs | `localhost:8080` (via dbt docs serve) |
+| Dashboard | BI tool visualization endpoints |
+| Reports | Analytics report pages |
 
 ### Project Context
 
@@ -82,7 +80,7 @@ For each page:
 | **Responsive** | Broken at mobile/tablet, tiny touch targets | High |
 | **Accessibility** | Low contrast, missing focus states, no alt text | High |
 | **Consistency** | Mixed fonts, inconsistent spacing/colors | Medium |
-| **Japanese content** | Furigana display issues, text truncation | Medium |
+| **Data display** | Table formatting, chart rendering | Medium |
 
 ---
 
@@ -103,10 +101,10 @@ For each page:
 
 ### Finding Source Files
 
-- Shared styles: `content/css/shared.css`
-- Shared JS: `content/js/shared.js`
-- Kanji module: `content/kanji/css/`, `content/kanji/js/`
-- Topic pages: `content/topics/{topic}/{page}.html`
+- dbt models: `models/staging/`, `models/marts/`
+- Macros: `macros/`
+- Documentation: `models/**/schema.yml`
+- Dashboard configs: BI tool configuration files
 
 ---
 

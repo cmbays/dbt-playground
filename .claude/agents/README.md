@@ -67,11 +67,11 @@ Claude analyzes context and adopts appropriate persona:
 Use prefixes to explicitly invoke a persona:
 
 ```
-pm: I want to add a vocabulary quiz feature
-arch: design the architecture for spaced repetition
-test: create test spec for flashcard flip
-dev: implement the JLPT filter
-review: check the new shopping page
+pm: I want to add a customer analytics mart
+arch: design the architecture for incremental models
+test: create test spec for staging model
+dev: implement the order metrics mart
+review: check the new staging models
 design: audit the dashboard for accessibility
 docs: update changelog for v0.3
 sage: extract learnings from this session

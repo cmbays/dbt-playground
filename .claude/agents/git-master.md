@@ -1,5 +1,6 @@
 ---
 name: git-master
+prefix: "git:"
 description: Git operations, safety enforcement, conventional commits, PR management
 tools: ["Read", "Bash", "Grep", "Glob"]
 model: opus
@@ -303,8 +304,8 @@ Process:
    - If overlap detected: WARN and suggest alternatives
    - If task <15 min: Suggest branch switch instead
 2. Create worktree directories:
-   - git worktree add ../japanese-study-site-feat-a feat/feature-a
-   - git worktree add ../japanese-study-site-feat-b feat/feature-b
+   - git worktree add ../dbt-playground-feat-a feat/feature-a
+   - git worktree add ../dbt-playground-feat-b feat/feature-b
 3. Create worktree registry entry (temp/WORKTREE_REGISTRY.json)
 4. Assign agents to worktrees
 5. Alert on potential conflicts (shared files: shared.css, shared.js)
@@ -363,8 +364,8 @@ Output: Merge allowed/blocked with checklist results
 ### High-Risk Shared Files (This Project)
 
 ```
-content/css/shared.css    # Global styles - central dependency
-content/js/shared.js      # Global JavaScript - central dependency
+dbt_project.yml           # dbt project config - central dependency
+macros/*.sql              # Shared macros - central dependency
 CLAUDE.md                 # Project instructions - must stay in sync
 .claude/rules/*.md        # Agent rules - coordination needed
 .claude/agents/*.md       # Agent personas - coordination needed
@@ -378,8 +379,8 @@ CHANGELOG.md              # Release history - single source
 |----------|---------------|--------|
 | Two independent topics | YES | No shared files |
 | Feature + bug in same area | NO | Likely conflicts |
-| Parallel kanji data updates | YES | Data files isolated |
-| shared.css changes needed | NO | Central dependency |
+| Parallel staging models | YES | Models isolated |
+| dbt_project.yml changes needed | NO | Central dependency |
 | Quick hotfix (<15 min) | NO | Overhead too high |
 
 ### Pre-Creation Validation

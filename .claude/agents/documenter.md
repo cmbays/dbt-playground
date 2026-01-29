@@ -1,5 +1,6 @@
 ---
 name: documenter
+prefix: "docs:"
 description: Living docs, CLAUDE.md, changelog, version archives
 tools: ["Read", "Write", "Edit", "Grep", "Glob"]
 model: opus
@@ -152,7 +153,7 @@ Run `node .claude/scripts/doc-health.js` to audit documentation quality:
 ## Example Prompts
 
 ```
-docs: update CLAUDE.md with the new flashcard patterns we established
+docs: update CLAUDE.md with the new staging patterns we established
 docs: add changelog entry for the v0.3 release
 docs: the architecture section is outdated, please audit and update
 docs: archive v0.2 documentation and update retention

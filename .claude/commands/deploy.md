@@ -13,7 +13,7 @@ Execute version deployment workflow with proper archiving and tagging.
 ```
 /deploy v0.3.0 "Complete shopping dialogue page"
 /deploy patch "Fix navigation bug"
-/deploy minor "Add JLPT filter feature"
+/deploy minor "Add customer metrics feature"
 ```
 
 ## Version Determination

@@ -11,7 +11,7 @@ Execute multi-persona workflow for feature development.
 ## Example
 
 ```
-/orchestrate Add vocabulary quiz with spaced repetition
+/orchestrate Add customer analytics mart with order metrics
 ```
 
 ## Assembly Line Workflow
@@ -29,7 +29,7 @@ This command initiates a sequential persona chain:
 │     - Design system architecture                            │
 │     - Create TDD in docs/tdd/                               │
 │     - Identify implementation approach                      │
-│     - Consult sensei: for Japanese content needs            │
+│     - Consult data-modeler: for dimensional modeling needs  │
 ├─────────────────────────────────────────────────────────────┤
 │  3. QUALITY TESTER (test:)                                  │
 │     - Write test specification                              │
@@ -77,8 +77,8 @@ The workflow pauses for user approval at:
 For smaller tasks, phases can be skipped:
 
 ```
-/orchestrate --skip-prd Add JLPT N4 filter option
-/orchestrate --dev-only Fix navigation bug in shopping page
+/orchestrate --skip-prd Add order status filter to marts
+/orchestrate --dev-only Fix null handling in dim_customers
 ```
 
 ## Artifact Locations

@@ -34,7 +34,7 @@
 
 ```javascript
 Task({
-  prompt: "Design the localStorage schema for kanji progress",
+  prompt: "Design the staging model schema for customer data",
   subagent_type: "everything-claude-code:architect"
 })
 ```
@@ -43,10 +43,10 @@ Task({
 
 ```javascript
 Task({
-  prompt: "Design the localStorage schema for kanji progress.
+  prompt: "Design the staging model schema for customer data.
 
   DELIVERABLES (must write to disk):
-  1. temp/kanji-storage-schema.js - Complete implementation
+  1. temp/stg-customers-design.sql - Complete model implementation
   2. temp/T1.1-SCHEMA-DESIGN-DOC.md - Design documentation
 
   Use the Write tool to create these files.",
@@ -81,6 +81,7 @@ All agent files use YAML frontmatter for machine-parseable metadata, enabling co
 ```yaml
 ---
 name: agent-name          # Matches filename (without .md)
+prefix: "name:"           # Invocation prefix (e.g., "arch:", "pm:")
 description: One-line summary for agent selection UI
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: opus               # Default model (opus/sonnet/haiku)
@@ -92,6 +93,7 @@ model: opus               # Default model (opus/sonnet/haiku)
 | Field | Required | Purpose |
 |-------|----------|---------|
 | `name` | Yes | Agent identifier, matches filename |
+| `prefix` | Yes | Invocation prefix for queuing agent (e.g., "arch:", "pm:") |
 | `description` | Yes | Concise summary (<100 chars) for selection |
 | `tools` | Yes | Auto-granted tools when agent invoked |
 | `model` | No | Default model preference |
@@ -201,7 +203,7 @@ After agent completes, **always verify** deliverables:
 
 ```javascript
 // Check if files were created
-Bash({ command: "ls -lh temp/kanji-storage-schema.js" })
+Bash({ command: "ls -lh temp/stg-customers-design.sql" })
 
 // If file doesn't exist, agent returned content in response
 // Extract content manually or re-run agent with explicit instructions
@@ -227,14 +229,14 @@ Task({
   prompt: `You are the architect for Task T1.2 (GitHub #14).
 
   Context:
-  - PRD: docs/specs/PRD-001-JLPT-Mastery-Engine.md
+  - PRD: docs/specs/PRD-001-Customer-Analytics.md
   - Previous task: T1.1 (schema design) completed
-  - Schema file: temp/kanji-storage-schema.js
+  - Schema file: temp/stg-customers-design.sql
 
-  Your task: Implement SM-2 algorithm based on the schema.
+  Your task: Design the dimensional model for customer analytics.
 
   Deliverables:
-  1. kanji/js/srs-engine.js - SM-2 implementation
+  1. models/marts/dim_customers.sql - Dimension model
   2. temp/T1.2-TESTING.md - Test plan
 
   Use Write tool to create files.`,
@@ -260,10 +262,10 @@ Structure your agent prompt with:
 TaskOutput({ task_id: "agent_id" })
 
 // 2. Verify files exist
-Bash({ command: "ls -lh temp/*.js temp/*.md" })
+Bash({ command: "ls -lh temp/*.sql temp/*.md" })
 
 // 3. Validate content
-Read({ file_path: "temp/kanji-storage-schema.js" })
+Read({ file_path: "temp/stg-customers-design.sql" })
 
 // 4. If missing, extract from agent response
 // (See "Common Pitfalls" section)
@@ -285,14 +287,14 @@ Task({
   prompt: `You are the Developer implementing T1.2.
 
   Build on previous work:
-  - Schema: temp/kanji-storage-schema.js (read this first)
+  - Schema: temp/stg-customers-design.sql (read this first)
   - Design doc: temp/T1.1-SCHEMA-DESIGN-DOC.md
 
-  Your task: Implement SM-2 algorithm using the schema.
+  Your task: Implement the customer dimension model.
 
   Deliverables:
-  1. kanji/js/srs-engine.js - Implementation
-  2. kanji/js/srs-engine.test.js - Unit tests
+  1. models/marts/dim_customers.sql - Implementation
+  2. models/marts/schema.yml - Tests and documentation
 
   Use Write tool for new files.`,
   subagent_type: "feature-dev",
@@ -321,7 +323,7 @@ Task({
 ```javascript
 // After realizing agent didn't write files
 Write({
-  file_path: "temp/kanji-storage-schema.js",
+  file_path: "temp/stg-customers-design.sql",
   content: `/* extract from agent response */`
 })
 ```
@@ -343,8 +345,8 @@ Write({
 ```javascript
 Task({
   prompt: `IMPORTANT: First read these files for context:
-  1. temp/kanji-storage-schema.js - Schema you'll implement
-  2. docs/specs/PRD-001-JLPT-Mastery-Engine.md - Requirements
+  1. temp/stg-customers-design.sql - Schema you'll implement
+  2. docs/specs/PRD-001-Customer-Analytics.md - Requirements
 
   Then implement... [rest of task]`,
   subagent_type: "feature-dev"
@@ -378,12 +380,12 @@ Task({
   prompt: `Task T1.2 from GitHub issue #14.
 
   Acceptance Criteria (from issue):
-  - [ ] Function calculates correct interval for repetitions 0, 1, 2+
-  - [ ] Ease factor adjusts based on quality rating (0-5)
-  - [ ] Quality < 3 resets repetitions to 0
-  - [ ] Returns next review date
+  - [ ] Staging model extracts all required columns
+  - [ ] Primary key is unique and not null
+  - [ ] Foreign key relationships are tested
+  - [ ] Column descriptions are documented
 
-  Implement SM-2 algorithm meeting ALL criteria above.`,
+  Implement staging model meeting ALL criteria above.`,
   subagent_type: "feature-dev"
 })
 ```
@@ -398,11 +400,11 @@ Task({
 
 ```javascript
 // ❌ Relative (may fail)
-"Read ../temp/schema.js"
+"Read ../temp/schema.sql"
 
 // ✅ Absolute or project-relative
-"Read /Users/cmbays/Documents/claude/japanese-study-site/temp/schema.js"
-"Read temp/schema.js (from project root)"
+"Read /Users/cmbays/Documents/claude/dbt-playground/temp/schema.sql"
+"Read temp/schema.sql (from project root)"
 ```
 
 ---
@@ -450,15 +452,15 @@ Task({
 ```javascript
 // Step 1: Architecture
 Task({
-  description: "Plan flashcard feature",
-  prompt: "Analyze codebase and design flashcard system...",
+  description: "Plan customer analytics mart",
+  prompt: "Analyze codebase and design customer mart models...",
   subagent_type: "feature-dev:code-architect"
 })
 
 // Step 2: Implementation
 Task({
-  description: "Implement flashcard feature",
-  prompt: "Build flashcard system per architecture...",
+  description: "Implement customer analytics mart",
+  prompt: "Build customer mart per architecture...",
   subagent_type: "feature-dev"
 })
 ```
@@ -478,8 +480,8 @@ Task({
 
 ```javascript
 Task({
-  description: "Review authentication code",
-  prompt: "Review kanji/js/srs-engine.js for bugs, security, quality...",
+  description: "Review staging model code",
+  prompt: "Review models/staging/stg_stripe__payments.sql for quality, patterns...",
   subagent_type: "everything-claude-code:code-reviewer",
   allowed_tools: ["Read", "Grep", "Glob"]
 })
@@ -503,8 +505,8 @@ Task({
 
 ```javascript
 Task({
-  description: "Security audit localStorage schema",
-  prompt: "Review temp/kanji-storage-schema.js for security vulnerabilities...",
+  description: "Security audit data model",
+  prompt: "Review models/marts/fct_orders.sql for security vulnerabilities...",
   subagent_type: "everything-claude-code:security-reviewer"
 })
 ```
@@ -524,8 +526,8 @@ Task({
 
 ```javascript
 Task({
-  description: "Write SM-2 algorithm tests",
-  prompt: "Create unit tests for kanji/js/srs-engine.js...",
+  description: "Write model tests",
+  prompt: "Create schema tests for models/marts/fct_orders.sql...",
   subagent_type: "everything-claude-code:tdd-guide"
 })
 ```
@@ -546,7 +548,7 @@ Task({
 ```javascript
 Task({
   description: "Update architecture docs",
-  prompt: "Update docs/ARCHITECTURE.md with new SRS engine...",
+  prompt: "Update docs/ARCHITECTURE.md with new data mart design...",
   subagent_type: "everything-claude-code:doc-updater"
 })
 ```
@@ -566,8 +568,8 @@ Task({
 
 ```javascript
 Task({
-  description: "Find all kanji data files",
-  prompt: "Search for all files containing kanji data and explain structure...",
+  description: "Find all staging models",
+  prompt: "Search for all staging models and explain their structure...",
   subagent_type: "Explore",
   model: "haiku" // Fast for exploration
 })
@@ -658,7 +660,7 @@ Git-Master is a **horizontal service agent** - unlike vertical agents that own s
 
 ```javascript
 // From any agent workflow
-"git: commit my changes with message 'feat(kanji): add filter'"
+"git: commit my changes with message 'feat(orders): add order status filter'"
 "git: create branch feat/new-feature"
 "git: create PR for current branch"
 ```
@@ -854,8 +856,8 @@ Cleanup Phase       Refactor-Cleaner quarterly
 
 ```javascript
 Task({
-  description: "Design kanji filtering system",
-  prompt: `Design the kanji filtering architecture.
+  description: "Design order filtering system",
+  prompt: `Design the order filtering architecture.
 
   IMPORTANT: Use code-simplifier to evaluate design complexity:
   - Identify unnecessary layers or abstraction
@@ -863,8 +865,8 @@ Task({
   - Suggest minimal implementation patterns
 
   DELIVERABLES:
-  1. temp/kanji-filter-design.md - Design document
-  2. temp/kanji-filter-schema.js - Data structure
+  1. temp/order-filter-design.md - Design document
+  2. temp/int_orders__filtered.sql - Intermediate model
 
   Use Write tool.`,
   subagent_type: "everything-claude-code:architect",
@@ -878,17 +880,17 @@ Task({
 
 ```javascript
 Task({
-  description: "Implement kanji filtering",
-  prompt: `Implement kanji filtering per design in temp/kanji-filter-design.md.
+  description: "Implement order filtering",
+  prompt: `Implement order filtering per design in temp/order-filter-design.md.
 
   Use code-simplifier to:
-  - Ensure no unnecessary functions or helpers
+  - Ensure no unnecessary CTEs or helpers
   - Validate implementation matches minimal design
   - Flag any over-engineering detected
 
   DELIVERABLES:
-  1. kanji/js/filters.js - Implementation
-  2. kanji/js/filters.test.js - Tests
+  1. models/intermediate/int_orders__filtered.sql - Implementation
+  2. models/intermediate/schema.yml - Tests
 
   Use Write tool.`,
   subagent_type: "feature-dev",
@@ -902,8 +904,8 @@ Task({
 
 ```javascript
 Task({
-  description: "Review kanji implementation for complexity",
-  prompt: `Review kanji/js/filters.js using code-simplifier:
+  description: "Review order filtering for complexity",
+  prompt: `Review models/intermediate/int_orders__filtered.sql using code-simplifier:
   - Flag any functions that could be consolidated
   - Identify unnecessary abstractions
   - Check for code duplication
@@ -1115,7 +1117,7 @@ ls -lh temp/*.js temp/*.md
 
 ```bash
 # Read key files
-cat temp/kanji-storage-schema.js | head -50
+cat temp/stg-customers-design.sql | head -50
 
 # Check for:
 # - Proper structure
@@ -1155,7 +1157,7 @@ Compare agent output to GitHub issue acceptance criteria:
 ```javascript
 Task({
   description: "Design localStorage schema architecture",
-  prompt: "Design the localStorage schema for kanji SRS progress tracking...",
+  prompt: "Design the staging model schema for customer data...",
   subagent_type: "everything-claude-code:architect"
 })
 ```
@@ -1171,10 +1173,10 @@ Task({
 ```javascript
 Task({
   description: "Design localStorage schema architecture",
-  prompt: `Design the localStorage schema for kanji SRS progress tracking.
+  prompt: `Design the staging model schema for customer data.
 
   DELIVERABLES (write to disk):
-  1. temp/kanji-storage-schema.js - Complete schema implementation
+  1. temp/stg-customers-design.sql - Complete schema implementation
   2. temp/T1.1-SCHEMA-DESIGN-DOC.md - Comprehensive design document
 
   Use the Write tool to create both files.`,
@@ -1313,7 +1315,7 @@ Start here on every new session to quickly orient yourself:
 ### Essential Reading (Do First)
 
 1. **[[CLAUDE.md]]** - Project context, current phase, critical rules
-   - Current status: Kanji Study Module (v0.2)
+   - Current status: Initial dbt Setup (v0.1)
    - Key workflow: UNDERSTAND -> PLAN -> PROTOTYPE -> BUILD -> VERIFY -> DEPLOY
    - Critical: Never overwrite content files directly
 
@@ -1420,7 +1422,7 @@ Architecture decisions are documented in [[docs/ARCHITECTURE.md#key-architectura
 | Coding standards | `.claude/rules/*.md` |
 | Project structure | `docs/PROJECT_STRUCTURE.md` |
 | Architecture | `docs/ARCHITECTURE.md` |
-| Japanese content | `docs/CONTENT_STANDARDS.md` |
+| dbt conventions | `docs/CONTENT_STANDARDS.md` |
 | UI/UX patterns | `docs/DESIGN_PRINCIPLES.md` |
 | Testing approach | `docs/TESTING.md` |
 | Task management | `docs/PROJECT_BOARD_GUIDE.md` |
@@ -1458,7 +1460,7 @@ Before committing documentation changes:
 | [[docs/ARCHITECTURE.md]] | System design, technical decisions | Implementation work |
 | [[docs/PROJECT_STRUCTURE.md]] | File organization, naming | Finding/creating files |
 | [[docs/DESIGN_PRINCIPLES.md]] | UI/UX standards | Frontend work |
-| [[docs/CONTENT_STANDARDS.md]] | Japanese content guidelines | Content creation |
+| [[docs/CONTENT_STANDARDS.md]] | dbt naming conventions | Model creation |
 | [[docs/TESTING.md]] | Testing framework, TDD | Verification work |
 
 ### Agent System Documentation

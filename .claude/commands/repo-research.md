@@ -11,9 +11,9 @@ Research an external repository and generate a learnings report for pm: and arch
 ## Examples
 
 ```
-/repo-research https://github.com/example/flashcard-app
-/repo-research https://github.com/example/ui-lib --depth=deep --focus="theming system"
-/repo-research https://github.com/example/learning-platform --depth=quick
+/repo-research https://github.com/dbt-labs/dbt-core
+/repo-research https://github.com/dbt-labs/dbt-utils --depth=deep --focus="macro patterns"
+/repo-research https://github.com/example/dbt-project --depth=quick
 ```
 
 ## Workflow

@@ -1,5 +1,6 @@
 ---
 name: data-modeler
+prefix: "dbt-model:"
 description: Design dbt models (stg_, int_, fct_, dim_), naming conventions, relationships
 tools: ["Read", "Write", "Grep", "Glob"]
 model: opus

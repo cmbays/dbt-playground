@@ -1,5 +1,6 @@
 ---
 name: dbt-tester
+prefix: "dbt-test:"
 description: Create schema/singular tests, data quality validation, freshness tests
 tools: ["Read", "Write", "Bash", "Grep", "Glob"]
 model: opus

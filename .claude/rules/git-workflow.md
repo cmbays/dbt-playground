@@ -74,16 +74,16 @@ type(scope): description
 
 ### Scope (Optional)
 
-Area of codebase: `shopping`, `kanji`, `shared-css`, `nav`
+Area of codebase: `staging`, `marts`, `macros`, `sources`
 
 ### Examples
 
 ```
-feat(restaurant): add dialogue page with audio support
-fix(nav): correct broken link to home-life index
+feat(staging): add stg_stripe__payments model
+fix(marts): correct null handling in dim_customers
 docs: update CLAUDE.md with development conventions
-style(flashcards): improve hover state transitions
-refactor(shared-js): extract audio player into function
+style(models): improve CTE formatting
+refactor(macros): extract date calculation to macro
 chore: update .gitignore for temp files
 ```
 
@@ -336,9 +336,9 @@ Layer 3: Git-Master Agent
 git: create branch feat/new-feature
 
 # Commit
-git: commit my changes with message "feat(kanji): add filter"
+git: commit my changes with message "feat(staging): add payments model"
 # Or use command
-/commit "feat(kanji): add filter"
+/commit "feat(staging): add payments model"
 
 # Tag creation
 git: create tag v0.3.0 "Description"
@@ -380,12 +380,12 @@ All git-master operations logged to `temp/GIT_AUDIT_LOG.txt` (gitignored):
 
 ```
 [2026-01-25T10:30:00Z] BRANCH_CREATE
-  Branch: feat/kanji-filter
+  Branch: feat/staging-payments
   Base: main (abc1234)
 
 [2026-01-25T10:35:00Z] COMMIT
   Hash: def5678
-  Message: feat(kanji): add JLPT filtering
+  Message: feat(staging): add payments model
   Files: 3 changed
 ```
 

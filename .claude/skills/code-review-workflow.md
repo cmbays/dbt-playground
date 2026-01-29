@@ -164,12 +164,12 @@ Positive observations:
 - Global variable pollution
 - innerHTML with unsanitized data
 
-### Japanese Content
+### dbt Models
 
-- Missing furigana
-- Incorrect romanization
-- Unnatural phrasing
-- Missing audio handling
+- Missing model documentation
+- Incorrect layer placement
+- Missing schema tests
+- Unclear CTE naming
 
 ## Review Response
 

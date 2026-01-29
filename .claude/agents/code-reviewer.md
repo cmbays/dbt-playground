@@ -1,5 +1,6 @@
 ---
 name: code-reviewer
+prefix: "review:"
 description: Code quality, bugs, patterns, security issues, constructive feedback
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: opus
@@ -177,10 +178,10 @@ function process(data) {
 ## Example Prompts
 
 ```
-review: check the new flashcard implementation
+review: check the new staging model implementation
 review: look at PR #12 for issues
-review: verify the kanji filter follows our patterns
-review: audit the shopping dialogue page for problems
+review: verify the order filter follows our patterns
+review: audit the customer dimension for problems
 ```
 
 ## Review Comment Levels
@@ -260,11 +261,11 @@ Overall assessment and key findings
 
 **Cross-reference**: See `docs/reference/LEARNINGS.md` and `.claude/skills/learned-pattern-javascript-defensive-coding.md`
 
-### Japanese Content
+### dbt Models
 
-- Missing furigana for kanji
-- Incorrect romanization
-- Missing audio attributes
+- Missing model documentation
+- Incorrect layer placement (staging vs marts)
+- Missing schema tests
 
 ## dbt Code Review Checklist
 

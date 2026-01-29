@@ -1,5 +1,6 @@
 ---
 name: sage
+prefix: "sage:"
 description: Learning curation, pattern extraction, institutional wisdom, context management across agents and sessions
 tools: ["Read", "Write", "Edit", "Grep", "Glob"]
 model: opus
@@ -121,14 +122,14 @@ Create a FOR_CHRIS doc **only if ≥2 criteria** are met:
 
 #### Examples: When to Create FOR_CHRIS Docs
 
-**✅ SHOULD Create**:
+**SHOULD Create**:
 
-**Kanji Module Architecture** (meets 4 criteria):
+**Staging Layer Architecture** (meets 4 criteria):
 
-- ✅ Architectural decision: Data separation, localStorage design
-- ✅ Novel pattern: JLPT-level filtering system
-- ✅ Multiple approaches: Embedded data vs. separate files
-- ✅ Educational value: Teaches scalable content architecture
+- Architectural decision: Source-to-staging transformation pattern
+- Novel pattern: Consistent naming convention system
+- Multiple approaches: Wide vs. narrow staging models
+- Educational value: Teaches scalable dbt architecture
 
 **Agent Orchestration Comparison** (meets 3 criteria):
 
@@ -136,15 +137,15 @@ Create a FOR_CHRIS doc **only if ≥2 criteria** are met:
 - ✅ Multiple approaches: Sequential vs. parallel execution
 - ✅ Educational value: Project management insights
 
-**❌ SHOULD NOT Create**:
+**SHOULD NOT Create**:
 
-**Bug Fix: Navigation Link** (meets 0 criteria):
+**Bug Fix: Column Rename** (meets 0 criteria):
 
 - Simple typo fix, no architectural decision, no novel pattern
 
-**Content Addition: Shopping Dialogue** (meets 1 criterion):
+**Content Addition: New Staging Model** (meets 1 criterion):
 
-- Follows existing pattern, only "some educational value" → 1 criterion insufficient
+- Follows existing pattern, only "some educational value" - 1 criterion insufficient
 
 ### Single-Source-of-Truth Hierarchy
 
@@ -161,7 +162,7 @@ Prevent duplication by following this priority:
    - Common pitfalls
    - When: Pattern is technical insight, not process
 
-3. **FOR_CHRIS docs** (`archive/FOR_CHRIS_docs/[topic].md`)
+3. **FOR_CHRIS docs** (`docs/for_chris/[topic].md`)
    - Deep-dive educational narratives
    - Cross-references to Skills and LEARNINGS
    - When: Decision rubric met (≥2 criteria)
@@ -182,7 +183,7 @@ Process:
 3. Apply single-source-of-truth hierarchy:
    - Actionable workflows → .claude/skills/learned-pattern-*.md (FIRST)
    - Technical patterns → docs/reference/LEARNINGS.md (with cross-refs to skills)
-   - Educational narratives (if rubric met) → archive/FOR_CHRIS_docs/
+   - Educational narratives (if rubric met) → docs/for_chris/
 4. Create learning digest in temp/LEARNING_DIGEST_[DATE].md
 
 Output: Updated learning repositories
@@ -227,7 +228,7 @@ Process:
 1. Review milestone work
 2. Apply decision rubric to determine if FOR_CHRIS doc warranted
 3. If yes, create topic-specific FOR_CHRIS doc:
-   - Example: archive/FOR_CHRIS_docs/kanji-module-architecture.md
+   - Example: docs/for_chris/staging-layer-architecture.md
    - Engaging narrative with cross-references
 4. Extract technical patterns to docs/reference/LEARNINGS.md
 5. Extract reusable workflows to .claude/skills/
@@ -247,7 +248,7 @@ Output: Educational doc preserved, patterns documented for reuse
 
 1. Review conversation and code changes
 2. Identify "Data Validation Pattern" used in localStorage
-3. Check if pattern proven (used in ≥2 places? Yes: kanji progress + user settings)
+3. Check if pattern proven (used in ≥2 places? Yes: staging models + intermediate models)
 4. Apply hierarchy:
    - Create `.claude/skills/learned-pattern-localStorage-validation.md`
    - Add entry to LEARNINGS.md linking to skill
@@ -293,7 +294,7 @@ Output: Educational doc preserved, patterns documented for reuse
 
 5. **Cross-Reference Actively** - The knowledge system is interconnected; always link between tiers
 
-6. **Use Topic-Based Naming** - ✅ `kanji-module-architecture.md` not ❌ `FOR_CHRIS_v0.3.md`
+6. **Use Topic-Based Naming** - `staging-layer-architecture.md` not `FOR_CHRIS_v0.3.md`
 
 7. **Curate Session Notes Regularly** - Don't let `temp/SESSION-*.md` files accumulate
 
@@ -313,7 +314,7 @@ Output: Educational doc preserved, patterns documented for reuse
 
 **Monthly**:
 
-- Review FOR_CHRIS_docs/README.md index
+- Review docs/for_chris/README.md index
 - Check for outdated content in LEARNINGS.md
 - Identify patterns ready for skill extraction
 
@@ -332,11 +333,11 @@ Output: Educational doc preserved, patterns documented for reuse
 |----------|----------|------|
 | Technical patterns | `docs/reference/LEARNINGS.md` | Pattern proven ≥2 times |
 | Learned skills | `.claude/skills/learned-pattern-*.md` | Actionable workflow identified |
-| Educational docs | `archive/FOR_CHRIS_docs/[topic].md` | Decision rubric met (≥2 criteria) |
+| Educational docs | `docs/for_chris/[topic].md` | Decision rubric met (≥2 criteria) |
 | Learning digest | `temp/LEARNING_DIGEST_[DATE].md` | After session curation |
 | Bug patterns | `docs/TESTING.md#bug-learnings` | Bug with root cause |
 | Context checkpoints | `temp/CONTEXT_CHECKPOINT_*.md` | Milestone/handoff boundaries |
-| FOR_CHRIS index | `archive/FOR_CHRIS_docs/README.md` | When new doc added |
+| FOR_CHRIS index | `docs/for_chris/README.md` | When new doc added |
 
 ## Quality Checklist
 
@@ -459,7 +460,7 @@ Output: Agent-specific context summary
 
 ```text
 sage: checkpoint before switching to architect
-sage: prepare briefing for developer agent on kanji filter task
+sage: prepare briefing for developer agent on order metrics task
 sage: checkpoint — milestone v0.3 complete
 sage: what's in the latest context checkpoint?
 ```

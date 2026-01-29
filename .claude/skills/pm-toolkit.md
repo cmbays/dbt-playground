@@ -39,9 +39,9 @@ We'll know this works when [observable result].
 **Example:**
 
 ```
-We believe SRS-based review scheduling will improve kanji retention
-because spaced repetition is proven to strengthen long-term memory.
-We'll know this works when users return to review sessions daily.
+We believe incremental models will improve query performance
+because they only process new/changed data.
+We'll know this works when build times decrease by 50%+.
 ```
 
 ## Scope Creep Guard
@@ -59,14 +59,14 @@ If all three say "add it now", update the PRD scope section before proceeding.
 Project-specific checklist for any feature:
 
 - [ ] Acceptance criteria from PRD/issue met
-- [ ] localStorage works (if applicable)
-- [ ] Mobile responsive (320px+)
-- [ ] Integrates with existing systems (SRS/mastery/XP if relevant)
-- [ ] No regression in existing features
+- [ ] dbt tests pass (unique, not_null, relationships)
+- [ ] Model documentation complete
+- [ ] Integrates with existing DAG properly
+- [ ] No regression in existing models
 - [ ] Living docs updated (ARCHITECTURE.md, PROJECT_STRUCTURE.md)
-- [ ] Follows shared.css / shared.js patterns
+- [ ] Follows dbt naming conventions
 - [ ] GitHub issue created with labels
-- [ ] JLPT level considerations included
+- [ ] Data layer boundaries respected
 
 ## GitHub Issue Template
 
@@ -75,7 +75,7 @@ Project-specific checklist for any feature:
 What problem does this solve?
 
 ## User Benefit
-How does this help learners?
+How does this improve analytics?
 
 ## Acceptance Criteria
 - [ ] Criterion 1

@@ -1,9 +1,5 @@
 {
   "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest", "--caps=vision"]
-    },
     "dbt": {
       "command": "uvx",
       "args": ["dbt-mcp"],

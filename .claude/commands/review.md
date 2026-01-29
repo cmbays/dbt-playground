@@ -11,8 +11,8 @@ Perform comprehensive code review with structured feedback.
 ## Examples
 
 ```
-/review topics/shopping/dialogue.html
-/review kanji/
+/review models/staging/stripe/
+/review models/marts/
 /review #12
 /review (reviews staged changes)
 ```
@@ -32,7 +32,7 @@ Perform comprehensive code review with structured feedback.
    - [ ] **Structure**: Semantic HTML, proper organization
    - [ ] **Performance**: Unnecessary operations, reflows
    - [ ] **Accessibility**: Keyboard nav, screen readers
-   - [ ] **Japanese Content**: Furigana, romanization accuracy
+   - [ ] **dbt Patterns**: Naming conventions, CTE structure
 
 3. **Generate Report**
    Create structured review with categorized findings
@@ -85,7 +85,7 @@ Perform comprehensive code review with structured feedback.
 This command activates the **Code Reviewer** (`review:`) persona, with optional consultation from:
 
 - **Design Reviewer** (`design:`) for UI/UX issues
-- **Japanese Sensei** (`sensei:`) for content accuracy
+- **Data Modeler** (`dbt-model:`) for dimensional modeling accuracy
 
 ## Skill Integration
 

@@ -1,0 +1,22 @@
+# Ignore dbt packages (external dependencies)
+dbt_project/dbt_packages/
+dbt_packages/
+
+# Ignore target directory (compiled SQL)
+dbt_project/target/
+target/
+
+# Ignore logs
+dbt_project/logs/
+logs/
+
+# Ignore virtual environments
+.venv/
+venv/
+env/
+
+# Ignore node modules
+node_modules/
+
+# Ignore temp directory
+temp/

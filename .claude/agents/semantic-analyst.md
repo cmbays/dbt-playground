@@ -1,5 +1,6 @@
 ---
 name: semantic-analyst
+prefix: "semantic:"
 description: Metrics, dimensions, natural language to SQL, semantic layer design
 tools: ["Read", "Write", "Bash", "Grep", "Glob"]
 model: opus

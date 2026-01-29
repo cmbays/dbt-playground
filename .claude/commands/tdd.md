@@ -11,9 +11,9 @@ Execute test-driven development workflow.
 ## Examples
 
 ```
-/tdd kanji flashcard flip animation
-/tdd vocabulary filter by JLPT level
-/tdd audio playback error handling
+/tdd staging model for Stripe payments
+/tdd customer dimension with order history
+/tdd incremental model error handling
 ```
 
 ## TDD Workflow
@@ -91,10 +91,10 @@ Execute test-driven development workflow.
 
 | Category | Purpose | Example |
 |----------|---------|---------|
-| **Unit** | Test individual functions | Filter function returns correct results |
-| **Integration** | Test component interactions | Flashcard updates after filter change |
-| **Manual** | Verify visual/UX | Animation looks smooth |
-| **Regression** | Ensure no breaks | Existing features still work |
+| **Schema** | Test column properties | Primary key is unique and not null |
+| **Data** | Test business rules | Order totals are non-negative |
+| **Singular** | Custom validation | No orphaned records exist |
+| **Regression** | Ensure no breaks | Existing models still work |
 
 ## Testing Checklist
 
@@ -116,12 +116,12 @@ Execute test-driven development workflow.
 - [ ] Error states handled
 - [ ] Performance acceptable
 
-### For Japanese Content
+### For dbt Models
 
-- [ ] Furigana displays correctly
-- [ ] Romaji toggles work
-- [ ] Audio plays (if applicable)
-- [ ] JLPT level accurate
+- [ ] Primary keys are unique
+- [ ] Foreign keys have valid references
+- [ ] Null handling is explicit
+- [ ] Column names follow conventions
 
 ## Test Documentation Template
 

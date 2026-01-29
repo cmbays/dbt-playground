@@ -13,11 +13,11 @@ Create a validated git branch through git: with naming convention enforcement.
 ## Examples
 
 ```
-/branch feat/kanji-stroke-order
-/branch fix/navigation-link-broken
+/branch feat/staging-stripe-payments
+/branch fix/marts-null-handling
 /branch docs/update-architecture
-/branch refactor/shared-js-cleanup
-/branch style/flashcard-hover-effects
+/branch refactor/macros-cleanup
+/branch style/model-formatting
 ```
 
 ## Branch Naming Format
@@ -36,7 +36,7 @@ Create a validated git branch through git: with naming convention enforcement.
 | `fix/` | Bug fixes | `fix/navigation-link-broken` |
 | `docs/` | Documentation changes | `docs/update-architecture` |
 | `refactor/` | Code restructuring | `refactor/shared-js-cleanup` |
-| `style/` | CSS/styling changes | `style/flashcard-hover-effects` |
+| `style/` | Formatting changes | `style/model-cte-formatting` |
 | `chore/` | Maintenance tasks | `chore/update-dependencies` |
 
 ### Naming Rules
@@ -112,17 +112,17 @@ When invoked without name (`/branch`), git: prompts:
 ### Feature Development
 
 ```
-/branch feat/shopping-quiz-page
-/branch feat/kanji-stroke-animation
-/branch feat/audio-playback-controls
+/branch feat/staging-payments-model
+/branch feat/marts-customer-analytics
+/branch feat/macros-date-utils
 ```
 
 ### Bug Fixes
 
 ```
-/branch fix/broken-nav-link
-/branch fix/quiz-score-calculation
-/branch fix/mobile-responsive-layout
+/branch fix/staging-null-dates
+/branch fix/marts-metric-calculation
+/branch fix/source-freshness-config
 ```
 
 ### Documentation
@@ -136,9 +136,9 @@ When invoked without name (`/branch`), git: prompts:
 ### Refactoring
 
 ```
-/branch refactor/extract-audio-module
-/branch refactor/consolidate-css
-/branch refactor/simplify-quiz-logic
+/branch refactor/extract-date-macro
+/branch refactor/consolidate-staging
+/branch refactor/simplify-mart-logic
 ```
 
 ## Error Recovery
@@ -155,12 +155,12 @@ Use: /branch feat/your-feature-name
 ### Branch Exists
 
 ```
-[REJECTED] Branch already exists: feat/kanji-filter
+[REJECTED] Branch already exists: feat/staging-payments
 
 Options:
-1. Switch to existing: git checkout feat/kanji-filter
-2. Delete and recreate: git branch -d feat/kanji-filter
-3. Use different name: /branch feat/kanji-filter-v2
+1. Switch to existing: git checkout feat/staging-payments
+2. Delete and recreate: git branch -d feat/staging-payments
+3. Use different name: /branch feat/staging-payments-v2
 ```
 
 ### Not on Main

@@ -1,5 +1,6 @@
 ---
 name: changelog-generator
+prefix: "changelog:"
 description: Automated changelog from git history, release notes, migration guides
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: sonnet
@@ -65,7 +66,7 @@ The agent needs:
 
 3. GROUP by scope
    - Group related commits under scope headers
-   - e.g., "**Kanji Module**" groups feat(kanji), fix(kanji)
+   - e.g., "**Orders Mart**" groups feat(orders), fix(orders)
 
 4. FORMAT as Keep a Changelog entry
    - Include date, version link

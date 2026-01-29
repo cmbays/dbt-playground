@@ -129,18 +129,18 @@ Invoke when:
 ## Example
 
 ```
-User: Implement JLPT filter for kanji cards
+User: Implement status filter for orders staging model
 
 TDD Phase 1 (RED):
-- Define: filterByLevel(kanji[], level) returns filtered array
-- Test: N5 filter returns only N5 kanji
-- Test: Empty array returns empty
-- Test: Invalid level returns all
+- Define: int_orders__filtered model with status filter
+- Test: unique and not_null on order_id
+- Test: only completed orders included
+- Test: accepted_values on status column
 
 TDD Phase 2 (GREEN):
-- Implement filterByLevel function
-- Pass all tests
-- Verify in browser
+- Implement staging model
+- Pass all dbt tests
+- Verify with dbt run
 
 TDD Phase 3 (REFACTOR):
 - Extract level validation

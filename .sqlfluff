@@ -1,0 +1,52 @@
+[sqlfluff]
+# Use DuckDB dialect for this project
+dialect = duckdb
+templater = jinja
+# Be less verbose for CI
+verbose = 0
+nocolor = True
+# Reasonable line length (moved from rules section per sqlfluff 2.x)
+max_line_length = 120
+
+[sqlfluff:indentation]
+indented_joins = True
+indented_ctes = True
+indented_using_on = True
+# Moved from rules section per sqlfluff 2.x
+tab_space_size = 4
+indent_unit = space
+
+[sqlfluff:rules]
+# Allow implicit aliases in select
+allow_scalar = True
+
+# Capitalize SQL keywords consistently (lowercase per our style guide)
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower
+
+# Capitalize function names consistently
+[sqlfluff:rules:capitalisation.functions]
+capitalisation_policy = lower
+
+# Capitalize literals consistently
+[sqlfluff:rules:capitalisation.literals]
+capitalisation_policy = lower
+
+# Capitalize types consistently
+[sqlfluff:rules:capitalisation.types]
+capitalisation_policy = lower
+
+# Use trailing commas (per dbt best practice)
+[sqlfluff:rules:layout.commas]
+comma_style = trailing
+
+# Aliasing preferences
+[sqlfluff:rules:aliasing.table]
+aliasing = explicit
+
+[sqlfluff:rules:aliasing.column]
+aliasing = explicit
+
+# Allow CTEs to use column aliases
+[sqlfluff:rules:references.consistent]
+single_table_references = consistent

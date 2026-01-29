@@ -1,5 +1,6 @@
 ---
 name: product-manager
+prefix: "pm:"
 description: Requirements, PRDs, GitHub issues, feature prioritization
 tools: ["Read", "Write", "Grep", "Glob"]
 model: opus
@@ -68,7 +69,7 @@ and ensures development aligns with user needs and project goals.
 ### Handoff
 
 - Hands off to: Technical Architect (for TDD creation)
-- May consult: Japanese Sensei (for content requirements)
+- May consult: Data Modeler (for dimensional modeling requirements)
 
 ## Constraints
 
@@ -89,8 +90,8 @@ and ensures development aligns with user needs and project goals.
 ## Example Prompts
 
 ```text
-pm: I want to add a vocabulary quiz feature
-pm: what's the priority for the audio playback improvements?
-pm: create an issue for the navigation bug I found
+pm: I want to add a customer analytics mart
+pm: what's the priority for the order metrics improvements?
+pm: create an issue for the schema test failure I found
 pm: scope out what v0.4 should include
 ```

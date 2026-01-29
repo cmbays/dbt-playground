@@ -1,5 +1,6 @@
 ---
 name: developer
+prefix: "dev:"
 description: Feature implementation, clean code, project patterns, vanilla JS
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: opus
@@ -127,50 +128,55 @@ dev: add localStorage for saving progress, use context7
 ## Example Prompts
 
 ```
-dev: implement the flashcard flip animation from the TDD
-dev: fix the navigation link issue in shopping/index.html
-dev: build a prototype for the quiz results modal
-dev: add the JLPT level filter to the kanji study page
+dev: implement the staging model from the TDD
+dev: fix the test failure in stg_stripe__payments
+dev: build a prototype for the customer dimension
+dev: add the data quality tests to the orders mart
 ```
 
 ## Code Standards Reference
 
-### HTML
+### SQL/dbt
 
-```html
-<!-- Version: v0.X.X - Updated: YYYY-MM-DD -->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Title | Japanese Learning</title>
-  <link rel="stylesheet" href="../../css/shared.css">
-</head>
-<body>
-  <!-- Semantic HTML5 elements -->
-  <script src="../../js/shared.js"></script>
-</body>
-</html>
+```sql
+-- Version: v0.X.X - Updated: YYYY-MM-DD
+-- Model: stg_[source]__[table]
+
+with source as (
+    select * from {{ source('source_name', 'table_name') }}
+),
+
+renamed as (
+    select
+        -- Primary key
+        id as order_id,
+        -- Attributes
+        created_at,
+        updated_at
+    from source
+)
+
+select * from renamed
 ```
 
-### CSS
+### Model Naming
 
-- Use CSS custom properties from shared.css
-- Mobile-first breakpoints
-- Page-specific styles in `<style>` only when necessary
+- Staging: `stg_[source]__[table]` (e.g., `stg_stripe__payments`)
+- Intermediate: `int_[entity]__[verb]` (e.g., `int_orders__pivoted`)
+- Mart facts: `fct_[process]` (e.g., `fct_orders`)
+- Mart dimensions: `dim_[entity]` (e.g., `dim_customers`)
 
-### JavaScript
+### Jinja/Macros
 
-- Vanilla JavaScript (no frameworks)
-- Clear function names
-- Error handling for audio/interactive elements
-- Use shared.js for common functionality
+- Use `ref()` for model references
+- Use `source()` for raw data sources
+- Keep macros DRY but readable
+- Document complex macros with comments
 
 ### File Naming
 
-- Lowercase with hyphens: `story-morning.html`
-- Descriptive: `shopping-dialogue.html` not `page2.html`
+- Lowercase with underscores: `stg_stripe__payments.sql`
+- Descriptive: `int_orders__enriched.sql` not `model2.sql`
 
 ## Development Flow
 

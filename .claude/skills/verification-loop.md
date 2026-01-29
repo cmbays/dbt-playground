@@ -93,12 +93,12 @@ Invoke when:
 - [ ] Color contrast sufficient
 - [ ] Screen reader compatible
 
-### 6. Japanese Content (if applicable)
+### 6. dbt Models (if applicable)
 
-- [ ] Furigana displays correctly
-- [ ] Romaji toggles work
-- [ ] Audio plays
-- [ ] JLPT level accurate
+- [ ] Schema tests pass
+- [ ] Model documentation complete
+- [ ] Column naming consistent
+- [ ] Layer boundaries respected
 
 ## Issue Handling
 

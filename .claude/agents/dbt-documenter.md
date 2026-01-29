@@ -1,5 +1,6 @@
 ---
 name: dbt-documenter
+prefix: "dbt-docs:"
 description: Model/column descriptions, dbt docs generation, lineage documentation
 tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
 model: opus

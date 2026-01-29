@@ -374,20 +374,20 @@ function validateTag(tag) {
 # GIT_AUDIT_LOG.txt (gitignored)
 
 [2026-01-25T10:30:00Z] BRANCH_CREATE
-  Branch: feat/kanji-stroke-order
+  Branch: feat/staging-payments
   Base: main (abc1234)
   User: git-master
 
 [2026-01-25T10:35:00Z] COMMIT
   Hash: def5678
-  Message: feat(kanji): add stroke order animation
+  Message: feat(staging): add Stripe payments model
   Files: 3 changed (+120/-5)
   User: git-master
 
 [2026-01-25T11:00:00Z] PR_CREATE
   Number: #45
-  Title: feat(kanji): add stroke order animation
-  Branch: feat/kanji-stroke-order → main
+  Title: feat(staging): add Stripe payments model
+  Branch: feat/staging-payments → main
   User: git-master
 
 [2026-01-25T12:00:00Z] PR_MERGE
