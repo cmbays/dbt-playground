@@ -6,7 +6,7 @@
       "env": {
         "DBT_PROJECT_DIR": "./dbt_project",
         "DBT_PATH": "./.venv/bin/dbt",
-        "DBT_PROFILES_DIR": "~/.dbt"
+        "DBT_PROFILES_DIR": "/Users/cmbays/.dbt"
       }
     }
   }
