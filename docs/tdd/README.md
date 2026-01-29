@@ -1,3 +1,12 @@
+---
+audience: [architect, developer]
+priority: medium
+size: small
+last_updated: 2026-01-28
+status: active
+tags: [tdd, technical-design, architecture, index]
+---
+
 # Technical Design Documents (TDDs)
 
 This directory contains Technical Design Documents that specify how features will be implemented.
@@ -20,13 +29,13 @@ TDD-[NUMBER]-[short-name].md
 ```
 
 Examples:
-- `TDD-001-vocabulary-quiz.md`
-- `TDD-002-progress-tracking.md`
-- `TDD-003-audio-playback.md`
+- `TDD-001-sample-data-pipeline.md`
+- `TDD-002-incremental-models.md`
+- `TDD-003-data-quality-tests.md`
 
 Architecture diagrams use matching names:
 ```
-TDD-001-vocabulary-quiz.d2
+TDD-001-sample-data-pipeline.d2
 ```
 
 ## Template
@@ -37,7 +46,7 @@ Use `TDD-TEMPLATE.md` for new TDDs.
 
 | TDD | Title | PRD | Status | Developer |
 |-----|-------|-----|--------|-----------|
-| _Example_ | _Vocabulary Quiz_ | _PRD-001_ | _In Progress_ | _— _ |
+| - | _No TDDs yet_ | - | - | - |
 
 ## Workflow
 
@@ -65,9 +74,9 @@ For complex features, include D2 diagrams:
 
 ```d2
 # Example component diagram
-user -> ui: interacts
-ui -> state: updates
-state -> storage: persists
+source -> staging: transform
+staging -> intermediate: business logic
+intermediate -> mart: analytics ready
 ```
 
 Save as `TDD-XXX-name.d2` alongside the TDD.

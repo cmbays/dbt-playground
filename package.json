@@ -1,7 +1,7 @@
 {
-  "name": "japanese-study-site",
-  "version": "1.0.0",
-  "description": "An interactive Japanese language learning website focused on practical, conversational skills for daily life, shopping, dining, and travel situations.",
+  "name": "dbt-playground",
+  "version": "0.1.0",
+  "description": "A dbt learning project with Claude Code agent orchestration for data analytics development",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -11,16 +11,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cmbays/japanese-study-site.git"
+    "url": "git+https://github.com/cmbays/dbt-playground.git"
   },
-  "keywords": [],
+  "keywords": [
+    "dbt",
+    "data-analytics",
+    "agent-orchestration",
+    "claude-code"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/cmbays/japanese-study-site/issues"
+    "url": "https://github.com/cmbays/dbt-playground/issues"
   },
-  "homepage": "https://github.com/cmbays/japanese-study-site#readme",
+  "homepage": "https://github.com/cmbays/dbt-playground#readme",
   "devDependencies": {
     "@playwright/test": "^1.58.0"
   }

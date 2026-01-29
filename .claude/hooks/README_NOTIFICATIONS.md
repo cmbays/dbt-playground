@@ -1,3 +1,12 @@
+---
+audience: [developer]
+priority: low
+size: small
+last_updated: 2026-01-28
+status: active
+tags: [hooks, notifications, macos, automation]
+---
+
 # OS Notification Hooks
 
 Native desktop notifications for Claude Code on macOS.

@@ -1,3 +1,12 @@
+---
+audience: [multi-agent]
+priority: high
+size: medium
+last_updated: 2026-01-28
+status: active
+tags: [agents, personas, orchestration, reference]
+---
+
 # Agent Orchestration System
 
 **Purpose**: Persona definitions and invocation methods for the agent orchestration system.
@@ -22,7 +31,6 @@ The agent system provides specialized personas for different aspects of developm
 | Feature Developer | `dev:` | `developer.md` | Implementation |
 | Code Reviewer | `review:` | `code-reviewer.md` | Code quality, patterns |
 | Design Reviewer | `design:` | `design-reviewer.md` | UI/UX, accessibility |
-| Japanese Sensei | `sensei:` | `sensei.md` | Language accuracy, culture |
 | Documenter | `docs:` | `documenter.md` | Documentation, changelog |
 | Security Reviewer | `security:` | `security-reviewer.md` | Security audit, OWASP |
 | Sage | `sage:` | `sage.md` | Learning curation, pattern extraction |
@@ -35,7 +43,6 @@ For feature development, personas chain together:
 ```
 1. PM         → Draft PRD in docs/specs/
 2. Architect  → Create TDD in docs/tdd/
-               (+ Sensei consultation for Japanese content)
 3. Tester     → Write test specification
 4. Developer  → Implement until tests pass
 5. Reviewers  → Code + Design review (parallel)
@@ -52,7 +59,6 @@ Claude analyzes context and adopts appropriate persona:
 - Technical design questions → Architect
 - Implementation tasks → Developer
 - Review requests → Code/Design Reviewer
-- Japanese content → Sensei
 
 ### Explicit Prefix Commands
 Use prefixes to explicitly invoke a persona:
@@ -62,8 +68,7 @@ arch: design the architecture for spaced repetition
 test: create test spec for flashcard flip
 dev: implement the JLPT filter
 review: check the new shopping page
-design: audit the kanji cards for accessibility
-sensei: verify this dialogue is natural
+design: audit the dashboard for accessibility
 docs: update changelog for v0.3
 sage: extract learnings from this session
 ```
@@ -89,8 +94,7 @@ Each persona ends work with:
 | Review artifacts | `docs/reviews/` |
 | Technical patterns | `docs/reference/LEARNINGS.md` |
 | Learned skills | `.claude/skills/learned-pattern-*.md` |
-| Educational docs | `archive/FOR_CHRIS_docs/*.md` |
-| Learning digests | `temp/LEARNING_DIGEST_*.md` |
+| Technical patterns | `docs/reference/LEARNINGS.md` |
 
 ## Skill Integration
 
@@ -122,7 +126,6 @@ Project-specific commands in `.claude/commands/`:
 | `/orchestrate` | Multi-persona feature workflow |
 | `/deploy` | Version deployment workflow |
 | `/tdd` | Test-driven development workflow |
-| `/sensei-check` | Japanese content validation |
 
 ## Context Modes
 
@@ -131,8 +134,7 @@ Context configurations in `.claude/contexts/`:
 | Context | Purpose | Active Personas |
 |---------|---------|-----------------|
 | `dev` | Development/coding | arch, dev, test, review, security, design |
-| `review` | Review-only tasks | review, design, security, sensei |
-| `content` | Japanese content | sensei, dev, docs, pm |
+| `review` | Review-only tasks | review, design, security |
 
 ## Rules
 
@@ -141,7 +143,6 @@ Modular rules in `.claude/rules/`:
 - `git-workflow.md` - Version control standards
 - `testing.md` - Testing requirements
 - `security.md` - Security guidelines
-- `japanese-content.md` - JLPT/content standards
 
 ## Skills
 
@@ -150,8 +151,6 @@ Reusable workflows in `.claude/skills/`:
 - `verification-loop.md` - QA verification
 - `code-review-workflow.md` - Review process
 - `deployment-workflow.md` - Release management
-- `kanji-content-creation.md` - Kanji data workflow
-- `topic-page-creation.md` - Page creation workflow
 - `continuous-learning.md` - Pattern extraction to skills
 - `learning-curation.md` - Session learning curation
 - `changelog-generation.md` - Automated changelog from git history

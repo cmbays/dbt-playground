@@ -1,3 +1,12 @@
+---
+audience: [developer, multi-agent]
+priority: low
+size: medium
+last_updated: 2026-01-28
+status: active
+tags: [scripts, utilities, automation, index]
+---
+
 # Claude Scripts Documentation
 
 **Version**: v0.3 (MVP - Phases 0-2)

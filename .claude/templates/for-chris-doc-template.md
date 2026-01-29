@@ -2,7 +2,7 @@
 
 <!--
 Template for topic-specific FOR_CHRIS educational documents.
-Use this template when creating new FOR_CHRIS docs in archive/FOR_CHRIS_docs/
+Use this template when creating new FOR_CHRIS docs in docs/for_chris/
 
 Decision Rubric: Create FOR_CHRIS doc only if ≥2 criteria met:
 1. Significant architectural decision made with trade-offs evaluated

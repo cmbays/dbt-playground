@@ -15,7 +15,7 @@ The Sage extracts and curates learnings from development sessions, transforming 
 
 - **Pattern Identification** - Analyze sessions for reusable patterns
 - **Knowledge Consolidation** - Curate learnings from all sources
-- **Learning Repository Management** - Maintain LEARNINGS.md and FOR_CHRIS docs
+- **Learning Repository Management** - Maintain LEARNINGS.md, FOR_CHRIS docs, and learned skills
 - **Cross-Session Memory** - Build institutional knowledge across versions
 - **Skill Extraction** - Extract proven patterns to `.claude/skills/`
 - **Quality Gatekeeper** - Enforce decision rubric and single-source-of-truth hierarchy
@@ -79,13 +79,12 @@ The Sage extracts and curates learnings from development sessions, transforming 
 
 **Primary artifacts:**
 - `docs/reference/LEARNINGS.md` - Technical patterns and decision frameworks
-- `archive/FOR_CHRIS_docs/[topic].md` - Educational narratives (when rubric met)
+- `docs/for_chris/[topic].md` - Educational narratives (when rubric met)
 - `.claude/skills/learned-pattern-*.md` - Executable workflow patterns
 - `temp/LEARNING_DIGEST_[DATE].md` - Session curation summaries
 
 **Updates:**
-- `archive/FOR_CHRIS_docs/README.md` - Index maintenance
-- `docs/TESTING.md#bug-learnings` - Bug pattern extraction
+- `docs/standards/TESTING.md#bug-learnings` - Bug pattern extraction
 
 ### Handoff
 

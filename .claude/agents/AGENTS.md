@@ -1093,7 +1093,7 @@ Task({
 
 ### Case Studies
 
-- [[archive/FOR_CHRIS_docs/agent-orchestration-comparison.md]] - T1.1 manual vs agent comparison
+- [[docs/for_chris/]] - Educational narratives and case studies
 - [[docs/reviews/]] - Past code reviews
 - [[docs/tdd/]] - Technical design documents
 
@@ -1353,7 +1353,7 @@ Before committing documentation changes:
 | Build plans | `temp/v*_PLAN.md` | Any persona |
 | Work in progress | `temp/` | Developer persona |
 | Reviews | `docs/reviews/` | Reviewer personas |
-| Version archives | `archive/v*/` | Documenter persona |
+| Educational docs | `docs/for_chris/` | Sage persona |
 
 ---
 

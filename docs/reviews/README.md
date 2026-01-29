@@ -1,3 +1,12 @@
+---
+audience: [code-reviewer, design-reviewer]
+priority: low
+size: small
+last_updated: 2026-01-28
+status: active
+tags: [reviews, code-review, artifacts, index]
+---
+
 # Review Artifacts
 
 This directory contains review documentation and artifacts from code and design reviews.

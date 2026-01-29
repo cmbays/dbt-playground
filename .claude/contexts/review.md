@@ -24,7 +24,6 @@ Review-focused personas only:
 | Code Reviewer | `review:` | Code quality analysis |
 | Design Reviewer | `design:` | UI/UX assessment |
 | Security Reviewer | `security:` | Security audit |
-| Japanese Sensei | `sensei:` | Content validation |
 
 ## Active Rules
 
@@ -32,7 +31,6 @@ Load these rule files:
 - `rules/coding-style.md` - For pattern checking
 - `rules/security.md` - For vulnerability assessment
 - `rules/testing.md` - For test coverage review
-- `rules/japanese-content.md` - For content accuracy
 
 ## Active Skills
 
@@ -44,7 +42,6 @@ Available workflows:
 
 Priority commands:
 - `/review` - Code review
-- `/sensei-check` - Japanese content validation
 
 ## Hooks
 
@@ -71,12 +68,6 @@ Reduced hook set:
 - Input validation
 - Output encoding
 - External resources
-
-### Content Review
-- Japanese accuracy
-- JLPT appropriateness
-- Cultural correctness
-- Romanization accuracy
 
 ## Constraints
 
@@ -111,23 +102,19 @@ All reviews should follow structured format:
 
 Switch to:
 - `/context dev` - To implement fixes
-- `/context content` - For content creation
 
 ## Example Session
 
 ```
 [review context active]
 
-User: Review the new shopping dialogue page
+User: Review the new dbt model
 
 Claude (review:): Analyzing code quality...
 [Provides code review]
 
-Claude (design:): Checking UI/UX...
-[Provides design feedback]
-
-Claude (sensei:): Validating Japanese content...
-[Provides content feedback]
+Claude (design:): Checking documentation...
+[Provides documentation feedback]
 
 Claude: Complete review summary with verdict
 ```
