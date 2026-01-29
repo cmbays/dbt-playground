@@ -22,6 +22,11 @@
 | Typo fix | **Manual** | Direct | Too simple for agent overhead |
 | Small CSS tweak | **Manual** | Direct | Quick, obvious change |
 | Exploratory research | **Agent** | `Explore` | Thorough codebase analysis |
+| dbt model design | **Agent** | `data-modeler` | Dimensional modeling expertise |
+| dbt implementation | **Agent** | `dbt-developer` | SQL/Jinja best practices |
+| dbt testing | **Agent** | `dbt-tester` | Data quality validation |
+| dbt documentation | **Agent** | `dbt-documenter` | Model/column descriptions |
+| Metrics/semantic layer | **Agent** | `semantic-analyst` | KPI definitions, natural language |
 
 ### Critical Rule: Be Explicit About File Operations
 
@@ -665,6 +670,137 @@ Git-Master is a **horizontal service agent** - unlike vertical agents that own s
 - All operations logged to audit trail
 
 **See**: [[git-master.md]] for full persona details, [[../skills/git-operations.md]] for workflows.
+
+### dbt Development Agents
+
+The dbt agents form a specialized pipeline for data modeling, transformation, and analytics development.
+
+#### Data Modeler (`dbt-model:`)
+
+Designs dbt models following dimensional modeling best practices.
+
+**When to use**:
+
+- Designing staging, intermediate, fact, and dimension models
+- Establishing naming conventions
+- Defining model relationships and grain
+- Creating source definitions
+
+**Example**:
+
+```
+dbt-model: design a dimensional model for customer orders
+dbt-model: create staging layer for Stripe payment data
+```
+
+**See**: [[data-modeler.md]] for full persona details.
+
+#### dbt Developer (`dbt-dev:`)
+
+Implements SQL models, macros, and incremental strategies.
+
+**When to use**:
+
+- Implementing model SQL from designs
+- Writing Jinja macros
+- Optimizing query performance
+- Implementing incremental logic
+
+**Example**:
+
+```
+dbt-dev: implement the stg_stripe__payments model
+dbt-dev: add incremental logic to fct_orders
+```
+
+**See**: [[dbt-developer.md]] for full persona details.
+
+#### dbt Tester (`dbt-test:`)
+
+Ensures data quality through comprehensive testing.
+
+**When to use**:
+
+- Adding schema tests to models
+- Creating singular tests for business rules
+- Configuring source freshness
+- Validating data quality
+
+**Example**:
+
+```
+dbt-test: add schema tests to stg_stripe__payments
+dbt-test: create singular test for orphaned orders
+```
+
+**See**: [[dbt-tester.md]] for full persona details.
+
+#### dbt Documenter (`dbt-docs:`)
+
+Maintains model and column documentation.
+
+**When to use**:
+
+- Writing model descriptions
+- Documenting columns
+- Generating dbt docs site
+- Auditing documentation coverage
+
+**Example**:
+
+```
+dbt-docs: document the orders mart models
+dbt-docs: generate and serve dbt docs
+```
+
+**See**: [[dbt-documenter.md]] for full persona details.
+
+#### Semantic Analyst (`semantic:`)
+
+Designs and manages the dbt Semantic Layer.
+
+**When to use**:
+
+- Defining metrics and dimensions
+- Enabling natural language queries
+- Creating consistent KPI definitions
+- Building semantic models
+
+**Example**:
+
+```
+semantic: define revenue metrics for orders
+semantic: query "revenue by month for 2024"
+```
+
+**See**: [[semantic-analyst.md]] for full persona details.
+
+### dbt Assembly Line
+
+For dbt model development, agents chain together:
+
+```
+Data Modeler → dbt Developer → dbt Tester → Code Reviewer → dbt Documenter
+     ↓              ↓              ↓              ↓              ↓
+  Design SQL    Implement      Add tests      Review        Document
+```
+
+**Commands**:
+
+- `/dbt-model` - Create new models
+- `/dbt-test` - Add/run tests
+- `/dbt-run` - Execute dbt commands
+- `/dbt-docs` - Generate documentation
+- `/dbt-query` - Natural language queries
+
+**Skills**:
+
+- `dbt-model-development` - End-to-end workflow
+- `dbt-testing` - Comprehensive testing
+- `dbt-code-review` - dbt-specific review
+- `dbt-deployment` - Safe deployment
+- `dbt-source-onboarding` - New sources
+- `dbt-semantic-layer` - Metrics design
 
 ---
 

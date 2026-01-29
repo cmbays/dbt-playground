@@ -265,3 +265,73 @@ Overall assessment and key findings
 - Missing furigana for kanji
 - Incorrect romanization
 - Missing audio attributes
+
+## dbt Code Review Checklist
+
+When reviewing dbt models, apply these additional checks:
+
+### Model Structure
+
+| Check | Pass | Fail |
+|-------|------|------|
+| Uses CTEs, not subqueries | `with cte as (...)` | `select * from (select...)` |
+| Final CTE is named `final` | `select * from final` | Unclear output |
+| CTE names are descriptive | `with orders as` | `with a as` |
+| Model in correct directory | `staging/`, `marts/` | Wrong layer |
+
+### Naming Conventions
+
+| Element | Convention | Example |
+|---------|------------|---------|
+| Staging | `stg_[source]__[table]` | `stg_stripe__payments` |
+| Intermediate | `int_[entity]__[verb]` | `int_orders__pivoted` |
+| Fact | `fct_[process]` | `fct_orders` |
+| Dimension | `dim_[entity]` | `dim_customers` |
+
+### SQL Best Practices
+
+```sql
+-- ✅ GOOD: Explicit column selection
+select order_id, customer_id from source
+
+-- ❌ BAD: Select star in production
+select * from source
+```
+
+```sql
+-- ✅ GOOD: Explicit null handling
+coalesce(customer_name, 'Unknown')
+
+-- ❌ BAD: Implicit null behavior
+customer_name  -- Could be null
+```
+
+### Dependencies
+
+- [ ] Uses `ref()` for model references
+- [ ] Uses `source()` for raw data
+- [ ] No circular dependencies
+- [ ] Correct layer order (stg → int → fct/dim)
+
+### Testing
+
+- [ ] Primary key has `unique` + `not_null` tests
+- [ ] Foreign keys have `relationships` tests
+- [ ] Status fields have `accepted_values` tests
+- [ ] Complex business rules have singular tests
+
+### Documentation
+
+- [ ] Model has description with grain
+- [ ] Primary key documented
+- [ ] Key columns have descriptions
+- [ ] Update frequency noted for incremental
+
+### Incremental Models
+
+- [ ] `unique_key` is defined
+- [ ] `is_incremental()` filter is correct
+- [ ] Handles late-arriving data
+- [ ] Full refresh still works
+
+**Cross-reference**: See `.claude/skills/dbt-code-review.md` for complete dbt review workflow
