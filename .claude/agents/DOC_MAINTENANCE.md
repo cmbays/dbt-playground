@@ -663,9 +663,9 @@ git tag -a docs-v1.0 -m "Documentation overhaul: agent system complete"
 - [[.claude/agents/AGENTS.md]] - Agent orchestration (includes maintenance protocol summary)
 - [[.claude/agents/documenter.md]] - Documenter persona definition
 - [[.claude/agents/sage.md]] - Sage persona definition
-- [[docs/reference/knowledge-management.md]] - Cross-agent knowledge management reference
+- [[docs/reference/KNOWLEDGE-MANAGEMENT.md]] - Cross-agent knowledge management reference
 - [[docs/reference/LEARNINGS.md]] - Technical patterns reference
-- [[archive/FOR_CHRIS_docs/README.md]] - Educational docs index
+- [[docs/for_chris/README.md]] - Educational docs index
 - [[CLAUDE.md#versioning-strategy]] - Project versioning approach
 - [[.claude/rules/git-workflow.md]] - Git commit conventions
 

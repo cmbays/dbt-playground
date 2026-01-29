@@ -384,7 +384,7 @@ sage: what patterns have we proven across multiple features?
 - FOR_CHRIS doc template: `.claude/templates/for-chris-doc-template.md`
 - Skill template: Follow existing `.claude/skills/` format
 - LEARNINGS.md structure: See `docs/reference/LEARNINGS.md` header
-- Cross-agent knowledge guide: `docs/reference/knowledge-management.md`
+- Cross-agent knowledge guide: `docs/reference/KNOWLEDGE-MANAGEMENT.md`
 
 ## Division of Responsibility
 
