@@ -9,10 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- dbt project initialization
-- dbt-mcp integration
-- SQL database connection setup
-- Sample data models
+- Build staging models from Synthea data (v0.3)
+- Intermediate models and business logic (v0.4)
+- Marts layer with facts and dimensions (v0.5)
+
+---
+
+## [0.2.0] - 2026-01-29
+
+### Added
+
+- **Source Tables**: Added 6 new Synthea source tables to `_synthea__sources.yml`
+  - `allergies` - Patient allergies and reactions
+  - `immunizations` - Patient immunization records
+  - `devices` - Medical devices used by patients
+  - `imaging_studies` - Medical imaging studies (X-rays, MRIs, etc.)
+  - `payer_transitions` - Patient insurance payer transitions over time
+  - `supplies` - Medical supplies used during encounters
+
+### Fixed
+
+- **MCP Config**: Fixed `DBT_PROFILES_DIR` path expansion from `~/.dbt` to absolute path for proper dbt-mcp operation
+
+### Changed
+
+- **Documentation**: Updated project phase status to v0.2 with correct next milestone (v0.3)
 
 ---
 
@@ -64,6 +85,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.2.0   | 2026-01-29 | v0.2 Environment Ready - 16 Synthea source tables  |
 | 0.1.0   | 2026-01-28 | Agent orchestration + dbt project planning complete |
 
 ---
