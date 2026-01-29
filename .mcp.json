@@ -8,7 +8,9 @@
       "command": "uvx",
       "args": ["dbt-mcp"],
       "env": {
-        "DBT_PROJECT_PATH": "./dbt_project"
+        "DBT_PROJECT_DIR": "./dbt_project",
+        "DBT_PATH": "./.venv/bin/dbt",
+        "DBT_PROFILES_DIR": "~/.dbt"
       }
     }
   }

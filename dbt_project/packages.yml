@@ -1,0 +1,16 @@
+packages:
+  # Core utilities - essential macros and tests
+  - package: dbt-labs/dbt_utils
+    version: 1.3.3
+
+  # Data quality testing framework
+  - package: metaplane/dbt_expectations
+    version: 0.10.10
+
+  # Date/time utilities (for dim_date)
+  - package: godatadriven/dbt_date
+    version: 0.17.1
+
+  # Code generation helpers
+  - package: dbt-labs/codegen
+    version: 0.14.0
