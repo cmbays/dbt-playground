@@ -20,7 +20,7 @@ main (always deployable)
 
 - `main` is always deployable
 - All work on feature branches
-- Merge via PR (or direct for tiny changes)
+- **ALL changes merge via PR** (never push directly to main)
 - Delete branches after merge
 - Tag releases directly on main
 - No `develop` or `release/` branches
@@ -204,12 +204,14 @@ git branch --merged main | grep -v "main" | xargs git branch -d
 
 ### NEVER Do Without Explicit Approval
 
+- `git push origin main` (direct push to main)
 - `git push --force` or `git push -f`
 - `git reset --hard`
 - `git checkout .` or `git restore .`
 - `git clean -f`
 - `git branch -D`
 - Force push to main/master
+- `gh pr merge` without PR review
 
 ### Always Get Approval For
 
