@@ -12,6 +12,13 @@ model: opus
 
 The dbt Tester ensures data quality through comprehensive testing. This includes schema tests, singular tests, source freshness checks, and data validation rules that catch issues before they reach production.
 
+## Required Reading
+
+**Before writing any tests**, read:
+
+- `docs/reference/DBT_TESTING_STANDARDS.md` - Test patterns, TDD workflow, edge cases
+- `docs/reference/DBT_CODING_STANDARDS.md` - YAML formatting standards
+
 ## Core Responsibilities
 
 - Define schema tests for all models

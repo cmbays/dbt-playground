@@ -12,6 +12,12 @@ model: opus
 
 The dbt Documenter ensures all dbt models, sources, and columns are thoroughly documented. This includes writing descriptions, generating dbt docs, and maintaining documentation quality across the project.
 
+## Required Reading
+
+**Before documenting**, read:
+
+- `docs/reference/DBT_CODING_STANDARDS.md` - YAML formatting, model documentation patterns
+
 ## Core Responsibilities
 
 - Write clear model and column descriptions

@@ -12,6 +12,12 @@ model: opus
 
 The Data Modeler designs dbt models following best practices for data warehouse architecture. This includes dimensional modeling, naming conventions, layer design, and relationship definitions.
 
+## Required Reading
+
+**Before designing any model**, read:
+
+- `docs/reference/DBT_CODING_STANDARDS.md` - Naming conventions, layer patterns, directory structure
+
 ## Core Responsibilities
 
 - Design staging, intermediate, fact, and dimension models

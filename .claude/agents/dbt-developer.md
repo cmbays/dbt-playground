@@ -12,6 +12,13 @@ model: opus
 
 The dbt Developer implements SQL models, macros, and transformations according to designs from the Data Modeler. This includes writing efficient SQL, implementing incremental logic, creating reusable macros, and ensuring models run reliably.
 
+## Required Reading
+
+**Before implementing any model**, read:
+
+- `docs/reference/DBT_CODING_STANDARDS.md` - SQL patterns, formatting, directory structure
+- `docs/reference/DBT_TESTING_STANDARDS.md` - Required tests for models
+
 ## Core Responsibilities
 
 - Implement SQL models from design specifications

@@ -1,327 +1,45 @@
 # Git Workflow Rules
 
-Standards for version control, branching, commits, and releases.
-
-## Workflow: GitHub Flow
-
-This project uses **GitHub Flow** (simple, not Git Flow):
-
-```text
-main (always deployable)
-  │
-  ├── feat/add-model ──→ PR ──→ merge ──→ delete branch
-  ├── fix/broken-test ──→ PR ──→ merge ──→ delete branch
-  ├── docs/update-readme ──→ PR ──→ merge ──→ delete branch
-  │
-  └── tag v0.2.0 (when milestone reached)
-```
-
-**Key principles:**
-
-- `main` is always deployable
-- All work on feature branches
-- **ALL changes merge via PR** (never push directly to main)
-- Delete branches after merge
-- Tag releases directly on main
-- No `develop` or `release/` branches
-
-## Branch Naming
-
-### Format
-
-`[category/]descriptive-name`
-
-### Categories
-
-| Prefix | Purpose | Example |
-|--------|---------|---------|
-| `feat/` | New features or content | `feat/add-patients-model` |
-| `fix/` | Bug fixes | `fix/broken-test` |
-| `docs/` | Documentation changes | `docs/update-architecture` |
-| `refactor/` | Code restructuring | `refactor/cleanup-staging` |
-| `style/` | CSS/styling changes | `style/format-sql` |
-| `chore/` | Maintenance tasks | `chore/update-dependencies` |
-
-### Guidelines
-
-- Use kebab-case (lowercase with hyphens)
-- Be descriptive but concise
-- Include issue number if applicable: `fix/nav-bug-#12`
-
-## Commit Messages
-
-### Format (Conventional Commits)
-
-```
-type(scope): description
-
-[optional body]
-
-[optional footer]
-```
-
-### Types
-
-| Type | Purpose |
-|------|---------|
-| `feat` | New feature or content |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Formatting, CSS (no logic change) |
-| `refactor` | Code restructuring |
-| `test` | Adding or updating tests |
-| `chore` | Maintenance, dependencies |
-
-### Scope (Optional)
-
-Area of codebase: `staging`, `marts`, `macros`, `sources`
-
-### Examples
-
-```
-feat(staging): add stg_stripe__payments model
-fix(marts): correct null handling in dim_customers
-docs: update CLAUDE.md with development conventions
-style(models): improve CTE formatting
-refactor(macros): extract date calculation to macro
-chore: update .gitignore for temp files
-```
-
-### Guidelines
-
-- Use imperative mood ("add" not "added")
-- Keep first line under 72 characters
-- Add body for complex changes
-- Reference issues: `fix(nav): resolve broken link (#12)`
-
-## Pull Requests
-
-### Title Format
-
-Same as commit messages: `type(scope): description`
-
-### Description Template
-
-```markdown
-## Summary
-Brief description (1-3 sentences)
-
-## Changes
-- Bullet list of changes
-- Include files added/modified
-- Note breaking changes
-
-## Testing
-- How was this tested?
-- What should reviewers verify?
-
-## Related
-- Links to issues, PRs, documentation
-- Reference to prototype/design
-```
-
-## Versioning
-
-### Semantic Versioning
-
-`vMAJOR.MINOR.PATCH`
-
-| Component | When to Increment |
-|-----------|-------------------|
-| MAJOR | Complete topic or major architecture change |
-| MINOR | New features, pages, content additions |
-| PATCH | Bug fixes, small corrections, typos |
-
-### Git Tags
-
-```bash
-# Create annotated tag
-git tag -a v0.3.0 -m "Complete shopping dialogue page"
-
-# Push tag
-git push origin v0.3.0
-
-# List tags
-git tag -l
-
-# View tag details
-git show v0.3.0
-```
-
-### When to Tag
-
-- After merging significant PRs
-- At version milestones
-- Before major refactoring (restore point)
-
-### When NOT to Tag
-
-Not every merge requires a version bump. These accumulate in `[Unreleased]`:
-
-| Change Type | Version Bump? | Example |
-|-------------|---------------|---------|
-| New feature | MINOR | Adding staging models |
-| Bug fix | PATCH | Fixing broken test |
-| Docs only | No | Updating README |
-| Chores | No | Dependency updates |
-| Refactors | No (usually) | Code cleanup |
-| Style/format | No | SQL formatting |
-
-**Rule**: Tag when there's meaningful user-facing change or milestone completion.
-
-## Branch Hygiene
-
-### Delete After Merge
-
-Always delete branches after merging to keep the repo tidy:
-
-```bash
-# Delete local branch
-git branch -d feat/my-feature
-
-# Delete remote branch
-git push origin --delete feat/my-feature
-
-# Prune stale remote tracking branches
-git fetch --prune
-```
-
-### GitHub Auto-Delete
-
-Enable "Automatically delete head branches" in repo settings to auto-cleanup after PR merge.
-
-### Periodic Cleanup
-
-```bash
-# List merged branches (safe to delete)
-git branch --merged main
-
-# Delete all merged local branches except main
-git branch --merged main | grep -v "main" | xargs git branch -d
-```
-
-## Protected Operations
-
-### NEVER Do Without Explicit Approval
-
-- `git push origin main` (direct push to main)
-- `git push --force` or `git push -f`
-- `git reset --hard`
-- `git checkout .` or `git restore .`
-- `git clean -f`
-- `git branch -D`
-- Force push to main/master
-- `gh pr merge` without PR review
-
-### Always Get Approval For
-
-- Rebasing shared branches
-- Amending pushed commits
-- Deleting branches with unmerged work
-- Resetting to previous commits
+GitHub Flow with git-master agent enforcement.
 
 ## Workflow
 
-### Feature Development
+```text
+main (always deployable)
+  └── feat/add-model ──→ PR ──→ merge ──→ delete branch
+```
+
+- `main` is always deployable
+- All work on feature branches
+- All changes merge via PR (never push directly to main)
+- Tag releases on main
+
+## Branch Naming
+
+`[category/]descriptive-name`
+
+| Prefix | Purpose |
+|--------|---------|
+| `feat/` | New features |
+| `fix/` | Bug fixes |
+| `docs/` | Documentation |
+| `refactor/` | Code restructuring |
+| `chore/` | Maintenance |
+
+## Commit Messages (Conventional Commits)
+
+`type(scope): description`
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 ```bash
-# Create feature branch
-git checkout -b feat/feature-name
-
-# Make changes, commit incrementally
-git add [specific files]
-git commit -m "feat(scope): description"
-
-# Push branch
-git push -u origin feat/feature-name
-
-# Create PR for review
-gh pr create --title "feat(scope): description" --body "..."
+feat(staging): add stg_stripe__payments model
+fix(marts): correct null handling in dim_customers
 ```
 
-### Bug Fixes
+## Git-Master Enforcement
 
-```bash
-git checkout -b fix/bug-description
-# Fix the bug
-git add [files]
-git commit -m "fix(scope): description"
-git push -u origin fix/bug-description
-gh pr create
-```
-
-### Commit Hygiene
-
-- Commit frequently with clear messages
-- Each commit should be a logical unit
-- Don't commit broken code
-- Don't commit large unrelated changes together
-
-## Archive Retention
-
-### Policy
-
-- Keep most recent of every MAJOR version
-- Keep most recent 3 of current MAJOR version
-- Pre-v1.0 treated as current major for retention
-
-### Archive Process
-
-```bash
-# Before deploying new version
-mkdir -p archive/v0.3/docs
-cp docs/*.md archive/v0.3/docs/
-
-# Prune old archives per policy
-# (Keep v0.5, v0.4, v0.3 if current major is v0)
-```
-
-## Safety Checks
-
-### Before Committing
-
-- [ ] Run tests (if applicable)
-- [ ] Check `git status` for unexpected files
-- [ ] Review `git diff` for unintended changes
-- [ ] Verify no sensitive data in changes
-
-### Before Pushing
-
-- [ ] Commits have clear messages
-- [ ] No debug code left in
-- [ ] Documentation updated if needed
-
-### Before Merging
-
-- [ ] PR approved by reviewer
-- [ ] All checks pass
-- [ ] Conflicts resolved properly
-- [ ] Version tag planned
-
-## Agent Git Governance
-
-### Git-Master Enforcement
-
-All git write operations in this project are managed through the Git-Master agent (`git:` prefix) for safety, validation, and audit trails.
-
-### Enforcement Layers
-
-```
-Layer 1: CLAUDE.md Rules
-├── "Agents MUST use git: for git operations"
-│
-Layer 2: pre-bash-check.js Hook
-├── BLOCKS git write operations without authorization
-├── Checks GIT_MASTER_AUTHORIZED env var
-├── Exit 1 if unauthorized
-│
-Layer 3: Git-Master Agent
-├── Validates format (Conventional Commits, branch names)
-├── Sets GIT_MASTER_AUTHORIZED=true
-└── Logs all operations to audit trail
-```
-
-### Commands
+All git write operations go through git-master agent for safety.
 
 | Command | Purpose |
 |---------|---------|
@@ -329,69 +47,29 @@ Layer 3: Git-Master Agent
 | `/branch` | Create validated branch |
 | `git: [request]` | General git operation |
 
-### Examples
+### Blocked Operations
 
-```bash
-# Branch creation
-git: create branch feat/new-feature
-
-# Commit
-git: commit my changes with message "feat(staging): add payments model"
-# Or use command
-/commit "feat(staging): add payments model"
-
-# Tag creation
-git: create tag v0.3.0 "Description"
-
-# PR creation
-git: create PR for current branch
-
-# Merge
-git: merge PR #44
-```
-
-### What Gets Blocked
-
-Direct git write commands are blocked by the hook:
+Direct git writes are blocked by hook:
 
 ```bash
 # BLOCKED - use git: prefix instead
 git commit -m "..."
 git push origin main
-git tag -a v0.3.0 -m "..."
-git checkout -b feat/something
-gh pr create
-gh pr merge
 ```
 
-### Bypass (Emergency Only)
+### Protected Operations (Need Explicit Approval)
 
-For emergencies, add `--bypass-git-master` flag (logged to audit):
+- `git push --force`
+- `git reset --hard`
+- Force push to main/master
+- `gh pr merge` without review
 
-```bash
-git commit -m "emergency fix" --bypass-git-master
-```
+## Versioning
 
-**Warning**: Bypass usage is logged. Use only when git-master is unavailable.
+`vMAJOR.MINOR.PATCH` (Semantic Versioning)
 
-### Audit Trail
+- MAJOR: Architecture change
+- MINOR: New features
+- PATCH: Bug fixes
 
-All git-master operations logged to `temp/GIT_AUDIT_LOG.txt` (gitignored):
-
-```
-[2026-01-25T10:30:00Z] BRANCH_CREATE
-  Branch: feat/staging-payments
-  Base: main (abc1234)
-
-[2026-01-25T10:35:00Z] COMMIT
-  Hash: def5678
-  Message: feat(staging): add payments model
-  Files: 3 changed
-```
-
-### Related
-
-- [[../agents/git-master.md]] - Git-Master persona
-- [[../skills/git-operations.md]] - Detailed workflows
-- [[../commands/commit.md]] - Commit command
-- [[../commands/branch.md]] - Branch command
+Tag when there's meaningful user-facing change.
