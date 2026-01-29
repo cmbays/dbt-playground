@@ -486,6 +486,16 @@ join dim_customers d
 
 Bridge tables resolve many-to-many (M:M) relationships in dimensional models.
 
+### Types of Bridge Tables
+
+| Type | Connects | Example |
+|------|----------|---------|
+| **Dimension-to-Dimension** | Two dimensions | `brg_customer_account` (Customer ↔ Account) |
+| **Fact-to-Dimension** | Fact to multi-valued dim | `brg_order_promotion` (Order ↔ Promotions) |
+| **Hierarchy Bridge** | Ragged hierarchy | `brg_org_hierarchy` (Employee ↔ Manager chain) |
+
+**Key Insight**: The fact table usually joins to ONE side of the bridge (the "transaction owner"), then the bridge fans out to the other dimension.
+
 ### The Problem
 
 ```text
@@ -501,10 +511,46 @@ If fct_orders has customer_id, and you want account_id,
 you can't add account_id directly (which one?)
 ```
 
+### Visualizing the Fan-Out
+
+```text
+Before Bridge Join (3 fact rows):
+┌─────────────┬─────────────┬─────────┐
+│ order_id    │ customer_id │ revenue │
+├─────────────┼─────────────┼─────────┤
+│ 1           │ Alice       │ $100    │
+│ 2           │ Bob         │ $50     │
+│ 3           │ Alice       │ $75     │
+└─────────────┴─────────────┴─────────┘
+
+Bridge Table:
+┌─────────────┬────────────┬────────┐
+│ customer_id │ account_id │ weight │
+├─────────────┼────────────┼────────┤
+│ Alice       │ Joint      │ 0.5    │
+│ Alice       │ Individual │ 0.5    │  ← Alice has 2 accounts!
+│ Bob         │ Joint      │ 1.0    │
+└─────────────┴────────────┴────────┘
+
+After Bridge Join (5 rows - FANNED OUT!):
+┌─────────────┬─────────────┬─────────┬────────────┬────────┐
+│ order_id    │ customer_id │ revenue │ account_id │ weight │
+├─────────────┼─────────────┼─────────┼────────────┼────────┤
+│ 1           │ Alice       │ $100    │ Joint      │ 0.5    │
+│ 1           │ Alice       │ $100    │ Individual │ 0.5    │  ← DUPLICATED!
+│ 2           │ Bob         │ $50     │ Joint      │ 1.0    │
+│ 3           │ Alice       │ $75     │ Joint      │ 0.5    │
+│ 3           │ Alice       │ $75     │ Individual │ 0.5    │  ← DUPLICATED!
+└─────────────┴─────────────┴─────────┴────────────┴────────┘
+
+SUM(revenue) = $100 + $100 + $50 + $75 + $75 = $400  ← WRONG! Should be $225
+```
+
 ### The Solution: Bridge Table
 
 ```sql
 -- brg_customer_account
+-- TYPE: Dimension-to-Dimension Bridge
 -- Grain: One row per customer-account assignment
 
 | customer_id | account_id | assignment_weight | is_primary |
@@ -538,7 +584,7 @@ group by 1
 ```sql
 select
     a.account_name,
-    sum(o.revenue * ca.assignment_weight) as total_revenue
+    sum(o.revenue * ca.assignment_weight) as weighted_revenue  -- Name clearly!
 from fct_orders o
 join brg_customer_account ca on o.customer_id = ca.customer_id
 join dim_accounts a on ca.account_id = a.account_id
@@ -546,6 +592,14 @@ group by 1
 
 -- Alice's $100 order → $50 to Joint, $50 to Individual
 ```
+
+> **End-User Warning**: Weighted allocation works perfectly for **totals**, but can confuse
+> end-users viewing **individual line items**. A $100 order showing as $50.00 in a
+> detail report looks like a data error. Consider:
+>
+> - Showing both `gross_revenue` AND `weighted_revenue` columns
+> - Adding a tooltip/footnote explaining the allocation
+> - Only using weighting in aggregate reports, not detail views
 
 **Option 2: Filter to Primary**
 
@@ -571,26 +625,108 @@ with customer_revenue as (
 )
 select
     a.account_name,
-    sum(cr.revenue * ca.assignment_weight) as total_revenue
+    sum(cr.revenue * ca.assignment_weight) as weighted_revenue
 from customer_revenue cr
 join brg_customer_account ca on cr.customer_id = ca.customer_id
 join dim_accounts a on ca.account_id = a.account_id
 group by 1
 ```
 
+**Option 4: LEFT JOIN to Handle Missing Bridge Entries**
+
+```sql
+-- IMPORTANT: If bridge isn't exhaustive, INNER JOIN drops revenue!
+select
+    coalesce(a.account_name, 'Unassigned') as account_name,
+    sum(o.revenue * coalesce(ca.assignment_weight, 1.0)) as weighted_revenue
+from fct_orders o
+left join brg_customer_account ca on o.customer_id = ca.customer_id
+left join dim_accounts a on ca.account_id = a.account_id
+group by 1
+
+-- Customers not in bridge → 'Unassigned' with full revenue (weight 1.0)
+```
+
+> **Null Handling Warning**: If a `customer_id` exists in `fct_orders` but has no entry
+> in `brg_customer_account`, an INNER JOIN silently **drops that revenue entirely**.
+> Always verify bridge completeness or use LEFT JOIN with null handling.
+
 ### Bridge Table Best Practices
 
 1. **Always include a weight column** (even if all 1.0 initially)
-2. **Include is_primary flag** for filtering
+2. **Include is_primary flag** for filtering to single assignment
 3. **Comment all bridge joins** to warn about double-counting
-4. **Validate weights sum to 1.0** per entity
+4. **Validate weights sum to 1.0** per entity (per customer, all account weights = 1.0)
 5. **Test cardinality** in dbt tests
+6. **Name weighted columns clearly** (`weighted_revenue` not `revenue`)
+7. **Use LEFT JOIN** if bridge isn't guaranteed to be exhaustive
+8. **Add referential integrity tests** to prevent orphan assignments
 
 ```sql
 -- ALWAYS comment bridge table usage
--- BRIDGE JOIN: brg_customer_account (M:M, weights to 1.0)
+-- BRIDGE JOIN: brg_customer_account (Dim-to-Dim, M:M)
 -- Using weighted allocation to avoid double-counting
-join brg_customer_account ca on o.customer_id = ca.customer_id
+-- NOTE: LEFT JOIN used because bridge may not cover all customers
+left join brg_customer_account ca on o.customer_id = ca.customer_id
+```
+
+### Bridge Table dbt Tests
+
+```yaml
+# models/marts/brg_customer_account.yml
+models:
+  - name: brg_customer_account
+    description: |
+      **Type**: Dimension-to-Dimension Bridge
+      **Grain**: One row per customer-account assignment
+      **Warning**: Join through this bridge causes fan-out. Use weights!
+
+    tests:
+      # Weights must sum to 1.0 per customer
+      - dbt_utils.expression_is_true:
+          expression: "abs(weight_sum - 1.0) < 0.001"
+          config:
+            where: "1=1"  # Applied to grouped result
+          # Custom SQL needed for this check
+
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+              # Prevents orphan assignments!
+
+      - name: account_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_accounts')
+              field: account_id
+
+      - name: assignment_weight
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0 and <= 1"
+```
+
+```sql
+-- tests/assert_bridge_weights_sum_to_one.sql
+-- Singular test: weights per customer must sum to 1.0
+
+with weight_sums as (
+    select
+        customer_id,
+        sum(assignment_weight) as total_weight
+    from {{ ref('brg_customer_account') }}
+    group by 1
+)
+
+select *
+from weight_sums
+where abs(total_weight - 1.0) > 0.001  -- Allow small float tolerance
 ```
 
 ---
