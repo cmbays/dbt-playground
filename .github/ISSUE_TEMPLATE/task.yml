@@ -1,0 +1,123 @@
+name: Implementation Task
+description: Specific development task as part of an Epic
+title: "[Task] "
+labels: ["type:task", "status:ready"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Implementation Task Template
+        Use this for specific development work that's part of a larger Epic.
+
+  - type: input
+    id: epic
+    attributes:
+      label: Parent Epic
+      description: Issue number of parent Epic
+      placeholder: "#7"
+    validations:
+      required: true
+
+  - type: input
+    id: task-id
+    attributes:
+      label: Task ID
+      description: Task identifier (e.g., T1.2, T2.5)
+      placeholder: "T1.2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Specific implementation work to be done
+      placeholder: Implement the SM-2 spaced repetition algorithm with interval calculation and ease factor adjustment
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this task is complete?
+      placeholder: |
+        - [ ] Function calculates correct interval for repetitions 0, 1, 2+
+        - [ ] Ease factor adjusts based on quality rating (0-5)
+        - [ ] Edge cases handled (quality < 3, first review, etc.)
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Implementation Notes
+      description: Implementation approach, files to modify, algorithms to use
+      placeholder: |
+        **Files to create/modify:**
+        - `kanji/js/srs-engine.js` - Create new file with SM2 class
+
+        **Algorithm reference:**
+        - SM-2 from SuperMemo: https://www.supermemo.com/en/blog/application-of-a-computer-to-improve-the-results-obtained-in-working-with-the-supermemo-method
+
+        **Function signature:**
+        ```javascript
+        calculateNextReview(currentInterval, easeFactor, quality, repetitions)
+        ```
+      render: markdown
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Effort Estimate
+      description: How long will this take?
+      options:
+        - "XS (<2 hours)"
+        - "S (<1 day)"
+        - "M (1-3 days)"
+        - "L (3-5 days)"
+        - "XL (1+ weeks)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: blockers
+    attributes:
+      label: Blocked By
+      description: Other tasks that must be completed first
+      placeholder: |
+        - #XX T1.1 - localStorage schema must be defined first
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing Plan
+      description: How to verify this works (unit tests, manual testing, edge cases)
+      placeholder: |
+        **Unit tests:**
+        - Test quality=0 resets interval to 1
+        - Test quality=4 increases interval correctly
+
+        **Manual testing:**
+        - Review 3 cards with different qualities, check intervals in localStorage
+      render: markdown
+
+  - type: checkboxes
+    id: definition-of-done
+    attributes:
+      label: Definition of Done
+      description: All must be checked before closing this issue
+      options:
+        - label: Code implemented and working
+          required: true
+        - label: Manual testing complete (no console errors)
+          required: true
+        - label: Works on mobile (375px width tested)
+          required: true
+        - label: localStorage data validates correctly
+          required: true
+        - label: Code reviewed (if applicable)
+          required: false
+        - label: PR merged to main
+          required: true

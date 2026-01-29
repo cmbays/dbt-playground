@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schema Migration Test (v1.0.0 → v1.1.0)</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; }
+    .test-section {
+      background: #f5f5f5;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    .test-result {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+    }
+    .pass {
+      background: #d4edda;
+      color: #155724;
+    }
+    .fail {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    pre {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    button.danger {
+      background: #ef4444;
+    }
+    button.danger:hover {
+      background: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <h1>Schema Migration Test (v1.0.0 → v1.1.0)</h1>
+
+  <div class="test-section">
+    <h2>Test Controls</h2>
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="createV100Schema()">Create v1.0.0 Schema</button>
+    <button onclick="loadAndMigrate()">Load & Migrate</button>
+    <button onclick="showCurrentSchema()">Show Current Schema</button>
+    <button class="danger" onclick="clearData()">Clear All Data</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script src="storage.js"></script>
+  <script>
+    const resultsDiv = document.getElementById('results');
+
+    function log(message, isPass = null) {
+      const div = document.createElement('div');
+      div.className = 'test-result' + (isPass === true ? ' pass' : isPass === false ? ' fail' : '');
+      div.textContent = (isPass === true ? '✓ ' : isPass === false ? '✗ ' : '') + message;
+      resultsDiv.appendChild(div);
+    }
+
+    function logPre(title, obj) {
+      const section = document.createElement('div');
+      section.className = 'test-section';
+      section.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(obj, null, 2)}</pre>`;
+      resultsDiv.appendChild(section);
+    }
+
+    function clearResults() {
+      resultsDiv.innerHTML = '';
+    }
+
+    // Create a v1.0.0 schema (without v1.1.0 fields)
+    function createV100Schema() {
+      clearResults();
+      log('Creating v1.0.0 schema...');
+
+      const v100Schema = {
+        version: '1.0.0',
+        kanji: {},
+        settings: {
+          new_cards_per_day: 10,
+          default_jlpt_filter: 'All',
+          default_topic_filter: 'All',
+          show_romaji: false,
+          show_furigana: true,
+          auto_play_audio: false,
+          preferred_reading_type: 'meaning'
+        },
+        stats: {
+          total_reviews: 50,
+          total_kanji_seen: 20,
+          streak_days: 7,
+          last_study_date: '2026-01-24',
+          streak_start_date: '2026-01-17',
+          today: {
+            date: '2026-01-25',
+            new_cards_introduced: 5,
+            reviews_completed: 25,
+            correct_count: 22,
+            session_count: 2
+          },
+          stage_distribution: {
+            locked: 149,
+            lesson: 0,
+            apprentice_1: 5,
+            apprentice_2: 5,
+            apprentice_3: 5,
+            apprentice_4: 3,
+            guru_1: 2,
+            guru_2: 0,
+            master: 0,
+            enlightened: 0,
+            burned: 0
+          },
+          jlpt_mastery_cache: {
+            N5: 15,
+            N4: 0,
+            N3: 0,
+            N2: 0,
+            N1: 0,
+            calculated_at: new Date().toISOString()
+          }
+        },
+        metadata: {
+          created: '2026-01-17T10:00:00.000Z',
+          last_modified: '2026-01-25T08:00:00.000Z',
+          migration_count: 0,
+          last_export: null,
+          client_id: 'test-client-id'
+        }
+      };
+
+      // Save directly to localStorage (bypassing validation)
+      localStorage.setItem(KanjiStorage.STORAGE_KEY, JSON.stringify(v100Schema));
+      log('v1.0.0 schema saved to localStorage', true);
+      logPre('v1.0.0 Schema', v100Schema);
+    }
+
+    // Load schema and trigger migration
+    function loadAndMigrate() {
+      clearResults();
+      log('Loading schema (will trigger migration if needed)...');
+
+      try {
+        const schema = KanjiStorage.loadSchema();
+
+        if (schema === null) {
+          log('No schema found. Create a v1.0.0 schema first.', false);
+          return;
+        }
+
+        log(`Schema loaded: v${schema.version}`, true);
+
+        // Check for v1.1.0 fields
+        const hasXP = !!schema.stats.xp;
+        const hasStreak = !!schema.stats.streak;
+        const hasDailyGoal = !!schema.settings.daily_goal;
+        const hasDailyHistory = !!schema.stats.daily_history;
+        const hasAtRisk = !!schema.stats.at_risk_kanji;
+        const hasSnapshots = !!schema.stats.mastery_snapshots;
+
+        log(`Has stats.xp: ${hasXP}`, hasXP);
+        log(`Has stats.streak: ${hasStreak}`, hasStreak);
+        log(`Has settings.daily_goal: ${hasDailyGoal}`, hasDailyGoal);
+        log(`Has stats.daily_history: ${hasDailyHistory}`, hasDailyHistory);
+        log(`Has stats.at_risk_kanji: ${hasAtRisk}`, hasAtRisk);
+        log(`Has stats.mastery_snapshots: ${hasSnapshots}`, hasSnapshots);
+
+        // Check migration preserved legacy data
+        if (schema.stats.streak) {
+          const streakPreserved = schema.stats.streak.current === 7;
+          log(`Streak migrated from legacy (current=7): ${streakPreserved}`, streakPreserved);
+        }
+
+        logPre('Migrated Schema', schema);
+
+      } catch (error) {
+        log(`Error: ${error.message}`, false);
+        console.error(error);
+      }
+    }
+
+    // Show current schema in localStorage
+    function showCurrentSchema() {
+      clearResults();
+      const raw = localStorage.getItem(KanjiStorage.STORAGE_KEY);
+      if (raw) {
+        try {
+          const schema = JSON.parse(raw);
+          logPre('Current Schema in localStorage', schema);
+        } catch (e) {
+          log(`Invalid JSON in localStorage: ${e.message}`, false);
+        }
+      } else {
+        log('No schema in localStorage', false);
+      }
+    }
+
+    // Clear all data
+    function clearData() {
+      clearResults();
+      if (confirm('Are you sure you want to clear all kanji data?')) {
+        KanjiStorage.clearAllData();
+        log('All data cleared', true);
+      }
+    }
+
+    // Run all tests
+    function runAllTests() {
+      clearResults();
+      log('=== Running Migration Tests ===');
+      log('');
+
+      // Test 1: compareVersions
+      log('Test 1: compareVersions()');
+      const tests = [
+        { a: '1.0.0', b: '1.1.0', expected: -1 },
+        { a: '1.1.0', b: '1.0.0', expected: 1 },
+        { a: '1.1.0', b: '1.1.0', expected: 0 },
+        { a: '2.0.0', b: '1.9.9', expected: 1 },
+        { a: '1.0.1', b: '1.0.0', expected: 1 }
+      ];
+      tests.forEach(({ a, b, expected }) => {
+        const result = KanjiStorage.compareVersions(a, b);
+        log(`  compareVersions('${a}', '${b}') = ${result} (expected ${expected})`, result === expected);
+      });
+
+      log('');
+
+      // Test 2: getLocalDateString
+      log('Test 2: getLocalDateString()');
+      const dateStr = KanjiStorage.getLocalDateString();
+      const isValidFormat = /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+      log(`  Returns YYYY-MM-DD format: ${dateStr}`, isValidFormat);
+
+      log('');
+
+      // Test 3: createDefaultSchema includes v1.1.0 fields
+      log('Test 3: createDefaultSchema() includes v1.1.0 fields');
+      const defaultSchema = KanjiStorage.createDefaultSchema();
+      log(`  version is ${SCHEMA_VERSION}: ${defaultSchema.version === KanjiStorage.SCHEMA_VERSION}`, defaultSchema.version === KanjiStorage.SCHEMA_VERSION);
+      log(`  has stats.xp: ${!!defaultSchema.stats.xp}`, !!defaultSchema.stats.xp);
+      log(`  has stats.streak: ${!!defaultSchema.stats.streak}`, !!defaultSchema.stats.streak);
+      log(`  has settings.daily_goal: ${!!defaultSchema.settings.daily_goal}`, !!defaultSchema.settings.daily_goal);
+      log(`  has stats.daily_history: ${!!defaultSchema.stats.daily_history}`, !!defaultSchema.stats.daily_history);
+      log(`  has stats.at_risk_kanji: ${!!defaultSchema.stats.at_risk_kanji}`, !!defaultSchema.stats.at_risk_kanji);
+      log(`  has stats.mastery_snapshots: ${!!defaultSchema.stats.mastery_snapshots}`, !!defaultSchema.stats.mastery_snapshots);
+      log(`  has stats.today.xp_earned: ${defaultSchema.stats.today.xp_earned !== undefined}`, defaultSchema.stats.today.xp_earned !== undefined);
+      log(`  has stats.today.goal_completed: ${defaultSchema.stats.today.goal_completed !== undefined}`, defaultSchema.stats.today.goal_completed !== undefined);
+
+      log('');
+
+      // Test 4: Validation functions
+      log('Test 4: Validation functions');
+
+      const validGoal = { enabled: true, target_cards: 10, notify_enabled: false, notify_time: '19:00' };
+      const invalidGoal = { enabled: 'yes', target_cards: 200 };
+      log(`  validateDailyGoal(valid): ${KanjiStorage.validateDailyGoal(validGoal).valid}`, KanjiStorage.validateDailyGoal(validGoal).valid);
+      log(`  validateDailyGoal(invalid): ${!KanjiStorage.validateDailyGoal(invalidGoal).valid}`, !KanjiStorage.validateDailyGoal(invalidGoal).valid);
+
+      const validXP = { total: 1000, current_level: 5, xp_this_level: 200, xp_to_next_level: 300, last_level_up: null };
+      const invalidXP = { total: -5, current_level: 100 };
+      log(`  validateXPStats(valid): ${KanjiStorage.validateXPStats(validXP).valid}`, KanjiStorage.validateXPStats(validXP).valid);
+      log(`  validateXPStats(invalid): ${!KanjiStorage.validateXPStats(invalidXP).valid}`, !KanjiStorage.validateXPStats(invalidXP).valid);
+
+      const validStreak = { current: 10, longest: 15, last_study_date: '2026-01-25', freezes_available: 1, freeze_used_date: null, freezes_earned_at: 7 };
+      const invalidStreak = { current: -1, freezes_available: 5 };
+      log(`  validateStreakStats(valid): ${KanjiStorage.validateStreakStats(validStreak).valid}`, KanjiStorage.validateStreakStats(validStreak).valid);
+      log(`  validateStreakStats(invalid): ${!KanjiStorage.validateStreakStats(invalidStreak).valid}`, !KanjiStorage.validateStreakStats(invalidStreak).valid);
+
+      log('');
+
+      // Test 5: Migration function
+      log('Test 5: migrateToV1_1_0()');
+      const v100Schema = {
+        version: '1.0.0',
+        kanji: {},
+        settings: { new_cards_per_day: 10 },
+        stats: {
+          total_reviews: 100,
+          streak_days: 14,
+          last_study_date: '2026-01-24',
+          today: { date: '2026-01-25', reviews_completed: 10, correct_count: 8, new_cards_introduced: 2, session_count: 1 },
+          stage_distribution: {},
+          jlpt_mastery_cache: {}
+        },
+        metadata: { created: new Date().toISOString(), last_modified: new Date().toISOString(), migration_count: 0 }
+      };
+
+      const migrated = KanjiStorage.migrateToV1_1_0(JSON.parse(JSON.stringify(v100Schema)));
+      log(`  version updated to 1.1.0: ${migrated.version === '1.1.0'}`, migrated.version === '1.1.0');
+      log(`  stats.xp added: ${!!migrated.stats.xp}`, !!migrated.stats.xp);
+      log(`  stats.streak added: ${!!migrated.stats.streak}`, !!migrated.stats.streak);
+      log(`  streak.current preserved from streak_days: ${migrated.stats.streak.current === 14}`, migrated.stats.streak.current === 14);
+      log(`  streak.last_study_date preserved: ${migrated.stats.streak.last_study_date === '2026-01-24'}`, migrated.stats.streak.last_study_date === '2026-01-24');
+      log(`  settings.daily_goal added: ${!!migrated.settings.daily_goal}`, !!migrated.settings.daily_goal);
+      log(`  stats.daily_history added: ${!!migrated.stats.daily_history}`, !!migrated.stats.daily_history);
+      log(`  migration_count incremented: ${migrated.metadata.migration_count === 1}`, migrated.metadata.migration_count === 1);
+
+      log('');
+      log('=== Tests Complete ===');
+    }
+
+    // Auto-run tests on load
+    runAllTests();
+  </script>
+</body>
+</html>

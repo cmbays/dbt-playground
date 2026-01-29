@@ -1,0 +1,248 @@
+═══════════════════════════════════════════════════════════════════════
+              SHOPPING DIALOGUE SECTION - COMPLETE ✅
+═══════════════════════════════════════════════════════════════════════
+
+✅ ALL 4 DIALOGUE TENSES ADDED TO SHOPPING PAGE
+
+Present Tense    → Supermarket vegetable shopping
+Past Tense       → 100 yen shop discussion
+Future Tense     → Electronics store laptop planning
+Advanced Tense   → Clothing store with polite keigo
+
+═══════════════════════════════════════════════════════════════════════
+                        CONTENT STATISTICS
+═══════════════════════════════════════════════════════════════════════
+
+Dialogue Lines:        25 exchanges
+Grammar Tips:          4 (one per tense)
+Kanji Flashcards:      54 unique kanji
+Audio Buttons:         25+
+Hint Buttons:          25+
+File Size:             75,678 characters (~74 KB)
+
+═══════════════════════════════════════════════════════════════════════
+                        DIALOGUE BREAKDOWN
+═══════════════════════════════════════════════════════════════════════
+
+1. PRESENT TENSE - SUPERMARKET SHOPPING
+   ────────────────────────────────────────────────────────────────
+   Scenario:  Shopping for fresh vegetables
+   Lines:     7 exchanges
+
+   Content:
+   • Customer asks where vegetable section is
+   • Staff provides directions
+   • Discussion about freshness and pricing
+   • Sale offer: 2 packs for 500 yen
+
+   Grammar Tip:
+   💡 い-adjectives vs な-adjectives
+      安い (cheap), 高い (expensive)
+      便利な (convenient), 不便な (inconvenient)
+
+   Key Phrases:
+   • すみません、野菜売り場はどこですか
+     (Excuse me, where is the vegetable section?)
+   • このトマトは新鮮ですか
+     (Are these tomatoes fresh?)
+   • いくらですか
+     (How much is it?)
+
+   Kanji: 野菜売場階果物鮮朝入荷特日買安 (15 kanji)
+
+
+2. PAST TENSE - 100 YEN SHOP
+   ────────────────────────────────────────────────────────────────
+   Scenario:  Discussing yesterday's shopping trip
+   Lines:     5 exchanges
+
+   Content:
+   • Telling friend about 100 yen shop visit
+   • Listing items purchased (notebook, pens, towel)
+   • Discussing quality and value
+   • Total cost: 500 yen
+
+   Grammar Tip:
+   💡 Past tense adjectives
+      い → かった: 高い → 高かった
+      な + でした: 便利 → 便利でした
+
+   Key Phrases:
+   • 昨日、百円ショップに行きました
+     (Yesterday, I went to a 100 yen shop)
+   • 何を買いましたか
+     (What did you buy?)
+   • 思ったより良かったです
+     (It was better than I thought)
+
+   Cultural Note: 100 yen shops (Daiso, Seria) are extremely
+                  popular for daily necessities in Japan
+
+   Kanji: 百円何全部品質思軽書 (11 kanji)
+
+
+3. FUTURE TENSE - ELECTRONICS STORE
+   ────────────────────────────────────────────────────────────────
+   Scenario:  Planning laptop purchase in Akihabara
+   Lines:     7 exchanges
+
+   Content:
+   • Plans to visit Akihabara next week
+   • Comparing online vs in-store shopping
+   • Importance of trying before buying
+   • Checking specs and prices
+
+   Grammar Tip:
+   💡 Future intentions and comparisons
+      ～つもりです (intend to)
+      ～予定です (plan to)
+      ～より (than), もっと (more)
+
+   Key Phrases:
+   • 来週秋葉原の電気屋に行くつもりです
+     (I plan to go to electronics store in Akihabara next week)
+   • 実際に見て試したいです
+     (I want to see and try it in person)
+   • 色々な店を見て、比べます
+     (I'll look at various stores and compare)
+
+   Cultural Note: Akihabara is Tokyo's famous "Electric Town"
+                  with countless electronics stores
+
+   Kanji: 来週電気屋種詳確実決重感認賢 (14 kanji)
+
+
+4. ADVANCED - CLOTHING STORE (KEIGO)
+   ────────────────────────────────────────────────────────────────
+   Scenario:  Buying a coat with polite business language
+   Lines:     10 exchanges
+
+   Content:
+   • Staff greets with keigo (いらっしゃいませ)
+   • Customer asks about window display coat
+   • Trying on in fitting room
+   • Discussing size and color options
+   • Polite purchase completion
+
+   Grammar Tip:
+   💡 Conditional forms and polite requests
+      ～たら (if/when), ～なら (if)
+      ～ていただけますか (could you please...?)
+      Keigo: いらっしゃいませ, かしこまりました
+
+   Key Phrases:
+   • いらっしゃいませ。何かお探しでしょうか
+     (Welcome. Are you looking for something?)
+   • 試着していただけますか
+     (Could I try it on?)
+   • かしこまりました。少々お待ちください
+     (Certainly. Please wait a moment)
+   • 他の色もございますか
+     (Do you have other colors?)
+
+   Cultural Note: Japanese retail uses very polite keigo
+                  Standard phrases are expected
+
+   Kanji: 試着室合少色黒見申訳切取置 (13 kanji)
+
+═══════════════════════════════════════════════════════════════════════
+                        INTERACTIVE FEATURES
+═══════════════════════════════════════════════════════════════════════
+
+Every dialogue line includes:
+
+🔊 AUDIO BUTTON
+   Click to hear native Japanese pronunciation
+   Uses Web Speech API for instant playback
+
+? HINT BUTTON
+   Click to reveal:
+   • Romaji (phonetic reading)
+   • English translation
+   Click again to hide
+
+📚 KANJI FLASHCARDS
+   Below each dialogue
+   Click any kanji to:
+   • Hear pronunciation
+   • See On-yomi and Kun-yomi readings
+   • Read English meaning
+
+💡 GRAMMAR TIPS
+   Yellow box at top of each dialogue
+   Explains key grammar points for that tense
+
+═══════════════════════════════════════════════════════════════════════
+                        LEARNING PROGRESSION
+═══════════════════════════════════════════════════════════════════════
+
+START HERE → Present Tense  (★☆☆☆☆)
+             Basic shopping transactions
+             Simple questions and answers
+             Everyday supermarket setting
+             ↓
+             Past Tense     (★★☆☆☆)
+             Describing experiences
+             Past tense verbs/adjectives
+             Casual conversation
+             ↓
+             Future Tense   (★★★☆☆)
+             Making plans
+             Expressing intentions
+             Complex comparisons
+             ↓
+MASTER IT  → Advanced       (★★★★★)
+             Polite business language
+             Keigo expressions
+             Formal retail setting
+
+═══════════════════════════════════════════════════════════════════════
+                        HOW TO USE
+═══════════════════════════════════════════════════════════════════════
+
+1. Open shopping.html in browser
+2. Click "Dialogue" tab
+3. Choose tense level (start with Present)
+4. Read grammar tip first
+5. For each dialogue line:
+   • Click 🔊 to hear pronunciation
+   • Try to understand Japanese
+   • Click "Hint" to check translation
+   • Practice speaking along
+6. Study kanji flashcards below
+7. Move to next tense when comfortable
+
+═══════════════════════════════════════════════════════════════════════
+                        WHAT'S COMPLETE
+═══════════════════════════════════════════════════════════════════════
+
+Shopping Page Status:
+
+✅ Key Phrases        (10 phrases with hints & kanji)
+✅ Kanji Section      (31 essential shopping kanji)
+✅ Dialogue - Present (7 exchanges + grammar + kanji)
+✅ Dialogue - Past    (5 exchanges + grammar + kanji)
+✅ Dialogue - Future  (7 exchanges + grammar + kanji)
+✅ Dialogue - Advanced(10 exchanges + grammar + kanji)
+⏳ Story Section     (to be populated)
+⏳ Manga Section     (to be developed)
+⏳ Quiz Section      (to be developed)
+✅ Tips Section       (cultural shopping tips)
+
+═══════════════════════════════════════════════════════════════════════
+                        VIEW YOUR WORK
+═══════════════════════════════════════════════════════════════════════
+
+Open: shopping.html
+Click: "Dialogue" tab
+Explore: All 4 tenses with interactive features!
+
+═══════════════════════════════════════════════════════════════════════
+
+                    🎉 DIALOGUE SECTION COMPLETE! 🎉
+
+             All dialogues include grammar tips and cultural context
+             as requested. Content reused from travel_scenarios.html
+             and fully integrated into modular architecture.
+
+═══════════════════════════════════════════════════════════════════════

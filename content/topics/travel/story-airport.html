@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.1.0 - Updated: 2026-01-19 - Topics reorganization -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airport & Flight Story - Japanese Travel Scenarios</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>✈️ Travel - Story</h1>
+            <p>Airport & Flight Story</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="../home-life/phrases.html" class="nav-btn">🏠 家庭生活</a>
+            <a href="../restaurant/story.html" class="nav-btn">🍜 レストラン</a>
+            <a href="story.html" class="nav-btn active">✈️ 旅行</a>
+            <a href="../shopping/story.html" class="nav-btn">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation (within Travel) -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn">💬 Dialogue</a>
+            <a href="story.html" class="section-btn active">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn">❓ Quiz</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <!-- Back to Stories Link -->
+        <div class="navigation" style="margin-bottom: 20px;">
+            <a href="story.html" class="nav-btn">← Back to Stories</a>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div id="travel-story-airport" class="tense-content active">
+                <h2>✈️ 空港と国際線 (Airport & International Flight)</h2>
+                <button class="play-all-btn" onclick="playAllInContainer('travel-story-airport')">▶️ Play All</button>
+
+                <div class="story-container">
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('田中さんは早朝、自宅前でタクシーを待っていました。成田空港まで行く予定で、フライトは午前十時に出発します。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">田中さんは早朝、自宅前でタクシーを待っていました。成田空港まで行く予定で、フライトは午前十時に出発します。</p>
+                        <div class="paragraph-hint">Tanaka-san wa soucho, jitaku mae de takushii wo matte imashita. Narita kuukou made iku yotei de, furaito wa gozen juu-ji ni shuppatsu shimasu. • Mr. Tanaka was waiting for a taxi in front of his house early in the morning. He plans to go to Narita Airport, and his flight departs at 10 AM.</div>
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('タクシーが到着すると、運転手は丁寧に荷物をトランクに入れてくれました。「成田空港まで、どのターミナルですか」と運転手が尋ねました。田中さんは「第二ターミナルです」と答えました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">タクシーが到着すると、運転手は丁寧に荷物をトランクに入れてくれました。「成田空港まで、どのターミナルですか」と運転手が尋ねました。田中さんは「第二ターミナルです」と答えました。</p>
+                        <div class="paragraph-hint">Takushii ga touchaku suru to, untenshu wa teinei ni nimotsu wo toranku ni irete kuremashita. "Narita kuukou made, dono taaminaru desu ka" to untenshu ga tazunemashita. Tanaka-san wa "dai-ni taaminaru desu" to kotaemashita. • When the taxi arrived, the driver politely put his luggage in the trunk. "To Narita Airport, which terminal?" the driver asked. Mr. Tanaka answered, "Terminal 2."</div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>📝 Grammar Tip:</strong> ～てくれる (te kureru) expresses that someone does something for you. It shows gratitude: 入れてくれました (irete kuremashita - "put in for me").
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('高速道路は思ったより混んでいませんでした。約一時間で空港に到着し、田中さんはチェックインカウンターに向かいました。パスポートと予約確認書を見せて、搭乗券を受け取りました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">高速道路は思ったより混んでいませんでした。約一時間で空港に到着し、田中さんはチェックインカウンターに向かいました。パスポートと予約確認書を見せて、搭乗券を受け取りました。</p>
+                        <div class="paragraph-hint">Kousoku douro wa omotta yori konde imasen deshita. Yaku ichi-jikan de kuukou ni touchaku shi, Tanaka-san wa chekku-in kauntaa ni mukaimashita. Pasupooto to yoyaku kakuninsho wo misete, toujouken wo uketori mashita. • The highway was less crowded than expected. They arrived at the airport in about an hour, and Mr. Tanaka headed to the check-in counter. He showed his passport and reservation confirmation and received his boarding pass.</div>
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('セキュリティチェックを通過した後、免税店で買い物をしました。家族へのお土産にチョコレートと香水を買いました。搭乗ゲートまで歩いて行き、出発時刻まで待合室で待ちました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">セキュリティチェックを通過した後、免税店で買い物をしました。家族へのお土産にチョコレートと香水を買いました。搭乗ゲートまで歩いて行き、出発時刻まで待合室で待ちました。</p>
+                        <div class="paragraph-hint">Sekyuriti chekku wo tsuuka shita ato, menzei-ten de kaimono wo shimashita. Kazoku e no omiyage ni chokoreto to kousui wo kaimashita. Toujou geeto made aruite iki, shuppatsu jikoku made machiai-shitsu de machimashita. • After passing through security check, he shopped at the duty-free store. He bought chocolate and perfume as souvenirs for his family. He walked to the boarding gate and waited in the waiting area until departure time.</div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> Duty-free shops (免税店 menzei-ten) at Japanese airports are extensive and popular. Many travelers buy last-minute お土産 (omiyage - souvenirs) for family and colleagues, as gift-giving is an important part of Japanese culture when returning from trips.
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('搭乗時刻になり、田中さんは飛行機に乗り込みました。座席は窓側で、離陸前に富士山が見えました。機内サービスで食事と飲み物を楽しみました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">搭乗時刻になり、田中さんは飛行機に乗り込みました。座席は窓側で、離陸前に富士山が見えました。機内サービスで食事と飲み物を楽しみました。</p>
+                        <div class="paragraph-hint">Toujou jikoku ni nari, Tanaka-san wa hikouki ni norikomi mashita. Zaseki wa madogawa de, ririku mae ni Fujisan ga miemashita. Kinai saabisu de shokuji to nomimono wo tanoshimi mashita. • When boarding time came, Mr. Tanaka boarded the plane. His seat was by the window, and he could see Mt. Fuji before takeoff. He enjoyed meals and drinks from the in-flight service.</div>
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('長時間のフライトでしたが、映画を見たり、本を読んだりして過ごしました。数時間後、飛行機は目的地の空港に無事着陸しました。新しい国での冒険が始まります。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">長時間のフライトでしたが、映画を見たり、本を読んだりして過ごしました。数時間後、飛行機は目的地の空港に無事着陸しました。新しい国での冒険が始まります。</p>
+                        <div class="paragraph-hint">Choujikan no furaito deshita ga, eiga wo mitari, hon wo yondari shite sugoshimashita. Suu-jikan go, hikouki wa mokuteki-chi no kuukou ni buji chakuriku shimashita. Atarashii kuni de no bouken ga hajimarimasu. • It was a long flight, but he spent time watching movies and reading books. Several hours later, the plane safely landed at the destination airport. His adventure in a new country begins.</div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>📝 Grammar Tip:</strong> ～たり～たりする (tari~tari suru) is used to list multiple actions: 見たり読んだりして (mitari yondari shite - "doing things like watching and reading").
+                    </div>
+                </div>
+
+                <!-- Kanji Section for Airport Story -->
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Story</div>
+
+                    <div style="background: #f0f9ff; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #0369a1;">
+                        <strong style="color: #0369a1;">🚕 Transportation & Travel (交通と旅行)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">空</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: クウ / Kun: そら、あ(く)</div>
+                                <div class="kanji-meaning">Meaning: sky, empty, airport</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">港</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: みなと</div>
+                                <div class="kanji-meaning">Meaning: port, harbor</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">機</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キ / Kun: はた</div>
+                                <div class="kanji-meaning">Meaning: machine, aircraft</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">飛</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヒ / Kun: と(ぶ)</div>
+                                <div class="kanji-meaning">Meaning: fly</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">乗</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジョウ / Kun: の(る)</div>
+                                <div class="kanji-meaning">Meaning: ride, board</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">搭</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: トウ</div>
+                                <div class="kanji-meaning">Meaning: board, ride</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">降</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: お(りる)、ふ(る)</div>
+                                <div class="kanji-meaning">Meaning: descend, get off</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #f59e0b;">
+                        <strong style="color: #f59e0b;">⏰ Time & Scheduling (時間と予定)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">朝</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チョウ / Kun: あさ</div>
+                                <div class="kanji-meaning">Meaning: morning</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">早</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ソウ / Kun: はや(い)</div>
+                                <div class="kanji-meaning">Meaning: early, fast</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">時</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジ / Kun: とき</div>
+                                <div class="kanji-meaning">Meaning: time, hour</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">刻</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コク / Kun: きざ(む)</div>
+                                <div class="kanji-meaning">Meaning: time, moment, engrave</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">発</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ハツ / Kun: た(つ)</div>
+                                <div class="kanji-meaning">Meaning: depart, emit</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">着</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チャク / Kun: つ(く)、き(る)</div>
+                                <div class="kanji-meaning">Meaning: arrive, wear</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">待</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: タイ / Kun: ま(つ)</div>
+                                <div class="kanji-meaning">Meaning: wait</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f0fdf4; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #10b981;">
+                        <strong style="color: #10b981;">📍 Places & Directions (場所と方向)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">前</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゼン / Kun: まえ</div>
+                                <div class="kanji-meaning">Meaning: front, before</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">自</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジ / Kun: みずか(ら)</div>
+                                <div class="kanji-meaning">Meaning: self, oneself</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">宅</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: タク</div>
+                                <div class="kanji-meaning">Meaning: home, residence</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">到</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: トウ</div>
+                                <div class="kanji-meaning">Meaning: arrival, reach</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">向</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: む(く)、む(かう)</div>
+                                <div class="kanji-meaning">Meaning: face, head toward</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">側</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ソク / Kun: がわ</div>
+                                <div class="kanji-meaning">Meaning: side</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">内</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ナイ / Kun: うち</div>
+                                <div class="kanji-meaning">Meaning: inside, within</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef2f2; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #ef4444;">
+                        <strong style="color: #ef4444;">🎒 Travel Items (旅行用品)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">荷</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カ / Kun: に</div>
+                                <div class="kanji-meaning">Meaning: luggage, cargo</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">物</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ブツ / Kun: もの</div>
+                                <div class="kanji-meaning">Meaning: thing, object</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">券</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケン</div>
+                                <div class="kanji-meaning">Meaning: ticket, certificate</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">書</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショ / Kun: か(く)</div>
+                                <div class="kanji-meaning">Meaning: write, document</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">土</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ド / Kun: つち</div>
+                                <div class="kanji-meaning">Meaning: earth, soil</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">産</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: サン / Kun: う(む)</div>
+                                <div class="kanji-meaning">Meaning: product, give birth</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #faf5ff; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #a855f7;">
+                        <strong style="color: #a855f7;">✈️ Airport Actions (空港での動作)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">入</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ニュウ / Kun: い(れる)、はい(る)</div>
+                                <div class="kanji-meaning">Meaning: enter, put in</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">受</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジュ / Kun: う(ける)</div>
+                                <div class="kanji-meaning">Meaning: receive, accept</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">取</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュ / Kun: と(る)</div>
+                                <div class="kanji-meaning">Meaning: take, get</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">通</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ツウ / Kun: とお(る)、かよ(う)</div>
+                                <div class="kanji-meaning">Meaning: pass through, commute</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">買</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バイ / Kun: か(う)</div>
+                                <div class="kanji-meaning">Meaning: buy, purchase</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">見</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケン / Kun: み(る)</div>
+                                <div class="kanji-meaning">Meaning: see, look</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">楽</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ラク、ガク / Kun: たの(しい)</div>
+                                <div class="kanji-meaning">Meaning: enjoy, pleasure, music</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../../js/shared.js"></script>
+</body>
+</html>

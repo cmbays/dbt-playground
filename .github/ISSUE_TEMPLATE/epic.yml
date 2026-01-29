@@ -1,0 +1,101 @@
+name: Epic (Feature PRD)
+description: High-level feature specification linking to PRD document
+title: "[Epic] "
+labels: ["type:epic", "status:draft"]
+assignees:
+  - cmbays
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Epic Issue Template
+        Use this for high-level features that will be broken down into multiple implementation tasks.
+
+  - type: input
+    id: prd-link
+    attributes:
+      label: PRD Document
+      description: Link to the PRD document in docs/specs/
+      placeholder: docs/specs/PRD-001-JLPT-Mastery-Engine.md
+    validations:
+      required: true
+
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase
+      description: Which roadmap phase does this belong to?
+      options:
+        - "Phase 1 (v0.3 Foundation)"
+        - "Phase 2 (v0.4 Engagement)"
+        - "Phase 3 (v0.5 Deep Learning)"
+        - "Phase 4 (v0.6 Active Recall)"
+        - "Future (v0.7+)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Brief description of what this epic accomplishes (1-3 sentences)
+      placeholder: Implement the core SRS algorithm with JLPT-integrated mastery tracking system.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-benefit
+    attributes:
+      label: User Benefit
+      description: How does this help learners?
+      placeholder: |
+        - Efficient Learning: Study cards you need to review, not ones you already know
+        - Clear JLPT Goals: See exactly how much of N5, N4, N3, N2 you've mastered
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria (High-Level)
+      description: Summary of key acceptance criteria from PRD
+      placeholder: |
+        - [ ] Per-kanji SRS tracking (interval, ease, stage)
+        - [ ] Due cards queue based on review dates
+        - [ ] Mastery stages with progression rules
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: task-breakdown
+    attributes:
+      label: Task Breakdown
+      description: List of implementation tasks (will be created as separate issues)
+      placeholder: |
+        - [ ] #XX T1.1 - Design localStorage schema
+        - [ ] #XX T1.2 - Implement SM-2 algorithm
+        - [ ] #XX T1.3 - Create mastery progression system
+      render: markdown
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Other epics or systems this depends on
+      placeholder: "Depends on: #X (Epic Name)"
+
+  - type: dropdown
+    id: personas
+    attributes:
+      label: Primary Personas
+      description: Which personas will work on this? (Select one, add others via labels)
+      options:
+        - "Product Manager"
+        - "Technical Architect"
+        - "Developer"
+        - "Tester"
+        - "Design Reviewer"
+        - "Japanese Sensei"
+    validations:
+      required: true

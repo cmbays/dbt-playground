@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.1.0 - Updated: 2026-01-19 - Topics reorganization -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Stories - Japanese Travel Scenarios</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+    <style>
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .story-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .story-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+        .story-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .story-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .story-description {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        .story-meta {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ Shopping - Stories</h1>
+            <p>Choose a shopping scenario to read about</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="../home-life/phrases.html" class="nav-btn">🏠 家庭生活</a>
+            <a href="../restaurant/story.html" class="nav-btn">🍜 レストラン</a>
+            <a href="../travel/story.html" class="nav-btn">✈️ 旅行</a>
+            <a href="story.html" class="nav-btn active">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn">💬 Dialogue</a>
+            <a href="story.html" class="section-btn active">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn">❓ Quiz</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <div class="content">
+            <div class="story-grid">
+                <a href="story-groceries.html" class="story-card">
+                    <div class="story-icon">🥬</div>
+                    <div class="story-title">The Supermarket Adventure</div>
+                    <div class="story-description">
+                        Follow田中さん as he shops for fresh vegetables and discovers seasonal produce at a local Japanese supermarket.
+                    </div>
+                    <div class="story-meta">7 paragraphs • Grammar & Cultural tips • 60+ kanji</div>
+                </a>
+
+                <a href="story-electronics.html" class="story-card">
+                    <div class="story-icon">💻</div>
+                    <div class="story-title">Electronics in Akihabara</div>
+                    <div class="story-description">
+                        Experience the excitement of shopping for a laptop in Tokyo's famous electronics district with knowledgeable staff.
+                    </div>
+                    <div class="story-meta">7 paragraphs • Grammar & Cultural tips • 70+ kanji</div>
+                </a>
+
+                <a href="story-clothing.html" class="story-card">
+                    <div class="story-icon">👔</div>
+                    <div class="story-title">Winter Coat Shopping</div>
+                    <div class="story-description">
+                        Discover the exceptional customer service at a Japanese department store while shopping for winter clothing.
+                    </div>
+                    <div class="story-meta">7 paragraphs • Grammar & Cultural tips • 65+ kanji</div>
+                </a>
+
+                <a href="story-giftshop.html" class="story-card">
+                    <div class="story-icon">🎁</div>
+                    <div class="story-title">Omiyage in Kyoto</div>
+                    <div class="story-description">
+                        Learn about the Japanese gift-giving tradition while selecting perfect souvenirs at a Kyoto gift shop.
+                    </div>
+                    <div class="story-meta">7 paragraphs • Grammar & Cultural tips • 75+ kanji</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/shared.js"></script>
+</body>
+</html>

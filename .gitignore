@@ -1,0 +1,21 @@
+# Work in progress
+temp/
+
+# Project-specific documentation (for review only)
+FOR_CHRIS.md
+
+# OS files
+.DS_Store
+**/.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Dependencies (if future npm usage)
+node_modules/
+package-lock.json
+
+# Python
+__pycache__/
+*.pyc

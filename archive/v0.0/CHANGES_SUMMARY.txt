@@ -1,0 +1,149 @@
+═══════════════════════════════════════════════════════════════════════
+                    SHOPPING PAGE UPDATES - COMPLETE
+═══════════════════════════════════════════════════════════════════════
+
+✅ TASK 1: FIX HINT BUTTONS IN KEY PHRASES
+───────────────────────────────────────────────────────────────────────
+Problem:  Clicking "?" buttons did nothing
+Fix:      Updated js/shared.js to recognize .phrase-hint class
+Result:   Hint buttons now show/hide hiragana + English translations
+
+BEFORE:
+  Click "?" → Nothing happens ❌
+
+AFTER:
+  Click "?" → Shows translation ✅
+  Example:
+    いくらですか
+    [?] ← Click here
+    ↓
+    Ikura desu ka? • How much is it? ← This appears!
+
+
+✅ TASK 2: CREATE KANJI SECTION WITH FLASHCARDS
+───────────────────────────────────────────────────────────────────────
+Added:    New kanji section with 31 interactive flashcards
+Location: shopping.html, right after key phrases section
+
+FEATURES:
+  ✓ Click any card to expand
+  ✓ Auto-plays audio pronunciation
+  ✓ Shows On-yomi and Kun-yomi readings
+  ✓ Shows English meanings
+  ✓ Click again to collapse
+
+INTERACTION:
+  [買]  ← You see this
+    ↓ (click)
+  🔊 Audio: "か-う"
+    ↓
+  [買]
+  On: バイ / Kun: か(う)
+  Meaning: buy, purchase
+    ↓ (click again)
+  [買]  ← Collapses back
+
+
+31 KANJI INCLUDED:
+───────────────────────────────────────────────────────────────────────
+📦 Basic Shopping (6):
+   買 (buy), 売 (sell), 店 (store), 物 (thing), 円 (yen), 金 (money)
+
+📊 Quality Adjectives (10):
+   安 (cheap), 高 (expensive), 新 (new), 古 (old)
+   大 (big), 小 (small), 良 (good), 悪 (bad)
+   重 (heavy), 軽 (light)
+
+🏪 Store Types (5):
+   市 (market), 場 (place), 服 (clothes), 品 (goods), 食 (food)
+
+🎯 Actions (4):
+   見 (see), 入 (enter), 出 (exit), 使 (use)
+
+🎨 Additional (6):
+   便 (convenient), 利 (advantage), 色 (color)
+   黒 (black), 白 (white), 赤 (red)
+
+
+FILES MODIFIED:
+───────────────────────────────────────────────────────────────────────
+1. js/shared.js
+   • Line 123: Added .phrase-hint selector
+   • Line 130: Changed button text to "?" instead of "Hint"
+   • Line 138-152: Enhanced toggleKanji() with audio playback
+
+2. shopping.html
+   • Lines 116-349: Added complete kanji section
+   • 31 interactive flashcards
+   • Organized by category
+   • All with proper readings and meanings
+
+
+BEFORE vs AFTER:
+───────────────────────────────────────────────────────────────────────
+BEFORE:
+  • Hint buttons in key phrases: Broken ❌
+  • Kanji section: Didn't exist ❌
+  • Audio on kanji: Manual only ❌
+
+AFTER:
+  • Hint buttons in key phrases: Working ✅
+  • Kanji section: 31 flashcards ✅
+  • Audio on kanji: Auto-plays on click ✅
+
+
+HOW TO TEST:
+───────────────────────────────────────────────────────────────────────
+1. Open shopping.html in browser
+2. Click "Key Phrases" tab (should be default)
+3. Click any "?" button
+   → Verify translation appears
+4. Scroll down to "Essential Shopping Kanji" section
+5. Click any kanji card
+   → Verify audio plays
+   → Verify readings and meaning appear
+6. Click card again
+   → Verify it collapses
+
+
+LEARNING BENEFITS:
+───────────────────────────────────────────────────────────────────────
+✓ Immediate audio feedback when exploring kanji
+✓ See both on-yomi (Chinese reading) and kun-yomi (Japanese reading)
+✓ Organized by category (shopping, adjectives, stores, actions)
+✓ Self-paced learning (expand what you want)
+✓ All kanji contextually relevant to shopping
+
+
+TECHNICAL DETAILS:
+───────────────────────────────────────────────────────────────────────
+JavaScript Enhancement:
+  • toggleHint() now supports 3 hint class types
+  • toggleKanji() plays audio when expanding cards
+  • Uses Web Speech API for pronunciation
+
+HTML Structure:
+  • 31 kanji cards in responsive grid
+  • Each card: character + hidden details
+  • Details show: readings + meaning
+  • onclick handler on each card
+
+CSS (already existed):
+  • .kanji-section for container styling
+  • .kanji-card for card styling with hover effects
+  • .kanji-details with show/hide transition
+  • Responsive grid for mobile/tablet/desktop
+
+
+═══════════════════════════════════════════════════════════════════════
+                            STATUS: COMPLETE ✅
+═══════════════════════════════════════════════════════════════════════
+
+Both requested features are fully implemented and ready to use!
+
+View the updated page:
+  → Open shopping.html in your browser
+  → Test hint buttons in key phrases
+  → Explore the new kanji flashcards
+
+═══════════════════════════════════════════════════════════════════════
