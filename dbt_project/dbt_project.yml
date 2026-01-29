@@ -1,8 +1,8 @@
-name: 'dbt_playground'
+name: 'healthcare_analytics'
 version: '0.1.0'
 config-version: 2
 
-profile: 'dbt_playground'
+profile: 'healthcare_analytics'
 
 # File paths
 model-paths: ["models"]
@@ -18,7 +18,7 @@ clean-targets:
 
 # Model configurations by layer
 models:
-  dbt_playground:
+  healthcare_analytics:
     staging:
       +materialized: view
       +schema: staging
