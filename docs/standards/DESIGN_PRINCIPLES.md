@@ -19,12 +19,14 @@ This document defines the visual and interaction design standards for the Japane
 ## Design Philosophy
 
 **Core Values**:
+
 1. **Clarity** - Content should be easy to read and understand
 2. **Consistency** - Similar elements look and behave the same way across pages
 3. **Accessibility** - Design works for all users, all devices
 4. **Delight** - Subtle animations and polish create engaging experience
 
 **User Experience Goals**:
+
 - Minimize cognitive load - don't make users think
 - Provide clear visual hierarchy - important things stand out
 - Give immediate feedback - users know when they interact with something
@@ -35,6 +37,7 @@ This document defines the visual and interaction design standards for the Japane
 ## Color Palette
 
 ### Primary Colors
+
 ```
 Purple Gradient Background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 Primary Purple: #667eea  (buttons, headings, interactive elements)
@@ -42,6 +45,7 @@ Deep Purple: #764ba2     (gradient end, accents)
 ```
 
 ### Neutral Colors
+
 ```
 Text Dark: #333          (primary text)
 Text Medium: #495057     (secondary text)
@@ -53,6 +57,7 @@ Background Gray: #e9ecef  (dividers, borders)
 ```
 
 ### Accent Colors
+
 ```
 Success Green: #10b981   (correct answers, positive feedback)
 Blue: #1e40af            (links, info)
@@ -60,6 +65,7 @@ Dark Blue: #1e293b       (strong emphasis)
 ```
 
 ### Usage Guidelines
+
 - **Primary Purple (#667eea)** for all primary actions (buttons, nav, headings)
 - **White (#ffffff)** for content backgrounds
 - **Light Gray (#f8f9fa)** for section backgrounds
@@ -71,6 +77,7 @@ Dark Blue: #1e293b       (strong emphasis)
 ## Typography
 
 ### Font Stack
+
 ```css
 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
              'Helvetica Neue', Arial, sans-serif;
@@ -79,6 +86,7 @@ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 **Rationale**: System fonts for speed, native feel, excellent readability
 
 ### Font Sizes
+
 ```
 Page Title (h1): 2.5em         (40px at default)
 Section Heading (h2): 2em      (32px at default)
@@ -89,11 +97,13 @@ Small Text: 0.9em              (14px - metadata)
 ```
 
 ### Japanese Text Sizing
+
 - **Kanji/Kana**: Same size as English or slightly larger for readability
 - **Furigana**: 0.6em (60% of base text size)
 - **Romaji**: 0.9em (90% of base text size)
 
 ### Line Height
+
 ```
 Body Text: 1.6              (relaxed reading)
 Headings: 1.2               (tighter spacing)
@@ -101,6 +111,7 @@ Japanese Text: 1.8          (extra space for complexity)
 ```
 
 ### Font Weights
+
 ```
 Regular: 400                (body text)
 Semi-Bold: 600              (buttons, nav, emphasis)
@@ -123,6 +134,7 @@ XXL: 60px       (landing page spacing)
 ```
 
 ### Padding Standards
+
 ```
 Buttons: 12px 24px          (vertical horizontal)
 Cards: 20-30px all sides
@@ -131,6 +143,7 @@ Container: 20px
 ```
 
 ### Margin Standards
+
 ```
 Between sections: 20-30px
 Between cards: 15-20px
@@ -143,6 +156,7 @@ Between related elements: 10px
 ## Layout & Structure
 
 ### Container
+
 ```css
 max-width: 1400px          (prevents too-wide content)
 margin: 0 auto             (centers content)
@@ -151,6 +165,7 @@ background: white          (content background)
 ```
 
 ### Grid Patterns
+
 ```
 Card Grids: grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
 Responsive: Adapts number of columns based on screen width
@@ -158,6 +173,7 @@ Gap: 20-30px between items
 ```
 
 ### Section Organization
+
 ```
 1. Header (gradient background, white text)
 2. Navigation (light gray background, centered)
@@ -172,6 +188,7 @@ Gap: 20-30px between items
 ### Buttons
 
 **Primary Buttons** (Main actions):
+
 ```css
 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 color: white
@@ -182,6 +199,7 @@ transition: all 0.3s ease
 ```
 
 **Secondary Buttons** (Navigation, less emphasis):
+
 ```css
 background: white
 color: #667eea
@@ -191,14 +209,17 @@ padding: 12px 24px
 ```
 
 **Hover States**:
+
 - Primary: slightly darker, slight scale (1.05), lifted shadow
 - Secondary: filled background (#667eea), white text
 
 **Active States**:
+
 - Add visual feedback (scale, color change, shadow)
 - Never leave users wondering if click registered
 
 ### Links
+
 ```css
 color: #1e40af              (blue for links)
 text-decoration: none       (clean look)
@@ -206,6 +227,7 @@ hover: underline            (indicate clickability)
 ```
 
 ### Form Elements
+
 *To be defined when forms are added*
 
 ---
@@ -213,6 +235,7 @@ hover: underline            (indicate clickability)
 ## Cards & Containers
 
 ### Standard Card
+
 ```css
 background: white
 border-radius: 15-20px
@@ -222,12 +245,14 @@ transition: all 0.3s ease
 ```
 
 **Hover Effect**:
+
 ```css
 transform: translateY(-5px)
 box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2)
 ```
 
 ### Content Cards (Kanji, Phrases, etc.)
+
 ```css
 background: #f8f9fa         (light gray)
 border-left: 4px solid #667eea (accent stripe)
@@ -241,6 +266,7 @@ margin-bottom: 15px
 ## Responsive Design
 
 ### Breakpoints
+
 ```css
 Mobile: < 768px            (phone)
 Tablet: 768px - 1024px     (tablet)
@@ -248,6 +274,7 @@ Desktop: > 1024px          (desktop/laptop)
 ```
 
 ### Mobile Adaptations
+
 - **Navigation**: Stack vertically or collapse to hamburger (if needed)
 - **Grid**: Single column on mobile
 - **Font sizes**: Slightly smaller but still readable (minimum 16px)
@@ -255,6 +282,7 @@ Desktop: > 1024px          (desktop/laptop)
 - **Padding**: Reduce to 15-20px on mobile
 
 ### Responsive Patterns
+
 ```css
 @media (max-width: 768px) {
     /* Mobile styles */
@@ -269,6 +297,7 @@ Desktop: > 1024px          (desktop/laptop)
 ## Animations & Transitions
 
 ### Standard Transitions
+
 ```css
 transition: all 0.3s ease;   (default for most elements)
 ```
@@ -276,6 +305,7 @@ transition: all 0.3s ease;   (default for most elements)
 ### Specific Animations
 
 **Fade In** (page load):
+
 ```css
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -285,6 +315,7 @@ animation: fadeIn 0.8s ease-in-out;
 ```
 
 **Pulse** (draw attention):
+
 ```css
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
@@ -293,6 +324,7 @@ animation: fadeIn 0.8s ease-in-out;
 ```
 
 ### Animation Guidelines
+
 - Keep animations subtle (0.3-0.8 seconds)
 - Use easing functions (ease, ease-in-out)
 - Don't animate everything - only meaningful interactions
@@ -303,23 +335,27 @@ animation: fadeIn 0.8s ease-in-out;
 ## Accessibility Standards
 
 ### Color Contrast
+
 - Text on white: minimum 4.5:1 ratio (WCAG AA)
 - Large text (18px+): minimum 3:1 ratio
 - Test: Use browser DevTools or online contrast checkers
 
 ### Interactive Elements
+
 - **Buttons**: Clear hover/focus states
 - **Focus indicators**: Visible outline for keyboard navigation
 - **Touch targets**: Minimum 44x44px (iOS guidelines)
 - **Error states**: Don't rely on color alone (use text/icons)
 
 ### Text Readability
+
 - Line length: 50-75 characters ideal
 - Line height: 1.6 for body text
 - Font size: minimum 16px (1em) for body text
 - Avoid pure black (#000) on pure white - use softer contrast
 
 ### Screen Readers
+
 - Use semantic HTML (header, nav, main, article, etc.)
 - Add alt text to images
 - Use aria-labels where needed
@@ -330,6 +366,7 @@ animation: fadeIn 0.8s ease-in-out;
 ## Component Patterns
 
 ### Home Icon (Fixed Position)
+
 ```css
 position: fixed
 top: 20px
@@ -344,6 +381,7 @@ box-shadow: 0 4px 12px rgba(0,0,0,0.15)
 ```
 
 ### Navigation Bar
+
 ```css
 background: #f8f9fa
 padding: 20px
@@ -354,6 +392,7 @@ flex-wrap: wrap
 ```
 
 ### Content Tabs (Modality Selector)
+
 ```css
 display: flex
 gap: 10px
@@ -363,6 +402,7 @@ border-radius: 10px
 ```
 
 ### Tense Selector (Sub-navigation)
+
 ```css
 display: flex
 gap: 10px
@@ -376,6 +416,7 @@ flex-wrap: wrap
 ## Japanese-Specific Design
 
 ### Furigana Display
+
 ```css
 Position above kanji
 Font size: 0.6em
@@ -384,6 +425,7 @@ Line height: minimal (keep close to kanji)
 ```
 
 ### Ruby Text (HTML)
+
 ```html
 <ruby>
     漢字
@@ -392,6 +434,7 @@ Line height: minimal (keep close to kanji)
 ```
 
 ### Audio Buttons
+
 ```css
 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
 color: white
@@ -402,6 +445,7 @@ font-size: 18px
 ```
 
 ### Hint Buttons
+
 ```css
 background: white
 border: 2px solid #667eea
@@ -425,6 +469,7 @@ font-weight: 700
 ## Design Checklist
 
 When creating new pages:
+
 - [ ] Links to `css/shared.css`
 - [ ] Uses established color palette
 - [ ] Follows typography standards

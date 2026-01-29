@@ -7,7 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\" \"#node_modules\"",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -27,6 +30,12 @@
   },
   "homepage": "https://github.com/cmbays/dbt-playground#readme",
   "devDependencies": {
-    "@playwright/test": "^1.58.0"
+    "@playwright/test": "^1.58.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^15.0.0",
+    "markdownlint-cli2": "^0.17.0"
+  },
+  "lint-staged": {
+    "*.md": "markdownlint-cli2 --fix"
   }
 }

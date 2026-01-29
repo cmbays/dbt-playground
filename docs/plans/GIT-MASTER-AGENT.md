@@ -15,6 +15,7 @@
 Introduce a **git-master agent** to centralize all git operations, enforce safety rules proactively, and orchestrate git worktrees for parallel agent development. This addresses current pain points where agents sometimes commit directly to main, skip PR templates, or perform unsafe git operations.
 
 **Value Proposition:**
+
 - **Single point of control** for all git operations across agents
 - **Active prevention** of destructive operations (not just warnings)
 - **Consistent git hygiene** (commit messages, branch naming, PR templates)
@@ -29,8 +30,10 @@ This is a **foundational workflow improvement** that prevents costly git mistake
 
 ## Current State Analysis
 
-### What EXISTS:
+### What EXISTS
+
 ✅ **Strong git documentation** (.claude/rules/git-workflow.md)
+
 - Branch naming conventions (feat/, fix/, docs/, etc.)
 - Conventional Commits format
 - PR template structure
@@ -38,21 +41,25 @@ This is a **foundational workflow improvement** that prevents costly git mistake
 - Safety checklists
 
 ✅ **Safety hooks** (.claude/hooks/pre-bash-check.js)
+
 - Warns about destructive operations (reset --hard, push --force, etc.)
 - Reminds about dev server background mode
 - **BUT: Warnings only, doesn't block (exit 0)**
 
 ✅ **Git operations distributed** across personas:
+
 - **Documenter** - Handles deployment git ops (commit, tag, push)
 - **Developer** - Creates branches, WIP commits
 - **Code Reviewer** - Uses gh CLI for PR interactions
 
 ✅ **PR-based workflow** actively used
+
 - Current branch: feat/phase2-engagement-layer
 - Recent commits follow conventions
 - GitHub CLI integration
 
-### What's MISSING:
+### What's MISSING
+
 ❌ **Centralized git enforcement** - No agent owns git safety
 ❌ **Active blocking** - Hooks warn but allow dangerous operations
 ❌ **Commit message validation** - No pre-commit format checking
@@ -61,7 +68,8 @@ This is a **foundational workflow improvement** that prevents costly git mistake
 ❌ **Protected branch enforcement** - No pre-push hook for main/master
 ❌ **Git operations audit trail** - No centralized logging
 
-### Git Governance Gaps Map:
+### Git Governance Gaps Map
+
 ```
 Current Git Safety (REACTIVE):
 ├── .claude/rules/git-workflow.md - Documentation only (no enforcement)
@@ -89,6 +97,7 @@ Problem: Git safety depends on documentation compliance, not technical enforceme
 **Prefix**: `git-master:` or `git:`
 
 **Core Responsibilities:**
+
 1. **Execute all git operations** (commits, branches, tags, PRs, merges)
 2. **Enforce git safety rules** (block destructive ops, validate format)
 3. **Manage branch lifecycle** (creation, naming, deletion)
@@ -98,12 +107,14 @@ Problem: Git safety depends on documentation compliance, not technical enforceme
 7. **Audit git operations** (log all git commands executed)
 
 **Why "Git-Master":**
+
 - Emphasizes **mastery of git** and **orchestration role**
 - Clear domain ownership (all things git)
 - Consistent with other specialized agents (Sensei, Sage)
 - Suggests **authority and expertise** in git operations
 
 **Why New Persona vs. Extend Documenter:**
+
 - **Different focus**: Git operations vs. documentation
 - **Separation of concerns**: Deployment ≠ git mechanics
 - **Prevents overload**: Documenter already has broad scope
@@ -130,6 +141,7 @@ Developer              Documenter            Code Reviewer
 ```
 
 **Invocation Examples:**
+
 ```
 Developer: "git-master: create branch feat/new-feature"
 Documenter: "git-master: commit these files and create tag v0.3.0"
@@ -152,12 +164,15 @@ Christopher: "git-master: is it safe to push --force here?"
 Git-master manages worktrees for parallel agent work:
 
 **Workflow:**
+
 1. Christopher requests parallel work: "I need agents working on feat-A and feat-B simultaneously"
 2. Git-master creates worktrees:
+
    ```bash
    git worktree add ../japanese-study-site-feat-a feat/feature-a
    git worktree add ../japanese-study-site-feat-b feat/feature-b
    ```
+
 3. Git-master assigns agents to worktrees:
    - Agent 1 → `/Users/cmbays/Documents/claude/japanese-study-site-feat-a`
    - Agent 2 → `/Users/cmbays/Documents/claude/japanese-study-site-feat-b`
@@ -165,6 +180,7 @@ Git-master manages worktrees for parallel agent work:
 5. After work complete, git-master cleans up worktrees
 
 **Safety Features:**
+
 - Prevent force push on branches checked out in other worktrees
 - Alert if multiple agents might modify shared files (shared.css, shared.js)
 - Track worktree status (active, completed, merged)
@@ -179,6 +195,7 @@ Git-master manages worktrees for parallel agent work:
 **Objective**: Create git-master agent persona and update git safety rules
 
 #### Step 1.1: Create Git-Master Persona
+
 - **File**: `.claude/agents/git-master.md`
 - **Content**: Full persona definition following sage.md format
   - Role Summary
@@ -196,6 +213,7 @@ Git-master manages worktrees for parallel agent work:
 - **Prefix**: `git-master:` or `git:`
 
 #### Step 1.2: Create Git Operations Skill
+
 - **File**: `.claude/skills/git-operations.md`
 - **Content**: Step-by-step workflows for common git operations
   - Create branch (with naming validation)
@@ -207,6 +225,7 @@ Git-master manages worktrees for parallel agent work:
 - **Format**: "When to Use", "Process" (steps), "Safety Checks", "Output"
 
 #### Step 1.3: Enhance Git Workflow Rules
+
 - **File**: `.claude/rules/git-workflow.md`
 - **Additions**:
   - **Agent Git Governance** section:
@@ -218,6 +237,7 @@ Git-master manages worktrees for parallel agent work:
   - **Worktree Usage Guidelines** (when/how to use)
 
 #### Step 1.4: Update Pre-Bash Hook for Blocking
+
 - **File**: `.claude/hooks/pre-bash-check.js`
 - **Changes**:
   - Change destructive operations from `exit 0` (warn) to `exit 1` (block)
@@ -226,6 +246,7 @@ Git-master manages worktrees for parallel agent work:
   - Add check: If command starts with `git` (write op), suggest git-master instead
 
 #### Step 1.5: Create Commit Message Validation Hook
+
 - **File**: `.claude/hooks/pre-commit-check.js` (NEW)
 - **Function**: Validate staged commit message format
   - Check Conventional Commits format: `type(scope): description`
@@ -241,6 +262,7 @@ Git-master manages worktrees for parallel agent work:
 **Objective**: Integrate git-master into existing agent workflows and update documentation
 
 #### Step 2.1: Update CLAUDE.md
+
 - **File**: `CLAUDE.md`
 - **Sections to update**:
   - **Agent Orchestration System** table: Add Git-Master row
@@ -249,6 +271,7 @@ Git-master manages worktrees for parallel agent work:
   - **Artifact Locations** table: Add "Git audit log" entry
 
 #### Step 2.2: Update Agent System Docs
+
 - **File**: `.claude/agents/AGENTS.md`
   - Add Git-Master to persona table
   - Document horizontal service pattern
@@ -261,6 +284,7 @@ Git-master manages worktrees for parallel agent work:
   - Add usage examples
 
 #### Step 2.3: Update Documenter Persona
+
 - **File**: `.claude/agents/documenter.md`
 - **Changes**:
   - Update "Handoff" to include git-master for git operations
@@ -269,6 +293,7 @@ Git-master manages worktrees for parallel agent work:
   - Update deployment workflow to show git-master invocation
 
 #### Step 2.4: Update Deployment Workflow
+
 - **File**: `.claude/skills/deployment-workflow.md`
 - **Changes**:
   - "Git Operations" section now shows git-master invocation pattern
@@ -276,6 +301,7 @@ Git-master manages worktrees for parallel agent work:
   - Update checklist to include "Git-master approval for push"
 
 #### Step 2.5: Create Git-Master Command
+
 - **File**: `.claude/commands/commit.md` (NEW)
 - **Purpose**: Shortcut for creating commits via git-master
 - **Usage**: `/commit "feat(scope): description"` → invokes git-master with validation
@@ -293,6 +319,7 @@ Git-master manages worktrees for parallel agent work:
 **Note**: This phase is OPTIONAL and can be deferred until parallel agent workflows are needed.
 
 #### Step 3.1: Add Worktree Management to Git-Master
+
 - **File**: `.claude/agents/git-master.md`
 - **Add responsibilities**:
   - Create worktrees for parallel agent work
@@ -301,6 +328,7 @@ Git-master manages worktrees for parallel agent work:
   - Cleanup completed worktrees
 
 #### Step 3.2: Create Worktree Workflow Skill
+
 - **File**: `.claude/skills/worktree-orchestration.md`
 - **Content**:
   - When to use worktrees (parallel agent work)
@@ -310,9 +338,11 @@ Git-master manages worktrees for parallel agent work:
   - Cleanup procedures
 
 #### Step 3.3: Add Worktree Tracking System
+
 - **File**: `temp/WORKTREE_REGISTRY.json` (NEW, gitignored)
 - **Purpose**: Track active worktrees and assignments
 - **Structure**:
+
   ```json
   {
     "worktrees": [
@@ -328,6 +358,7 @@ Git-master manages worktrees for parallel agent work:
   ```
 
 #### Step 3.4: Update CLAUDE.md with Worktree Workflow
+
 - **File**: `CLAUDE.md`
 - **Add section**: "Git Worktree Workflow for Parallel Development"
   - When to use worktrees
@@ -342,6 +373,7 @@ Git-master manages worktrees for parallel agent work:
 **Objective**: Verify git-master works correctly and doesn't disrupt workflows
 
 #### Step 4.1: Test Safety Enforcement
+
 - **Scenarios**:
   - [x] Attempt `git reset --hard` → Should block with error message
   - [x] Attempt `git push --force` to main → Should block
@@ -350,6 +382,7 @@ Git-master manages worktrees for parallel agent work:
   - [x] Invalid commit message → Should reject with guidance
 
 #### Step 4.2: Test Agent Integration
+
 - **Scenarios**:
   - [x] Developer requests branch creation → git-master validates name and creates
   - [x] Documenter requests deployment → git-master handles commit/tag/push
@@ -357,13 +390,16 @@ Git-master manages worktrees for parallel agent work:
   - [x] Christopher requests status check → git-master provides safe read-only info
 
 #### Step 4.3: Test PR Workflow
+
 - **Scenarios**:
   - [x] Create PR via git-master → Template enforced, description validated
   - [x] Merge PR via git-master → Safety checks pass, main branch updated
   - [x] Attempt merge without approval → Should require confirmation
 
 #### Step 4.4: Rollback Plan
+
 If git-master causes friction or blocks legitimate work:
+
 - **Immediate**: Temporarily disable pre-bash blocking (revert hook to exit 0)
 - **Short-term**: Adjust safety rules based on false positives
 - **Long-term**: Refine git-master validation logic based on real usage
@@ -372,7 +408,7 @@ If git-master causes friction or blocks legitimate work:
 
 ## Critical Files
 
-### Files to CREATE:
+### Files to CREATE
 
 1. **`.claude/agents/git-master.md`** - Agent persona definition ✅ DONE
    - Core responsibilities, safety gates, invocation patterns
@@ -401,7 +437,7 @@ If git-master causes friction or blocks legitimate work:
 8. **`temp/WORKTREE_REGISTRY.json`** (Phase 3, gitignored)
    - Active worktree tracking
 
-### Files to MODIFY:
+### Files to MODIFY
 
 1. **`.claude/rules/git-workflow.md`**
    - Add "Agent Git Governance" section
@@ -442,7 +478,8 @@ If git-master causes friction or blocks legitimate work:
 
 ## Verification Plan
 
-### After Phase 1 (Foundation):
+### After Phase 1 (Foundation)
+
 - [ ] Git-master agent persona exists and is complete
 - [ ] Git operations skill created with all workflows
 - [ ] Pre-bash hook blocks destructive operations (exit 1)
@@ -450,7 +487,8 @@ If git-master causes friction or blocks legitimate work:
 - [ ] Git workflow rules updated with agent governance
 - [ ] Can invoke git-master with `git-master:` prefix
 
-### After Phase 2 (Integration):
+### After Phase 2 (Integration)
+
 - [ ] CLAUDE.md references git-master for all git operations
 - [ ] AGENTS.md shows git-master as horizontal service
 - [ ] Documenter persona delegates git ops to git-master
@@ -458,21 +496,24 @@ If git-master causes friction or blocks legitimate work:
 - [ ] /commit and /branch commands work
 - [ ] No broken cross-references
 
-### After Phase 3 (Worktree Support):
+### After Phase 3 (Worktree Support)
+
 - [ ] Git-master can create worktrees
 - [ ] Worktree registry tracks active worktrees
 - [ ] Worktree orchestration skill documents workflows
 - [ ] CLAUDE.md includes worktree workflow section
 - [ ] Safety checks prevent conflicts between worktrees
 
-### After Phase 4 (Testing):
+### After Phase 4 (Testing)
+
 - [ ] All safety enforcement scenarios pass
 - [ ] Agent integration scenarios work smoothly
 - [ ] PR workflow enforces template and validation
 - [ ] Rollback plan documented and tested
 - [ ] No false positives blocking legitimate work
 
-### Final System Check:
+### Final System Check
+
 - [ ] Can invoke git-master for all git operations
 - [ ] Destructive operations blocked without approval
 - [ ] Commit messages validated automatically
@@ -487,6 +528,7 @@ If git-master causes friction or blocks legitimate work:
 ## Success Criteria
 
 **Immediate (Phase 1-2 Complete):**
+
 - ✅ Git-master agent operational and invocable
 - ✅ Destructive git operations blocked proactively (not just warned)
 - ✅ Commit message format validated automatically
@@ -495,12 +537,14 @@ If git-master causes friction or blocks legitimate work:
 - ✅ PR template enforcement active
 
 **Short-term (Phase 3 Complete, if needed):**
+
 - ✅ Git worktrees orchestrated by git-master
 - ✅ Parallel agent development enabled safely
 - ✅ Worktree conflicts detected and prevented
 - ✅ Shared file modification alerts working
 
 **Long-term (v1.0+):**
+
 - ✅ Zero git mistakes (no more direct main commits)
 - ✅ 100% conventional commit compliance
 - ✅ Git audit trail provides transparency
@@ -511,7 +555,8 @@ If git-master causes friction or blocks legitimate work:
 
 ## Trade-offs and Considerations
 
-### Pros:
+### Pros
+
 ✅ **Prevents costly git mistakes** (force push, lost work, broken history)
 ✅ **Consistent git hygiene** (commit format, branch naming, PR templates)
 ✅ **Reduces cognitive load** (Christopher doesn't verify every git operation)
@@ -520,14 +565,16 @@ If git-master causes friction or blocks legitimate work:
 ✅ **Learning accumulation** (git-master gets smarter about project patterns)
 ✅ **Foundation for CI/CD** (centralized git control enables future automation)
 
-### Cons:
+### Cons
+
 ❌ **Adds complexity** (another agent to invoke)
 ❌ **Potential friction** (blocking operations might slow workflow initially)
 ❌ **False positives** (legitimate operations might be blocked)
 ❌ **Learning curve** (agents need to adapt to git-master delegation)
 ❌ **Overhead** (extra step for simple git operations)
 
-### Mitigations:
+### Mitigations
+
 - **Clear invocation patterns** - Simple prefixes (`git-master:`) and commands (`/commit`)
 - **Refinement based on usage** - Adjust safety rules if false positives occur
 - **Rollback plan** - Can temporarily disable blocking if needed
@@ -535,29 +582,34 @@ If git-master causes friction or blocks legitimate work:
 - **Gradual rollout** - Start with Phase 1-2, add Phase 3 only when needed
 - **Exception mechanism** - Allow explicit user override for edge cases
 
-### Alternatives Considered:
+### Alternatives Considered
 
 **1. Enhance hooks instead of new agent**
+
 - **Rejected**: Hooks are reactive (after command entered); agent is proactive (guides process)
 - Hooks can't provide intelligent guidance or context-aware validation
 - Agent can handle complex workflows (worktrees, PR templates) that hooks can't
 
 **2. Extend Documenter instead of new persona**
+
 - **Rejected**: Different focus (git mechanics vs. documentation)
 - Separation of concerns clearer with dedicated agent
 - Git-master reusable by all personas, not just deployment
 
 **3. Name: "Git-Guardian" vs "Git-Master" vs "Git-Ops"**
+
 - **"Git-Guardian"**: Emphasizes safety, but sounds passive/defensive
 - **"Git-Master"**: ✅ **CHOSEN** - Emphasizes expertise and orchestration
 - **"Git-Ops"**: Too generic, doesn't convey authority
 
 **4. Prefix: "git-master:" vs "git:" vs "gm:"**
+
 - **"git-master:"**: ✅ **CHOSEN** - Explicit, clear domain
 - **"git:"**: Shorter but might conflict with git commands
 - **"gm:"**: Too cryptic, not self-documenting
 
 **5. Immediate worktree implementation vs. deferred**
+
 - **Deferred to Phase 3**: ✅ **CHOSEN** - Avoid over-engineering, add when needed
 - Start simple (Phase 1-2), prove value before adding complexity
 
@@ -565,17 +617,20 @@ If git-master causes friction or blocks legitimate work:
 
 ## Dependencies
 
-### Technical Dependencies:
+### Technical Dependencies
+
 - Git 2.5+ (for worktree support in Phase 3)
 - Node.js (for hooks)
 - GitHub CLI (for PR operations)
 
-### Process Dependencies:
+### Process Dependencies
+
 - PR workflow already established ✅
 - Conventional Commits understood ✅
 - Agent orchestration system mature ✅
 
-### Blocking Issues:
+### Blocking Issues
+
 - None identified
 
 ---
@@ -583,11 +638,13 @@ If git-master causes friction or blocks legitimate work:
 ## Future Enhancements
 
 **v0.4+:**
+
 - Git audit log viewer (see all operations git-master performed)
 - Statistics (commit frequency, branch health, PR cycle time)
 - Smart suggestions (detect when branch should be merged, rebase recommended)
 
 **v1.0+:**
+
 - Integration with CI/CD (git-master triggers builds, runs tests)
 - Auto-rebase feature branches to stay current with main
 - Conflict prediction (alert before merge conflicts occur)
@@ -597,13 +654,15 @@ If git-master causes friction or blocks legitimate work:
 
 ## Decisions Made
 
-### From User Input:
+### From User Input
+
 1. **Problem Identified**: ✅ Agents sometimes merge to main, skip PR templates, perform unsafe git ops
 2. **Solution Approach**: ✅ Centralized git-master agent (not just enhanced hooks)
 3. **Scope**: ✅ Phase 1-2 immediate, Phase 3 worktrees deferred until needed
 4. **Integration Pattern**: ✅ Horizontal service agent (invoked by others)
 
-### From Planning Research:
+### From Planning Research
+
 5. **Agent Name**: ✅ "Git-Master" (expertise and orchestration focus)
 6. **Prefix**: ✅ `git-master:` or `git:` (explicit, clear)
 7. **Safety Enforcement**: ✅ BLOCK destructive ops (exit 1), not just warn
@@ -611,7 +670,8 @@ If git-master causes friction or blocks legitimate work:
 9. **Documenter Separation**: ✅ Delegate git ops to git-master, focus on docs
 10. **Phased Approach**: ✅ Foundation → Integration → Worktrees → Testing
 
-### Open Questions for User:
+### Open Questions for User
+
 None - plan is comprehensive and ready for approval.
 
 ---
@@ -619,6 +679,7 @@ None - plan is comprehensive and ready for approval.
 **Plan Status**: ✅ **READY FOR IMPLEMENTATION (Future Session)**
 
 **Estimated Effort**:
+
 - Phase 1 (Foundation): 3-4 hours
 - Phase 2 (Integration): 2-3 hours
 - Phase 3 (Worktree Support): 3-4 hours (OPTIONAL, deferred)
@@ -636,6 +697,7 @@ None - plan is comprehensive and ready for approval.
 **During Implementation**: This plan is stored in `docs/plans/GIT-MASTER-AGENT.md` for future reference.
 
 **Related Documentation**:
+
 - `.claude/agents/git-master.md` - Agent persona (created in Phase 1)
 - `.claude/rules/git-workflow.md` - Git standards (to be enhanced)
 - `.claude/skills/git-operations.md` - Git workflows (to be created)
@@ -646,11 +708,13 @@ None - plan is comprehensive and ready for approval.
 ## Next Steps for Future Session
 
 **To Resume:**
+
 ```bash
 git stash pop
 ```
 
 **Implementation Order:**
+
 1. Create `.claude/skills/git-operations.md` (Git workflows)
 2. Create `.claude/hooks/pre-commit-check.js` (Message validation)
 3. Update `.claude/hooks/pre-bash-check.js` (Enable blocking)

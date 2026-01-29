@@ -14,7 +14,7 @@ tags: [reference, architecture, technical]
 
 ### High-Level Structure
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │         dbt-playground                  │
 │    Data Analytics Development           │
@@ -40,32 +40,38 @@ tags: [reference, architecture, technical]
 
 ### Key Architectural Decisions
 
-**1. Agent-First Development**
+#### Agent-First Development
+
 - Multi-persona system for specialized tasks
 - Structured workflows (PRD → TDD → Implementation)
 - Git governance via git-master agent
 
-**Benefits**:
+Benefits:
+
 - Consistent development patterns
 - Quality gates at each phase
 - Knowledge accumulation via Sage persona
 
-**2. Documentation-Driven**
+#### Documentation-Driven
+
 - Living documentation kept current
 - PRDs for requirements
 - TDDs for technical specifications
 
-**Benefits**:
+Benefits:
+
 - Clear requirements before implementation
 - Traceable decisions
 - Onboarding support for future development
 
-**3. dbt for Data Transformation (Planned)**
+#### dbt for Data Transformation (Planned)
+
 - SQL-based transformations
 - Version-controlled data models
 - Built-in testing and documentation
 
-**Benefits**:
+Benefits:
+
 - Industry-standard data tooling
 - Reproducible transformations
 - Self-documenting data pipelines
@@ -76,7 +82,7 @@ tags: [reference, architecture, technical]
 
 ### Persona System
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │           Assembly Line Flow            │
 ├─────────────────────────────────────────┤
@@ -92,7 +98,7 @@ tags: [reference, architecture, technical]
 
 ### Git Governance
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │         Git-Master Enforcement          │
 ├─────────────────────────────────────────┤
@@ -107,12 +113,14 @@ tags: [reference, architecture, technical]
 ## Technology Stack
 
 ### Current
+
 - **Documentation**: Markdown with YAML frontmatter
 - **Version Control**: Git with conventional commits
 - **Agent System**: Claude Code with MCP servers
 - **Hooks**: JavaScript-based pre/post tool hooks
 
 ### Planned (dbt Integration)
+
 - **dbt**: Data transformation framework
 - **SQL**: Data modeling language
 - **dbt-mcp**: AI-assisted dbt development
@@ -124,7 +132,8 @@ tags: [reference, architecture, technical]
 
 For complete directory structure, see **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)**.
 
-**Key organizational principles**:
+Key organizational principles:
+
 - **Documentation hierarchy** (docs/, temp/)
 - **Agent configuration** (.claude/)
 - **Work-in-progress isolation** (temp/)
@@ -136,7 +145,7 @@ For complete directory structure, see **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE
 
 ### dbt Project Structure (When Added)
 
-```
+```text
 dbt-playground/
 ├── models/           # dbt models
 │   ├── staging/      # Source transformations

@@ -27,6 +27,7 @@ Build the "Engagement Layer" on top of Phase 1's SRS foundation to make studying
 ## Sprint 1: XP & Levels System
 
 ### Features
+
 - XP points earned per card (quality-dependent: 0/5/10/12)
 - Streak bonus XP (+2 at 7+ days, +5 at 30+ days)
 - Perfect session bonus (+50 XP)
@@ -35,6 +36,7 @@ Build the "Engagement Layer" on top of Phase 1's SRS foundation to make studying
 - Dashboard widget: Level badge + XP progress bar
 
 ### Schema Changes (storage.js v1.1.0)
+
 ```javascript
 stats.xp: {
   total: 0,
@@ -46,12 +48,14 @@ stats.xp: {
 ```
 
 ### Files to Modify/Create
+
 - `storage.js` - Schema v1.1.0, migration function
 - `session-manager.js` - Award XP after review
 - `xp-engine.js` (NEW) - XP calculation, level thresholds
 - `index.html` - Level/XP widget in dashboard
 
 ### Acceptance Criteria
+
 - [ ] XP awarded after each card review (quality-dependent)
 - [ ] Streak bonus applied when streak >= 7 days
 - [ ] Perfect session bonus awarded at 100% accuracy
@@ -64,6 +68,7 @@ stats.xp: {
 ## Sprint 2: Progress & Mastery Dashboard
 
 ### Features
+
 - Topic mastery rings (SVG circular progress x 4 topics)
 - JLPT mastery bars (horizontal bars N5-N2)
 - Stage distribution pie/donut chart
@@ -73,6 +78,7 @@ stats.xp: {
 - Stats summary panel
 
 ### Schema Changes
+
 ```javascript
 stats.daily_history: { "YYYY-MM-DD": { reviews, correct, xp_earned } }
 stats.mastery_snapshots: [{ date, overall, n5, n4, n3, n2 }]
@@ -80,6 +86,7 @@ stats.at_risk_kanji: [{ character, dropped_from, dropped_to, date }]
 ```
 
 ### Files to Modify/Create
+
 - `storage.js` - History CRUD, snapshot management
 - `mastery-calculator.js` - Trend calculations
 - `session-manager.js` - Track at-risk kanji on stage drops
@@ -87,6 +94,7 @@ stats.at_risk_kanji: [{ character, dropped_from, dropped_to, date }]
 - `index.html` - New visualization components
 
 ### Acceptance Criteria
+
 - [ ] Topic mastery rings display 0-100% per topic
 - [ ] JLPT bars show percentage with color coding
 - [ ] Heatmap shows 365-day activity history
@@ -99,12 +107,14 @@ stats.at_risk_kanji: [{ character, dropped_from, dropped_to, date }]
 ## Sprint 3: Daily Goals
 
 ### Features
+
 - Goal setting UI (modal: 5/10/20/custom cards)
 - Goal progress bar on dashboard
 - Goal completion celebration + bonus XP (10% of goal)
 - Browser notification opt-in with configurable time
 
 ### Schema Changes
+
 ```javascript
 settings.daily_goal: {
   enabled: true,
@@ -116,11 +126,13 @@ stats.today.goal_completed: false
 ```
 
 ### Files to Modify/Create
+
 - `storage.js` - Goal settings validation
 - `goals-manager.js` (NEW) - Progress tracking, notifications
 - `index.html` - Goal setting modal, progress bar
 
 ### Acceptance Criteria
+
 - [ ] Goal setting modal allows 5/10/20/custom choice
 - [ ] Progress bar shows X/Y cards completed
 - [ ] Goal completion triggers celebration + bonus XP
@@ -148,36 +160,43 @@ stats.today.goal_completed: false
 Following project standard workflow:
 
 ### Step 1: PM Review PRD-003
+
 - PRD-003 (Habit Formation System) already exists in Draft
 - Review and update for any missing requirements
 - Create PRD-005 for Sprint 2 Progress Dashboard (not covered in PRD-003)
 
 ### Step 2: Architect Creates TDD-003
+
 - Detailed API contracts for xp-engine.js, goals-manager.js
 - Chart rendering approach (CSS/SVG, no libraries)
 - Data flow diagrams
 - Test specifications
 
 ### Step 3: PM Creates GitHub Issues
+
 - Epic issue for Phase 2
 - Task issues per feature (T2.1, T2.2, etc.)
 - Link to TDD-003 sections
 
 ### Step 4: Developer Implements
+
 - Follow TDD specifications exactly
 - Create test files alongside implementation
 - Feature branch per sprint
 
 ### Step 5: Tester Verifies
+
 - Unit tests for new modules
 - Integration tests for XP flow
 - Manual browser testing
 
 ### Step 6: Code Review & Merge
+
 - Review against TDD requirements
 - Merge to main, tag v0.4.0
 
 ### Step 7: Post-Completion
+
 - PM closes GitHub issues
 - Documenter updates CHANGELOG
 - Sage extracts learnings
@@ -187,12 +206,14 @@ Following project standard workflow:
 ## Critical Files
 
 ### To Modify
+
 - `/content/kanji/js/storage.js` - Schema v1.1.0, migration
 - `/content/kanji/js/session-manager.js` - XP awards, history tracking
 - `/content/kanji/js/mastery-calculator.js` - Trend snapshots
 - `/content/kanji/index.html` - Major UI additions
 
 ### To Create
+
 - `/content/kanji/js/xp-engine.js` - XP and level system
 - `/content/kanji/js/goals-manager.js` - Daily goals
 - `/content/kanji/css/dashboard.css` - Chart/heatmap styles
@@ -204,15 +225,18 @@ Following project standard workflow:
 ## Verification Plan
 
 ### Unit Tests
+
 - `test-xp-engine.html` - XP calculation, level thresholds
 - `test-goals-manager.html` - Goal progress, completion
 
 ### Integration Tests
+
 - Complete session → XP awarded → Level advances → UI updates
 - Stage drop → At-risk panel updates
 - Daily goal met → Celebration + bonus XP
 
 ### Browser Testing
+
 - New user: XP starts at 0, Level 1
 - Existing user: Migration preserves data
 - Heatmap colors match review counts

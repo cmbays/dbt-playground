@@ -47,12 +47,14 @@ The Claude Task GitHub Integration system enables cross-session task persistence
 ### When to Use
 
 **Use Claude Tasks for**:
+
 - Session-level work coordination between agents
 - Breaking down GitHub issues into implementation sub-tasks
 - Tracking progress within a single coding session
 - Agent handoffs (PM → Architect → Developer → Reviewer)
 
 **Use GitHub Issues for**:
+
 - Long-term project planning and roadmap
 - External visibility and collaboration
 - Milestone tracking and release planning
@@ -91,11 +93,13 @@ The Claude Task GitHub Integration system enables cross-session task persistence
 ### Data Flow
 
 **Pull Integration (Phase 2)**:
+
 ```
 GitHub Issue → issue-to-task.sh → validate-metadata.sh → TaskCreate → Claude Task
 ```
 
 **Push Integration (Phase 3+)**:
+
 ```
 Claude Task (completed) → task-to-status.sh → gh CLI → GitHub Issue (status update)
 ```
@@ -140,6 +144,7 @@ All task metadata must include a `type` field and conform to type-specific valid
 ### Type-Specific Validation
 
 #### Epic Metadata
+
 ```javascript
 {
   "type": "epic",           // Required
@@ -156,6 +161,7 @@ All task metadata must include a `type` field and conform to type-specific valid
 **Validation**: Must have `epic_id` matching pattern and `prd` field.
 
 #### Task Metadata
+
 ```javascript
 {
   "type": "task",          // Required
@@ -173,6 +179,7 @@ All task metadata must include a `type` field and conform to type-specific valid
 **Validation**: No required fields beyond `type`. Optional fields validated if present.
 
 #### TDD Metadata
+
 ```javascript
 {
   "type": "tdd",                 // Required
@@ -188,6 +195,7 @@ All task metadata must include a `type` field and conform to type-specific valid
 **Validation**: Must have `tdd_id` (3 digits) and `epic_id` (PRD-XXX format).
 
 #### PM Work Metadata
+
 ```javascript
 {
   "type": "pm-work",       // Required
@@ -200,6 +208,7 @@ All task metadata must include a `type` field and conform to type-specific valid
 **Validation**: Only `type` required.
 
 #### Documentation Metadata
+
 ```javascript
 {
   "type": "documentation",  // Required
@@ -296,11 +305,13 @@ TaskCreate({
 **Purpose**: Validates Claude task metadata against JSON schema
 
 **Usage**:
+
 ```bash
 .claude/scripts/core/validate-metadata.sh '<metadata-json>'
 ```
 
 **Examples**:
+
 ```bash
 # Valid Epic metadata
 .claude/scripts/core/validate-metadata.sh '{
@@ -320,6 +331,7 @@ TaskCreate({
 ```
 
 **Exit Codes**:
+
 - `0` - Metadata is valid
 - `1` - Metadata is invalid (schema violation)
 - `2` - System error (jq missing, invalid JSON syntax)
@@ -333,6 +345,7 @@ TaskCreate({
 **Purpose**: Utility functions for metadata extraction and formatting
 
 **Usage**:
+
 ```bash
 source .claude/scripts/core/task-helpers.sh
 
@@ -348,6 +361,7 @@ build_task_metadata 14 "T1.2" 7 "§3"
 ```
 
 **Functions**:
+
 - `get_github_issue` - Extract GitHub issue number
 - `get_task_type` - Extract task type
 - `is_sync_enabled` - Check if sync enabled
@@ -367,11 +381,13 @@ build_task_metadata 14 "T1.2" 7 "§3"
 **Purpose**: Converts GitHub issue to Claude TaskCreate call
 
 **Usage**:
+
 ```bash
 .claude/scripts/github-sync/issue-to-task.sh <issue-number>
 ```
 
 **Examples**:
+
 ```bash
 # Convert Epic issue #7
 .claude/scripts/github-sync/issue-to-task.sh 7
@@ -393,6 +409,7 @@ TaskCreate({
 ```
 
 **Exit Codes**:
+
 - `0` - Conversion successful
 - `1` - Validation error
 - `2` - GitHub error (issue not found, gh CLI failed)
@@ -406,6 +423,7 @@ TaskCreate({
 **Scenario**: You want to work on Epic #7 in Claude session
 
 **Steps**:
+
 ```bash
 # 1. Convert GitHub issue to TaskCreate call
 .claude/scripts/github-sync/issue-to-task.sh 7
@@ -428,6 +446,7 @@ TaskList()
 **Scenario**: Epic task exists, you want to create implementation sub-tasks
 
 **Steps**:
+
 ```javascript
 // In Claude session with Epic task already created
 
@@ -468,6 +487,7 @@ TaskList()
 **Scenario**: PM → Architect → Developer handoff
 
 **Phase 1: PM Creates Epic Task**:
+
 ```bash
 # PM converts Epic issue to task
 .claude/scripts/github-sync/issue-to-task.sh 7
@@ -475,6 +495,7 @@ TaskList()
 ```
 
 **Phase 2: Architect Creates TDD Task**:
+
 ```javascript
 // Architect sees Epic task via TaskList()
 // Creates TDD task linked to Epic
@@ -490,6 +511,7 @@ TaskCreate({
 ```
 
 **Phase 3: Developer Works on Implementation**:
+
 ```javascript
 // Developer sees both Epic and TDD tasks
 // Creates implementation task
@@ -520,6 +542,7 @@ TaskUpdate({
 **Cause**: Malformed JSON in metadata string
 
 **Solution**:
+
 ```bash
 # Test JSON syntax first
 echo '{"type": "epic"}' | jq .
@@ -535,6 +558,7 @@ echo '{"type": "epic"}' | jq .
 **Cause**: Epic metadata missing required field
 
 **Solution**:
+
 ```javascript
 // ❌ Invalid
 {
@@ -557,6 +581,7 @@ echo '{"type": "epic"}' | jq .
 **Cause**: Epic ID doesn't follow required format
 
 **Solution**:
+
 ```javascript
 // ❌ Invalid patterns
 "epic_id": "PRD-1"      // Need 3 digits
@@ -576,6 +601,7 @@ echo '{"type": "epic"}' | jq .
 **Cause**: TDD section doesn't use correct format
 
 **Solution**:
+
 ```javascript
 // ❌ Invalid formats
 "tdd_section": "section3"   // Must use §
@@ -595,6 +621,7 @@ echo '{"type": "epic"}' | jq .
 **Cause**: Effort value not in allowed set
 
 **Solution**:
+
 ```javascript
 // ❌ Invalid values
 "effort": "SMALL"
@@ -615,6 +642,7 @@ echo '{"type": "epic"}' | jq .
 **Cause**: GitHub CLI not installed
 
 **Solution**:
+
 ```bash
 # Install gh CLI
 brew install gh
@@ -633,6 +661,7 @@ gh --version
 **Cause**: jq not installed
 
 **Solution**:
+
 ```bash
 # Install jq
 brew install jq
@@ -648,6 +677,7 @@ jq --version
 ### Q: When should I use GitHub issues vs Claude tasks?
 
 **A**:
+
 - **GitHub issues**: Long-term planning, external visibility, milestone tracking, source of truth
 - **Claude tasks**: Session-level work, agent coordination, breaking down implementation, temporary sub-tasks
 
@@ -686,6 +716,7 @@ jq --version
 ### Q: What's the difference between `type: "task"` and `type: "epic"`?
 
 **A**:
+
 - **Epic**: Parent feature, requires `epic_id` and `prd`, represents GitHub Epic issue
 - **Task**: Implementation work, no required fields beyond `type`, represents implementation sub-task
 
@@ -703,6 +734,7 @@ jq --version
 ---
 
 **Version History**:
+
 - v0.3 (2026-01-25): Initial MVP (Phases 0-2)
 
 **Maintained by**: Claude (Technical Architect / Developer)

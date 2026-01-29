@@ -14,6 +14,7 @@ This directory contains Product Requirement Documents that define features befor
 ## Purpose
 
 PRDs capture the "what" and "why" of features:
+
 - Problem being solved
 - User benefit
 - Acceptance criteria
@@ -28,6 +29,7 @@ PRD-[NUMBER]-[short-name].md
 ```
 
 Examples:
+
 - `PRD-001-sample-data-pipeline.md`
 - `PRD-002-incremental-models.md`
 - `PRD-003-data-quality-tests.md`

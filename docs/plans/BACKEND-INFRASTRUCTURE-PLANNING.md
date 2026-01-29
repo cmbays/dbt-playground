@@ -3,6 +3,7 @@
 ## Overview
 
 Plan for building backend infrastructure to support user accounts, progress tracking, and spaced repetition scheduling. This work will unlock:
+
 - Cross-device synchronization
 - Personalized learning schedules
 - Future premium features (social, analytics)
@@ -14,6 +15,7 @@ Plan for building backend infrastructure to support user accounts, progress trac
 **Created**: 2026-01-25
 **Updated**: 2026-01-25
 **Documentation**:
+
 - [PRD-006: Backend Infrastructure Setup](../specs/PRD-006-Backend-Infrastructure-Setup.md)
 - [TDD-006: Backend Infrastructure Design](../tdd/TDD-006-Backend-Infrastructure.md)
 - [Backend Planning Guide](../reference/BACKEND-PLANNING-GUIDE.md)
@@ -23,12 +25,14 @@ Plan for building backend infrastructure to support user accounts, progress trac
 ## Problem & Opportunity
 
 ### Current State (v0.2-v0.4)
+
 - ✅ Rich frontend: kanji flashcards, engagement gamification, progress visualization
 - ❌ Data lives only in localStorage (lost on device change, cleared on cache flush)
 - ❌ No accounts: can't identify users, no progress persistence
 - ❌ No scheduling: users manually pick what to study (inefficient)
 
 ### Future State (v1.0+)
+
 - ✅ Persistent accounts (signup/login)
 - ✅ Server-side progress tracking (sync across devices)
 - ✅ Spaced repetition scheduling (SM-2 algorithm or similar)
@@ -49,6 +53,7 @@ This is **not immediate work**. It follows a deliberate review process with mult
 **Output**: PRD-006 (approved), GitHub issue, scope definition
 
 **PM Tasks**:
+
 1. Answer critical business questions (see PRD-006 Open Questions):
    - What's MVP scope? (Progress tracking? + Spaced rep?)
    - Authentication approach? (Username/password only? OAuth future?)
@@ -163,6 +168,7 @@ This is **not immediate work**. It follows a deliberate review process with mult
    - Assign owner for next phase
 
 **Outcome**:
+
 - Final decisions locked in
 - No more ambiguity for Backend Developer
 - Ready to implement
@@ -204,9 +210,11 @@ When backend work actually begins:
 These decisions will be made during PM/Architect phases:
 
 ### Scope Decision (PM)
+
 **Question**: What's the MVP?
 
 **Options**:
+
 - A) Basic progress tracking only (simpler, faster MVP)
 - B) Progress + spaced rep scheduling (more value, more complex)
 - C) Progress + spaced rep + social features (ambitious, delays MVP)
@@ -218,6 +226,7 @@ These decisions will be made during PM/Architect phases:
 ---
 
 ### Technology Stack (Architect)
+
 **Question**: Which framework/database/hosting?
 
 **Decision Matrix** (Architect fills this in):
@@ -240,14 +249,17 @@ The decision constrains everything downstream (database schema design, API patte
 ---
 
 ### Agent Splitting (Both)
+
 **Question**: When do we split developer agents?
 
 **Current Decision** ✅ (Already decided):
+
 - **Keep** single `dev:` persona through v0.4
 - **Split** `frontend-dev:` + `backend-dev:` when backend infrastructure work begins
 - **Trigger**: This document + approved decisions + GitHub issue created
 
 **Boundary**:
+
 - **Frontend Dev**: `content/`, HTML/CSS/JS, client-side integration, localStorage
 - **Backend Dev**: `api/` or `backend/`, authentication, database, server-side logic
 - **Shared**: Data contracts (API spec), tests, CLAUDE.md patterns
@@ -302,17 +314,20 @@ Note: No time estimates for individual sessions—focus on completion criteria i
 ## When to Start This Work
 
 ### Prerequisites (Must Be Met First)
+
 - [ ] Kanji study module stable (v0.3+)
 - [ ] Engagement layer complete (v0.4, XP/levels/goals)
 - [ ] Frontend architecture patterns solidified
 - [ ] Team ready to add backend complexity
 
 ### Trigger Events
+
 - User requests: "I want my progress saved between devices"
 - Project milestone: Kanji module feature-complete, ready to scale
 - Business need: Need user accounts for premium features or analytics
 
-### Not Starting This Work If...
+### Not Starting This Work If
+
 - Kanji study still has critical bugs
 - Engagement features are still in flux
 - Team is at capacity with frontend work
@@ -352,6 +367,7 @@ Note: No time estimates for individual sessions—focus on completion criteria i
 ## Next Steps
 
 **For PM (when ready to start)**:
+
 1. Read `PRD-006-Backend-Infrastructure-Setup.md` top-to-bottom
 2. Answer the 6 questions in "Open Questions" section
 3. Refine acceptance criteria (make them specific)
@@ -359,6 +375,7 @@ Note: No time estimates for individual sessions—focus on completion criteria i
 5. Notify Architect: "PRD approved, ready for TDD work"
 
 **For Architect (when PM done)**:
+
 1. Read `TDD-006-Backend-Infrastructure.md` top-to-bottom
 2. Research each technology option (Node/Python/Firebase/Next.js)
 3. Complete "Alternative Approaches" with real findings
@@ -368,6 +385,7 @@ Note: No time estimates for individual sessions—focus on completion criteria i
 7. Notify PM: "TDD approved, ready for joint review"
 
 **For Joint Review (when both done)**:
+
 1. Use BACKEND-PLANNING-GUIDE Phase 3 section
 2. 30-minute focused meeting covering:
    - PRD approval + MVP scope confirmation
@@ -383,6 +401,7 @@ Note: No time estimates for individual sessions—focus on completion criteria i
 ## Questions?
 
 If anything is unclear:
+
 - Check the detailed PRD-006, TDD-006 documents
 - Read BACKEND-PLANNING-GUIDE for workflow details
 - Reference CLAUDE.md for persona definitions

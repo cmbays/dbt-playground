@@ -9,6 +9,7 @@
 ## Tagging Schema
 
 ### Audience Tags
+
 - `pm` - Product Manager
 - `architect` - Technical Architect
 - `developer` - Feature Developer
@@ -18,16 +19,19 @@
 - `multi-agent` - All personas
 
 ### Priority Levels
+
 - `high` - Load for most tasks (core workflows, frequently referenced)
 - `medium` - Load when task-relevant
 - `low` - Reference only (load on explicit mention)
 
 ### Size Categories
+
 - `small` - <5K tokens (~2500 words)
 - `medium` - 5-15K tokens (~2500-7500 words)
 - `large` - >15K tokens (>7500 words)
 
 ### Status Values
+
 - `active` - Current, authoritative
 - `draft` - Work in progress
 - `deprecated` - Superseded, for reference only
@@ -39,6 +43,7 @@
 ### guides/ (How-to workflows)
 
 #### PROJECT_WORKFLOW.md
+
 ```yaml
 audience: [multi-agent]
 priority: high
@@ -47,9 +52,11 @@ dependencies: [PROJECT_STRUCTURE, ARCHITECTURE]
 status: active
 tags: [workflow, planning, epic, tdd, task]
 ```
+
 **Reasoning**: All personas use Epic→TDD→Task pattern. High priority but large (18KB), so load when planning/coordinating work.
 
 #### PROJECT_BOARD_GUIDE.md
+
 ```yaml
 audience: [pm, developer, multi-agent]
 priority: medium
@@ -58,9 +65,11 @@ dependencies: [PROJECT_WORKFLOW]
 status: active
 tags: [workflow, github, tracking]
 ```
+
 **Reasoning**: PM and Dev use GitHub board frequently. Medium priority (not every task needs it).
 
 #### CLAUDE_TASK_INTEGRATION.md
+
 ```yaml
 audience: [pm, architect, multi-agent]
 priority: medium
@@ -69,6 +78,7 @@ dependencies: [PROJECT_WORKFLOW]
 status: active
 tags: [workflow, claude-tasks, coordination]
 ```
+
 **Reasoning**: PM/Arch for cross-session coordination. Load when creating Claude tasks or planning multi-session work.
 
 ---
@@ -76,6 +86,7 @@ tags: [workflow, claude-tasks, coordination]
 ### standards/ (Rules and conventions)
 
 #### CONTENT_STANDARDS.md
+
 ```yaml
 audience: [sensei, developer]
 priority: medium
@@ -84,9 +95,11 @@ dependencies: []
 status: active
 tags: [standards, japanese, jlpt, content]
 ```
+
 **Reasoning**: Sensei (content validation) and Dev (implementation). Load when working on Japanese content.
 
 #### DESIGN_PRINCIPLES.md
+
 ```yaml
 audience: [design, developer]
 priority: medium
@@ -95,9 +108,11 @@ dependencies: []
 status: active
 tags: [standards, ui, ux, design]
 ```
+
 **Reasoning**: Design reviews and UI implementation. Load when working on frontend/design.
 
 #### TESTING.md
+
 ```yaml
 audience: [tester, developer]
 priority: high
@@ -106,9 +121,11 @@ dependencies: []
 status: active
 tags: [standards, testing, quality]
 ```
+
 **Reasoning**: Small (7KB), high priority for any code changes. Always load for implementation tasks.
 
 #### WORKFLOW_EXCEPTIONS.md
+
 ```yaml
 audience: [multi-agent]
 priority: low
@@ -117,6 +134,7 @@ dependencies: [PROJECT_WORKFLOW]
 status: active
 tags: [workflow, exceptions, reference]
 ```
+
 **Reasoning**: Reference only - check when considering workflow deviations. Small, so low cost to load if needed.
 
 ---
@@ -124,6 +142,7 @@ tags: [workflow, exceptions, reference]
 ### reference/ (Technical reference)
 
 #### ARCHITECTURE.md
+
 ```yaml
 audience: [architect, developer]
 priority: high
@@ -132,9 +151,11 @@ dependencies: [PROJECT_STRUCTURE]
 status: active
 tags: [reference, architecture, technical]
 ```
+
 **Reasoning**: Core technical reference. High priority for arch/dev work.
 
 #### PROJECT_STRUCTURE.md
+
 ```yaml
 audience: [multi-agent]
 priority: high
@@ -143,9 +164,11 @@ dependencies: []
 status: active
 tags: [reference, structure, organization]
 ```
+
 **Reasoning**: All personas need to know file locations. High priority, medium size.
 
 #### ROADMAP.md
+
 ```yaml
 audience: [pm, architect]
 priority: low
@@ -154,6 +177,7 @@ dependencies: []
 status: active
 tags: [reference, planning, roadmap]
 ```
+
 **Reasoning**: PM/Arch for long-term planning. Large (16KB), load only when explicitly planning future work.
 
 ---
@@ -161,6 +185,7 @@ tags: [reference, planning, roadmap]
 ### Root-Level
 
 #### README.md
+
 ```yaml
 audience: [multi-agent]
 priority: high
@@ -169,6 +194,7 @@ dependencies: []
 status: active
 tags: [overview, navigation]
 ```
+
 **Reasoning**: Entry point to documentation. Small, high priority.
 
 ---
@@ -176,6 +202,7 @@ tags: [overview, navigation]
 ### specs/ (PRDs)
 
 #### PRD-*.md
+
 ```yaml
 audience: [pm, architect, multi-agent]
 priority: high (when working on that Epic)
@@ -184,6 +211,7 @@ dependencies: [related TDD]
 status: active
 tags: [spec, prd, requirements]
 ```
+
 **Pattern**: Load PRD when working on its Epic or creating its TDD.
 
 ---
@@ -191,6 +219,7 @@ tags: [spec, prd, requirements]
 ### tdd/ (Technical Design Documents)
 
 #### TDD-*.md
+
 ```yaml
 audience: [architect, developer, tester]
 priority: high (when implementing tasks)
@@ -199,6 +228,7 @@ dependencies: [related PRD]
 status: active
 tags: [spec, tdd, technical, algorithms]
 ```
+
 **Pattern**: Load TDD section when implementing task that references it.
 
 ---
@@ -206,6 +236,7 @@ tags: [spec, tdd, technical, algorithms]
 ## Agent Loading Strategies
 
 ### Strategy 1: Persona-Based Filtering
+
 ```python
 # Developer starting T1.2
 persona = "developer"
@@ -220,6 +251,7 @@ load_docs = filter(docs, where=(
 ```
 
 ### Strategy 2: Priority-Based Loading
+
 ```python
 # Quick bug fix
 task_type = "bug-fix"
@@ -233,6 +265,7 @@ load_docs = filter(docs, where=(
 ```
 
 ### Strategy 3: Task-Context Loading
+
 ```python
 # Task mentions "TDD-001 §3"
 mentioned_docs = extract_references(task_description)
@@ -246,6 +279,7 @@ load_docs = (
 ```
 
 ### Strategy 4: Progressive Loading
+
 ```python
 # Start minimal, expand if needed
 initial_load = filter(docs, where=(priority=="high", size=="small"))
@@ -276,16 +310,19 @@ if still_unclear:
 ## Maintenance
 
 ### When Adding New Docs
+
 1. Add YAML frontmatter with tags
 2. Update this manifest
 3. Test agent loading with new tags
 
 ### When Updating Docs
+
 1. Check if size category changed (small→medium, etc.)
 2. Update `last_updated` timestamp
 3. Reconsider priority if doc usage patterns changed
 
 ### Quarterly Review
+
 - Audit actual agent loading patterns
 - Adjust priority based on usage
 - Archive deprecated docs
@@ -295,22 +332,27 @@ if still_unclear:
 ## Future Enhancements
 
 ### Smart Caching
+
 ```yaml
 cacheable: true | false
 cache_ttl: 1h | 24h | 7d
 ```
+
 Frequently loaded docs could be cached in agent context.
 
 ### Selective Section Loading
+
 ```yaml
 sections:
   - name: "§3 SM-2 Algorithm"
     size: medium
     tags: [algorithm, srs]
 ```
+
 For large TDDs, load only relevant sections.
 
 ### Dependency Graph
+
 ```mermaid
 graph TD
   PROJECT_WORKFLOW --> PROJECT_STRUCTURE
@@ -318,11 +360,13 @@ graph TD
   TDD-001 --> PRD-001
   CLAUDE_TASK_INTEGRATION --> PROJECT_WORKFLOW
 ```
+
 Visualize doc relationships for smarter loading.
 
 ---
 
 **Next Steps**:
+
 1. Add YAML frontmatter to all existing docs
 2. Update CLAUDE.md with agent loading instructions
 3. Test with representative tasks from each persona

@@ -104,12 +104,14 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 ### Why This Pattern?
 
 **Without TDD**:
+
 - Developer sees task: "Implement SM-2 algorithm"
 - Developer asks: "What formula? What edge cases? What data structure?"
 - Architect has to explain in comments/chat
 - Result: Inconsistent implementation, back-and-forth, wasted time
 
 **With TDD**:
+
 - Developer sees task: "Implement SM-2 algorithm per TDD-001 §3"
 - Developer reads TDD-001 §3
 - TDD has: Complete pseudocode, edge cases, test cases, API contracts
@@ -124,6 +126,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 **When**: Start of feature development
 
 **Responsibilities**:
+
 1. Write PRD defining feature goals and acceptance criteria
 2. Create Epic issue in GitHub with high-level task list
 3. After TDD is created, break Epic into detailed task issues
@@ -131,6 +134,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 5. Coordinate task dependencies and priorities
 
 **Artifacts Created**:
+
 - `docs/specs/PRD-XXX.md`
 - Epic issue (e.g., #7)
 - Task issues (e.g., #13-22)
@@ -142,6 +146,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 **When**: After PRD approval, before implementation
 
 **Responsibilities**:
+
 1. Read PRD and understand requirements
 2. Design system architecture and data structures
 3. Write TDD with complete specifications:
@@ -156,6 +161,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 5. Update Epic issue to link to TDD
 
 **Artifacts Created**:
+
 - `docs/tdd/TDD-XXX.md`
 
 **Example**: See TDD-001 JLPT Mastery Engine (35KB, 1450 lines)
@@ -165,6 +171,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 **When**: After TDD is created, tasks are ready
 
 **Responsibilities**:
+
 1. Read TDD section referenced in task
 2. Implement code exactly per TDD specifications
 3. Write unit tests per TDD §7 test cases
@@ -172,6 +179,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 5. Flag ambiguities or errors in TDD immediately
 
 **Artifacts Created**:
+
 - Implementation code (e.g., `kanji/js/srs-engine.js`)
 - Unit tests
 - PR for review
@@ -183,6 +191,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 **When**: After implementation, before PR merge
 
 **Responsibilities**:
+
 1. Run test cases from TDD §7
 2. Verify acceptance criteria from task issue
 3. Check edge cases and error handling
@@ -190,6 +199,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 5. Validate against PRD user stories
 
 **Artifacts Created**:
+
 - Test reports
 - Bug issues
 - Verification sign-off
@@ -203,12 +213,14 @@ Claude Code has built-in task primitives (`TaskCreate`, `TaskUpdate`, `TaskList`
 ### When to Use Claude Tasks
 
 **Use Claude tasks for**:
+
 - Session-level work breakdown (breaking down GitHub issues into sub-tasks)
 - Agent handoffs (PM → Architect → Developer)
 - Temporary coordination within a coding session
 - Capturing context before session compaction
 
 **Don't use Claude tasks for**:
+
 - Long-term planning (use GitHub issues)
 - External visibility (use GitHub issues)
 - Milestone tracking (use GitHub issues)
@@ -244,6 +256,7 @@ TaskCreate({
 ```
 
 **Benefits**:
+
 - Tasks persist across Claude restarts
 - Metadata links to GitHub issues
 - Dependencies tracked via `addBlockedBy`
@@ -295,6 +308,7 @@ TaskCreate({
 ### Task Breakdown Example
 
 **Original Task** (before TDD):
+
 ```
 #13 T1.1 - Design localStorage schema
 
@@ -304,6 +318,7 @@ Problem: Too vague! What fields? What structure? What validation?
 ```
 
 **Updated Task** (after TDD):
+
 ```
 #13 T1.1 - Implement localStorage layer per TDD-001 §2
 
@@ -336,18 +351,21 @@ Key Design Decisions (from §2.3.1):
 
 Not every change requires the full workflow. Use judgment:
 
-### Skip PRD When:
+### Skip PRD When
+
 - Bug fix (implementation-only change)
 - Minor UI tweak (CSS change)
 - Documentation update
 - Refactoring without behavior change
 
-### Skip TDD When:
+### Skip TDD When
+
 - Change is <50 lines
 - Pattern already established (e.g., add another page using existing template)
 - Trivial implementation (typo fix, comment update)
 
-### Always Do:
+### Always Do
+
 - Create GitHub issue (even for small tasks)
 - Update CHANGELOG
 - Test changes manually
@@ -362,12 +380,14 @@ Not every change requires the full workflow. Use judgment:
 ### For PMs
 
 **Do**:
+
 - Write clear, testable acceptance criteria
 - Reference TDD sections in every task
 - Keep Epic issues updated with progress
 - Adjust priorities based on blockers
 
 **Don't**:
+
 - Create tasks before TDD exists (they'll be too vague)
 - Skip linking tasks to TDD sections
 - Assume developers know what "implement X" means
@@ -375,6 +395,7 @@ Not every change requires the full workflow. Use judgment:
 ### For Architects
 
 **Do**:
+
 - Include complete pseudocode for algorithms
 - Provide function signatures with types
 - Document edge cases explicitly
@@ -383,6 +404,7 @@ Not every change requires the full workflow. Use judgment:
 - Use diagrams (D2 format) for complex flows
 
 **Don't**:
+
 - Leave implementation details ambiguous
 - Skip error handling specifications
 - Assume "obvious" design decisions
@@ -391,6 +413,7 @@ Not every change requires the full workflow. Use judgment:
 ### For Developers
 
 **Do**:
+
 - Read entire TDD section before coding
 - Follow TDD specs exactly (don't improvise)
 - Write tests per TDD §7 test cases
@@ -398,6 +421,7 @@ Not every change requires the full workflow. Use judgment:
 - Reference TDD section in PR description
 
 **Don't**:
+
 - Guess at implementation details
 - Deviate from TDD without architect approval
 - Skip edge cases documented in TDD
@@ -406,12 +430,14 @@ Not every change requires the full workflow. Use judgment:
 ### For Testers
 
 **Do**:
+
 - Run all test cases from TDD §7
 - Test edge cases explicitly documented
 - Verify acceptance criteria from task
 - Report bugs with TDD section reference
 
 **Don't**:
+
 - Skip documented test cases
 - Test only happy path
 - Approve PRs without checking TDD compliance
@@ -425,6 +451,7 @@ Not every change requires the full workflow. Use judgment:
 See: `docs/specs/PRD-001-JLPT-Mastery-Engine.md` as reference
 
 **Sections**:
+
 1. Problem Statement
 2. User Benefit
 3. Target Users
@@ -441,6 +468,7 @@ See: `docs/specs/PRD-001-JLPT-Mastery-Engine.md` as reference
 See: `docs/tdd/TDD-001-JLPT-Mastery-Engine.md` as reference
 
 **Sections**:
+
 1. §1: Architecture Overview
 2. §2: Data Schema Design
 3. §3: Algorithm Specifications
@@ -450,6 +478,7 @@ See: `docs/tdd/TDD-001-JLPT-Mastery-Engine.md` as reference
 7. §7: Testing Strategy
 
 **Principles**:
+
 - Complete specifications (no ambiguity)
 - Pseudocode for all algorithms
 - Function signatures with types
@@ -460,6 +489,7 @@ See: `docs/tdd/TDD-001-JLPT-Mastery-Engine.md` as reference
 ### Task Template
 
 **Format**:
+
 ```markdown
 **Parent Epic**: #X
 
@@ -509,12 +539,14 @@ See: `docs/tdd/TDD-001-JLPT-Mastery-Engine.md` as reference
 ### Success Stories
 
 **Before Epic → TDD → Task**:
+
 - Developer task: "Implement SRS algorithm" (10 lines)
 - Developer implementation: 3 days, 5 clarifying questions, 2 refactors
 - Bugs found: 8 (missed edge cases)
 - Time to merge: 7 days
 
 **After Epic → TDD → Task**:
+
 - Developer task: "Implement SM-2 algorithm per TDD-001 §3" (200 lines with full spec)
 - Developer implementation: 1 day, 0 questions, 0 refactors
 - Bugs found: 1 (typo)
@@ -564,6 +596,7 @@ See: `docs/tdd/TDD-001-JLPT-Mastery-Engine.md` as reference
 **Last Updated**: 2026-01-25 by PM (Claude)
 
 **Changelog**:
+
 - 2026-01-25: Initial version documenting Epic → TDD → Task pattern based on PRD-001/TDD-001 experience
 
 ---

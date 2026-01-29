@@ -13,6 +13,7 @@
 This repository is a **battle-tested, production-grade Claude Code configuration collection** from an Anthropic hackathon winner with 28.6k stars and 3.4k forks. It provides agents, skills, hooks, commands, rules, and MCP configurations optimized for real-world AI-assisted development.
 
 **Top 3 Takeaways**:
+
 1. **YAML frontmatter in agent definitions** enables machine-parseable metadata for context window optimization
 2. **Agents are more operationally actionable** with concrete code examples, anti-patterns ("Red Flags"), and project-specific templates
 3. **Skills are modular and hook-triggered** rather than embedded in agents, enabling on-demand loading
@@ -24,9 +25,11 @@ This repository is a **battle-tested, production-grade Claude Code configuration
 ## 1. Repository Overview
 
 ### Purpose
+
 Complete Claude Code plugin collection for AI-assisted development. Provides production-ready configurations for agents, skills, hooks, commands, rules, and MCP integrations.
 
 ### Technology Stack
+
 | Layer | Technology |
 |-------|------------|
 | Language | JavaScript (primary), TypeScript |
@@ -36,12 +39,14 @@ Complete Claude Code plugin collection for AI-assisted development. Provides pro
 | Other | MCP servers, hooks, scripts |
 
 ### Project Maturity
+
 - **Stars/Forks**: 28,643 / 3,433
 - **Last Updated**: 2026-01-26 (actively maintained)
 - **Contributors**: Multiple
 - **Maintenance Status**: **Very Active**
 
 ### Documentation Quality
+
 - [x] README comprehensive
 - [x] Examples provided
 - [ ] API documentation (N/A - config files)
@@ -55,6 +60,7 @@ Complete Claude Code plugin collection for AI-assisted development. Provides pro
 ## 2. Project Structure
 
 ### Directory Layout
+
 ```
 everything-claude-code/
 ├── agents/               # Specialized subagent definitions
@@ -88,16 +94,19 @@ everything-claude-code/
 ```
 
 ### Organization Patterns
+
 - **Agents are flat files** - One `.md` file per agent
 - **Skills are directories** - `skill-name/SKILL.md` pattern allows auxiliary files
 - **YAML frontmatter everywhere** - Machine-parseable metadata at file start
 
 ### Key Observations
+
 - Skills use directory structure for extensibility (can add helper scripts)
 - All agents have explicit tool grants in frontmatter
 - Model selection (`opus`) declared per agent
 
 ### Applicability to Our Project
+
 | Their Pattern | Our Equivalent | Adoption Potential |
 |---------------|----------------|-------------------|
 | YAML frontmatter | None currently | **High** - Critical for context optimization |
@@ -110,6 +119,7 @@ everything-claude-code/
 ## 3. Architecture Patterns
 
 ### Pattern 1: YAML Frontmatter for Agents
+
 **What it is**: Structured metadata at file start enabling machine parsing
 
 ```yaml
@@ -123,18 +133,21 @@ model: opus
 
 **Where used**: All agent files
 **Why it works**:
+
 - Claude Code can extract metadata without loading full content
 - Tools are granted automatically when agent invoked
 - Model selection happens at agent level, not prompt level
 - Description serves as summary for agent selection
 
 **Our applicability**: **Critical** - This is the key optimization we're missing. Claude Code can use frontmatter to:
+
 1. List available agents with descriptions
 2. Grant tools without parsing prose
 3. Select appropriate model
 4. Minimize tokens loaded for agent selection
 
 ### Pattern 2: Red Flags / Anti-Patterns Section
+
 **What it is**: Explicit documentation of what NOT to do
 
 ```markdown
@@ -153,6 +166,7 @@ Watch for these architectural anti-patterns:
 **Our applicability**: **High** - Our agents lack explicit anti-pattern guidance
 
 ### Pattern 3: Actionable Code Examples
+
 **What it is**: Real code snippets showing correct vs incorrect patterns
 
 ```javascript
@@ -168,6 +182,7 @@ const apiKey = process.env.OPENAI_API_KEY
 **Our applicability**: **High** - Our agents are more abstract, less actionable
 
 ### Pattern 4: Project-Specific Templating
+
 **What it is**: Generic patterns adapted with project-specific examples
 
 ```markdown
@@ -184,6 +199,7 @@ const apiKey = process.env.OPENAI_API_KEY
 **Our applicability**: **High** - We should add Japanese learning site examples
 
 ### Pattern 5: Strategic Context Compaction
+
 **What it is**: Manual `/compact` at logical boundaries instead of auto-compaction
 
 ```markdown
@@ -198,9 +214,11 @@ Strategic compaction at logical boundaries:
 **Our applicability**: **Medium** - Useful for long sessions
 
 ### Data Flow
+
 Agents are invoked → YAML frontmatter parsed → Tools granted → Full content loaded → Agent executes → Results returned
 
 ### State Management
+
 - No persistent state between invocations
 - Skills can use hooks for session tracking
 - continuous-learning skill extracts patterns at session end
@@ -225,9 +243,11 @@ Agents are invoked → YAML frontmatter parsed → Tools granted → Full conten
 ### Feature Deep-Dives
 
 #### YAML Frontmatter (Critical Relevance)
+
 **What it does**: Provides machine-parseable metadata for agent selection and configuration
 
 **Implementation approach**:
+
 ```yaml
 ---
 name: architect
@@ -240,16 +260,19 @@ model: opus                       # Model selection
 ```
 
 **Key files**:
+
 - `agents/architect.md` - Example with all fields
 - `agents/code-reviewer.md` - Shows tools array with Bash
 
 **What we can learn**:
+
 - Frontmatter is parsed before content is loaded
 - `tools` array eliminates need for `allowed_tools` in Task calls
 - `description` enables agent discovery without full content load
 
 **Potential adaptation**:
 Add frontmatter to all our agent files:
+
 ```yaml
 ---
 name: documenter
@@ -260,19 +283,23 @@ model: opus
 ```
 
 #### Code Reviewer Agent (High Relevance)
+
 **What it does**: Reviews code with structured issue categorization
 
 **Implementation approach**:
+
 - Uses git diff to see changes
 - Categorizes issues: CRITICAL, HIGH, MEDIUM, LOW
 - Provides fix examples for each issue
 
 **Key patterns**:
+
 ```markdown
 ## Review Output Format
 
 For each issue:
 ```
+
 [CRITICAL] Hardcoded API key
 File: src/api/client.ts:42
 Issue: API key exposed in source code
@@ -280,10 +307,12 @@ Fix: Move to environment variable
 
 const apiKey = "sk-abc123";  // ❌ Bad
 const apiKey = process.env.API_KEY;  // ✓ Good
+
 ```
 ```
 
 **What we can learn**:
+
 - Structured issue format with file:line references
 - Concrete fix examples, not just descriptions
 - Approval criteria clearly defined
@@ -295,6 +324,7 @@ const apiKey = process.env.API_KEY;  // ✓ Good
 ### High Priority (Quick Wins)
 
 #### Opportunity 1: Add YAML Frontmatter to All Agents
+
 - **What**: Add `---` frontmatter with name, description, tools, model
 - **Value**: ~30% context window savings on agent selection; cleaner tool grants
 - **Effort**: Low (template change, apply to 13 agents)
@@ -302,6 +332,7 @@ const apiKey = process.env.API_KEY;  // ✓ Good
 - **Risk**: None - additive change
 
 #### Opportunity 2: Add Red Flags Sections
+
 - **What**: Add "Red Flags" / "Anti-Patterns" to architect, code-reviewer, tester
 - **Value**: Prevent common mistakes proactively
 - **Effort**: Low (add ~20 lines per agent)
@@ -309,6 +340,7 @@ const apiKey = process.env.API_KEY;  // ✓ Good
 - **Risk**: None
 
 #### Opportunity 3: Add Concrete Code Examples
+
 - **What**: Add ❌/✅ code comparisons throughout agents
 - **Value**: Faster application of guidance
 - **Effort**: Medium (requires domain-specific examples)
@@ -318,18 +350,21 @@ const apiKey = process.env.API_KEY;  // ✓ Good
 ### Medium Priority (Planned Features)
 
 #### Opportunity 4: Structured Issue Format for Reviews
+
 - **What**: Standardize review output with [SEVERITY] file:line format
 - **Value**: Consistent, actionable review feedback
 - **Effort**: Medium
 - **Approach**: Adapt their format
 
 #### Opportunity 5: Project-Specific Examples in Agents
+
 - **What**: Add Japanese learning site architecture examples to architect
 - **Value**: Shows how abstract patterns apply to our project
 - **Effort**: Medium
 - **Approach**: Create from scratch using their pattern
 
 #### Opportunity 6: Strategic Compact Awareness
+
 - **What**: Add guidance about when to manually compact
 - **Value**: Preserve context during long sessions
 - **Effort**: Low
@@ -338,6 +373,7 @@ const apiKey = process.env.API_KEY;  // ✓ Good
 ### Low Priority (Future Consideration)
 
 #### Opportunity 7: Skill Directory Structure
+
 - **What**: Convert skills to `skill-name/SKILL.md` directories
 - **Value**: Allows auxiliary scripts/configs per skill
 - **Effort**: Medium
@@ -345,6 +381,7 @@ const apiKey = process.env.API_KEY;  // ✓ Good
 - **Risk**: Disrupts current structure
 
 ### Not Recommended
+
 | Idea | Why Not |
 |------|---------|
 | Copy their MCP configs | Different tech stack (we use vanilla JS) |
@@ -365,18 +402,23 @@ const apiKey = process.env.API_KEY;  // ✓ Good
 | Playwright | E2E testing | Evaluate for future |
 
 ### Build & Tooling
+
 N/A - Configuration files only, no build process
 
 ### Testing Approach
+
 Mentions Jest/Vitest for unit tests, Playwright for E2E. We don't have automated tests yet.
 
 ### Performance Considerations
+
 - YAML frontmatter designed for minimal token load
 - Skills loaded on-demand via hooks
 - Strategic compact for long sessions
 
 ### Security Considerations
+
 Their security-reviewer is comprehensive:
+
 - OWASP Top 10 coverage
 - Hardcoded secrets detection
 - Race condition awareness
@@ -387,18 +429,22 @@ Their security-reviewer is comprehensive:
 ## 7. Risks & Concerns
 
 ### Technical Risks
+
 - **Frontmatter compatibility**: Need to verify Claude Code parses our frontmatter
   - *Mitigation*: Test with one agent first before mass migration
 
 ### Compatibility Concerns
+
 - Their agents assume TypeScript/Next.js stack
 - Some patterns (database queries, API routes) don't apply to our static site
 
 ### Maintenance Concerns
+
 - More detailed agents = more to keep updated
 - Red Flags sections need project-specific examples
 
 ### Licensing
+
 - **License**: MIT
 - **Implications**: Free to use, modify, and adapt patterns
 
@@ -409,6 +455,7 @@ Their security-reviewer is comprehensive:
 ### For Product Manager (pm:)
 
 **Feature Opportunities**:
+
 1. **Agent Enhancement Project** - Improve all 13 agents with new patterns
    - Effort estimate: Low (1-2 sessions)
    - Suggested priority: P1
@@ -418,10 +465,12 @@ Their security-reviewer is comprehensive:
    - Suggested priority: P2
 
 **User Stories to Consider**:
+
 - As a developer, I want agents with concrete examples so I can apply guidance faster
 - As a maintainer, I want frontmatter metadata so Claude Code loads agents efficiently
 
 **Questions for PM**:
+
 - Should we prioritize all agents equally, or focus on most-used (architect, code-reviewer)?
 - Do we want to track token usage before/after to measure optimization?
 
@@ -430,6 +479,7 @@ Their security-reviewer is comprehensive:
 ### For Technical Architect (arch:)
 
 **Architecture Recommendations**:
+
 1. **YAML Frontmatter Migration** - Add to all agent files
    - Complexity: Low
    - Files affected: 13 agents
@@ -439,10 +489,12 @@ Their security-reviewer is comprehensive:
    - Files affected: architect.md, code-reviewer.md, documenter.md, tester.md
 
 **TDD Candidates**:
+
 - [ ] Agent Frontmatter Migration - Ready for implementation (no TDD needed)
 - [ ] Agent Content Enhancement - Create enhancement spec
 
 **Technical Questions**:
+
 - Should `model` field default to `opus` or be explicitly set per agent?
 - Should tools be exhaustive or minimal per agent?
 
@@ -451,16 +503,19 @@ Their security-reviewer is comprehensive:
 ## 9. Action Items
 
 ### Immediate (This Session)
+
 - [x] Generate research report
 - [ ] Review with Christopher for approval
 
 ### Short-term (Next Sprint)
+
 - [ ] Add YAML frontmatter to all 13 agents
 - [ ] Add Red Flags section to architect.md
 - [ ] Add Red Flags section to code-reviewer.md
 - [ ] Add concrete code examples to security-reviewer.md
 
 ### Long-term (Backlog)
+
 - [ ] Add project-specific examples to architect (Japanese learning site)
 - [ ] Evaluate strategic compact skill
 - [ ] Consider skill directory structure for complex skills
@@ -470,6 +525,7 @@ Their security-reviewer is comprehensive:
 ## 10. Appendix
 
 ### Key File References
+
 | File | Purpose | Notable Code |
 |------|---------|--------------|
 | `agents/architect.md` | Architecture specialist | Lines 1-5: YAML frontmatter example |
@@ -480,6 +536,7 @@ Their security-reviewer is comprehensive:
 ### Code Snippets
 
 #### YAML Frontmatter Template
+
 ```yaml
 ---
 name: agent-name
@@ -497,6 +554,7 @@ You are a [role] specializing in [specialty].
 ```
 
 #### Red Flags Section Template
+
 ```markdown
 ## Red Flags
 
@@ -506,6 +564,7 @@ Watch for these anti-patterns:
 ```
 
 #### Code Example Template
+
 ```markdown
 ### Issue: [Issue Name]
 
@@ -516,6 +575,7 @@ badCode();
 // ✅ GOOD: Description of solution
 goodCode();
 ```
+
 ```
 
 ### External Resources

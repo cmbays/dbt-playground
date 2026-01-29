@@ -97,11 +97,13 @@ dbt-playground/
 ### File Protection Rules
 
 **NEVER**:
+
 - Overwrite files without backup
 - Skip prototype step for new features
 - Deploy without testing
 
 **ALWAYS**:
+
 - Work in temp/ first
 - Test changes
 - Update documentation
