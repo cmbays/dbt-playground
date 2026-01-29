@@ -19,3 +19,15 @@ package-lock.json
 # Python
 __pycache__/
 *.pyc
+.venv/
+venv/
+*.egg-info/
+
+# dbt
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/logs/
+dbt_project/*.duckdb
+dbt_project/*.duckdb.wal
+dbt_project/data/synthea/*.csv
+logs/

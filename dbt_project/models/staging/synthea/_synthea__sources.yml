@@ -1,0 +1,66 @@
+version: 2
+
+sources:
+  - name: synthea_raw
+    description: Raw Synthea synthetic healthcare data loaded from CSV files
+    schema: main
+    tables:
+      - name: patients
+        description: Patient demographics and identifiers
+        columns:
+          - name: Id
+            description: Unique patient identifier (UUID)
+            data_tests:
+              - unique
+              - not_null
+
+      - name: encounters
+        description: Healthcare encounters/visits
+        columns:
+          - name: Id
+            description: Unique encounter identifier (UUID)
+            data_tests:
+              - unique
+              - not_null
+
+      - name: conditions
+        description: Patient diagnoses and conditions
+
+      - name: medications
+        description: Prescribed medications
+
+      - name: procedures
+        description: Medical procedures performed
+
+      - name: observations
+        description: Clinical observations (vital signs, lab results)
+
+      - name: providers
+        description: Healthcare providers
+        columns:
+          - name: Id
+            description: Unique provider identifier (UUID)
+            data_tests:
+              - unique
+              - not_null
+
+      - name: organizations
+        description: Healthcare organizations/facilities
+        columns:
+          - name: Id
+            description: Unique organization identifier (UUID)
+            data_tests:
+              - unique
+              - not_null
+
+      - name: payers
+        description: Insurance payers
+        columns:
+          - name: Id
+            description: Unique payer identifier (UUID)
+            data_tests:
+              - unique
+              - not_null
+
+      - name: careplans
+        description: Care plan assignments (bridge table)
