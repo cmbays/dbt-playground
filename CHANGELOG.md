@@ -20,50 +20,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial project scaffold forked from agent orchestration template
-- Agent orchestration system with 10 personas:
-  - Product Manager, Architect, Developer, Code Reviewer
-  - Tester, Documenter, Security Reviewer, Design Reviewer
-  - Git-Master, Sage, Changelog Generator
-- Documentation framework:
-  - `docs/guides/` - How-to workflows
-  - `docs/standards/` - Rules and conventions
-  - `docs/reference/` - Technical documentation
-  - `docs/specs/` - PRDs
-  - `docs/tdd/` - Technical design docs
-- Agent configuration in `.claude/`:
-  - 10+ agent persona files
-  - 8 slash commands (/plan, /review, /commit, /branch, /orchestrate, /deploy, /tdd, /repo-research)
-  - 14+ reusable workflow skills
-  - 4 coding rules (coding-style, git-workflow, testing, security)
-  - Pre/post tool hooks
-  - Utility scripts
-- Git governance via git-master agent with enforcement hooks
+- **Agent System**: Complete dbt development agent orchestration with 16 personas
+  - Base agents: Product Manager, Architect, Developer, Code Reviewer, Tester, Documenter, Security Reviewer, Design Reviewer, Git-Master, Sage, Changelog Generator
+  - dbt agents: data-modeler, dbt-developer, dbt-tester, dbt-documenter, semantic-analyst
 
-### Removed
+- **Skills**: 21 workflow skills including 6 dbt-specific
+  - dbt-model-development, dbt-testing, dbt-code-review, dbt-deployment, dbt-source-onboarding, dbt-semantic-layer
 
-- Japanese study site content (previous project)
-- Domain-specific content directories (content/, topics/, kanji/)
-- Japanese-specific agents (sensei)
-- Japanese-specific skills (kanji-content-creation, topic-page-creation)
-- Japanese-specific rules (japanese-content.md)
-- Japanese documentation (CONTENT_STANDARDS.md, ROADMAP.md)
-- Previous version archives (v0.0-v0.2)
-- Japanese PRDs and TDDs
+- **Commands**: 13 slash commands including 5 for dbt
+  - `/dbt-model`, `/dbt-test`, `/dbt-run`, `/dbt-docs`, `/dbt-query`
+
+- **Documentation**: Comprehensive project planning
+  - DBT-PROJECT-INITIALIZATION.md: 8-phase technical plan
+  - ROADMAP.md: 6 epics, 4 milestones (v0.2-v0.5)
+  - GITHUB-ISSUES.md: 41 actionable issues
+  - 4 PRDs, 1 TDD for architecture decisions
+  - Kimball dimensional modeling reference guide
+
+- **Infrastructure**
+  - GitHub project with 40 issues and 4 milestones
+  - markdownlint-cli2 with pre-commit hooks
+  - dbt-mcp server configuration
+  - GitHub Flow workflow documentation
 
 ### Changed
 
 - Rebranded from "japanese-study-site" to "dbt-playground"
-- Updated all documentation for generic data project use
-- Simplified project structure for dbt development
+- Updated workflow to GitHub Flow (no release branches)
+- Added branch hygiene and versioning strategy documentation
+
+### Fixed
+
+- ~400 markdown formatting issues via linting
+
+### Removed
+
+- Japanese study site content and domain-specific agents
+- Previous version archives (now using git tags)
 
 ---
 
 ## Version History
 
-| Version | Date       | Highlights                                |
-| ------- | ---------- | ----------------------------------------- |
-| 0.1.0   | 2026-01-28 | Initial scaffold with agent orchestration |
+| Version | Date       | Highlights                                         |
+| ------- | ---------- | -------------------------------------------------- |
+| 0.1.0   | 2026-01-28 | Agent orchestration + dbt project planning complete |
 
 ---
 

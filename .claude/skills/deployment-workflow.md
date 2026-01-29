@@ -15,6 +15,16 @@ Invoke when:
 - Ready for release
 - User requests deployment
 
+## Git Workflow: GitHub Flow
+
+This project uses **GitHub Flow** (not Git Flow):
+
+- `main` is always deployable
+- All work done on feature branches (`feat/`, `fix/`, `docs/`, `chore/`)
+- Branches merge to main via PR
+- Tags mark releases directly on main
+- No `develop` or `release/` branches needed
+
 ## Deployment Workflow
 
 ```
