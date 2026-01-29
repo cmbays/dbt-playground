@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.2.0 - Updated: 2026-01-20 - Enhanced Kanji Flashcard Study Mode -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanji Study - Home Life - Japanese Learning</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Home Life - Kanji Study</h1>
+            <p>Master kanji through interactive flashcard study</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="quiz.html" class="nav-btn active">🏠 家庭生活</a>
+            <a href="../restaurant/quiz.html" class="nav-btn">🍜 レストラン</a>
+            <a href="../travel/quiz.html" class="nav-btn">✈️ 旅行</a>
+            <a href="../shopping/quiz.html" class="nav-btn">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn">💬 Dialogue</a>
+            <a href="story.html" class="section-btn">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn active">📝 Study</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <div class="content">
+            <!-- ============================================
+                 STUDY MODE - START SCREEN
+                 ============================================ -->
+            <div id="study-start-screen" class="study-start-screen">
+                <h2 class="study-title">Kanji Flashcard Study</h2>
+                <p class="study-description">Select your study preferences and begin learning!</p>
+
+                <!-- JLPT Level Filter -->
+                <div class="filter-section">
+                    <label class="filter-label">JLPT Level</label>
+                    <div class="jlpt-buttons">
+                        <button class="jlpt-filter-btn active" data-level="all">All</button>
+                        <button class="jlpt-filter-btn jlpt-n5" data-level="N5">N5</button>
+                        <button class="jlpt-filter-btn jlpt-n4" data-level="N4">N4</button>
+                        <button class="jlpt-filter-btn jlpt-n3" data-level="N3">N3</button>
+                        <button class="jlpt-filter-btn jlpt-n2" data-level="N2">N2</button>
+                    </div>
+                </div>
+
+                <!-- Study Options -->
+                <div class="study-options">
+                    <label class="study-option">
+                        <input type="checkbox" id="shuffle-cards" checked>
+                        <span>Shuffle cards</span>
+                    </label>
+                    <label class="study-option">
+                        <input type="checkbox" id="auto-audio" checked>
+                        <span>Auto-play audio</span>
+                    </label>
+                    <label class="study-option">
+                        <input type="checkbox" id="marked-only">
+                        <span>Marked cards only</span>
+                    </label>
+                </div>
+
+                <!-- Card Count Display -->
+                <div id="card-count-display" class="card-count-display">
+                    Ready to study 169 kanji cards
+                </div>
+
+                <!-- Start Button -->
+                <button id="start-study-btn" class="start-study-btn" onclick="startStudySession()">
+                    Start Studying
+                </button>
+            </div>
+
+            <!-- ============================================
+                 STUDY MODE - ACTIVE SCREEN
+                 ============================================ -->
+            <div id="study-active-screen" class="study-active-screen">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <div class="progress-text">
+                        Card <span id="current-card-num">1</span> of <span id="total-cards">169</span>
+                    </div>
+                </div>
+
+                <!-- Flashcard -->
+                <div id="flashcard" class="flashcard" onclick="flipCard()">
+                    <!-- Front of Card -->
+                    <div id="flashcard-front" class="flashcard-front">
+                        <div id="flashcard-kanji" class="flashcard-kanji">食</div>
+                        <div class="flashcard-hint">Click to reveal</div>
+                    </div>
+
+                    <!-- Back of Card -->
+                    <div id="flashcard-back" class="flashcard-back">
+                        <div class="flashcard-kanji-row">
+                            <div id="flashcard-kanji-small" class="flashcard-kanji-small">食</div>
+                            <button class="audio-btn flashcard-audio-btn" onclick="playCurrentKanji(event)" title="Play pronunciation">
+                                🔊
+                            </button>
+                        </div>
+
+                        <div id="flashcard-meaning" class="flashcard-meaning">
+                            <strong>Meaning:</strong> eat, food
+                        </div>
+
+                        <div id="flashcard-jlpt" class="flashcard-jlpt">
+                            <span class="jlpt-badge jlpt-n5">JLPT N5</span>
+                        </div>
+
+                        <!-- Vocabulary grouped by reading type -->
+                        <div id="flashcard-vocabulary" class="flashcard-vocabulary">
+                            <div class="vocab-group vocab-onyomi">
+                                <div class="vocab-group-header">
+                                    <span class="vocab-group-label">
+                                        On'yomi Examples
+                                        <span class="help-icon" tabindex="0">ⓘ
+                                            <span class="tooltip tooltip-onyomi">
+                                                <strong>On'yomi (音読み)</strong> — "Sound reading"<br><br>
+                                                The Chinese-derived pronunciation, brought to Japan with kanji characters. Written in <strong>katakana</strong> in dictionaries.<br><br>
+                                                <strong>When used:</strong> Mostly in compound words (熟語) made of multiple kanji, like 食事 (しょくじ, meal).<br><br>
+                                                <strong>Tip:</strong> Some words mix readings! 時計 (とけい, clock) uses kun + on — called <em>jūbako-yomi</em> (重箱読み).
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span id="onyomi-reading" class="vocab-group-reading">(ショク)</span>
+                                </div>
+                                <div id="onyomi-words" class="vocab-words">
+                                    <div class="vocab-word">
+                                        <span class="word-jp">食事</span>
+                                        <span class="word-reading">(しょくじ)</span>
+                                        <span class="word-en">meal</span>
+                                    </div>
+                                </div>
+                                <div id="onyomi-sentence" class="vocab-sentence">
+                                    <div class="vocab-sentence-jp">食事の時間です。</div>
+                                    <div class="vocab-sentence-romaji">Shokuji no jikan desu.</div>
+                                    <div class="vocab-sentence-en">It's meal time.</div>
+                                </div>
+                            </div>
+                            <div class="vocab-group vocab-kunyomi">
+                                <div class="vocab-group-header">
+                                    <span class="vocab-group-label">
+                                        Kun'yomi Examples
+                                        <span class="help-icon" tabindex="0">ⓘ
+                                            <span class="tooltip tooltip-kunyomi">
+                                                <strong>Kun'yomi (訓読み)</strong> — "Meaning reading"<br><br>
+                                                The native Japanese pronunciation that existed before kanji arrived. Written in <strong>hiragana</strong> in dictionaries.<br><br>
+                                                <strong>When used:</strong> Often when kanji stands alone or with hiragana (okurigana), like 食べる (たべる, to eat).<br><br>
+                                                <strong>Tip:</strong> Verbs and adjectives usually use kun'yomi with hiragana endings that show conjugation.
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span id="kunyomi-reading" class="vocab-group-reading">(た・べる)</span>
+                                </div>
+                                <div id="kunyomi-words" class="vocab-words">
+                                    <div class="vocab-word">
+                                        <span class="word-jp">食べる</span>
+                                        <span class="word-reading">(たべる)</span>
+                                        <span class="word-en">to eat</span>
+                                    </div>
+                                </div>
+                                <div id="kunyomi-sentence" class="vocab-sentence">
+                                    <div class="vocab-sentence-jp">朝ごはんを食べます。</div>
+                                    <div class="vocab-sentence-romaji">Asa-gohan wo tabemasu.</div>
+                                    <div class="vocab-sentence-en">I eat breakfast.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fallback sentence for non-grouped kanji -->
+                        <div id="flashcard-sentence" class="flashcard-sentence" style="display: none;">
+                            <strong>Example Sentence:</strong>
+                            <div class="sentence-jp"></div>
+                            <div class="sentence-romaji"></div>
+                            <div class="sentence-en"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mark for Review Button -->
+                <div style="text-align: center;">
+                    <button id="mark-btn" class="mark-review-btn" onclick="toggleMark()">
+                        <span class="mark-icon">☆</span> Mark for Review
+                    </button>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="study-controls">
+                    <button id="prev-btn" class="study-nav-btn" onclick="previousCard()" disabled>
+                        ← Previous
+                    </button>
+                    <button id="next-btn" class="study-nav-btn" onclick="nextCard()">
+                        Next →
+                    </button>
+                    <button class="end-study-btn" onclick="endStudy()">
+                        End Session
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============================================
+                 STUDY MODE - RESULTS SCREEN
+                 ============================================ -->
+            <div id="study-results-screen" class="study-results-screen">
+                <h2 class="results-title">Study Session Complete!</h2>
+                <p class="results-message">Great work on your kanji practice!</p>
+
+                <div class="results-summary">
+                    <div class="result-stat">
+                        <div id="cards-reviewed" class="stat-number">0</div>
+                        <div class="stat-label">Cards Reviewed</div>
+                    </div>
+                    <div class="result-stat">
+                        <div id="cards-marked" class="stat-number">0</div>
+                        <div class="stat-label">Marked for Review</div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="restart-btn" onclick="restartStudy()">
+                        Study Again
+                    </button>
+                    <button class="back-to-start-btn" onclick="returnToStart()">
+                        Back to Start
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kanji Data -->
+    <script src="../../temp/home-life-kanji-data.js"></script>
+
+    <!-- Shared JavaScript -->
+    <script src="../../js/shared.js"></script>
+
+    <!-- Study Mode JavaScript -->
+    <script>
+    // ============================================
+    // STUDY STATE
+    // ============================================
+    let studyState = {
+        cards: [],
+        currentIndex: 0,
+        isFlipped: false,
+        settings: {
+            shuffle: true,
+            autoAudio: true
+        }
+    };
+
+    // ============================================
+    // PROTOTYPE: GROUPED VOCABULARY DATA
+    // Words categorized by reading type for select kanji
+    // This will eventually be integrated into the main data file
+    // ============================================
+    const groupedVocabData = {
+        "食": {
+            onyomi: {
+                reading: "ショク",
+                words: [
+                    { japanese: "食事", hiragana: "しょくじ", english: "meal" },
+                    { japanese: "朝食", hiragana: "ちょうしょく", english: "breakfast" },
+                    { japanese: "食堂", hiragana: "しょくどう", english: "cafeteria" }
+                ],
+                sentence: {
+                    japanese: "食事の時間です。",
+                    romaji: "Shokuji no jikan desu.",
+                    english: "It's meal time."
+                }
+            },
+            kunyomi: {
+                reading: "た・べる",
+                words: [
+                    { japanese: "食べる", hiragana: "たべる", english: "to eat" },
+                    { japanese: "食べ物", hiragana: "たべもの", english: "food" }
+                ],
+                sentence: {
+                    japanese: "朝ごはんを食べます。",
+                    romaji: "Asa-gohan wo tabemasu.",
+                    english: "I eat breakfast."
+                }
+            }
+        },
+        "時": {
+            onyomi: {
+                reading: "ジ",
+                words: [
+                    { japanese: "時間", hiragana: "じかん", english: "time/hour" },
+                    { japanese: "時代", hiragana: "じだい", english: "era/period" }
+                ],
+                sentence: {
+                    japanese: "時間がありません。",
+                    romaji: "Jikan ga arimasen.",
+                    english: "There's no time."
+                }
+            },
+            kunyomi: {
+                reading: "とき",
+                words: [
+                    { japanese: "時", hiragana: "とき", english: "time, when" },
+                    { japanese: "時々", hiragana: "ときどき", english: "sometimes" },
+                    { japanese: "時計", hiragana: "とけい", english: "clock/watch" }
+                ],
+                sentence: {
+                    japanese: "寝る時、本を読みます。",
+                    romaji: "Neru toki, hon wo yomimasu.",
+                    english: "When I sleep, I read a book."
+                }
+            }
+        },
+        "朝": {
+            onyomi: {
+                reading: "チョウ",
+                words: [
+                    { japanese: "朝食", hiragana: "ちょうしょく", english: "breakfast (formal)" },
+                    { japanese: "毎朝", hiragana: "まいちょう", english: "every morning (formal)" }
+                ],
+                sentence: {
+                    japanese: "朝食は７時です。",
+                    romaji: "Chōshoku wa shichi-ji desu.",
+                    english: "Breakfast is at 7 o'clock."
+                }
+            },
+            kunyomi: {
+                reading: "あさ",
+                words: [
+                    { japanese: "朝", hiragana: "あさ", english: "morning" },
+                    { japanese: "朝ごはん", hiragana: "あさごはん", english: "breakfast" },
+                    { japanese: "今朝", hiragana: "けさ", english: "this morning" }
+                ],
+                sentence: {
+                    japanese: "朝は早く起きます。",
+                    romaji: "Asa wa hayaku okimasu.",
+                    english: "I wake up early in the morning."
+                }
+            }
+        },
+        "家": {
+            onyomi: {
+                reading: "カ・ケ",
+                words: [
+                    { japanese: "家族", hiragana: "かぞく", english: "family" },
+                    { japanese: "家庭", hiragana: "かてい", english: "household" }
+                ],
+                sentence: {
+                    japanese: "家族は四人です。",
+                    romaji: "Kazoku wa yonin desu.",
+                    english: "My family has four people."
+                }
+            },
+            kunyomi: {
+                reading: "いえ・うち",
+                words: [
+                    { japanese: "家", hiragana: "いえ", english: "house" },
+                    { japanese: "家", hiragana: "うち", english: "home (my home)" }
+                ],
+                sentence: {
+                    japanese: "家に帰ります。",
+                    romaji: "Ie ni kaerimasu.",
+                    english: "I'm going home."
+                }
+            }
+        },
+        "水": {
+            onyomi: {
+                reading: "スイ",
+                words: [
+                    { japanese: "水曜日", hiragana: "すいようび", english: "Wednesday" },
+                    { japanese: "水道", hiragana: "すいどう", english: "water supply" }
+                ],
+                sentence: {
+                    japanese: "水曜日に会いましょう。",
+                    romaji: "Suiyōbi ni aimashō.",
+                    english: "Let's meet on Wednesday."
+                }
+            },
+            kunyomi: {
+                reading: "みず",
+                words: [
+                    { japanese: "水", hiragana: "みず", english: "water" },
+                    { japanese: "お水", hiragana: "おみず", english: "water (polite)" }
+                ],
+                sentence: {
+                    japanese: "水を飲みます。",
+                    romaji: "Mizu wo nomimasu.",
+                    english: "I drink water."
+                }
+            }
+        }
+    };
+
+    // ============================================
+    // RENDER GROUPED VOCABULARY
+    // ============================================
+    function renderGroupedVocabulary(card) {
+        const vocabContainer = document.getElementById('flashcard-vocabulary');
+        const onyomiGroup = vocabContainer.querySelector('.vocab-onyomi');
+        const kunyomiGroup = vocabContainer.querySelector('.vocab-kunyomi');
+        const fallbackSentence = document.getElementById('flashcard-sentence');
+
+        // Check if we have grouped data for this kanji
+        const groupedData = groupedVocabData[card.character];
+
+        if (groupedData) {
+            // Use the new grouped format
+            vocabContainer.style.display = 'flex';
+            fallbackSentence.style.display = 'none';
+
+            // On'yomi section
+            if (groupedData.onyomi && groupedData.onyomi.words.length > 0) {
+                onyomiGroup.classList.remove('empty');
+                onyomiGroup.querySelector('.vocab-group-label').textContent = "On'yomi Examples";
+                document.getElementById('onyomi-reading').textContent = `(${groupedData.onyomi.reading})`;
+                document.getElementById('onyomi-words').innerHTML = groupedData.onyomi.words.map(w =>
+                    `<div class="vocab-word">
+                        <span class="word-jp">${w.japanese}</span>
+                        <span class="word-reading">(${w.hiragana})</span>
+                        <span class="word-en">${w.english}</span>
+                    </div>`
+                ).join('');
+
+                // On'yomi sentence
+                if (groupedData.onyomi.sentence) {
+                    document.getElementById('onyomi-sentence').innerHTML = `
+                        <div class="vocab-sentence-jp">${groupedData.onyomi.sentence.japanese}</div>
+                        <div class="vocab-sentence-romaji">${groupedData.onyomi.sentence.romaji}</div>
+                        <div class="vocab-sentence-en">${groupedData.onyomi.sentence.english}</div>
+                    `;
+                    document.getElementById('onyomi-sentence').style.display = 'block';
+                } else {
+                    document.getElementById('onyomi-sentence').style.display = 'none';
+                }
+            } else {
+                onyomiGroup.classList.add('empty');
+            }
+
+            // Kun'yomi section
+            if (groupedData.kunyomi && groupedData.kunyomi.words.length > 0) {
+                kunyomiGroup.classList.remove('empty');
+                kunyomiGroup.querySelector('.vocab-group-label').textContent = "Kun'yomi Examples";
+                document.getElementById('kunyomi-reading').textContent = `(${groupedData.kunyomi.reading})`;
+                document.getElementById('kunyomi-words').innerHTML = groupedData.kunyomi.words.map(w =>
+                    `<div class="vocab-word">
+                        <span class="word-jp">${w.japanese}</span>
+                        <span class="word-reading">(${w.hiragana})</span>
+                        <span class="word-en">${w.english}</span>
+                    </div>`
+                ).join('');
+
+                // Kun'yomi sentence
+                if (groupedData.kunyomi.sentence) {
+                    document.getElementById('kunyomi-sentence').innerHTML = `
+                        <div class="vocab-sentence-jp">${groupedData.kunyomi.sentence.japanese}</div>
+                        <div class="vocab-sentence-romaji">${groupedData.kunyomi.sentence.romaji}</div>
+                        <div class="vocab-sentence-en">${groupedData.kunyomi.sentence.english}</div>
+                    `;
+                    document.getElementById('kunyomi-sentence').style.display = 'block';
+                } else {
+                    document.getElementById('kunyomi-sentence').style.display = 'none';
+                }
+            } else {
+                kunyomiGroup.classList.add('empty');
+            }
+
+            // Handle single-group display
+            const hasOnyomi = groupedData.onyomi && groupedData.onyomi.words.length > 0;
+            const hasKunyomi = groupedData.kunyomi && groupedData.kunyomi.words.length > 0;
+            if (hasOnyomi && !hasKunyomi || !hasOnyomi && hasKunyomi) {
+                vocabContainer.classList.add('single-group');
+            } else {
+                vocabContainer.classList.remove('single-group');
+            }
+        } else {
+            // Fallback: use original words data in a simple format
+            onyomiGroup.classList.add('empty');
+            kunyomiGroup.classList.remove('empty');
+            vocabContainer.classList.add('single-group');
+
+            // Change label to generic "Examples"
+            kunyomiGroup.querySelector('.vocab-group-label').textContent = 'Example Words';
+            document.getElementById('kunyomi-reading').textContent = '';
+
+            document.getElementById('kunyomi-words').innerHTML = card.words.map(w =>
+                `<div class="vocab-word">
+                    <span class="word-jp">${w.japanese}</span>
+                    <span class="word-reading">(${w.hiragana})</span>
+                    <span class="word-en">${w.english}</span>
+                </div>`
+            ).join('');
+
+            // Hide the kunyomi sentence section and show fallback
+            document.getElementById('kunyomi-sentence').style.display = 'none';
+            fallbackSentence.style.display = 'block';
+            fallbackSentence.querySelector('.sentence-jp').textContent = card.sentence.japanese;
+            fallbackSentence.querySelector('.sentence-romaji').textContent = card.sentence.romaji;
+            fallbackSentence.querySelector('.sentence-en').textContent = card.sentence.english;
+        }
+    }
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up JLPT filter buttons
+        document.querySelectorAll('.jlpt-filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.jlpt-filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                updateCardCount();
+            });
+        });
+
+        // Set up checkbox listeners
+        document.getElementById('shuffle-cards').addEventListener('change', updateCardCount);
+        document.getElementById('auto-audio').addEventListener('change', updateCardCount);
+        document.getElementById('marked-only').addEventListener('change', updateCardCount);
+
+        // Initial card count
+        updateCardCount();
+
+        console.log('Study mode initialized. Kanji loaded:', homeLifeKanji.length);
+    });
+
+    // ============================================
+    // FILTER FUNCTIONS
+    // ============================================
+    function getSelectedJLPTLevel() {
+        const activeBtn = document.querySelector('.jlpt-filter-btn.active');
+        return activeBtn ? activeBtn.dataset.level : 'all';
+    }
+
+    function filterByJLPT(kanji, level) {
+        if (level === 'all') return kanji;
+        return kanji.filter(k => k.jlpt === level);
+    }
+
+    function filterByMarked(kanji, markedOnly) {
+        if (!markedOnly) return kanji;
+        const marked = JSON.parse(localStorage.getItem('markedKanji') || '[]');
+        return kanji.filter(k => marked.includes(k.character));
+    }
+
+    function updateCardCount() {
+        let filtered = [...homeLifeKanji];
+
+        const jlptLevel = getSelectedJLPTLevel();
+        filtered = filterByJLPT(filtered, jlptLevel);
+
+        const markedOnly = document.getElementById('marked-only').checked;
+        filtered = filterByMarked(filtered, markedOnly);
+
+        const count = filtered.length;
+        document.getElementById('card-count-display').textContent =
+            `Ready to study ${count} kanji card${count !== 1 ? 's' : ''}`;
+
+        // Disable start button if no cards
+        document.getElementById('start-study-btn').disabled = (count === 0);
+
+        return filtered;
+    }
+
+    // ============================================
+    // STUDY SESSION FUNCTIONS
+    // ============================================
+    function startStudySession() {
+        // Get filtered cards
+        studyState.cards = updateCardCount();
+
+        if (studyState.cards.length === 0) {
+            alert('No cards match your filter criteria.');
+            return;
+        }
+
+        // Shuffle if enabled
+        if (document.getElementById('shuffle-cards').checked) {
+            studyState.cards = shuffleArray(studyState.cards);
+        }
+
+        // Store settings
+        studyState.settings.shuffle = document.getElementById('shuffle-cards').checked;
+        studyState.settings.autoAudio = document.getElementById('auto-audio').checked;
+        studyState.currentIndex = 0;
+
+        // Hide start screen, show study screen
+        document.getElementById('study-start-screen').style.display = 'none';
+        document.getElementById('study-active-screen').style.display = 'block';
+
+        // Show first card
+        showCard(0);
+    }
+
+    function shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    // ============================================
+    // CARD DISPLAY FUNCTIONS
+    // ============================================
+    function showCard(index) {
+        studyState.currentIndex = index;
+        studyState.isFlipped = false;
+
+        const card = studyState.cards[index];
+
+        // Update progress
+        document.getElementById('current-card-num').textContent = index + 1;
+        document.getElementById('total-cards').textContent = studyState.cards.length;
+
+        const progressPercent = ((index + 1) / studyState.cards.length) * 100;
+        document.getElementById('progress-fill').style.width = progressPercent + '%';
+
+        // Update flashcard front
+        document.getElementById('flashcard-kanji').textContent = card.character;
+
+        // Update flashcard back
+        document.getElementById('flashcard-kanji-small').textContent = card.character;
+
+        // Meaning
+        document.getElementById('flashcard-meaning').innerHTML =
+            `<strong>Meaning:</strong> ${card.meanings.join(', ')}`;
+
+        // JLPT badge
+        const jlptBadge = document.querySelector('#flashcard-jlpt .jlpt-badge');
+        jlptBadge.className = 'jlpt-badge jlpt-' + card.jlpt.toLowerCase();
+        jlptBadge.textContent = 'JLPT ' + card.jlpt;
+
+        // Vocabulary - grouped by reading type
+        renderGroupedVocabulary(card);
+
+        // Sentence
+        document.getElementById('flashcard-sentence').innerHTML =
+            `<strong>Example Sentence:</strong>
+            <div class="sentence-jp">${card.sentence.japanese}</div>
+            <div class="sentence-romaji">${card.sentence.romaji}</div>
+            <div class="sentence-en">${card.sentence.english}</div>`;
+
+        // Reset to front
+        document.getElementById('flashcard-front').style.display = 'flex';
+        document.getElementById('flashcard-back').style.display = 'none';
+
+        // Update mark button
+        updateMarkButton(card.character);
+
+        // Update navigation buttons
+        document.getElementById('prev-btn').disabled = (index === 0);
+        document.getElementById('next-btn').textContent =
+            (index === studyState.cards.length - 1) ? 'Finish →' : 'Next →';
+    }
+
+    function flipCard() {
+        if (studyState.isFlipped) return;
+
+        studyState.isFlipped = true;
+
+        // Hide front, show back
+        document.getElementById('flashcard-front').style.display = 'none';
+        document.getElementById('flashcard-back').style.display = 'block';
+
+        // Play audio if enabled
+        if (studyState.settings.autoAudio) {
+            const kanji = studyState.cards[studyState.currentIndex].character;
+            speakJapanese(kanji);
+        }
+    }
+
+    // ============================================
+    // NAVIGATION FUNCTIONS
+    // ============================================
+    function nextCard() {
+        if (studyState.currentIndex < studyState.cards.length - 1) {
+            showCard(studyState.currentIndex + 1);
+        } else {
+            showResults();
+        }
+    }
+
+    function previousCard() {
+        if (studyState.currentIndex > 0) {
+            showCard(studyState.currentIndex - 1);
+        }
+    }
+
+    function endStudy() {
+        if (confirm('End study session?')) {
+            showResults();
+        }
+    }
+
+    // ============================================
+    // MARK FOR REVIEW FUNCTIONS
+    // ============================================
+    function toggleMark() {
+        const card = studyState.cards[studyState.currentIndex];
+        const kanji = card.character;
+
+        let markedKanji = JSON.parse(localStorage.getItem('markedKanji') || '[]');
+
+        if (markedKanji.includes(kanji)) {
+            markedKanji = markedKanji.filter(k => k !== kanji);
+        } else {
+            markedKanji.push(kanji);
+        }
+
+        localStorage.setItem('markedKanji', JSON.stringify(markedKanji));
+        updateMarkButton(kanji);
+    }
+
+    function updateMarkButton(kanji) {
+        const markedKanji = JSON.parse(localStorage.getItem('markedKanji') || '[]');
+        const isMarked = markedKanji.includes(kanji);
+
+        const markBtn = document.getElementById('mark-btn');
+
+        if (isMarked) {
+            markBtn.classList.add('marked');
+            markBtn.innerHTML = '<span class="mark-icon">⭐</span> Marked for Review';
+        } else {
+            markBtn.classList.remove('marked');
+            markBtn.innerHTML = '<span class="mark-icon">☆</span> Mark for Review';
+        }
+    }
+
+    // ============================================
+    // RESULTS FUNCTIONS
+    // ============================================
+    function showResults() {
+        document.getElementById('study-active-screen').style.display = 'none';
+        document.getElementById('study-results-screen').style.display = 'block';
+
+        // Calculate statistics
+        const cardsReviewed = studyState.currentIndex + 1;
+        const markedKanji = JSON.parse(localStorage.getItem('markedKanji') || '[]');
+        const cardsMarked = studyState.cards.filter(c =>
+            markedKanji.includes(c.character)
+        ).length;
+
+        // Update display
+        document.getElementById('cards-reviewed').textContent = cardsReviewed;
+        document.getElementById('cards-marked').textContent = cardsMarked;
+    }
+
+    function restartStudy() {
+        studyState.currentIndex = 0;
+        showCard(0);
+        document.getElementById('study-results-screen').style.display = 'none';
+        document.getElementById('study-active-screen').style.display = 'block';
+    }
+
+    function returnToStart() {
+        document.getElementById('study-results-screen').style.display = 'none';
+        document.getElementById('study-start-screen').style.display = 'block';
+        studyState.currentIndex = 0;
+        updateCardCount();
+    }
+
+    // ============================================
+    // AUDIO FUNCTIONS
+    // ============================================
+    function speakJapanese(text) {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+        utterance.rate = 0.8;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+
+        // Try to select a Japanese voice if available
+        const voices = window.speechSynthesis.getVoices();
+        const japaneseVoice = voices.find(voice =>
+            voice.lang === 'ja-JP' || voice.lang.startsWith('ja')
+        );
+
+        if (japaneseVoice) {
+            utterance.voice = japaneseVoice;
+        }
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Play current kanji pronunciation (called from audio button)
+    function playCurrentKanji(event) {
+        // Prevent the click from flipping the card
+        if (event) {
+            event.stopPropagation();
+        }
+        const kanji = studyState.cards[studyState.currentIndex].character;
+        speakJapanese(kanji);
+    }
+
+    // Ensure voices are loaded
+    window.speechSynthesis.onvoiceschanged = function() {
+        window.speechSynthesis.getVoices();
+    };
+    </script>
+</body>
+</html>

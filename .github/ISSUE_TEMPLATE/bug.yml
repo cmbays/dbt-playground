@@ -1,0 +1,84 @@
+name: Bug Report
+description: Report a defect or unexpected behavior
+title: "[Bug] "
+labels: ["type:bug", "status:triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Bug Report Template
+        Help us fix issues quickly by providing detailed information.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How bad is this bug?
+      options:
+        - "Critical - Blocks usage"
+        - "High - Major feature broken"
+        - "Medium - Feature partially broken"
+        - "Low - Minor issue or visual glitch"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What's wrong?
+      placeholder: The streak counter resets to 0 after studying on consecutive days
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we recreate this bug?
+      placeholder: |
+        1. Study 10 cards on Day 1
+        2. Come back next day (Day 2)
+        3. Study 10 cards on Day 2
+        4. Check streak counter - shows 0 instead of 2
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+      placeholder: Streak counter should increment to 2 on Day 2
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happens?
+      placeholder: Streak counter resets to 0
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, OS, device details
+      placeholder: |
+        - Browser: Chrome 120.0.6099.109
+        - OS: macOS 14.2
+        - Device: MacBook Pro M1
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Console Errors
+      description: Any errors in browser console? (Cmd+Option+J on Mac, F12 on Windows)
+      placeholder: Paste console errors here
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Add screenshots if helpful (drag & drop)

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.1.0 - Updated: 2026-01-19 - Topics reorganization -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Dialogues - Japanese Travel Scenarios</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <div class="header">
+            <h1>✈️ Travel - Dialogue</h1>
+            <p>Practice realistic transportation conversations</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="../home-life/phrases.html" class="nav-btn">🏠 家庭生活</a>
+            <a href="../restaurant/dialogue.html" class="nav-btn">🍜 レストラン</a>
+            <a href="dialogue.html" class="nav-btn active">✈️ 旅行</a>
+            <a href="../shopping/dialogue.html" class="nav-btn">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn active">💬 Dialogue</a>
+            <a href="story.html" class="section-btn">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn">❓ Quiz</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <div class="content">
+            <!-- Tense Selector -->
+            <div class="tense-selector">
+                <button class="tense-btn active" onclick="showTense('travel', 'dialogue', 'present')">Present</button>
+                <button class="tense-btn" onclick="showTense('travel', 'dialogue', 'past')">Past</button>
+                <button class="tense-btn" onclick="showTense('travel', 'dialogue', 'future')">Future</button>
+                <button class="tense-btn" onclick="showTense('travel', 'dialogue', 'advanced')">Advanced</button>
+            </div>
+
+            <!-- Present Tense Dialogue -->
+            <div id="travel-dialogue-present" class="tense-content active">
+                <button class="play-all-btn" onclick="playAllInContainer('travel-dialogue-present')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> Present tense ～ます form is used for habitual actions and future plans.
+                        Particle まで indicates "to/until" a destination. ～ますか creates polite questions.
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「すみません、新宿駅はどこですか。」</span>
+                                <button class="audio-btn" onclick="speak('すみません、新宿駅はどこですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sumimasen, Shinjuku eki wa doko desu ka. • Excuse me, where is Shinjuku Station?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">駅員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「ここから三つ目の駅です。山手線で行きます。」</span>
+                                <button class="audio-btn" onclick="speak('ここから三つ目の駅です。山手線で行きます。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Koko kara mittsu me no eki desu. Yamanote-sen de ikimasu. • It's the third station from here. You take the Yamanote Line.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「切符はいくらですか。」</span>
+                                <button class="audio-btn" onclick="speak('切符はいくらですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kippu wa ikura desu ka. • How much is the ticket?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">駅員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「二百円です。あの券売機で買います。」</span>
+                                <button class="audio-btn" onclick="speak('二百円です。あの券売機で買います。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Nihyaku en desu. Ano kenbaiki de kaimasu. • It's 200 yen. You buy it at that ticket machine.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「ICカードも使えますか。」</span>
+                                <button class="audio-btn" onclick="speak('ICカードも使えますか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">IC kaado mo tsukaemasu ka. • Can I use an IC card too?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">駅員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「はい、使えます。改札でタッチします。」</span>
+                                <button class="audio-btn" onclick="speak('はい、使えます。改札でタッチします。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Hai, tsukaemasu. Kaisatsu de tacchi shimasu. • Yes, you can. You tap it at the ticket gate.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「何番線ですか。」</span>
+                                <button class="audio-btn" onclick="speak('何番線ですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Nan-bansen desu ka. • What track number?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">駅員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「五番線です。階段を上がって右です。」</span>
+                                <button class="audio-btn" onclick="speak('五番線です。階段を上がって右です。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Go-bansen desu. Kaidan wo agatte migi desu. • It's track 5. Go up the stairs and turn right.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                    <strong>🎌 Cultural Note:</strong> IC cards (Suica, PASMO) are rechargeable transit cards used throughout Japan. They work on trains, buses, and even in convenience stores. Most tourists get a Suica card at major stations.
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">駅</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: エキ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: station</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">線</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: line, track</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">行</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ、ギョウ / Kun: い(く)、ゆ(く)</div>
+                                <div class="kanji-meaning">Meaning: go</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">切</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セツ、サイ / Kun: き(る)</div>
+                                <div class="kanji-meaning">Meaning: cut, ticket</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">符</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: フ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: sign, ticket</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">買</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バイ / Kun: か(う)</div>
+                                <div class="kanji-meaning">Meaning: buy</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">使</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シ / Kun: つか(う)</div>
+                                <div class="kanji-meaning">Meaning: use</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">番</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バン / Kun: つが(い)</div>
+                                <div class="kanji-meaning">Meaning: number, turn</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">上</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジョウ / Kun: うえ、あ(がる)、のぼ(る)</div>
+                                <div class="kanji-meaning">Meaning: up, above, go up</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">右</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ウ、ユウ / Kun: みぎ</div>
+                                <div class="kanji-meaning">Meaning: right</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Past Tense Dialogue -->
+            <div id="travel-dialogue-past" class="tense-content">
+                <button class="play-all-btn" onclick="playAllInContainer('travel-dialogue-past')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> Past tense verbs end in ～ました (polite) or ～た (casual).
+                        The pattern ～てしまいました expresses regret about a completed action ("ended up doing").
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「すみません、電車を間違えてしまいました。」</span>
+                                <button class="audio-btn" onclick="speak('すみません、電車を間違えてしまいました。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sumimasen, densha wo machigaete shimaimashita. • Excuse me, I took the wrong train.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">駅員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「どこに行きたかったですか。」</span>
+                                <button class="audio-btn" onclick="speak('どこに行きたかったですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Doko ni ikitakatta desu ka. • Where did you want to go?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「浅草に行きたかったです。快速に乗ってしまいました。」</span>
+                                <button class="audio-btn" onclick="speak('浅草に行きたかったです。快速に乗ってしまいました。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Asakusa ni ikitakatta desu. Kaisoku ni notte shimaimashita. • I wanted to go to Asakusa. I ended up taking an express train.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">駅員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「そうですか。この電車は浅草に止まりませんでした。」</span>
+                                <button class="audio-btn" onclick="speak('そうですか。この電車は浅草に止まりませんでした。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sou desu ka. Kono densha wa Asakusa ni tomarimasen deshita. • I see. This train didn't stop at Asakusa.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「次の駅で降りたほうがいいですか。」</span>
+                                <button class="audio-btn" onclick="speak('次の駅で降りたほうがいいですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Tsugi no eki de orita hou ga ii desu ka. • Should I get off at the next station?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">駅員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「はい。次の駅で降りて、反対方向の各駅停車に乗り換えてください。」</span>
+                                <button class="audio-btn" onclick="speak('はい。次の駅で降りて、反対方向の各駅停車に乗り換えてください。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Hai. Tsugi no eki de orite, hantai houkou no kakueki teisha ni norikaete kudasai. • Yes. Get off at the next station and transfer to a local train in the opposite direction.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「わかりました。ありがとうございました。」</span>
+                                <button class="audio-btn" onclick="speak('わかりました。ありがとうございました。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Wakarimashita. Arigatou gozaimashita. • I understand. Thank you very much.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                    <strong>🎌 Cultural Note:</strong> Japanese trains have different types: 各駅停車 (kakueki teisha - local/stops at every station), 快速 (kaisoku - rapid), 特急 (tokkyuu - express). Station staff are very helpful if you make a mistake!
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">電</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: デン / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: electricity, train</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">車</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シャ / Kun: くるま</div>
+                                <div class="kanji-meaning">Meaning: car, vehicle</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">間</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カン、ケン / Kun: あいだ、ま</div>
+                                <div class="kanji-meaning">Meaning: interval, mistake</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">違</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: イ / Kun: ちが(う)</div>
+                                <div class="kanji-meaning">Meaning: differ, wrong</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">快</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カイ / Kun: こころよ(い)</div>
+                                <div class="kanji-meaning">Meaning: pleasant, rapid (train)</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">速</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ソク / Kun: はや(い)、すみ(やか)</div>
+                                <div class="kanji-meaning">Meaning: fast, speed</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">乗</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジョウ / Kun: の(る)</div>
+                                <div class="kanji-meaning">Meaning: ride, board</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">止</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シ / Kun: と(まる)、と(める)</div>
+                                <div class="kanji-meaning">Meaning: stop</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">降</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: お(りる)、お(ろす)</div>
+                                <div class="kanji-meaning">Meaning: get off, descend</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">反</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ハン、タン / Kun: そ(る)</div>
+                                <div class="kanji-meaning">Meaning: opposite, anti-</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">対</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: タイ、ツイ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: opposite, versus</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">方</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ホウ / Kun: かた</div>
+                                <div class="kanji-meaning">Meaning: direction, side</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">向</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: む(く)、む(かう)</div>
+                                <div class="kanji-meaning">Meaning: facing, direction</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">各</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カク / Kun: おのおの</div>
+                                <div class="kanji-meaning">Meaning: each, every</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Future Tense Dialogue -->
+            <div id="travel-dialogue-future" class="tense-content">
+                <button class="play-all-btn" onclick="playAllInContainer('travel-dialogue-future')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> Future tense uses present ～ます form or ～つもりです (intend to), ～予定です (plan to).
+                        The volitional form ～ましょう suggests "let's do" together.
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「明日、京都に行くつもりです。新幹線のチケットを予約したいです。」</span>
+                                <button class="audio-btn" onclick="speak('明日、京都に行くつもりです。新幹線のチケットを予約したいです。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Ashita, Kyouto ni iku tsumori desu. Shinkansen no chiketto wo yoyaku shitai desu. • I intend to go to Kyoto tomorrow. I want to reserve a Shinkansen ticket.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「かしこまりました。何時頃の新幹線がよろしいですか。」</span>
+                                <button class="audio-btn" onclick="speak('かしこまりました。何時頃の新幹線がよろしいですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kashikomarimashita. Nanji goro no shinkansen ga yoroshii desu ka. • Certainly. What time Shinkansen would you prefer?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「朝九時頃に出発したいです。指定席をお願いします。」</span>
+                                <button class="audio-btn" onclick="speak('朝九時頃に出発したいです。指定席をお願いします。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Asa ku-ji goro ni shuppatsu shitai desu. Shiteiseki wo onegai shimasu. • I'd like to depart around 9 AM. Reserved seat, please.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「九時六分発の「のぞみ」に空席がございます。窓側と通路側、どちらがよろしいですか。」</span>
+                                <button class="audio-btn" onclick="speak('九時六分発の「のぞみ」に空席がございます。窓側と通路側、どちらがよろしいですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Ku-ji roppun hatsu no "Nozomi" ni kuuseki ga gozaimasu. Madogawa to tsuurogawa, dochira ga yoroshii desu ka. • There are seats available on the 9:06 Nozomi. Window or aisle, which would you prefer?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「窓側にします。富士山が見えるかもしれません。」</span>
+                                <button class="audio-btn" onclick="speak('窓側にします。富士山が見えるかもしれません。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Madogawa ni shimasu. Fujisan ga mieru kamoshiremasen. • I'll take a window seat. I might be able to see Mt. Fuji.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「良い選択ですね。天気が良ければ、静岡あたりで見えるでしょう。」</span>
+                                <button class="audio-btn" onclick="speak('良い選択ですね。天気が良ければ、静岡あたりで見えるでしょう。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Yoi sentaku desu ne. Tenki ga yokereba, Shizuoka atari de mieru deshou. • That's a good choice. If the weather is good, you should be able to see it around Shizuoka.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「楽しみです。帰りのチケットも今日予約できますか。」</span>
+                                <button class="audio-btn" onclick="speak('楽しみです。帰りのチケットも今日予約できますか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Tanoshimi desu. Kaeri no chiketto mo kyou yoyaku dekimasu ka. • I'm looking forward to it. Can I reserve the return ticket today too?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「もちろんです。往復で予約しましょう。」</span>
+                                <button class="audio-btn" onclick="speak('もちろんです。往復で予約しましょう。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Mochiron desu. Oufuku de yoyaku shimashou. • Of course. Let's reserve a round trip.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                    <strong>🎌 Cultural Note:</strong> The Shinkansen has three types: のぞみ (Nozomi - fastest), ひかり (Hikari - semi-fast), こだま (Kodama - stops at all stations). On clear days, Mt. Fuji is visible from the right side when heading to Kyoto from Tokyo!
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">明</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: メイ、ミョウ / Kun: あ(かり)、あか(るい)</div>
+                                <div class="kanji-meaning">Meaning: bright, tomorrow</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">日</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ニチ、ジツ / Kun: ひ、び、か</div>
+                                <div class="kanji-meaning">Meaning: day, sun</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">新</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シン / Kun: あたら(しい)</div>
+                                <div class="kanji-meaning">Meaning: new, fresh</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">幹</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カン / Kun: みき</div>
+                                <div class="kanji-meaning">Meaning: trunk, main line</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">予</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヨ / Kun: あらかじ(め)</div>
+                                <div class="kanji-meaning">Meaning: in advance, reserve</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">約</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヤク / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: promise, reservation</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">時</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジ / Kun: とき</div>
+                                <div class="kanji-meaning">Meaning: time, hour</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">頃</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケイ / Kun: ころ、ごろ</div>
+                                <div class="kanji-meaning">Meaning: approximate time, about</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">指</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シ / Kun: ゆび、さ(す)</div>
+                                <div class="kanji-meaning">Meaning: finger, point, reserved</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">定</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: テイ、ジョウ / Kun: さだ(める)</div>
+                                <div class="kanji-meaning">Meaning: determine, fixed</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">席</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セキ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: seat</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">発</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ハツ、ホツ / Kun: た(つ)</div>
+                                <div class="kanji-meaning">Meaning: departure, emit</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">窓</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ソウ / Kun: まど</div>
+                                <div class="kanji-meaning">Meaning: window</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">側</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ソク / Kun: かわ、がわ</div>
+                                <div class="kanji-meaning">Meaning: side</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">見</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケン / Kun: み(る)、み(える)</div>
+                                <div class="kanji-meaning">Meaning: see, look</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">往</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: オウ / Kun: ゆ(く)、い(く)</div>
+                                <div class="kanji-meaning">Meaning: go, outbound</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">復</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: フク / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: return, restore</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Dialogue -->
+            <div id="travel-dialogue-advanced" class="tense-content">
+                <button class="play-all-btn" onclick="playAllInContainer('travel-dialogue-advanced')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> Advanced keigo uses honorific forms: いらっしゃいます (go/come/be), おっしゃる (say), ご利用になる (use).
+                        The humble form 申し訳ございません is more formal than すみません.
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「すみません、グリーン車の切符を購入したいのですが、どちらで手続きできますか。」</span>
+                                <button class="audio-btn" onclick="speak('すみません、グリーン車の切符を購入したいのですが、どちらで手続きできますか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sumimasen, guriin-sha no kippu wo kounyuu shitai no desu ga, dochira de tetsuzuki dekimasu ka. • Excuse me, I'd like to purchase a Green Car ticket, where can I complete the procedure?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「みどりの窓口でご購入いただけます。あちらの三番窓口にお並びください。」</span>
+                                <button class="audio-btn" onclick="speak('みどりの窓口でご購入いただけます。あちらの三番窓口にお並びください。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Midori no madoguchi de gokounyuu itadakemasu. Achira no san-ban madoguchi ni onarabi kudasai. • You can purchase it at the Midori no Madoguchi ticket office. Please line up at window 3 over there.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「かしこまりました。ジャパンレールパスは使用できますか。」</span>
+                                <button class="audio-btn" onclick="speak('かしこまりました。ジャパンレールパスは使用できますか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kashikomarimashita. Japan reeru pasu wa shiyou dekimasu ka. • Understood. Can I use a Japan Rail Pass?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「はい、ご利用いただけます。ただし、グリーン車をご利用の場合は追加料金が発生いたします。」</span>
+                                <button class="audio-btn" onclick="speak('はい、ご利用いただけます。ただし、グリーン車をご利用の場合は追加料金が発生いたします。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Hai, goriyou itadakemasu. Tadashi, guriin-sha wo goriyou no baai wa tsuika ryoukin ga hassei itashimasu. • Yes, you can use it. However, if you use Green Car, an additional fee will be charged.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「承知しました。追加料金はおいくらでしょうか。」</span>
+                                <button class="audio-btn" onclick="speak('承知しました。追加料金はおいくらでしょうか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Shouchi shimashita. Tsuika ryoukin wa oikura deshou ka. • I understand. How much is the additional fee?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「区間によって異なりますが、東京から京都までですと、約五千円でございます。」</span>
+                                <button class="audio-btn" onclick="speak('区間によって異なりますが、東京から京都までですと、約五千円でございます。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kukan ni yotte kotonarimasu ga, Toukyou kara Kyouto made desu to, yaku go-sen en de gozaimasu. • It varies by section, but from Tokyo to Kyoto it's approximately 5,000 yen.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「では、そちらで手続きをお願いいたします。荷物の預け入れサービスもございますか。」</span>
+                                <button class="audio-btn" onclick="speak('では、そちらで手続きをお願いいたします。荷物の預け入れサービスもございますか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Dewa, sochira de tetsuzuki wo onegai itashimasu. Nimotsu no azukeire saabisu mo gozaimasu ka. • Then I'll complete the procedure there. Is there also a luggage check-in service?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">係員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「はい、グリーン車ですと、大きな荷物を事前にお預かりできます。窓口でお申し込みください。」</span>
+                                <button class="audio-btn" onclick="speak('はい、グリーン車ですと、大きな荷物を事前にお預かりできます。窓口でお申し込みください。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Hai, guriin-sha desu to, ookina nimotsu wo jizen ni oazukari dekimasu. Madoguchi de omoushikomi kudasai. • Yes, with Green Car, we can check large luggage in advance. Please apply at the window.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「大変助かります。ご丁寧にありがとうございました。」</span>
+                                <button class="audio-btn" onclick="speak('大変助かります。ご丁寧にありがとうございました。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Taihen tasukarimasu. Goteinei ni arigatou gozaimashita. • That's very helpful. Thank you for your courteous service.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                    <strong>🎌 Cultural Note:</strong> Green Car (グリーン車) is the first-class section of trains with wider seats and more space. The Japan Rail Pass (JR Pass) is available only to tourists and covers most JR trains. Midori no Madoguchi (みどりの窓口) is JR's full-service ticket office.
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">購</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: purchase, buy</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">入</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ニュウ / Kun: い(る)、はい(る)</div>
+                                <div class="kanji-meaning">Meaning: enter, put in</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">手</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュ / Kun: て</div>
+                                <div class="kanji-meaning">Meaning: hand, procedure</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">続</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゾク / Kun: つづ(く)、つづ(ける)</div>
+                                <div class="kanji-meaning">Meaning: continue, procedure</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">窓</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ソウ / Kun: まど</div>
+                                <div class="kanji-meaning">Meaning: window, counter</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">並</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヘイ / Kun: なら(ぶ)、なら(べる)</div>
+                                <div class="kanji-meaning">Meaning: line up, row</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">使</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シ / Kun: つか(う)</div>
+                                <div class="kanji-meaning">Meaning: use</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">用</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヨウ / Kun: もち(いる)</div>
+                                <div class="kanji-meaning">Meaning: use, business</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">利</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: リ / Kun: き(く)</div>
+                                <div class="kanji-meaning">Meaning: profit, use, convenient</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">追</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ツイ / Kun: お(う)</div>
+                                <div class="kanji-meaning">Meaning: chase, additional</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">加</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カ / Kun: くわ(える)、くわ(わる)</div>
+                                <div class="kanji-meaning">Meaning: add, additional</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">料</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: リョウ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: fee, charge, material</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">金</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キン、コン / Kun: かね、かな</div>
+                                <div class="kanji-meaning">Meaning: gold, money</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">発</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ハツ、ホツ / Kun: た(つ)</div>
+                                <div class="kanji-meaning">Meaning: depart, occur</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">生</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セイ、ショウ / Kun: い(きる)、う(まれる)</div>
+                                <div class="kanji-meaning">Meaning: life, occur, raw</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">承</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショウ / Kun: うけたまわ(る)</div>
+                                <div class="kanji-meaning">Meaning: consent, hear (humble)</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">知</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チ / Kun: し(る)</div>
+                                <div class="kanji-meaning">Meaning: know, understand</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">区</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ク / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: ward, section</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">異</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: イ / Kun: こと(なる)</div>
+                                <div class="kanji-meaning">Meaning: differ, strange</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">荷</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カ / Kun: に</div>
+                                <div class="kanji-meaning">Meaning: luggage, cargo</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">預</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヨ / Kun: あず(ける)、あず(かる)</div>
+                                <div class="kanji-meaning">Meaning: deposit, entrust</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">事</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジ、ズ / Kun: こと</div>
+                                <div class="kanji-meaning">Meaning: matter, thing</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">前</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゼン / Kun: まえ</div>
+                                <div class="kanji-meaning">Meaning: front, before, in advance</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/shared.js"></script>
+</body>
+</html>

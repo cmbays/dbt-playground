@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.1.0 - Updated: 2026-01-19 - Topics reorganization -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery Shopping Story - Japanese Shopping Scenarios</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛍️ Shopping - Story</h1>
+            <p>Grocery Shopping Story</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="../home-life/phrases.html" class="nav-btn">🏠 家庭生活</a>
+            <a href="../restaurant/story.html" class="nav-btn">🍜 レストラン</a>
+            <a href="../travel/story.html" class="nav-btn">✈️ 旅行</a>
+            <a href="story.html" class="nav-btn active">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation (within Shopping) -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn">💬 Dialogue</a>
+            <a href="story.html" class="section-btn active">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn">❓ Quiz</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <!-- Back to Stories Link -->
+        <div class="navigation" style="margin-bottom: 20px;">
+            <a href="story.html" class="nav-btn">← Back to Stories</a>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div id="shopping-story-groceries" class="tense-content active">
+                <h2>🛒 スーパーマーケットでの買い物 (Grocery Shopping at a Supermarket)</h2>
+                <button class="play-all-btn" onclick="playAllInContainer('shopping-story-groceries')">▶️ Play All</button>
+
+                <div class="story-container">
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('週末、山田さんは近所のスーパーマーケットに行きました。午前中に買い物をするのが好きで、この時間帯は野菜が新鮮です。入口でショッピングカートを取り、店内に入りました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">週末、山田さんは近所のスーパーマーケットに行きました。午前中に買い物をするのが好きで、この時間帯は野菜が新鮮です。入口でショッピングカートを取り、店内に入りました。</p>
+                        <div class="paragraph-hint">Shuumatsu, Yamada-san wa kinjo no suupaamaaketto ni ikimashita. Gozen-chuu ni kaimono wo suru no ga suki de, kono jikantai wa yasai ga shinsen desu. Iriguchi de shoppingu kaato wo tori, tennai ni hairimashita. • On the weekend, Ms. Yamada went to the nearby supermarket. She likes shopping in the morning, and vegetables are fresh during this time. She took a shopping cart at the entrance and entered the store.</div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> Japanese supermarkets (スーパー suupaa) pride themselves on freshness. Many shoppers go early in the morning when produce is freshest, and stores often discount items approaching their sell-by date in the evening with special 割引 (waribiki - discount) stickers.
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('最初に青果売り場で野菜と果物を選びました。トマト、きゅうり、人参を買いました。リンゴも安かったので、五つ買いました。店員さんが「このリンゴは甘くて美味しいですよ」と教えてくれました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">最初に青果売り場で野菜と果物を選びました。トマト、きゅうり、人参を買いました。リンゴも安かったので、五つ買いました。店員さんが「このリンゴは甘くて美味しいですよ」と教えてくれました。</p>
+                        <div class="paragraph-hint">Saisho ni seika uriba de yasai to kudamono wo erabimashita. Tomato, kyuuri, ninjin wo kaimashita. Ringo mo yasukatta node, itsutsu kaimashita. Ten'in-san ga "kono ringo wa amakute oishii desu yo" to oshiete kuremashita. • First, she selected vegetables and fruits in the produce section. She bought tomatoes, cucumbers, and carrots. Apples were also cheap, so she bought five. The staff member told her, "These apples are sweet and delicious."</div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>📝 Grammar Tip:</strong> ～てくれる (te kureru) shows that someone does something for you as a favor: 教えてくれました (oshiete kuremashita - "told me/taught me [for my benefit]").
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('次に精肉コーナーに行きました。今晩の夕食用に鶏肉を買いました。魚売り場では、新鮮なサーモンと鯖を見つけました。「今日の魚はどれが新鮮ですか」と店員に聞いてみました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">次に精肉コーナーに行きました。今晩の夕食用に鶏肉を買いました。魚売り場では、新鮮なサーモンと鯖を見つけました。「今日の魚はどれが新鮮ですか」と店員に聞いてみました。</p>
+                        <div class="paragraph-hint">Tsugi ni seiniku koonaa ni ikimashita. Konban no yuushoku-you ni toriniku wo kaimashita. Sakana uriba de wa, shinsen na saamon to saba wo mitsukemashita. "Kyou no sakana wa dore ga shinsen desu ka" to ten'in ni kiite mimashita. • Next, she went to the meat corner. She bought chicken for tonight's dinner. At the fish section, she found fresh salmon and mackerel. She tried asking the staff, "Which fish is fresh today?"</div>
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('乳製品コーナーで牛乳、チーズ、ヨーグルトを取りました。パンや卵も必要だったので、それぞれの売り場を回りました。調味料売り場では、醤油と味噌を補充しました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">乳製品コーナーで牛乳、チーズ、ヨーグルトを取りました。パンや卵も必要だったので、それぞれの売り場を回りました。調味料売り場では、醤油と味噌を補充しました。</p>
+                        <div class="paragraph-hint">Nyuuseihin koonaa de gyuunyuu, chiizu, yooguruto wo torimashita. Pan ya tamago mo hitsuyou datta node, sorezore no uriba wo mawarimashita. Choumiryou uriba de wa, shouyu to miso wo hojuu shimashita. • At the dairy section, she took milk, cheese, and yogurt. Since bread and eggs were also needed, she went around to each section. At the condiments section, she restocked soy sauce and miso.</div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>📝 Grammar Tip:</strong> ～ので (node) means "because" and connects cause and effect naturally: 必要だったので (hitsuyou datta node - "because it was necessary").
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('買い物が終わって、レジに並びました。前に三人のお客さんがいました。自分の番が来ると、店員さんが商品をスキャンしてくれました。「ポイントカードはお持ちですか」と聞かれたので、カードを見せました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">買い物が終わって、レジに並びました。前に三人のお客さんがいました。自分の番が来ると、店員さんが商品をスキャンしてくれました。「ポイントカードはお持ちですか」と聞かれたので、カードを見せました。</p>
+                        <div class="paragraph-hint">Kaimono ga owatte, reji ni narabimashita. Mae ni san-nin no okyaku-san ga imashita. Jibun no ban ga kuru to, ten'in-san ga shouhin wo sukyan shite kuremashita. "Pointo kaado wa omochi desu ka" to kikareta node, kaado wo misemashita. • After finishing shopping, she lined up at the register. There were three customers ahead of her. When her turn came, the staff member scanned her items. When asked "Do you have a point card?", she showed her card.</div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> Point cards (ポイントカード pointo kaado) are extremely popular in Japan. Almost every store has a loyalty program where customers earn points with purchases. Staff always ask "ポイントカードはお持ちですか" (Do you have a point card?) at checkout.
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('合計金額は四千五百円でした。現金で支払いをして、レシートと釣り銭を受け取りました。自分でエコバッグに商品を詰めて、店を出ました。新鮮な食材を買えて満足でした。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">合計金額は四千五百円でした。現金で支払いをして、レシートと釣り銭を受け取りました。自分でエコバッグに商品を詰めて、店を出ました。新鮮な食材を買えて満足でした。</p>
+                        <div class="paragraph-hint">Goukei kingaku wa yon-sen go-hyaku-en deshita. Genkin de shiharai wo shite, reshiito to tsurisen wo uketorimashita. Jibun de eko baggu ni shouhin wo tsumete, mise wo demashita. Shinsen na shokuzai wo kaete manzoku deshita. • The total amount was 4,500 yen. She paid with cash and received the receipt and change. She packed the items into her eco-bag herself and left the store. She was satisfied with buying fresh ingredients.</div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>📝 Grammar Tip:</strong> ～て (te form) can show satisfaction about a completed action: 買えて満足でした (kaete manzoku deshita - "was satisfied having bought").
+                    </div>
+                </div>
+
+                <!-- Kanji Section for Groceries Story -->
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Story</div>
+
+                    <div style="background: #f0f9ff; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #0369a1;">
+                        <strong style="color: #0369a1;">🛒 Shopping & Store (買い物と店)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">買</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バイ / Kun: か(う)</div>
+                                <div class="kanji-meaning">Meaning: buy, purchase</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">売</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バイ / Kun: う(る)</div>
+                                <div class="kanji-meaning">Meaning: sell</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">店</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: テン / Kun: みせ</div>
+                                <div class="kanji-meaning">Meaning: store, shop</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">場</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジョウ / Kun: ば</div>
+                                <div class="kanji-meaning">Meaning: place, location</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">員</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: イン</div>
+                                <div class="kanji-meaning">Meaning: member, staff</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">客</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キャク、カク / Kun: ---</div>
+                                <div class="kanji-meaning">Meaning: customer, guest</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">商</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショウ / Kun: あきな(う)</div>
+                                <div class="kanji-meaning">Meaning: commerce, merchandise</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">品</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヒン / Kun: しな</div>
+                                <div class="kanji-meaning">Meaning: goods, item</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f0fdf4; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #10b981;">
+                        <strong style="color: #10b981;">🥬 Food & Ingredients (食品と食材)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">野</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヤ / Kun: の</div>
+                                <div class="kanji-meaning">Meaning: field, wild</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">菜</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: サイ / Kun: な</div>
+                                <div class="kanji-meaning">Meaning: vegetable, greens</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">果</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カ / Kun: は(たす)</div>
+                                <div class="kanji-meaning">Meaning: fruit, result</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">物</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ブツ / Kun: もの</div>
+                                <div class="kanji-meaning">Meaning: thing, object</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">肉</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ニク</div>
+                                <div class="kanji-meaning">Meaning: meat</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">鶏</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケイ / Kun: にわとり</div>
+                                <div class="kanji-meaning">Meaning: chicken</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">魚</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ギョ / Kun: さかな</div>
+                                <div class="kanji-meaning">Meaning: fish</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">鯖</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: --- / Kun: さば</div>
+                                <div class="kanji-meaning">Meaning: mackerel</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">乳</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ニュウ / Kun: ちち</div>
+                                <div class="kanji-meaning">Meaning: milk</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">卵</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ラン / Kun: たまご</div>
+                                <div class="kanji-meaning">Meaning: egg</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #f59e0b;">
+                        <strong style="color: #f59e0b;">💰 Money & Payment (お金と支払い)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">金</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キン / Kun: かね</div>
+                                <div class="kanji-meaning">Meaning: money, gold</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">額</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ガク / Kun: ひたい</div>
+                                <div class="kanji-meaning">Meaning: amount, forehead</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">円</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: エン / Kun: まる(い)</div>
+                                <div class="kanji-meaning">Meaning: yen, circle</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">払</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: フツ / Kun: はら(う)</div>
+                                <div class="kanji-meaning">Meaning: pay</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">現</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゲン / Kun: あらわ(れる)</div>
+                                <div class="kanji-meaning">Meaning: present, current, cash</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">安</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: アン / Kun: やす(い)</div>
+                                <div class="kanji-meaning">Meaning: cheap, peaceful</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">釣</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チョウ / Kun: つ(る)</div>
+                                <div class="kanji-meaning">Meaning: fish, change (money)</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">銭</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: ぜに</div>
+                                <div class="kanji-meaning">Meaning: coin, money</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #faf5ff; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #a855f7;">
+                        <strong style="color: #a855f7;">📅 Time & Quality (時間と品質)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">週</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュウ</div>
+                                <div class="kanji-meaning">Meaning: week</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">末</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: マツ / Kun: すえ</div>
+                                <div class="kanji-meaning">Meaning: end</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">午</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゴ</div>
+                                <div class="kanji-meaning">Meaning: noon</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">前</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゼン / Kun: まえ</div>
+                                <div class="kanji-meaning">Meaning: front, before</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">新</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シン / Kun: あたら(しい)</div>
+                                <div class="kanji-meaning">Meaning: new, fresh</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">鮮</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: あざ(やか)</div>
+                                <div class="kanji-meaning">Meaning: fresh, vivid</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">今</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コン / Kun: いま</div>
+                                <div class="kanji-meaning">Meaning: now, present</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">晩</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バン</div>
+                                <div class="kanji-meaning">Meaning: evening, night</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef2f2; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #ef4444;">
+                        <strong style="color: #ef4444;">🎯 Actions & Verbs (動作と動詞)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">選</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: えら(ぶ)</div>
+                                <div class="kanji-meaning">Meaning: choose, select</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">取</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュ / Kun: と(る)</div>
+                                <div class="kanji-meaning">Meaning: take, get</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">並</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヘイ / Kun: なら(ぶ)</div>
+                                <div class="kanji-meaning">Meaning: line up, arrange</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">受</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジュ / Kun: う(ける)</div>
+                                <div class="kanji-meaning">Meaning: receive, accept</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">詰</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キツ / Kun: つ(める)</div>
+                                <div class="kanji-meaning">Meaning: pack, stuff</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">見</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケン / Kun: み(る)</div>
+                                <div class="kanji-meaning">Meaning: see, look</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">聞</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ブン / Kun: き(く)</div>
+                                <div class="kanji-meaning">Meaning: hear, ask</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">教</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キョウ / Kun: おし(える)</div>
+                                <div class="kanji-meaning">Meaning: teach, tell</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #e0f7fa; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #00acc1;">
+                        <strong style="color: #00acc1;">🏪 Store Sections (店内のコーナー)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">青</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セイ / Kun: あお</div>
+                                <div class="kanji-meaning">Meaning: blue, green</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">精</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セイ</div>
+                                <div class="kanji-meaning">Meaning: refined, spirit</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">製</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セイ</div>
+                                <div class="kanji-meaning">Meaning: manufactured, made</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">調</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チョウ / Kun: しら(べる)</div>
+                                <div class="kanji-meaning">Meaning: investigate, season</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">味</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ミ / Kun: あじ</div>
+                                <div class="kanji-meaning">Meaning: taste, flavor</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">料</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: リョウ</div>
+                                <div class="kanji-meaning">Meaning: fee, material</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../../js/shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,1661 @@
+/* Japanese Language Learning App - Shared Styles */
+/* This file contains all common styles used across scenario pages */
+
+/* ============================================================================
+   RESET & BASE STYLES
+   ============================================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* ============================================================================
+   CONTAINER & LAYOUT
+   ============================================================================ */
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+/* ============================================================================
+   HEADER & NAVIGATION
+   ============================================================================ */
+
+/* Home Icon - Top Left Corner */
+.home-icon {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    text-decoration: none;
+    font-size: 2.5em;
+    background: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.home-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.header p {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+.navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 3px solid #e9ecef;
+    justify-content: center;
+}
+
+.nav-btn {
+    padding: 12px 24px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.nav-btn.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Section Navigation (within a topic) */
+.section-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    justify-content: center;
+}
+
+.section-btn {
+    padding: 10px 20px;
+    border: 2px solid #10b981;
+    background: white;
+    color: #10b981;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.section-btn:hover {
+    background: #10b981;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.section-btn.active {
+    background: #10b981;
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* ============================================================================
+   SCENARIO CARDS
+   ============================================================================ */
+
+.content {
+    padding: 30px;
+}
+
+.scenario-card {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.scenario-card.hidden {
+    display: none;
+}
+
+.scenario-title {
+    font-size: 2em;
+    color: #667eea;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #667eea;
+}
+
+.scenario-subtitle {
+    color: #6c757d;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+/* ============================================================================
+   MODALITY TABS
+   ============================================================================ */
+
+.modality-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.modality-tab {
+    padding: 12px 24px;
+    background: #e9ecef;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s;
+    color: #495057;
+}
+
+.modality-tab:hover {
+    background: #dee2e6;
+    transform: translateY(-2px);
+}
+
+.modality-tab.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.modality-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.modality-content.active {
+    display: block;
+}
+
+/* ============================================================================
+   TENSE SELECTOR
+   ============================================================================ */
+
+.tense-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+.tense-btn {
+    padding: 8px 16px;
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+    color: #495057;
+}
+
+.tense-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.tense-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.tense-content {
+    display: none;
+}
+
+.tense-content.active {
+    display: block;
+}
+
+/* ============================================================================
+   KEY PHRASES SECTION
+   ============================================================================ */
+
+.key-phrases {
+    background: #f0f9ff;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    border-left: 4px solid #3b82f6;
+}
+
+.key-phrases-title {
+    font-size: 1.5em;
+    color: #1e40af;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.phrase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.phrase-item {
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+}
+
+.phrase-item:hover {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+}
+
+.phrase-jp {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.phrase-hint {
+    font-size: 0.9em;
+    color: #64748b;
+    margin-top: 4px;
+    display: none;
+}
+
+.phrase-hint.show {
+    display: block;
+}
+
+/* ============================================================================
+   DIALOGUE SECTION
+   ============================================================================ */
+
+.dialogue-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.dialogue-line {
+    display: flex;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.speaker {
+    font-weight: 700;
+    color: #667eea;
+    min-width: 80px;
+    font-size: 14px;
+}
+
+.speech-bubble {
+    background: #f8f9fa;
+    padding: 12px 16px;
+    border-radius: 12px;
+    flex: 1;
+    position: relative;
+}
+
+.japanese {
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.hint-text {
+    font-size: 0.9em;
+    color: #64748b;
+    line-height: 1.4;
+    display: none;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.hint-text.show {
+    display: block;
+}
+
+/* ============================================================================
+   STORY SECTION
+   ============================================================================ */
+
+.story-container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.story-paragraph {
+    margin-bottom: 25px;
+}
+
+.paragraph-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.paragraph-japanese {
+    font-size: 1.15em;
+    line-height: 1.8;
+    color: #1e293b;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.paragraph-hint {
+    font-size: 0.95em;
+    color: #64748b;
+    line-height: 1.6;
+    display: none;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+.paragraph-hint.show {
+    display: block;
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.audio-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.audio-btn:hover {
+    background: #059669;
+    transform: scale(1.05);
+}
+
+.hint-btn {
+    background: #f59e0b;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.hint-btn:hover {
+    background: #d97706;
+    transform: scale(1.05);
+}
+
+/* ============================================================================
+   KANJI SECTION
+   ============================================================================ */
+
+.kanji-section {
+    margin-top: 30px;
+    background: #f0f9ff;
+    border-radius: 15px;
+    padding: 20px;
+    border-left: 4px solid #3b82f6;
+}
+
+.kanji-title {
+    font-size: 1.4em;
+    color: #1e40af;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.kanji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.kanji-card {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid #e5e7eb;
+}
+
+.kanji-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+}
+
+.kanji-character {
+    font-size: 2.5em;
+    color: #1e293b;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.kanji-details {
+    font-size: 0.85em;
+    color: #64748b;
+    text-align: left;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.kanji-details.show {
+    max-height: 600px;
+}
+
+.kanji-reading {
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.kanji-meaning {
+    color: #6b7280;
+}
+
+/* ============================================================================
+   GRAMMAR TIPS
+   ============================================================================ */
+
+.grammar-tip {
+    background: #fef3c7;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    border-left: 4px solid #f59e0b;
+}
+
+.grammar-tip strong {
+    color: #92400e;
+}
+
+.tip-box {
+    background: #fef3c7;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+/* ============================================================================
+   QUIZ SECTION
+   ============================================================================ */
+
+.quiz-container {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.quiz-item {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.question {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    padding: 12px 16px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.option:hover:not(.disabled) {
+    border-color: #667eea;
+    background: #f8fafc;
+}
+
+.option.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.option.correct {
+    border-color: #10b981;
+    background: #d1fae5;
+}
+
+.option.incorrect {
+    border-color: #ef4444;
+    background: #fee2e2;
+}
+
+.feedback {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: none;
+}
+
+.feedback.show {
+    display: block;
+}
+
+.feedback.correct {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.feedback.incorrect {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.score-display {
+    position: sticky;
+    top: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.score-display.good {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.score-display.excellent {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+/* ============================================================================
+   CULTURAL TIPS
+   ============================================================================ */
+
+.cultural-tips {
+    background: #fef3c7;
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 4px solid #f59e0b;
+}
+
+.cultural-tips h3 {
+    color: #92400e;
+    margin-bottom: 15px;
+}
+
+.cultural-tips p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.cultural-tips strong {
+    color: #78350f;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.hidden {
+    display: none !important;
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ============================================================================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+    }
+
+    .header p {
+        font-size: 1em;
+    }
+
+    .navigation {
+        padding: 15px;
+    }
+
+    .nav-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .scenario-title {
+        font-size: 1.5em;
+    }
+
+    .phrase-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kanji-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    .kanji-character {
+        font-size: 2em;
+    }
+}
+
+/* ============================================================================
+   JLPT BADGE STYLES
+   ============================================================================ */
+
+.kanji-jlpt {
+    margin: 8px 0;
+    text-align: center;
+}
+
+.jlpt-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.jlpt-n5 { background: #22c55e; color: white; }
+.jlpt-n4 { background: #3b82f6; color: white; }
+.jlpt-n3 { background: #eab308; color: white; }
+.jlpt-n2 { background: #f97316; color: white; }
+.jlpt-n1 { background: #dc2626; color: white; }
+
+/* ============================================================================
+   WORD EXAMPLES & SENTENCE STYLES
+   ============================================================================ */
+
+.kanji-words {
+    margin: 10px 0;
+    padding: 8px;
+    background: #f0f9ff;
+    border-radius: 6px;
+}
+
+.kanji-words-title {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 6px;
+}
+
+.word-example {
+    font-size: 0.9em;
+    margin: 4px 0;
+    color: #1e293b;
+}
+
+.word-example .word-jp {
+    font-weight: 600;
+}
+
+.word-example .word-reading {
+    color: #64748b;
+}
+
+.word-example .word-en {
+    color: #6b7280;
+}
+
+.word-example .word-jlpt {
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 8px;
+    margin-left: 4px;
+}
+
+.kanji-sentence {
+    margin: 10px 0;
+    padding: 8px;
+    background: #fef3c7;
+    border-radius: 6px;
+}
+
+.kanji-sentence-title {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 6px;
+}
+
+.sentence-jp {
+    font-size: 1em;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 4px 0;
+}
+
+.sentence-hiragana {
+    font-size: 0.85em;
+    color: #64748b;
+    margin: 2px 0;
+}
+
+.sentence-romaji {
+    font-size: 0.85em;
+    color: #64748b;
+    margin: 2px 0;
+}
+
+.sentence-en {
+    font-size: 0.85em;
+    color: #6b7280;
+    font-style: italic;
+    margin: 4px 0;
+}
+
+/* ============================================================================
+   MARK FOR REVIEW STYLES
+   ============================================================================ */
+
+.kanji-card {
+    position: relative;
+}
+
+.kanji-card.marked-for-review {
+    border: 2px solid #f59e0b;
+    background: #fffbeb;
+}
+
+.kanji-card.marked-for-review::before {
+    content: "⭐";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 1.2em;
+}
+
+.mark-review-btn {
+    margin: 20px 0;
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    color: #f59e0b;
+    transition: all 0.3s;
+}
+
+.mark-review-btn:hover {
+    background: #fffbeb;
+}
+
+.mark-review-btn.marked {
+    background: #f59e0b;
+    color: white;
+}
+
+.mark-icon {
+    font-size: 1.3em;
+    margin-right: 5px;
+}
+
+/* ============================================================================
+   STUDY MODE - START SCREEN
+   ============================================================================ */
+
+.study-start-screen {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.study-title {
+    font-size: 2em;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.study-description {
+    color: #64748b;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+.filter-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.filter-label {
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.jlpt-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.jlpt-filter-btn {
+    padding: 10px 20px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s;
+    min-width: 70px;
+}
+
+.jlpt-filter-btn:hover {
+    border-color: #667eea;
+}
+
+.jlpt-filter-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.jlpt-filter-btn.jlpt-n5.active { background: #22c55e; border-color: #22c55e; }
+.jlpt-filter-btn.jlpt-n4.active { background: #3b82f6; border-color: #3b82f6; }
+.jlpt-filter-btn.jlpt-n3.active { background: #eab308; border-color: #eab308; }
+.jlpt-filter-btn.jlpt-n2.active { background: #f97316; border-color: #f97316; }
+.jlpt-filter-btn.jlpt-n1.active { background: #dc2626; border-color: #dc2626; }
+
+.study-options {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.study-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.study-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.card-count-display {
+    font-size: 1.2em;
+    color: #667eea;
+    font-weight: 700;
+    margin: 20px 0;
+}
+
+.start-study-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.start-study-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.start-study-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ============================================================================
+   STUDY MODE - ACTIVE SCREEN
+   ============================================================================ */
+
+.study-active-screen {
+    display: none;
+    padding: 20px;
+}
+
+.progress-container {
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    text-align: center;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.flashcard {
+    background: white;
+    border: 3px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 40px;
+    min-height: 400px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.flashcard:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 15px 40px rgba(59, 130, 246, 0.2);
+}
+
+.flashcard-front {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+}
+
+.flashcard-back {
+    display: none;
+}
+
+.flashcard-kanji {
+    font-size: 8em;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.flashcard-hint {
+    color: #94a3b8;
+    margin-top: 20px;
+    font-size: 1em;
+}
+
+.flashcard-kanji-small {
+    font-size: 4em;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.flashcard-kanji-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.flashcard-audio-btn {
+    font-size: 1.5em;
+    padding: 10px 15px;
+    border-radius: 50%;
+    min-width: 50px;
+    height: 50px;
+}
+
+.flashcard-reading {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.reading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.reading-row:last-of-type {
+    border-bottom: none;
+}
+
+.reading-label {
+    font-weight: 600;
+    color: #64748b;
+    cursor: help;
+    font-size: 0.95em;
+}
+
+.reading-value {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.reading-help {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #cbd5e1;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.reading-help small {
+    font-size: 0.8em;
+}
+
+.flashcard-meaning {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 1.1em;
+}
+
+.flashcard-jlpt {
+    text-align: center;
+    margin: 15px 0;
+}
+
+/* Vocabulary grouped by reading type */
+.flashcard-vocabulary {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.vocab-group {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.vocab-onyomi {
+    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+    border-left: 4px solid #3b82f6;
+}
+
+.vocab-kunyomi {
+    background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+    border-left: 4px solid #22c55e;
+}
+
+.vocab-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.vocab-group-label {
+    font-weight: 700;
+    font-size: 0.85em;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Help icon with tooltip */
+.help-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    font-size: 0.85em;
+    color: #64748b;
+    cursor: help;
+    position: relative;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.help-icon:hover,
+.help-icon:focus {
+    color: #3b82f6;
+    outline: none;
+}
+
+.tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    padding: 12px;
+    background: #1e293b;
+    color: white;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: left;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: #1e293b;
+}
+
+.tooltip strong {
+    color: #93c5fd;
+}
+
+.tooltip em {
+    color: #fcd34d;
+}
+
+.help-icon:hover .tooltip,
+.help-icon:focus .tooltip {
+    display: block;
+}
+
+/* Position tooltips better on mobile */
+@media (max-width: 600px) {
+    .tooltip {
+        width: 240px;
+        left: 0;
+        transform: translateX(0);
+    }
+
+    .tooltip::after {
+        left: 20px;
+        transform: translateX(0);
+    }
+
+    .tooltip-kunyomi {
+        left: auto;
+        right: 0;
+    }
+
+    .tooltip-kunyomi::after {
+        left: auto;
+        right: 20px;
+    }
+}
+
+.vocab-group-reading {
+    font-size: 1em;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.vocab-words {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.vocab-word {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 0.95em;
+}
+
+.vocab-word .word-jp {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1.1em;
+}
+
+.vocab-word .word-reading {
+    color: #64748b;
+    font-size: 0.9em;
+}
+
+.vocab-word .word-en {
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.vocab-word .word-en::before {
+    content: "– ";
+}
+
+/* Sentence within vocab group */
+.vocab-sentence {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.15);
+    font-size: 0.9em;
+}
+
+.vocab-sentence-jp {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.vocab-sentence-romaji {
+    color: #64748b;
+    font-size: 0.9em;
+    margin-bottom: 2px;
+}
+
+.vocab-sentence-en {
+    color: #6b7280;
+    font-style: italic;
+    font-size: 0.95em;
+}
+
+/* Handle kanji with only one reading type */
+.vocab-group.empty {
+    display: none;
+}
+
+.flashcard-vocabulary.single-group {
+    display: block;
+}
+
+.flashcard-vocabulary.single-group .vocab-group {
+    width: 100%;
+}
+
+/* Legacy support */
+.flashcard-words {
+    background: #f0f9ff;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+.flashcard-words div {
+    margin: 5px 0;
+}
+
+.flashcard-sentence {
+    background: #fef3c7;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+.flashcard-sentence .sentence-jp {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 8px 0;
+}
+
+.flashcard-sentence .sentence-romaji {
+    color: #64748b;
+    font-size: 0.9em;
+    margin: 4px 0;
+}
+
+.flashcard-sentence .sentence-en {
+    color: #6b7280;
+    font-style: italic;
+    margin: 4px 0;
+}
+
+/* Mobile responsive for vocabulary */
+@media (max-width: 600px) {
+    .flashcard-vocabulary {
+        flex-direction: column;
+    }
+}
+
+.study-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.study-nav-btn {
+    padding: 12px 25px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.study-nav-btn:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+}
+
+.study-nav-btn:disabled {
+    border-color: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.end-study-btn {
+    padding: 12px 25px;
+    border: 2px solid #ef4444;
+    background: white;
+    color: #ef4444;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.end-study-btn:hover {
+    background: #ef4444;
+    color: white;
+}
+
+/* ============================================================================
+   STUDY MODE - RESULTS SCREEN
+   ============================================================================ */
+
+.study-results-screen {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.results-title {
+    font-size: 2em;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.results-message {
+    color: #64748b;
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.results-summary {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 40px 0;
+    flex-wrap: wrap;
+}
+
+.result-stat {
+    text-align: center;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+}
+
+.stat-number {
+    font-size: 3em;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.stat-label {
+    color: #64748b;
+    font-size: 1em;
+    margin-top: 5px;
+}
+
+.results-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.restart-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.restart-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.back-to-start-btn {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.back-to-start-btn:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* ============================================================================
+   STUDY MODE - RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 600px) {
+    .flashcard-kanji {
+        font-size: 5em;
+    }
+
+    .flashcard-kanji-small {
+        font-size: 3em;
+    }
+
+    .flashcard {
+        padding: 20px;
+        min-height: 300px;
+    }
+
+    .flashcard-front {
+        min-height: 240px;
+    }
+
+    .jlpt-buttons {
+        flex-direction: column;
+    }
+
+    .jlpt-filter-btn {
+        width: 100%;
+    }
+
+    .study-options {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .results-summary {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .result-stat {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .navigation,
+    .modality-tabs,
+    .tense-selector,
+    .audio-btn,
+    .hint-btn {
+        display: none;
+    }
+
+    .hint-text,
+    .paragraph-hint,
+    .kanji-details {
+        display: block !important;
+        max-height: none !important;
+    }
+
+    .scenario-card {
+        display: block !important;
+    }
+}

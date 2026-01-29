@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.1.0 - Updated: 2026-01-19 - Topics reorganization -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Life Phrases - Japanese Travel Scenarios</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Home Life - Key Phrases</h1>
+            <p>Essential phrases for daily life at home</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="phrases.html" class="nav-btn active">🏠 家庭生活</a>
+            <a href="../restaurant/phrases.html" class="nav-btn">🍜 レストラン</a>
+            <a href="../travel/phrases.html" class="nav-btn">✈️ 旅行</a>
+            <a href="../shopping/phrases.html" class="nav-btn">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn active">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn">💬 Dialogue</a>
+            <a href="story.html" class="section-btn">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn">❓ Quiz</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <div class="content">
+            <p style="color: #64748b; margin-bottom: 20px;">Click the ? button to see romaji and English translations</p>
+
+            <!-- Key Phrases -->
+            <div class="key-phrases">
+                <div class="key-phrases-title">🔑 Essential Home Life Phrases (25)</div>
+
+                <!-- Daily Routines -->
+                <div style="background: #f0f9ff; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #0369a1;">⏰ Daily Routines (日常生活)</strong>
+                </div>
+                <div class="phrase-grid">
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('おはようございます', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">おはようございます</span>
+                        <div class="phrase-hint">Ohayou gozaimasu • Good morning</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('いってきます', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">いってきます</span>
+                        <div class="phrase-hint">Ittekimasu • I'm leaving (said when leaving home)</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('ただいま', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">ただいま</span>
+                        <div class="phrase-hint">Tadaima • I'm home</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('おかえりなさい', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">おかえりなさい</span>
+                        <div class="phrase-hint">Okaerinasai • Welcome home</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('おやすみなさい', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">おやすみなさい</span>
+                        <div class="phrase-hint">Oyasuminasai • Good night</div>
+                    </div>
+                </div>
+
+                <!-- Household Chores -->
+                <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #166534;">🧹 Household Chores (家事)</strong>
+                </div>
+                <div class="phrase-grid">
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('掃除します', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">掃除します</span>
+                        <div class="phrase-hint">Souji shimasu • I will clean</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('洗濯します', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">洗濯します</span>
+                        <div class="phrase-hint">Sentaku shimasu • I will do laundry</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('料理します', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">料理します</span>
+                        <div class="phrase-hint">Ryouri shimasu • I will cook</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('皿を洗います', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">皿を洗います</span>
+                        <div class="phrase-hint">Sara wo araimasu • I will wash dishes</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('ゴミを出します', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">ゴミを出します</span>
+                        <div class="phrase-hint">Gomi wo dashimasu • I will take out the trash</div>
+                    </div>
+                </div>
+
+                <!-- Rooms & Spaces -->
+                <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #92400e;">🚪 Rooms & Spaces (部屋)</strong>
+                </div>
+                <div class="phrase-grid">
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('リビングルームにいます', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">リビングルームにいます</span>
+                        <div class="phrase-hint">Ribingu ruumu ni imasu • I'm in the living room</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('台所で料理します', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">台所で料理します</span>
+                        <div class="phrase-hint">Daidokoro de ryouri shimasu • I cook in the kitchen</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('寝室で寝ます', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">寝室で寝ます</span>
+                        <div class="phrase-hint">Shinshitsu de nemasu • I sleep in the bedroom</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('お風呂に入ります', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">お風呂に入ります</span>
+                        <div class="phrase-hint">Ofuro ni hairimasu • I take a bath</div>
+                    </div>
+                </div>
+
+                <!-- Meals & Eating -->
+                <div style="background: #fce7f3; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #831843;">🍽️ Meals & Eating (食事)</strong>
+                </div>
+                <div class="phrase-grid">
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('いただきます', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">いただきます</span>
+                        <div class="phrase-hint">Itadakimasu • Thank you for the meal (before eating)</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('ごちそうさまでした', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">ごちそうさまでした</span>
+                        <div class="phrase-hint">Gochisousama deshita • Thank you for the meal (after eating)</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('朝ごはんは何ですか', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">朝ごはんは何ですか</span>
+                        <div class="phrase-hint">Asa gohan wa nan desu ka? • What's for breakfast?</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('おいしいです', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">おいしいです</span>
+                        <div class="phrase-hint">Oishii desu • It's delicious</div>
+                    </div>
+                </div>
+
+                <!-- Requests & Offers -->
+                <div style="background: #ede9fe; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #5b21b6;">🙏 Requests & Offers (お願い)</strong>
+                </div>
+                <div class="phrase-grid">
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('手伝ってください', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">手伝ってください</span>
+                        <div class="phrase-hint">Tetsudatte kudasai • Please help me</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('手伝いましょうか', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">手伝いましょうか</span>
+                        <div class="phrase-hint">Tetsudaimashou ka? • Shall I help?</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('電気を消してください', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">電気を消してください</span>
+                        <div class="phrase-hint">Denki wo keshite kudasai • Please turn off the light</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('窓を開けてもいいですか', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">窓を開けてもいいですか</span>
+                        <div class="phrase-hint">Mado wo akete mo ii desu ka? • May I open the window?</div>
+                    </div>
+                </div>
+
+                <!-- Family Communication -->
+                <div style="background: #ffedd5; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #9a3412;">👨‍👩‍👧‍👦 Family Communication (家族)</strong>
+                </div>
+                <div class="phrase-grid">
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('お母さん、どこですか', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">お母さん、どこですか</span>
+                        <div class="phrase-hint">Okaasan, doko desu ka? • Mom, where are you?</div>
+                    </div>
+                    <div class="phrase-item">
+                        <button class="audio-btn" onclick="speak('お父さん、ただいま', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">?</button>
+                        <span class="phrase-jp">お父さん、ただいま</span>
+                        <div class="phrase-hint">Otousan, tadaima • Dad, I'm home</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanji Flashcards Section -->
+            <div class="kanji-section">
+                <div class="kanji-title">📚 Kanji in This Section (55)</div>
+                <p style="color: #64748b; margin-bottom: 20px;">Click any card to see the full details</p>
+
+                <!-- Daily Life Kanji -->
+                <div style="background: #f0f9ff; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #0369a1;">⏰ Daily Life (日常)</strong>
+                </div>
+                <div class="kanji-grid">
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">朝</div>
+                        <div class="kanji-reading">あさ / チョウ</div>
+                        <div class="kanji-meaning">morning</div>
+                        <div class="kanji-example">朝ごはん (asa gohan) - breakfast</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">昼</div>
+                        <div class="kanji-reading">ひる / チュウ</div>
+                        <div class="kanji-meaning">noon, daytime</div>
+                        <div class="kanji-example">昼ごはん (hiru gohan) - lunch</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">夜</div>
+                        <div class="kanji-reading">よる / ヤ</div>
+                        <div class="kanji-meaning">night, evening</div>
+                        <div class="kanji-example">夜ごはん (yoru gohan) - dinner</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">今</div>
+                        <div class="kanji-reading">いま / コン</div>
+                        <div class="kanji-meaning">now</div>
+                        <div class="kanji-example">今日 (kyou) - today</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">寝</div>
+                        <div class="kanji-reading">ね(る) / シン</div>
+                        <div class="kanji-meaning">sleep, lie down</div>
+                        <div class="kanji-example">寝室 (shinshitsu) - bedroom</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">起</div>
+                        <div class="kanji-reading">お(きる) / キ</div>
+                        <div class="kanji-meaning">wake up, rise</div>
+                        <div class="kanji-example">起きる (okiru) - to wake up</div>
+                    </div>
+                </div>
+
+                <!-- Household & Chores -->
+                <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #166534;">🧹 Household & Chores (家事)</strong>
+                </div>
+                <div class="kanji-grid">
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">家</div>
+                        <div class="kanji-reading">いえ / カ</div>
+                        <div class="kanji-meaning">house, home</div>
+                        <div class="kanji-example">家事 (kaji) - housework</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">掃</div>
+                        <div class="kanji-reading">そう(じ) / ソウ</div>
+                        <div class="kanji-meaning">sweep, clean</div>
+                        <div class="kanji-example">掃除 (souji) - cleaning</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">除</div>
+                        <div class="kanji-reading">じょ / ジョ</div>
+                        <div class="kanji-meaning">exclude, remove</div>
+                        <div class="kanji-example">掃除 (souji) - cleaning</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">洗</div>
+                        <div class="kanji-reading">あら(う) / セン</div>
+                        <div class="kanji-meaning">wash</div>
+                        <div class="kanji-example">洗濯 (sentaku) - laundry</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">濯</div>
+                        <div class="kanji-reading">たく / タク</div>
+                        <div class="kanji-meaning">launder, rinse</div>
+                        <div class="kanji-example">洗濯 (sentaku) - laundry</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">料</div>
+                        <div class="kanji-reading">りょう / リョウ</div>
+                        <div class="kanji-meaning">fee, materials</div>
+                        <div class="kanji-example">料理 (ryouri) - cooking</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">理</div>
+                        <div class="kanji-reading">り / リ</div>
+                        <div class="kanji-meaning">reason, logic</div>
+                        <div class="kanji-example">料理 (ryouri) - cooking</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">皿</div>
+                        <div class="kanji-reading">さら / ベイ</div>
+                        <div class="kanji-meaning">dish, plate</div>
+                        <div class="kanji-example">お皿 (osara) - plate</div>
+                    </div>
+                </div>
+
+                <!-- Rooms & Spaces -->
+                <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #92400e;">🚪 Rooms & Spaces (部屋)</strong>
+                </div>
+                <div class="kanji-grid">
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">部</div>
+                        <div class="kanji-reading">ぶ / ブ</div>
+                        <div class="kanji-meaning">section, department</div>
+                        <div class="kanji-example">部屋 (heya) - room</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">屋</div>
+                        <div class="kanji-reading">や / オク</div>
+                        <div class="kanji-meaning">house, shop</div>
+                        <div class="kanji-example">部屋 (heya) - room</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">台</div>
+                        <div class="kanji-reading">だい / ダイ</div>
+                        <div class="kanji-meaning">stand, counter</div>
+                        <div class="kanji-example">台所 (daidokoro) - kitchen</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">所</div>
+                        <div class="kanji-reading">ところ / ショ</div>
+                        <div class="kanji-meaning">place</div>
+                        <div class="kanji-example">台所 (daidokoro) - kitchen</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">室</div>
+                        <div class="kanji-reading">しつ / シツ</div>
+                        <div class="kanji-meaning">room</div>
+                        <div class="kanji-example">寝室 (shinshitsu) - bedroom</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">風</div>
+                        <div class="kanji-reading">かぜ / フウ</div>
+                        <div class="kanji-meaning">wind, style</div>
+                        <div class="kanji-example">お風呂 (ofuro) - bath</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">呂</div>
+                        <div class="kanji-reading">ろ / ロ</div>
+                        <div class="kanji-meaning">spine, backbone</div>
+                        <div class="kanji-example">お風呂 (ofuro) - bath</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">窓</div>
+                        <div class="kanji-reading">まど / ソウ</div>
+                        <div class="kanji-meaning">window</div>
+                        <div class="kanji-example">窓 (mado) - window</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">戸</div>
+                        <div class="kanji-reading">と / コ</div>
+                        <div class="kanji-meaning">door</div>
+                        <div class="kanji-example">戸 (to) - door</div>
+                    </div>
+                </div>
+
+                <!-- Food & Meals -->
+                <div style="background: #fce7f3; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #831843;">🍽️ Food & Meals (食事)</strong>
+                </div>
+                <div class="kanji-grid">
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">食</div>
+                        <div class="kanji-reading">た(べる) / ショク</div>
+                        <div class="kanji-meaning">eat, food</div>
+                        <div class="kanji-example">食事 (shokuji) - meal</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">事</div>
+                        <div class="kanji-reading">こと / ジ</div>
+                        <div class="kanji-meaning">thing, matter</div>
+                        <div class="kanji-example">食事 (shokuji) - meal</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">飯</div>
+                        <div class="kanji-reading">はん / ハン</div>
+                        <div class="kanji-meaning">cooked rice, meal</div>
+                        <div class="kanji-example">ごはん (gohan) - rice, meal</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">味</div>
+                        <div class="kanji-reading">あじ / ミ</div>
+                        <div class="kanji-meaning">flavor, taste</div>
+                        <div class="kanji-example">美味しい (oishii) - delicious</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">美</div>
+                        <div class="kanji-reading">うつく(しい) / ビ</div>
+                        <div class="kanji-meaning">beautiful</div>
+                        <div class="kanji-example">美味しい (oishii) - delicious</div>
+                    </div>
+                </div>
+
+                <!-- Actions & Verbs -->
+                <div style="background: #ede9fe; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #5b21b6;">⚡ Actions & Verbs (動詞)</strong>
+                </div>
+                <div class="kanji-grid">
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">入</div>
+                        <div class="kanji-reading">い(る) / ニュウ</div>
+                        <div class="kanji-meaning">enter, put in</div>
+                        <div class="kanji-example">入る (hairu) - to enter</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">出</div>
+                        <div class="kanji-reading">で(る) / シュツ</div>
+                        <div class="kanji-meaning">exit, go out</div>
+                        <div class="kanji-example">出す (dasu) - to put out</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">開</div>
+                        <div class="kanji-reading">あ(ける) / カイ</div>
+                        <div class="kanji-meaning">open</div>
+                        <div class="kanji-example">開ける (akeru) - to open</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">閉</div>
+                        <div class="kanji-reading">し(める) / ヘイ</div>
+                        <div class="kanji-meaning">close</div>
+                        <div class="kanji-example">閉める (shimeru) - to close</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">消</div>
+                        <div class="kanji-reading">け(す) / ショウ</div>
+                        <div class="kanji-meaning">erase, turn off</div>
+                        <div class="kanji-example">消す (kesu) - to turn off</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">付</div>
+                        <div class="kanji-reading">つ(ける) / フ</div>
+                        <div class="kanji-meaning">attach, turn on</div>
+                        <div class="kanji-example">付ける (tsukeru) - to turn on</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">手</div>
+                        <div class="kanji-reading">て / シュ</div>
+                        <div class="kanji-meaning">hand</div>
+                        <div class="kanji-example">手伝う (tetsudau) - to help</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">伝</div>
+                        <div class="kanji-reading">つた(える) / デン</div>
+                        <div class="kanji-meaning">transmit, convey</div>
+                        <div class="kanji-example">手伝う (tetsudau) - to help</div>
+                    </div>
+                </div>
+
+                <!-- Family & People -->
+                <div style="background: #ffedd5; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #9a3412;">👨‍👩‍👧‍👦 Family & People (家族)</strong>
+                </div>
+                <div class="kanji-grid">
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">族</div>
+                        <div class="kanji-reading">ぞく / ゾク</div>
+                        <div class="kanji-meaning">tribe, family</div>
+                        <div class="kanji-example">家族 (kazoku) - family</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">父</div>
+                        <div class="kanji-reading">ちち / フ</div>
+                        <div class="kanji-meaning">father</div>
+                        <div class="kanji-example">お父さん (otousan) - father</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">母</div>
+                        <div class="kanji-reading">はは / ボ</div>
+                        <div class="kanji-meaning">mother</div>
+                        <div class="kanji-example">お母さん (okaasan) - mother</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">兄</div>
+                        <div class="kanji-reading">あに / ケイ</div>
+                        <div class="kanji-meaning">older brother</div>
+                        <div class="kanji-example">お兄さん (oniisan) - older brother</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">姉</div>
+                        <div class="kanji-reading">あね / シ</div>
+                        <div class="kanji-meaning">older sister</div>
+                        <div class="kanji-example">お姉さん (oneesan) - older sister</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">弟</div>
+                        <div class="kanji-reading">おとうと / テイ</div>
+                        <div class="kanji-meaning">younger brother</div>
+                        <div class="kanji-example">弟 (otouto) - younger brother</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">妹</div>
+                        <div class="kanji-reading">いもうと / マイ</div>
+                        <div class="kanji-meaning">younger sister</div>
+                        <div class="kanji-example">妹 (imouto) - younger sister</div>
+                    </div>
+                </div>
+
+                <!-- Utilities & Objects -->
+                <div style="background: #dbeafe; padding: 12px; border-radius: 8px; margin: 20px 0 10px 0;">
+                    <strong style="color: #1e3a8a;">💡 Utilities & Objects (物)</strong>
+                </div>
+                <div class="kanji-grid">
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">電</div>
+                        <div class="kanji-reading">でん / デン</div>
+                        <div class="kanji-meaning">electricity</div>
+                        <div class="kanji-example">電気 (denki) - light, electricity</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">気</div>
+                        <div class="kanji-reading">き / キ</div>
+                        <div class="kanji-meaning">spirit, air</div>
+                        <div class="kanji-example">電気 (denki) - light, electricity</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">物</div>
+                        <div class="kanji-reading">もの / ブツ</div>
+                        <div class="kanji-meaning">thing, object</div>
+                        <div class="kanji-example">買い物 (kaimono) - shopping</div>
+                    </div>
+                    <div class="kanji-card" onclick="this.classList.toggle('expanded')">
+                        <div class="kanji-main">水</div>
+                        <div class="kanji-reading">みず / スイ</div>
+                        <div class="kanji-meaning">water</div>
+                        <div class="kanji-example">水 (mizu) - water</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/shared.js"></script>
+</body>
+</html>

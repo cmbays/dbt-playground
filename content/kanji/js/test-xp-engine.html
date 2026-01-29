@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XP Engine Tests (T2.2)</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }
+    h2 { color: #555; margin-top: 30px; }
+    .test-section {
+      background: #f5f5f5;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+    }
+    .test-result {
+      padding: 8px 12px;
+      margin: 5px 0;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .pass {
+      background: #d4edda;
+      color: #155724;
+      border-left: 4px solid #28a745;
+    }
+    .fail {
+      background: #f8d7da;
+      color: #721c24;
+      border-left: 4px solid #dc3545;
+    }
+    .info {
+      background: #e7f3ff;
+      color: #004085;
+      border-left: 4px solid #0066cc;
+    }
+    pre {
+      background: #282c34;
+      color: #abb2bf;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    .summary {
+      background: #333;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+      text-align: center;
+      font-size: 18px;
+    }
+    .summary.all-pass { background: #28a745; }
+    .summary.has-fail { background: #dc3545; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    th { background: #f0f0f0; }
+    tr:nth-child(even) { background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <h1>XP Engine Tests (T2.2)</h1>
+  <p>Testing <code>xp-engine.js</code> per TDD-003 §3 specifications.</p>
+
+  <div id="results"></div>
+  <div id="summary" class="summary"></div>
+
+  <script src="xp-engine.js"></script>
+  <script>
+    const resultsDiv = document.getElementById('results');
+    const summaryDiv = document.getElementById('summary');
+    let passCount = 0;
+    let failCount = 0;
+
+    function log(message, status = 'info') {
+      const div = document.createElement('div');
+      div.className = 'test-result ' + status;
+
+      if (status === 'pass') {
+        div.textContent = '✓ ' + message;
+        passCount++;
+      } else if (status === 'fail') {
+        div.textContent = '✗ ' + message;
+        failCount++;
+      } else {
+        div.textContent = message;
+      }
+
+      resultsDiv.appendChild(div);
+    }
+
+    function section(title) {
+      const h2 = document.createElement('h2');
+      h2.textContent = title;
+      resultsDiv.appendChild(h2);
+    }
+
+    function assertEqual(actual, expected, description) {
+      if (actual === expected) {
+        log(`${description}: ${actual} === ${expected}`, 'pass');
+      } else {
+        log(`${description}: got ${actual}, expected ${expected}`, 'fail');
+      }
+    }
+
+    function assertTrue(value, description) {
+      if (value) {
+        log(`${description}: true`, 'pass');
+      } else {
+        log(`${description}: got false, expected true`, 'fail');
+      }
+    }
+
+    function assertFalse(value, description) {
+      if (!value) {
+        log(`${description}: false`, 'pass');
+      } else {
+        log(`${description}: got true, expected false`, 'fail');
+      }
+    }
+
+    function showTable(title, data) {
+      const section = document.createElement('div');
+      section.className = 'test-section';
+
+      let html = `<h3>${title}</h3><table><tr>`;
+      const keys = Object.keys(data[0]);
+      keys.forEach(k => html += `<th>${k}</th>`);
+      html += '</tr>';
+
+      data.forEach(row => {
+        html += '<tr>';
+        keys.forEach(k => html += `<td>${row[k]}</td>`);
+        html += '</tr>';
+      });
+
+      html += '</table>';
+      section.innerHTML = html;
+      resultsDiv.appendChild(section);
+    }
+
+    // ============================================
+    // Test Suite
+    // ============================================
+
+    function runTests() {
+      // Test 1: Constants
+      section('1. Constants Verification');
+      assertEqual(XPEngine.BASE_XP, 10, 'BASE_XP');
+      assertEqual(XPEngine.MAX_LEVEL, 60, 'MAX_LEVEL');
+      assertEqual(XPEngine.DAILY_GOAL_BONUS, 50, 'DAILY_GOAL_BONUS');
+      assertEqual(XPEngine.PERFECT_SESSION_BONUS, 25, 'PERFECT_SESSION_BONUS');
+      assertEqual(XPEngine.PERFECT_SESSION_MIN_CARDS, 5, 'PERFECT_SESSION_MIN_CARDS');
+      assertTrue(XPEngine.MILESTONE_LEVELS.includes(10), 'Milestone includes 10');
+      assertTrue(XPEngine.MILESTONE_LEVELS.includes(60), 'Milestone includes 60');
+
+      // Test 2: calculateXP - Base Cases (TDD-003 §3.1)
+      section('2. calculateXP() - Base XP Calculation');
+      assertEqual(XPEngine.calculateXP(0, 0), 10, 'Again (0) with 0 streak = 10 XP');
+      assertEqual(XPEngine.calculateXP(2, 0), 10, 'Hard (2) with 0 streak = 10 XP');
+      assertEqual(XPEngine.calculateXP(4, 0), 15, 'Good (4) with 0 streak = 15 XP');
+      assertEqual(XPEngine.calculateXP(5, 0), 20, 'Easy (5) with 0 streak = 20 XP');
+
+      // Test 3: calculateXP - Streak Bonuses (TDD-003 §3.1)
+      section('3. calculateXP() - Streak Bonus Tiers');
+      // Tier 0 (0-6 days): 0% bonus
+      assertEqual(XPEngine.calculateXP(4, 0), 15, 'Good + 0 days streak = 15 (no bonus)');
+      assertEqual(XPEngine.calculateXP(4, 6), 15, 'Good + 6 days streak = 15 (tier 0)');
+
+      // Tier 1 (7-13 days): +10% bonus
+      assertEqual(XPEngine.calculateXP(4, 7), 17, 'Good + 7 days streak = 17 (15 * 1.1)');
+      assertEqual(XPEngine.calculateXP(5, 7), 22, 'Easy + 7 days streak = 22 (20 * 1.1)');
+      assertEqual(XPEngine.calculateXP(0, 7), 11, 'Again + 7 days streak = 11 (10 * 1.1)');
+
+      // Tier 2 (14-20 days): +20% bonus
+      assertEqual(XPEngine.calculateXP(4, 14), 18, 'Good + 14 days streak = 18 (15 * 1.2)');
+      assertEqual(XPEngine.calculateXP(5, 14), 24, 'Easy + 14 days streak = 24 (20 * 1.2)');
+
+      // Tier 3 (21-27 days): +30% bonus
+      assertEqual(XPEngine.calculateXP(4, 21), 20, 'Good + 21 days streak = 20 (15 * 1.3 rounded)');
+      assertEqual(XPEngine.calculateXP(5, 21), 26, 'Easy + 21 days streak = 26 (20 * 1.3)');
+
+      // Tier 4 (28-34 days): +40% bonus
+      assertEqual(XPEngine.calculateXP(4, 28), 21, 'Good + 28 days streak = 21 (15 * 1.4)');
+      assertEqual(XPEngine.calculateXP(5, 28), 28, 'Easy + 28 days streak = 28 (20 * 1.4)');
+
+      // Tier 5 (35+ days): +50% bonus (max)
+      assertEqual(XPEngine.calculateXP(4, 35), 23, 'Good + 35 days streak = 23 (15 * 1.5 rounded)');
+      assertEqual(XPEngine.calculateXP(5, 35), 30, 'Easy + 35 days streak = 30 (20 * 1.5)');
+      assertEqual(XPEngine.calculateXP(5, 100), 30, 'Easy + 100 days streak = 30 (capped at tier 5)');
+
+      // Test 4: calculateXP - Edge Cases
+      section('4. calculateXP() - Edge Cases');
+      assertEqual(XPEngine.calculateXP(3, 0), 10, 'Invalid quality 3 defaults to 0 XP bonus');
+      assertEqual(XPEngine.calculateXP(4, -5), 15, 'Negative streak treated as 0');
+      assertEqual(XPEngine.calculateXP(4, null), 15, 'Null streak treated as 0');
+      assertEqual(XPEngine.calculateXP(4, undefined), 15, 'Undefined streak treated as 0');
+
+      // Test 5: Perfect Session Bonus
+      section('5. calculatePerfectSessionBonus()');
+      assertEqual(XPEngine.calculatePerfectSessionBonus(5, 5), 25, '5/5 correct = 25 XP bonus');
+      assertEqual(XPEngine.calculatePerfectSessionBonus(10, 10), 25, '10/10 correct = 25 XP bonus');
+      assertEqual(XPEngine.calculatePerfectSessionBonus(5, 4), 0, '4/5 correct = no bonus');
+      assertEqual(XPEngine.calculatePerfectSessionBonus(4, 4), 0, '4/4 correct but < 5 cards = no bonus');
+      assertEqual(XPEngine.calculatePerfectSessionBonus(3, 3), 0, '3/3 correct but < 5 cards = no bonus');
+
+      // Test 6: Level Thresholds (TDD-003 §3.2)
+      section('6. getXPRequiredForLevel() - XP per Level');
+      // Level 1 → 2 requires 50 XP
+      assertEqual(XPEngine.getXPRequiredForLevel(1), 50, 'Level 1 → 2: 50 XP');
+      // Level 2 → 3 requires 100 XP
+      assertEqual(XPEngine.getXPRequiredForLevel(2), 100, 'Level 2 → 3: 100 XP');
+      // Level 9 → 10 requires 450 XP
+      assertEqual(XPEngine.getXPRequiredForLevel(9), 450, 'Level 9 → 10: 450 XP');
+      // Level 10 → 11 requires 550 XP (tier multiplier kicks in)
+      assertEqual(XPEngine.getXPRequiredForLevel(10), 550, 'Level 10 → 11: 550 XP');
+      // Level 59 → 60 requires a lot
+      assertTrue(XPEngine.getXPRequiredForLevel(59) > 3000, 'Level 59 → 60: >3000 XP');
+      // Level 60 has no next level
+      assertEqual(XPEngine.getXPRequiredForLevel(60), 0, 'Level 60: 0 XP (max)');
+
+      // Test 7: getLevelFromXP (TDD-003 §3.3)
+      section('7. getLevelFromXP() - Level Calculation');
+
+      let levelInfo = XPEngine.getLevelFromXP(0);
+      assertEqual(levelInfo.level, 1, '0 XP = Level 1');
+
+      levelInfo = XPEngine.getLevelFromXP(49);
+      assertEqual(levelInfo.level, 1, '49 XP = Level 1');
+      assertEqual(levelInfo.xp_this_level, 49, '49 XP this level');
+      assertEqual(levelInfo.xp_to_next_level, 50, 'Need 50 XP for level 2');
+
+      levelInfo = XPEngine.getLevelFromXP(50);
+      assertEqual(levelInfo.level, 2, '50 XP = Level 2');
+      assertEqual(levelInfo.xp_this_level, 0, '0 XP into level 2');
+      assertEqual(levelInfo.xp_to_next_level, 100, 'Need 100 XP for level 3');
+
+      levelInfo = XPEngine.getLevelFromXP(150);
+      assertEqual(levelInfo.level, 3, '150 XP = Level 3');
+      assertEqual(levelInfo.xp_this_level, 0, '0 XP into level 3');
+
+      levelInfo = XPEngine.getLevelFromXP(500);
+      assertEqual(levelInfo.level, 4, '500 XP = Level 4');
+
+      levelInfo = XPEngine.getLevelFromXP(999999);
+      assertEqual(levelInfo.level, 60, 'Very large XP = Level 60 (capped)');
+      assertEqual(levelInfo.xp_to_next_level, 0, 'At max level, no next level');
+
+      // Test 8: getXPForLevel - Cumulative XP
+      section('8. getXPForLevel() - Cumulative XP');
+      assertEqual(XPEngine.getXPForLevel(1), 0, 'Level 1 requires 0 cumulative XP');
+      assertEqual(XPEngine.getXPForLevel(2), 50, 'Level 2 requires 50 cumulative XP');
+      assertEqual(XPEngine.getXPForLevel(3), 150, 'Level 3 requires 150 cumulative XP');
+      assertTrue(XPEngine.getXPForLevel(10) > 2000, 'Level 10 requires >2000 XP');
+      assertTrue(XPEngine.getXPForLevel(60) > 100000, 'Level 60 requires >100000 XP');
+
+      // Test 9: isMilestoneLevel
+      section('9. isMilestoneLevel()');
+      assertFalse(XPEngine.isMilestoneLevel(1), 'Level 1 is not milestone');
+      assertFalse(XPEngine.isMilestoneLevel(5), 'Level 5 is not milestone');
+      assertTrue(XPEngine.isMilestoneLevel(10), 'Level 10 is milestone');
+      assertTrue(XPEngine.isMilestoneLevel(20), 'Level 20 is milestone');
+      assertTrue(XPEngine.isMilestoneLevel(60), 'Level 60 is milestone');
+
+      // Test 10: awardXP (TDD-003 §3.3)
+      section('10. awardXP() - XP Award System');
+
+      // Create mock schema
+      const mockSchema = {
+        stats: {
+          xp: {
+            total: 0,
+            current_level: 1,
+            xp_this_level: 0,
+            xp_to_next_level: 50,
+            last_level_up: null
+          },
+          today: {
+            date: '2026-01-25',
+            xp_earned: 0
+          }
+        }
+      };
+
+      // Award 20 XP
+      let result = XPEngine.awardXP(mockSchema, 20);
+      assertEqual(result.schema.stats.xp.total, 20, 'Total XP = 20 after awarding 20');
+      assertEqual(result.schema.stats.today.xp_earned, 20, 'Today XP = 20');
+      assertFalse(result.leveledUp, 'No level up with 20 XP');
+      assertEqual(result.newLevel, 1, 'Still level 1');
+      assertEqual(result.celebration, null, 'No celebration');
+
+      // Award 30 more to trigger level up (total 50)
+      result = XPEngine.awardXP(mockSchema, 30);
+      assertEqual(result.schema.stats.xp.total, 50, 'Total XP = 50');
+      assertTrue(result.leveledUp, 'Leveled up to 2');
+      assertEqual(result.newLevel, 2, 'Now level 2');
+      assertEqual(result.previousLevel, 1, 'Was level 1');
+      assertEqual(result.celebration, 'level_up', 'Standard celebration');
+      assertTrue(result.schema.stats.xp.last_level_up !== null, 'Level up timestamp set');
+
+      // Test 11: awardXP - Milestone Level
+      section('11. awardXP() - Milestone Celebrations');
+
+      // Set up schema just below level 10
+      const milestoneSchema = {
+        stats: {
+          xp: {
+            total: XPEngine.getXPForLevel(10) - 10,
+            current_level: 9,
+            xp_this_level: XPEngine.getXPRequiredForLevel(9) - 10,
+            xp_to_next_level: XPEngine.getXPRequiredForLevel(9),
+            last_level_up: null
+          },
+          today: { date: '2026-01-25', xp_earned: 0 }
+        }
+      };
+
+      result = XPEngine.awardXP(milestoneSchema, 20);
+      assertTrue(result.leveledUp, 'Leveled up to 10');
+      assertEqual(result.newLevel, 10, 'Now level 10');
+      assertEqual(result.celebration, 'milestone', 'Milestone celebration for level 10');
+
+      // Test 12: Helper Functions
+      section('12. Helper Functions');
+
+      const xpStats = {
+        current_level: 5,
+        xp_this_level: 125,
+        xp_to_next_level: 250
+      };
+      assertEqual(XPEngine.getLevelProgress(xpStats), 50, 'Level progress = 50%');
+
+      const maxedXpStats = { current_level: 60, xp_this_level: 1000, xp_to_next_level: 0 };
+      assertEqual(XPEngine.getLevelProgress(maxedXpStats), 100, 'Max level progress = 100%');
+
+      assertEqual(XPEngine.getLevelTitle(1), 'Novice', 'Level 1 title');
+      assertEqual(XPEngine.getLevelTitle(5), 'Apprentice I', 'Level 5 title');
+      assertEqual(XPEngine.getLevelTitle(10), 'Apprentice II', 'Level 10 title');
+      assertEqual(XPEngine.getLevelTitle(60), 'Master', 'Level 60 title');
+
+      let streakBonus = XPEngine.getStreakBonus(0);
+      assertEqual(streakBonus.tier, 0, 'Streak 0 = tier 0');
+      assertEqual(streakBonus.percentage, 0, 'Streak 0 = 0% bonus');
+
+      streakBonus = XPEngine.getStreakBonus(14);
+      assertEqual(streakBonus.tier, 2, 'Streak 14 = tier 2');
+      assertEqual(streakBonus.percentage, 20, 'Streak 14 = 20% bonus');
+
+      // Test 13: XP Table Generation
+      section('13. XP Table (First 10 Levels)');
+      const table = XPEngine.generateXPTable(10);
+      showTable('XP Progression Table', table);
+
+      // Final Summary
+      summaryDiv.textContent = `Tests Complete: ${passCount} passed, ${failCount} failed`;
+      summaryDiv.className = failCount === 0 ? 'summary all-pass' : 'summary has-fail';
+    }
+
+    // Run tests on load
+    runTests();
+  </script>
+</body>
+</html>

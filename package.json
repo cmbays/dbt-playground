@@ -1,0 +1,27 @@
+{
+  "name": "japanese-study-site",
+  "version": "1.0.0",
+  "description": "An interactive Japanese language learning website focused on practical, conversational skills for daily life, shopping, dining, and travel situations.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmbays/japanese-study-site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/cmbays/japanese-study-site/issues"
+  },
+  "homepage": "https://github.com/cmbays/japanese-study-site#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.0"
+  }
+}

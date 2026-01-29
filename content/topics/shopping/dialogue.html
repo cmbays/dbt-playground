@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.1.0 - Updated: 2026-01-19 - Topics reorganization -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Dialogues - Japanese Travel Scenarios</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛍️ Shopping - Dialogue</h1>
+            <p>Practice realistic shopping conversations</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="../home-life/phrases.html" class="nav-btn">🏠 家庭生活</a>
+            <a href="../restaurant/dialogue.html" class="nav-btn">🍜 レストラン</a>
+            <a href="../travel/dialogue.html" class="nav-btn">✈️ 旅行</a>
+            <a href="dialogue.html" class="nav-btn active">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation (within Shopping) -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn active">💬 Dialogue</a>
+            <a href="story.html" class="section-btn">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn">❓ Quiz</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Tense Selector -->
+            <div class="tense-selector">
+                <button class="tense-btn active" onclick="showTense('shopping', 'dialogue', 'present')">Present</button>
+                <button class="tense-btn" onclick="showTense('shopping', 'dialogue', 'past')">Past</button>
+                <button class="tense-btn" onclick="showTense('shopping', 'dialogue', 'future')">Future</button>
+                <button class="tense-btn" onclick="showTense('shopping', 'dialogue', 'advanced')">Advanced</button>
+            </div>
+
+            <!-- Present Tense Dialogue -->
+            <div id="shopping-dialogue-present" class="tense-content active">
+                <button class="play-all-btn" onclick="playAllInContainer('shopping-dialogue-present')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> い-adjectives: 安<strong>い</strong> (cheap), 高<strong>い</strong> (expensive).
+                        な-adjectives: 便利<strong>な</strong> (convenient), 不便<strong>な</strong> (inconvenient)
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「すみません、野菜売り場はどこですか。」</span>
+                                <button class="audio-btn" onclick="speak('すみません、野菜売り場はどこですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sumimasen, yasai uriba wa doko desu ka. • Excuse me, where is the vegetable section?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">店員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「一階の奥にあります。果物売り場の隣です。」</span>
+                                <button class="audio-btn" onclick="speak('一階の奥にあります。果物売り場の隣です。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Ikkai no oku ni arimasu. Kudamono uriba no tonari desu. • It's at the back of the first floor. Next to the fruit section.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「このトマトは新鮮ですか。」</span>
+                                <button class="audio-btn" onclick="speak('このトマトは新鮮ですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kono tomato wa shinsen desu ka. • Are these tomatoes fresh?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">店員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「はい、今朝入荷したばかりです。とても新鮮で美味しいですよ。」</span>
+                                <button class="audio-btn" onclick="speak('はい、今朝入荷したばかりです。とても新鮮で美味しいですよ。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Hai, kesa nyuuka shita bakari desu. Totemo shinsen de oishii desu yo. • Yes, they just arrived this morning. They're very fresh and delicious.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「いくらですか。」</span>
+                                <button class="audio-btn" onclick="speak('いくらですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Ikura desu ka. • How much is it?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">店員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「一パック三百円です。今日は特売日で、二パック買うと五百円になります。」</span>
+                                <button class="audio-btn" onclick="speak('一パック三百円です。今日は特売日で、二パック買うと五百円になります。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Ichi pakku sanbyaku en desu. Kyou wa tokubai bi de, ni pakku kau to gohyaku en ni narimasu. • It's 300 yen per pack. Today is sale day, so if you buy two packs, it becomes 500 yen.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「それは安いですね。二パックください。」</span>
+                                <button class="audio-btn" onclick="speak('それは安いですね。二パックください。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sore wa yasui desu ne. Ni pakku kudasai. • That's cheap. Two packs, please.</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> Japanese supermarkets pride themselves on fresh produce. Staff often enthusiastically recommend seasonal items (旬の食材 shun no shokuzai). The phrase 今朝入荷したばかり (kesa nyuuka shita bakari - "just arrived this morning") emphasizes freshness, which is highly valued in Japanese food culture. Special sale days (特売日 tokubai bi) are common, especially for perishables.
+                    </div>
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">野</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヤ / Kun: の</div>
+                                <div class="kanji-meaning">Meaning: field, vegetables</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">菜</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: サイ / Kun: な</div>
+                                <div class="kanji-meaning">Meaning: vegetable, greens</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">売</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バイ / Kun: う(る)</div>
+                                <div class="kanji-meaning">Meaning: sell</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">場</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジョウ / Kun: ば</div>
+                                <div class="kanji-meaning">Meaning: place, section</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">階</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カイ</div>
+                                <div class="kanji-meaning">Meaning: floor, story</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">果</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カ / Kun: は(たす)</div>
+                                <div class="kanji-meaning">Meaning: fruit, result</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">鮮</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: あざ(やか)</div>
+                                <div class="kanji-meaning">Meaning: fresh, vivid</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">買</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: バイ / Kun: か(う)</div>
+                                <div class="kanji-meaning">Meaning: buy</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">安</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: アン / Kun: やす(い)</div>
+                                <div class="kanji-meaning">Meaning: cheap, peaceful</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Past Tense Dialogue -->
+            <div id="shopping-dialogue-past" class="tense-content">
+                <button class="play-all-btn" onclick="playAllInContainer('shopping-dialogue-past')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> Past tense adjectives: い → かった (高い → 高<strong>かった</strong>),
+                        な-adjectives use でした (便利 → 便利<strong>でした</strong>)
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「昨日、百円ショップに行きました。」</span>
+                                <button class="audio-btn" onclick="speak('昨日、百円ショップに行きました。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kinou, hyaku en shoppu ni ikimashita. • Yesterday, I went to a 100 yen shop.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">友人</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「何を買いましたか。」</span>
+                                <button class="audio-btn" onclick="speak('何を買いましたか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Nani wo kaimashita ka. • What did you buy?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「ノート、ペン、それから小さいタオルを買いました。全部で五百円でした。」</span>
+                                <button class="audio-btn" onclick="speak('ノート、ペン、それから小さいタオルを買いました。全部で五百円でした。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Nooto, pen, sorekara chiisai taoru wo kaimashita. Zenbu de gohyaku en deshita. • I bought a notebook, pens, and a small towel. It was 500 yen in total.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">友人</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「品質はどうでしたか。」</span>
+                                <button class="audio-btn" onclick="speak('品質はどうでしたか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Hinshitsu wa dou deshita ka. • How was the quality?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「思ったより良かったです。ペンは軽くて書きやすかったです。」</span>
+                                <button class="audio-btn" onclick="speak('思ったより良かったです。ペンは軽くて書きやすかったです。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Omotta yori yokatta desu. Pen wa karukute kakiyasukatta desu. • It was better than I thought. The pens were light and easy to write with.</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> 100 yen shops (百円ショップ) like Daiso, Seria, and Can Do are extremely popular in Japan. Despite the name, many items now cost 100, 300, or 500 yen, but they still offer incredible value. These stores carry everything from stationery and kitchen goods to cosmetics and seasonal decorations. The quality is often surprisingly good, making them favorites of both locals and tourists.
+                    </div>
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">百</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヒャク / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: hundred</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">円</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: エン / Kun: まる(い)</div>
+                                <div class="kanji-meaning">Meaning: yen, circle</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">何</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カ / Kun: なに、なん</div>
+                                <div class="kanji-meaning">Meaning: what</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">全</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゼン / Kun: すべ(て)</div>
+                                <div class="kanji-meaning">Meaning: all, whole</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">部</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ブ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: part, section</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">品</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヒン / Kun: しな</div>
+                                <div class="kanji-meaning">Meaning: goods, quality</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">質</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シツ、シチ / Kun: たち</div>
+                                <div class="kanji-meaning">Meaning: quality, nature</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">思</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シ / Kun: おも(う)</div>
+                                <div class="kanji-meaning">Meaning: think</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">良</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: リョウ / Kun: よ(い)</div>
+                                <div class="kanji-meaning">Meaning: good</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">軽</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケイ / Kun: かる(い)、かろ(やか)</div>
+                                <div class="kanji-meaning">Meaning: light (weight)</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">書</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショ / Kun: か(く)</div>
+                                <div class="kanji-meaning">Meaning: write</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Future Tense Dialogue -->
+            <div id="shopping-dialogue-future" class="tense-content">
+                <button class="play-all-btn" onclick="playAllInContainer('shopping-dialogue-future')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> Future intentions: ～つもりです (intend to), ～予定です (plan to).
+                        Comparisons: ～より (than), もっと (more)
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「来週、新しいノートパソコンを買う予定です。」</span>
+                                <button class="audio-btn" onclick="speak('来週、新しいノートパソコンを買う予定です。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Raishuu, atarashii nooto pasokon wo kau yotei desu. • Next week, I plan to buy a new laptop.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">友人</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「どこで買うつもりですか。」</span>
+                                <button class="audio-btn" onclick="speak('どこで買うつもりですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Doko de kau tsumori desu ka. • Where do you intend to buy it?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「秋葉原の大きい電気屋に行きます。色々な種類があって、店員さんも詳しいです。」</span>
+                                <button class="audio-btn" onclick="speak('秋葉原の大きい電気屋に行きます。色々な種類があって、店員さんも詳しいです。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Akihabara no ookii denkiya ni ikimasu. Iroiro na shurui ga atte, ten'in san mo kuwashii desu. • I'll go to a large electronics store in Akihabara. They have various types, and the staff are knowledgeable.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">友人</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「オンラインで買う方が安いんじゃないですか。」</span>
+                                <button class="audio-btn" onclick="speak('オンラインで買う方が安いんじゃないですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Onrain de kau hou ga yasui n ja nai desu ka. • Isn't buying online cheaper?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「確かに安いですが、実物を見てから決めたいです。重さやキーボードの感じを確認したいです。」</span>
+                                <button class="audio-btn" onclick="speak('確かに安いですが、実物を見てから決めたいです。重さやキーボードの感じを確認したいです。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Tashika ni yasui desu ga, jitsubutsu wo mite kara kimetai desu. Omosa ya kiiboodo no kanji wo kakunin shitai desu. • It's certainly cheap, but I want to decide after seeing the actual item. I want to check the weight and feel of the keyboard.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">友人</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「それは賢いですね。一緒に行きましょうか。」</span>
+                                <button class="audio-btn" onclick="speak('それは賢いですね。一緒に行きましょうか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sore wa kashikoi desu ne. Issho ni ikimashou ka. • That's smart. Shall we go together?</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> Akihabara (秋葉原) is Tokyo's famous electronics district, known for massive stores like Yodobashi Camera and Bic Camera. Staff are incredibly knowledgeable (詳しい kuwashii) and will spend time explaining features. Many Japanese prefer to see and touch electronics before buying (実物を見る jitsubutsu wo miru), even if online is cheaper. Product demonstrations are common, and staff don't pressure customers to buy.
+                    </div>
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">来</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ライ / Kun: く(る)、きた(る)</div>
+                                <div class="kanji-meaning">Meaning: come, next</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">週</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュウ</div>
+                                <div class="kanji-meaning">Meaning: week</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">電</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: デン</div>
+                                <div class="kanji-meaning">Meaning: electricity, electric</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">気</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キ、ケ / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: spirit, air, electricity</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">屋</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: オク / Kun: や</div>
+                                <div class="kanji-meaning">Meaning: shop, house, roof</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">種</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュ / Kun: たね</div>
+                                <div class="kanji-meaning">Meaning: type, kind, seed</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">詳</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショウ / Kun: くわ(しい)</div>
+                                <div class="kanji-meaning">Meaning: detailed, know well</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">確</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カク / Kun: たし(か)</div>
+                                <div class="kanji-meaning">Meaning: certain, sure</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">実</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジツ / Kun: み、みの(る)</div>
+                                <div class="kanji-meaning">Meaning: reality, fruit, actual</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">決</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケツ / Kun: き(める)、き(まる)</div>
+                                <div class="kanji-meaning">Meaning: decide, determine</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">重</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジュウ、チョウ / Kun: おも(い)、かさ(ねる)</div>
+                                <div class="kanji-meaning">Meaning: heavy, important</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">感</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カン / Kun: ーーー</div>
+                                <div class="kanji-meaning">Meaning: feeling, sense</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">認</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ニン / Kun: みと(める)</div>
+                                <div class="kanji-meaning">Meaning: recognize, approve</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">賢</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケン / Kun: かしこ(い)</div>
+                                <div class="kanji-meaning">Meaning: wise, smart</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Dialogue -->
+            <div id="shopping-dialogue-advanced" class="tense-content">
+                <button class="play-all-btn" onclick="playAllInContainer('shopping-dialogue-advanced')">▶️ Play All</button>
+
+                <div class="dialogue-container">
+                    <div style="background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em;">
+                        <strong>💡 Grammar Tip:</strong> Conditional forms: ～たら (if/when), ～なら (if that's the case).
+                        Polite requests: ～ていただけますか (could you...?)
+                    </div>
+
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「すみません、このコートを試着してもよろしいでしょうか。」</span>
+                                <button class="audio-btn" onclick="speak('すみません、このコートを試着してもよろしいでしょうか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sumimasen, kono kooto wo shichaku shite mo yoroshii deshou ka. • Excuse me, may I try on this coat?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">店員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「もちろんです。試着室はあちらにございます。サイズは合っていますか。」</span>
+                                <button class="audio-btn" onclick="speak('もちろんです。試着室はあちらにございます。サイズは合っていますか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Mochiron desu. Shichakushitsu wa achira ni gozaimasu. Saizu wa atte imasu ka. • Of course. The fitting room is over there. Is the size right?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「これはMサイズですが、もう少し大きいサイズがあれば、それも試してみたいです。」</span>
+                                <button class="audio-btn" onclick="speak('これはMサイズですが、もう少し大きいサイズがあれば、それも試してみたいです。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kore wa M saizu desu ga, mou sukoshi ookii saizu ga areba, sore mo tameshite mitai desu. • This is size M, but if there's a slightly larger size, I'd like to try that too.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">店員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「かしこまりました。Lサイズをお持ちします。色は同じグレーでよろしいですか。」</span>
+                                <button class="audio-btn" onclick="speak('かしこまりました。Lサイズをお持ちします。色は同じグレーでよろしいですか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Kashikomarimashita. L saizu wo omochi shimasu. Iro wa onaji guree de yoroshii desu ka. • Certainly. I'll bring a size L. Is the same gray color okay?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「はい、お願いします。もしあれば、黒も見せていただけますか。」</span>
+                                <button class="audio-btn" onclick="speak('はい、お願いします。もしあれば、黒も見せていただけますか。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Hai, onegai shimasu. Moshi areba, kuro mo misete itadakemasu ka. • Yes, please. If you have it, could you also show me black?</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker staff">店員</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「申し訳ございません。黒のLサイズは売り切れております。ただ、来週入荷する予定ですので、お取り置きすることもできます。」</span>
+                                <button class="audio-btn" onclick="speak('申し訳ございません。黒のLサイズは売り切れております。ただ、来週入荷する予定ですので、お取り置きすることもできます。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Moushiwake gozaimasen. Kuro no L saizu wa urikire de orimasu. Tada, raishuu nyuuka suru yotei desu node, otorioki suru koto mo dekimasu. • I apologize. Black in size L is sold out. However, we're scheduled to receive stock next week, so we can also reserve it for you.</div>
+                        </div>
+                    </div>
+                    <div class="dialogue-line">
+                        <span class="speaker you">あなた</span>
+                        <div class="speech-bubble">
+                            <div class="japanese-line">
+                                <span class="japanese">「それは助かります。まずグレーを試着してから、決めさせていただきます。」</span>
+                                <button class="audio-btn" onclick="speak('それは助かります。まずグレーを試着してから、決めさせていただきます。', this)">🔊</button>
+                                <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                            </div>
+                            <div class="hint-text">Sore wa tasukarimasu. Mazu guree wo shichaku shite kara, kimesasete itadakimasu. • That's helpful. Let me try on the gray first, then I'll decide.</div>
+                        </div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> Japanese department stores and clothing shops offer exceptional customer service. Staff use very polite language (keigo) like かしこまりました (kashikomarimashita - "certainly") and ございます (gozaimasu - the polite form of "to be"). Many stores offer お取り置き (otorioki - reserving items) for customers. Free alterations (お直し onaoshi) are often included with purchases. The trying-on experience (試着 shichaku) is treated with great care and respect.
+                    </div>
+                </div>
+
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Dialogue</div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">試</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シ / Kun: こころ(みる)、ため(す)</div>
+                                <div class="kanji-meaning">Meaning: try, test</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">着</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チャク / Kun: き(る)、つ(く)</div>
+                                <div class="kanji-meaning">Meaning: wear, arrive</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">室</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シツ / Kun: むろ</div>
+                                <div class="kanji-meaning">Meaning: room</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">合</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ゴウ、ガッ / Kun: あ(う)、あ(わせる)</div>
+                                <div class="kanji-meaning">Meaning: fit, match, combine</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">少</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショウ / Kun: すく(ない)、すこ(し)</div>
+                                <div class="kanji-meaning">Meaning: few, little</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">色</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショク、シキ / Kun: いろ</div>
+                                <div class="kanji-meaning">Meaning: color</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">黒</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コク / Kun: くろ(い)</div>
+                                <div class="kanji-meaning">Meaning: black</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">見</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ケン / Kun: み(る)、み(せる)</div>
+                                <div class="kanji-meaning">Meaning: see, show</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">申</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シン / Kun: もう(す)</div>
+                                <div class="kanji-meaning">Meaning: say (humble), report</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">訳</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヤク / Kun: わけ</div>
+                                <div class="kanji-meaning">Meaning: translate, reason</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">切</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セツ、サイ / Kun: き(る)</div>
+                                <div class="kanji-meaning">Meaning: cut, sold out</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">取</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュ / Kun: と(る)</div>
+                                <div class="kanji-meaning">Meaning: take, get</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">置</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チ / Kun: お(く)</div>
+                                <div class="kanji-meaning">Meaning: put, place, reserve</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/shared.js"></script>
+</body>
+</html>

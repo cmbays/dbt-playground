@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Version: v0.1.0 - Updated: 2026-01-19 - Topics reorganization -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cruise Ship Story - Japanese Travel Scenarios</title>
+    <link rel="stylesheet" href="../../css/shared.css">
+</head>
+<body>
+    <!-- Home Icon -->
+    <a href="../../index.html" class="home-icon" title="Back to Home">⛩️</a>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>✈️ Travel - Story</h1>
+            <p>Cruise Ship Story</p>
+        </div>
+
+        <!-- Topic Navigation -->
+        <div class="navigation">
+            <a href="../home-life/phrases.html" class="nav-btn">🏠 家庭生活</a>
+            <a href="../restaurant/story.html" class="nav-btn">🍜 レストラン</a>
+            <a href="story.html" class="nav-btn active">✈️ 旅行</a>
+            <a href="../shopping/story.html" class="nav-btn">🛍️ 買い物</a>
+        </div>
+
+        <!-- Section Navigation (within Travel) -->
+        <div class="section-navigation">
+            <a href="phrases.html" class="section-btn">🔑 Phrases</a>
+            <a href="dialogue.html" class="section-btn">💬 Dialogue</a>
+            <a href="story.html" class="section-btn active">📖 Story</a>
+            <a href="manga.html" class="section-btn">📰 Manga</a>
+            <a href="quiz.html" class="section-btn">❓ Quiz</a>
+            <a href="tips.html" class="section-btn">💡 Tips</a>
+        </div>
+
+        <!-- Back to Stories Link -->
+        <div class="navigation" style="margin-bottom: 20px;">
+            <a href="story.html" class="nav-btn">← Back to Stories</a>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div id="travel-story-cruise" class="tense-content active">
+                <h2>🚢 クルーズ船 (Cruise Ship)</h2>
+                <button class="play-all-btn" onclick="playAllInContainer('travel-story-cruise')">▶️ Play All</button>
+
+                <div class="story-container">
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('山田さん夫婦は横浜港から出発するクルーズ船に乗船しました。この船は日本の美しい島々を巡る七日間の旅です。船は大きくて豪華で、様々な施設がありました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">山田さん夫婦は横浜港から出発するクルーズ船に乗船しました。この船は日本の美しい島々を巡る七日間の旅です。船は大きくて豪華で、様々な施設がありました。</p>
+                        <div class="paragraph-hint">Yamada-san fuufu wa Yokohama-kou kara shuppatsu suru kuruuzu-sen ni jousen shimashita. Kono fune wa Nihon no utsukushii shima-jima wo meguru nanoka-kan no tabi desu. Fune wa ookikute gouka de, samazama na shisetsu ga arimashita. • The Yamada couple boarded a cruise ship departing from Yokohama Port. This ship is a seven-day journey touring Japan's beautiful islands. The ship was large and luxurious, with various facilities.</div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> Cruise tourism has become increasingly popular in Japan. Domestic cruises (国内クルーズ kokunai kuruuzu) often visit the Seto Inland Sea islands, Okinawa, and other scenic coastal destinations. Japanese cruise ships are known for excellent service and authentic Japanese cuisine options.
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('客室は海が見える窓付きで、広くて快適でした。バルコニーに出ると、青い海と空が広がっていました。夫婦は荷物を片付けてから、船内を探検することにしました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">客室は海が見える窓付きで、広くて快適でした。バルコニーに出ると、青い海と空が広がっていました。夫婦は荷物を片付けてから、船内を探検することにしました。</p>
+                        <div class="paragraph-hint">Kyakushitsu wa umi ga mieru mado-tsuki de, hirokute kaiteki deshita. Barukoni ni deru to, aoi umi to sora ga hirogatte imashita. Fuufu wa nimotsu wo katadzukete kara, sennai wo tanken suru koto ni shimashita. • The cabin had a window with an ocean view and was spacious and comfortable. When they went out on the balcony, the blue ocean and sky spread out before them. After putting away their luggage, the couple decided to explore inside the ship.</div>
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('船内にはレストラン、プール、温泉、劇場などがありました。夕食は和洋折衷のバイキング形式で、新鮮な海の幸が豊富に並んでいました。山田さんは刺身と天ぷらを選び、奥さんはパスタとサラダを取りました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">船内にはレストラン、プール、温泉、劇場などがありました。夕食は和洋折衷のバイキング形式で、新鮮な海の幸が豊富に並んでいました。山田さんは刺身と天ぷらを選び、奥さんはパスタとサラダを取りました。</p>
+                        <div class="paragraph-hint">Sennai ni wa resutoran, puuru, onsen, gekijou nado ga arimashita. Yuushoku wa wa-you-secchuu no baikingu keishiki de, shinsen na umi no sachi ga houfu ni narande imashita. Yamada-san wa sashimi to tenpura wo erabi, okusan wa pasuta to sarada wo torimashita. • Inside the ship were restaurants, a pool, hot springs, a theater, and more. Dinner was a buffet-style blend of Japanese and Western food, with an abundance of fresh seafood lined up. Mr. Yamada chose sashimi and tempura, while his wife took pasta and salad.</div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>📝 Grammar Tip:</strong> ～折衷 (secchuu) means "blend" or "compromise." 和洋折衷 (wa-you-secchuu) refers to a harmonious blend of Japanese (和 wa) and Western (洋 you) styles, commonly used for architecture, food, and design.
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('二日目、船は瀬戸内海を航行し、小豆島に寄港しました。乗客たちは島に降りて、オリーブ園や醤油工場を見学しました。美しい海岸線を歩き、地元の名物を味わいました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">二日目、船は瀬戸内海を航行し、小豆島に寄港しました。乗客たちは島に降りて、オリーブ園や醤油工場を見学しました。美しい海岸線を歩き、地元の名物を味わいました。</p>
+                        <div class="paragraph-hint">Futsuka-me, fune wa Seto Naikai wo koukou shi, Shodoshima ni kikou shimashita. Joukyaku-tachi wa shima ni orite, oriibu-en ya shouyu koujou wo kengaku shimashita. Utsukushii kaigan-sen wo aruki, jimoto no meibutsu wo ajiwai mashita. • On the second day, the ship sailed the Seto Inland Sea and docked at Shodoshima Island. Passengers got off on the island and toured olive groves and soy sauce factories. They walked along the beautiful coastline and tasted local specialties.</div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>🎌 Cultural Note:</strong> The Seto Inland Sea (瀬戸内海 Seto Naikai) is famous for its calm waters and numerous small islands. Shodoshima (小豆島) is known for olive cultivation and traditional soy sauce production. Many islands have unique local specialties (名物 meibutsu) that tourists seek out.
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('三日目と四日目は、船上でゆっくり過ごしました。山田さんは朝のヨガ教室に参加し、午後はデッキで読書をしました。夜は星空を眺めながら、夫婦で散歩を楽しみました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">三日目と四日目は、船上でゆっくり過ごしました。山田さんは朝のヨガ教室に参加し、午後はデッキで読書をしました。夜は星空を眺めながら、夫婦で散歩を楽しみました。</p>
+                        <div class="paragraph-hint">Mikka-me to yokka-me wa, senjou de yukkuri sugoshimashita. Yamada-san wa asa no yoga kyoushitsu ni sanka shi, gogo wa dekki de dokusho wo shimashita. Yoru wa hoshizora wo nagame nagara, fuufu de sanpo wo tanoshimi mashita. • On the third and fourth days, they spent time relaxing on the ship. Mr. Yamada participated in a morning yoga class and read on the deck in the afternoon. At night, they enjoyed a walk together while gazing at the starry sky.</div>
+                    </div>
+
+                    <div class="paragraph-container">
+                        <button class="audio-btn" onclick="speak('最終日、船は無事に横浜港に帰港しました。七日間の船旅で、日本の海の美しさを再発見し、リフレッシュできました。夫婦は次の旅行を楽しみにしながら、下船しました。', this)">🔊</button>
+                        <button class="hint-btn" onclick="toggleHint(this)">Hint</button>
+                        <p class="japanese-paragraph">最終日、船は無事に横浜港に帰港しました。七日間の船旅で、日本の海の美しさを再発見し、リフレッシュできました。夫婦は次の旅行を楽しみにしながら、下船しました。</p>
+                        <div class="paragraph-hint">Saishuubi, fune wa buji ni Yokohama-kou ni kikou shimashita. Nanoka-kan no funa-tabi de, Nihon no umi no utsukushisa wo sai-hakken shi, rifuresshu dekimashita. Fuufu wa tsugi no ryokou wo tanoshimi ni shinagara, gesen shimashita. • On the final day, the ship safely returned to Yokohama Port. During the seven-day sea voyage, they rediscovered the beauty of Japan's seas and felt refreshed. The couple disembarked looking forward to their next trip.</div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 12px; border-radius: 8px; margin: 15px 0; font-size: 0.9em;">
+                        <strong>📝 Grammar Tip:</strong> 再～ (sai-) is a prefix meaning "re-" or "again": 再発見 (sai-hakken - "rediscover"), 再会 (saikai - "reunion"), 再生 (saisei - "regenerate/replay").
+                    </div>
+                </div>
+
+                <!-- Kanji Section for Cruise Story -->
+                <div class="kanji-section">
+                    <div class="kanji-title">📚 Kanji in This Story</div>
+
+                    <div style="background: #f0f9ff; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #0369a1;">
+                        <strong style="color: #0369a1;">🚢 Ship & Maritime (船と海)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">船</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: ふね</div>
+                                <div class="kanji-meaning">Meaning: ship, boat</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">港</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: みなと</div>
+                                <div class="kanji-meaning">Meaning: port, harbor</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">海</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カイ / Kun: うみ</div>
+                                <div class="kanji-meaning">Meaning: sea, ocean</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">島</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: トウ / Kun: しま</div>
+                                <div class="kanji-meaning">Meaning: island</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">航</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ</div>
+                                <div class="kanji-meaning">Meaning: navigate, sail</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">寄</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キ / Kun: よ(る)</div>
+                                <div class="kanji-meaning">Meaning: approach, stop by</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">乗</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジョウ / Kun: の(る)</div>
+                                <div class="kanji-meaning">Meaning: ride, board</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">客</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: キャク</div>
+                                <div class="kanji-meaning">Meaning: guest, passenger</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #f59e0b;">
+                        <strong style="color: #f59e0b;">🏨 Facilities & Places (施設と場所)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">室</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シツ / Kun: むろ</div>
+                                <div class="kanji-meaning">Meaning: room</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">内</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ナイ / Kun: うち</div>
+                                <div class="kanji-meaning">Meaning: inside, within</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">泉</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: いずみ</div>
+                                <div class="kanji-meaning">Meaning: spring, fountain</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">場</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジョウ / Kun: ば</div>
+                                <div class="kanji-meaning">Meaning: place, location</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">園</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: エン</div>
+                                <div class="kanji-meaning">Meaning: garden, park</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">工</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: く</div>
+                                <div class="kanji-meaning">Meaning: factory, construction</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">岸</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ガン / Kun: きし</div>
+                                <div class="kanji-meaning">Meaning: shore, coast</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f0fdf4; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #10b981;">
+                        <strong style="color: #10b981;">🎯 Actions & Activities (動作と活動)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">出</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シュツ / Kun: で(る)</div>
+                                <div class="kanji-meaning">Meaning: exit, depart</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">巡</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ジュン / Kun: めぐ(る)</div>
+                                <div class="kanji-meaning">Meaning: go around, tour</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">降</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: お(りる)</div>
+                                <div class="kanji-meaning">Meaning: descend, get off</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">探</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: タン / Kun: さぐ(る)、さが(す)</div>
+                                <div class="kanji-meaning">Meaning: explore, search</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">選</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: えら(ぶ)</div>
+                                <div class="kanji-meaning">Meaning: choose, select</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">参</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: サン / Kun: まい(る)</div>
+                                <div class="kanji-meaning">Meaning: participate</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">歩</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ホ / Kun: ある(く)</div>
+                                <div class="kanji-meaning">Meaning: walk</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">眺</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: チョウ / Kun: なが(める)</div>
+                                <div class="kanji-meaning">Meaning: gaze, view</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef2f2; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #ef4444;">
+                        <strong style="color: #ef4444;">🍽️ Food & Dining (食事)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">食</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ショク / Kun: た(べる)</div>
+                                <div class="kanji-meaning">Meaning: eat, food</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">夕</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セキ / Kun: ゆう</div>
+                                <div class="kanji-meaning">Meaning: evening</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">和</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ワ / Kun: やわ(らぐ)</div>
+                                <div class="kanji-meaning">Meaning: Japanese, harmony</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">洋</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ヨウ</div>
+                                <div class="kanji-meaning">Meaning: Western, ocean</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">鮮</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セン / Kun: あざ(やか)</div>
+                                <div class="kanji-meaning">Meaning: fresh, vivid</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">豊</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ホウ / Kun: ゆた(か)</div>
+                                <div class="kanji-meaning">Meaning: abundant, rich</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">刺</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シ / Kun: さ(す)</div>
+                                <div class="kanji-meaning">Meaning: pierce, sashimi</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">味</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ミ / Kun: あじ</div>
+                                <div class="kanji-meaning">Meaning: taste, flavor</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #faf5ff; padding: 10px 15px; border-radius: 8px; margin: 15px 0 10px 0; border-left: 4px solid #a855f7;">
+                        <strong style="color: #a855f7;">🌟 Descriptive Words (形容詞)</strong>
+                    </div>
+                    <div class="kanji-grid">
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">美</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ビ / Kun: うつく(しい)</div>
+                                <div class="kanji-meaning">Meaning: beautiful</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">大</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: ダイ / Kun: おお(きい)</div>
+                                <div class="kanji-meaning">Meaning: big, large</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">広</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: コウ / Kun: ひろ(い)</div>
+                                <div class="kanji-meaning">Meaning: wide, spacious</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">快</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: カイ</div>
+                                <div class="kanji-meaning">Meaning: pleasant, comfortable</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">青</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セイ / Kun: あお(い)</div>
+                                <div class="kanji-meaning">Meaning: blue, green</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">新</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: シン / Kun: あたら(しい)</div>
+                                <div class="kanji-meaning">Meaning: new, fresh</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">静</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: セイ / Kun: しず(か)</div>
+                                <div class="kanji-meaning">Meaning: quiet, calm</div>
+                            </div>
+                        </div>
+                        <div class="kanji-card" onclick="toggleKanji(this)">
+                            <div class="kanji-character">安</div>
+                            <div class="kanji-details">
+                                <div class="kanji-reading">On: アン / Kun: やす(い)</div>
+                                <div class="kanji-meaning">Meaning: safe, cheap</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../../js/shared.js"></script>
+</body>
+</html>

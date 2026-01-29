@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastery Calculator Tests - JLPT Mastery Engine</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      max-width: 900px;
+    }
+    h1 {
+      color: #4ec9b0;
+      border-bottom: 2px solid #4ec9b0;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #569cd6;
+      margin-top: 30px;
+      border-bottom: 1px solid #569cd6;
+      padding-bottom: 5px;
+    }
+    .test {
+      margin: 10px 0;
+      padding: 8px 10px;
+      background: #2d2d30;
+      border-left: 3px solid #007acc;
+    }
+    .pass {
+      border-left-color: #4ec9b0;
+    }
+    .pass::before {
+      content: "PASS ";
+      color: #4ec9b0;
+      font-weight: bold;
+    }
+    .fail {
+      border-left-color: #f48771;
+    }
+    .fail::before {
+      content: "FAIL ";
+      color: #f48771;
+      font-weight: bold;
+    }
+    .info {
+      color: #9cdcfe;
+      margin: 3px 0 3px 20px;
+      font-size: 0.9em;
+    }
+    .summary {
+      margin-top: 30px;
+      padding: 15px;
+      background: #2d2d30;
+      border: 2px solid #4ec9b0;
+    }
+    .summary.has-failures {
+      border-color: #f48771;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mastery Calculator Test Suite</h1>
+  <p>Testing JLPT/Topic mastery aggregation per TDD-001 5, 6.3, 7.2</p>
+
+  <script src="js/mastery-calculator.js"></script>
+
+  <script>
+    // Test framework utilities
+    const results = [];
+
+    function test(name, fn) {
+      try {
+        fn();
+        results.push({ name, passed: true });
+        return true;
+      } catch (e) {
+        results.push({ name, passed: false, error: e.message });
+        return false;
+      }
+    }
+
+    function expect(actual) {
+      return {
+        toBe(expected) {
+          if (actual !== expected) {
+            throw new Error(`Expected ${expected}, got ${actual}`);
+          }
+        },
+        toBeCloseTo(expected, precision = 1) {
+          const multiplier = Math.pow(10, precision);
+          if (Math.round(actual * multiplier) !== Math.round(expected * multiplier)) {
+            throw new Error(`Expected ~${expected}, got ${actual}`);
+          }
+        },
+        toEqual(expected) {
+          if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+            throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+          }
+        },
+        toBeTruthy() {
+          if (!actual) {
+            throw new Error(`Expected truthy, got ${actual}`);
+          }
+        }
+      };
+    }
+
+    // Helper to create test kanji
+    function createTestKanji(character, jlpt, stage, topics = ['home-life']) {
+      return {
+        character,
+        jlpt_level: jlpt,
+        topics,
+        srs: { stage },
+        history: []
+      };
+    }
+
+    console.log('=== Mastery Calculator Tests ===\n');
+
+    // =========================================================================
+    // JLPT MASTERY TESTS (TDD 5.2, 7.2)
+    // =========================================================================
+
+    console.log('\n--- JLPT Mastery Tests ---\n');
+
+    test('JLPT Mastery: Empty kanji map returns 0', () => {
+      const mastery = MasteryCalculator.calculateJLPTMastery({}, 'N5');
+      expect(mastery).toBe(0);
+      console.log('  Empty map: 0%');
+    });
+
+    test('JLPT Mastery: No kanji at level returns 0', () => {
+      const kanjiMap = {
+        '': createTestKanji('', 'N4', 'guru_1')
+      };
+      const mastery = MasteryCalculator.calculateJLPTMastery(kanjiMap, 'N5');
+      expect(mastery).toBe(0);
+      console.log('  No N5 kanji: 0%');
+    });
+
+    test('JLPT Mastery: All locked = 0%', () => {
+      const kanjiMap = {};
+      for (let i = 0; i < 50; i++) {
+        kanjiMap[`kanji_${i}`] = createTestKanji(`kanji_${i}`, 'N5', 'locked');
+      }
+      const mastery = MasteryCalculator.calculateJLPTMastery(kanjiMap, 'N5');
+      expect(mastery).toBe(0);
+      console.log('  50 locked N5 kanji: 0%');
+    });
+
+    test('JLPT Mastery: All burned = 100%', () => {
+      const kanjiMap = {};
+      for (let i = 0; i < 50; i++) {
+        kanjiMap[`kanji_${i}`] = createTestKanji(`kanji_${i}`, 'N5', 'burned');
+      }
+      const mastery = MasteryCalculator.calculateJLPTMastery(kanjiMap, 'N5');
+      expect(mastery).toBe(100);
+      console.log('  50 burned N5 kanji: 100%');
+    });
+
+    test('JLPT Mastery: Mixed stages = 48% (TDD example)', () => {
+      // From TDD 5.1: 20 guru_1 (60), 15 apprentice_4 (50), 15 apprentice_2 (30)
+      // Total: 1200 + 750 + 450 = 2400
+      // Mastery: 2400 / 5000 = 48%
+      const kanjiMap = {};
+      let idx = 0;
+
+      // 20 guru_1 (60 points each)
+      for (let i = 0; i < 20; i++) {
+        kanjiMap[`guru_${i}`] = createTestKanji(`guru_${i}`, 'N5', 'guru_1');
+      }
+      // 15 apprentice_4 (50 points each)
+      for (let i = 0; i < 15; i++) {
+        kanjiMap[`app4_${i}`] = createTestKanji(`app4_${i}`, 'N5', 'apprentice_4');
+      }
+      // 15 apprentice_2 (30 points each)
+      for (let i = 0; i < 15; i++) {
+        kanjiMap[`app2_${i}`] = createTestKanji(`app2_${i}`, 'N5', 'apprentice_2');
+      }
+
+      const mastery = MasteryCalculator.calculateJLPTMastery(kanjiMap, 'N5');
+      expect(mastery).toBe(48);
+      console.log('  20 guru_1 + 15 app4 + 15 app2: 48%');
+    });
+
+    test('JLPT Mastery: Only counts specified level', () => {
+      const kanjiMap = {
+        n5_1: createTestKanji('n5_1', 'N5', 'burned'),  // 100
+        n5_2: createTestKanji('n5_2', 'N5', 'burned'),  // 100
+        n4_1: createTestKanji('n4_1', 'N4', 'locked'),  // Should not count
+        n4_2: createTestKanji('n4_2', 'N4', 'locked')   // Should not count
+      };
+
+      const n5Mastery = MasteryCalculator.calculateJLPTMastery(kanjiMap, 'N5');
+      const n4Mastery = MasteryCalculator.calculateJLPTMastery(kanjiMap, 'N4');
+
+      expect(n5Mastery).toBe(100);  // 2 burned / 2 total
+      expect(n4Mastery).toBe(0);    // 2 locked / 2 total
+      console.log('  N5: 100%, N4: 0% (level filtering works)');
+    });
+
+    // =========================================================================
+    // TOPIC MASTERY TESTS (TDD 5.3, 7.2)
+    // =========================================================================
+
+    console.log('\n--- Topic Mastery Tests ---\n');
+
+    test('Topic Mastery: Empty kanji map returns 0', () => {
+      const mastery = MasteryCalculator.calculateTopicMastery({}, 'home-life');
+      expect(mastery).toBe(0);
+      console.log('  Empty map: 0%');
+    });
+
+    test('Topic Mastery: Basic calculation', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'guru_1', ['home-life']),  // 60
+        k2: createTestKanji('k2', 'N5', 'master', ['home-life'])   // 80
+      };
+
+      const mastery = MasteryCalculator.calculateTopicMastery(kanjiMap, 'home-life');
+      // (60 + 80) / 200 * 100 = 70%
+      expect(mastery).toBe(70);
+      console.log('  guru_1 + master: 70%');
+    });
+
+    test('Topic Mastery: Multi-topic kanji counted in each', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'burned', ['home-life', 'travel']),  // 100
+        k2: createTestKanji('k2', 'N5', 'locked', ['home-life']),            // 0
+        k3: createTestKanji('k3', 'N5', 'locked', ['travel'])                // 0
+      };
+
+      const homeLifeMastery = MasteryCalculator.calculateTopicMastery(kanjiMap, 'home-life');
+      const travelMastery = MasteryCalculator.calculateTopicMastery(kanjiMap, 'travel');
+
+      // home-life: (100 + 0) / 200 = 50%
+      // travel: (100 + 0) / 200 = 50%
+      expect(homeLifeMastery).toBe(50);
+      expect(travelMastery).toBe(50);
+      console.log('  Multi-topic kanji: contributes to both topics');
+    });
+
+    test('Topic Mastery: Zero kanji in topic returns 0', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'burned', ['home-life'])
+      };
+      const mastery = MasteryCalculator.calculateTopicMastery(kanjiMap, 'restaurant');
+      expect(mastery).toBe(0);
+      console.log('  No kanji in topic: 0%');
+    });
+
+    // =========================================================================
+    // OVERALL MASTERY TESTS
+    // =========================================================================
+
+    console.log('\n--- Overall Mastery Tests ---\n');
+
+    test('Overall Mastery: All kanji aggregated', () => {
+      const kanjiMap = {
+        n5_1: createTestKanji('n5_1', 'N5', 'guru_1'),   // 60
+        n4_1: createTestKanji('n4_1', 'N4', 'master'),   // 80
+        n3_1: createTestKanji('n3_1', 'N3', 'burned')    // 100
+      };
+
+      const overall = MasteryCalculator.calculateOverallMastery(kanjiMap);
+      // (60 + 80 + 100) / 300 * 100 = 80%
+      expect(overall).toBe(80);
+      console.log('  Mixed JLPT levels: 80%');
+    });
+
+    // =========================================================================
+    // STAGE DISTRIBUTION TESTS
+    // =========================================================================
+
+    console.log('\n--- Stage Distribution Tests ---\n');
+
+    test('Stage Distribution: Counts each stage', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'locked'),
+        k2: createTestKanji('k2', 'N5', 'locked'),
+        k3: createTestKanji('k3', 'N5', 'lesson'),
+        k4: createTestKanji('k4', 'N5', 'guru_1'),
+        k5: createTestKanji('k5', 'N5', 'burned')
+      };
+
+      const dist = MasteryCalculator.calculateStageDistribution(kanjiMap);
+      expect(dist.locked).toBe(2);
+      expect(dist.lesson).toBe(1);
+      expect(dist.guru_1).toBe(1);
+      expect(dist.burned).toBe(1);
+      expect(dist.apprentice_1).toBe(0);
+      console.log('  Stage counts: locked=2, lesson=1, guru_1=1, burned=1');
+    });
+
+    // =========================================================================
+    // PROGRESS STATS TESTS
+    // =========================================================================
+
+    console.log('\n--- Progress Stats Tests ---\n');
+
+    test('Progress Stats: Correct calculations', () => {
+      const kanjiMap = {};
+      // 50 locked, 30 in progress (various stages), 20 burned
+      for (let i = 0; i < 50; i++) kanjiMap[`locked_${i}`] = createTestKanji(`locked_${i}`, 'N5', 'locked');
+      for (let i = 0; i < 30; i++) kanjiMap[`progress_${i}`] = createTestKanji(`progress_${i}`, 'N5', 'guru_1');
+      for (let i = 0; i < 20; i++) kanjiMap[`burned_${i}`] = createTestKanji(`burned_${i}`, 'N5', 'burned');
+
+      const stats = MasteryCalculator.getProgressStats(kanjiMap);
+      expect(stats.total_kanji).toBe(100);
+      expect(stats.locked).toBe(50);
+      expect(stats.unlocked).toBe(50);
+      expect(stats.burned).toBe(20);
+      expect(stats.in_progress).toBe(30);
+      expect(stats.unlock_percentage).toBe(50);
+      expect(stats.completion_percentage).toBe(20);
+      console.log('  100 kanji: 50 locked, 30 in progress, 20 burned');
+    });
+
+    // =========================================================================
+    // FILTER TESTS
+    // =========================================================================
+
+    console.log('\n--- Filter Tests ---\n');
+
+    test('Filter by JLPT Level: Only returns matching', () => {
+      const kanjiMap = {
+        n5: createTestKanji('n5', 'N5', 'guru_1'),
+        n4: createTestKanji('n4', 'N4', 'guru_1')
+      };
+
+      const filtered = MasteryCalculator.filterByJLPTLevel(kanjiMap, 'N5');
+      expect(Object.keys(filtered).length).toBe(1);
+      expect(filtered.n5).toBeTruthy();
+      console.log('  Filter N5: returns only N5 kanji');
+    });
+
+    test('Filter by Topic: Only returns matching', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'guru_1', ['home-life']),
+        k2: createTestKanji('k2', 'N5', 'guru_1', ['shopping'])
+      };
+
+      const filtered = MasteryCalculator.filterByTopic(kanjiMap, 'home-life');
+      expect(Object.keys(filtered).length).toBe(1);
+      expect(filtered.k1).toBeTruthy();
+      console.log('  Filter home-life: returns only home-life kanji');
+    });
+
+    test('Filter by Stage: Only returns matching', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'guru_1'),
+        k2: createTestKanji('k2', 'N5', 'burned')
+      };
+
+      const filtered = MasteryCalculator.filterByStage(kanjiMap, 'burned');
+      expect(Object.keys(filtered).length).toBe(1);
+      expect(filtered.k2).toBeTruthy();
+      console.log('  Filter burned: returns only burned kanji');
+    });
+
+    test('Apply Multiple Filters: Combines correctly', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'guru_1', ['home-life']),
+        k2: createTestKanji('k2', 'N5', 'burned', ['home-life']),
+        k3: createTestKanji('k3', 'N4', 'guru_1', ['home-life']),
+        k4: createTestKanji('k4', 'N5', 'guru_1', ['shopping'])
+      };
+
+      const filtered = MasteryCalculator.applyFilters(kanjiMap, {
+        jlpt_level: 'N5',
+        topic: 'home-life'
+      });
+
+      expect(Object.keys(filtered).length).toBe(2);
+      expect(filtered.k1).toBeTruthy();
+      expect(filtered.k2).toBeTruthy();
+      console.log('  Multiple filters: N5 + home-life = 2 kanji');
+    });
+
+    // =========================================================================
+    // CACHE TESTS
+    // =========================================================================
+
+    console.log('\n--- Cache Tests ---\n');
+
+    test('Cache Valid: Fresh cache is valid', () => {
+      const cache = {
+        calculated_at: new Date().toISOString()
+      };
+      const lastModified = new Date(Date.now() - 1000).toISOString();
+
+      const valid = MasteryCalculator.isCacheValid(cache, lastModified);
+      expect(valid).toBe(true);
+      console.log('  Fresh cache: valid');
+    });
+
+    test('Cache Invalid: Modified after cache', () => {
+      const cache = {
+        calculated_at: new Date(Date.now() - 1000).toISOString()
+      };
+      const lastModified = new Date().toISOString();
+
+      const valid = MasteryCalculator.isCacheValid(cache, lastModified);
+      expect(valid).toBe(false);
+      console.log('  Schema modified after cache: invalid');
+    });
+
+    test('Cache Invalid: Older than 1 hour', () => {
+      const cache = {
+        calculated_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+      };
+      const lastModified = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
+
+      const valid = MasteryCalculator.isCacheValid(cache, lastModified);
+      expect(valid).toBe(false);
+      console.log('  Cache older than 1 hour: invalid');
+    });
+
+    // =========================================================================
+    // MASTERY SUMMARY TEST
+    // =========================================================================
+
+    console.log('\n--- Mastery Summary Test ---\n');
+
+    test('Mastery Summary: Returns complete summary', () => {
+      const kanjiMap = {
+        k1: createTestKanji('k1', 'N5', 'guru_1', ['home-life']),
+        k2: createTestKanji('k2', 'N5', 'master', ['shopping'])
+      };
+
+      const summary = MasteryCalculator.getMasterySummary(kanjiMap);
+      expect(summary.overall).toBeTruthy();
+      expect(summary.jlpt).toBeTruthy();
+      expect(summary.topics).toBeTruthy();
+      expect(summary.calculated_at).toBeTruthy();
+      console.log('  Summary contains overall, jlpt, topics, timestamp');
+    });
+
+    // =========================================================================
+    // SUMMARY
+    // =========================================================================
+
+    console.log('\n=== Test Summary ===\n');
+
+    const passed = results.filter(r => r.passed).length;
+    const failed = results.filter(r => !r.passed).length;
+    const total = results.length;
+
+    console.log(`Passed: ${passed}/${total}`);
+    console.log(`Failed: ${failed}/${total}`);
+
+    if (failed > 0) {
+      console.log('\nFailed tests:');
+      results.filter(r => !r.passed).forEach(r => {
+        console.log(`  - ${r.name}: ${r.error}`);
+      });
+    }
+
+    // Render results to page
+    const container = document.createElement('div');
+
+    // Group tests by category
+    const categories = {
+      'JLPT Mastery': [],
+      'Topic Mastery': [],
+      'Overall Mastery': [],
+      'Stage Distribution': [],
+      'Progress Stats': [],
+      'Filters': [],
+      'Cache': [],
+      'Summary': []
+    };
+
+    results.forEach(r => {
+      if (r.name.includes('JLPT')) categories['JLPT Mastery'].push(r);
+      else if (r.name.includes('Topic')) categories['Topic Mastery'].push(r);
+      else if (r.name.includes('Overall')) categories['Overall Mastery'].push(r);
+      else if (r.name.includes('Stage Distribution')) categories['Stage Distribution'].push(r);
+      else if (r.name.includes('Progress Stats')) categories['Progress Stats'].push(r);
+      else if (r.name.includes('Filter')) categories['Filters'].push(r);
+      else if (r.name.includes('Cache')) categories['Cache'].push(r);
+      else categories['Summary'].push(r);
+    });
+
+    Object.entries(categories).forEach(([category, tests]) => {
+      if (tests.length === 0) return;
+
+      const section = document.createElement('div');
+      section.innerHTML = `<h2>${category}</h2>`;
+
+      tests.forEach(t => {
+        const div = document.createElement('div');
+        div.className = `test ${t.passed ? 'pass' : 'fail'}`;
+        div.innerHTML = t.name;
+        if (!t.passed) {
+          div.innerHTML += `<div class="info">Error: ${t.error}</div>`;
+        }
+        section.appendChild(div);
+      });
+
+      container.appendChild(section);
+    });
+
+    // Summary
+    const summary = document.createElement('div');
+    summary.className = `summary ${failed > 0 ? 'has-failures' : ''}`;
+    summary.innerHTML = `
+      <strong style="color: ${failed > 0 ? '#f48771' : '#4ec9b0'}">
+        ${failed > 0 ? 'SOME TESTS FAILED' : 'ALL TESTS PASSED'}
+      </strong>
+      <div class="info">Passed: ${passed}/${total}</div>
+      <div class="info">Failed: ${failed}/${total}</div>
+    `;
+    container.appendChild(summary);
+
+    document.body.appendChild(container);
+  </script>
+</body>
+</html>
