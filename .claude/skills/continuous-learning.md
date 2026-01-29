@@ -16,6 +16,7 @@
 - Pattern identified that could be reusable across features
 
 **Do NOT use for**:
+
 - One-off solutions
 - Theoretical patterns (not yet proven)
 - Patterns already documented elsewhere
@@ -25,11 +26,13 @@
 ## Prerequisites
 
 **Required inputs**:
+
 - Session notes (`temp/SESSION-*.md` files) OR conversation context
 - Code examples showing pattern in practice
 - Evidence of ≥2 successful uses (quality bar)
 
 **Required knowledge**:
+
 - Understanding of existing skills format (`.claude/skills/` directory)
 - Familiarity with single-source-of-truth hierarchy
 - Access to LEARNINGS.md and FOR_CHRIS doc templates
@@ -43,12 +46,14 @@
 **Inputs**: Session notes, conversation history, code changes
 
 **Actions**:
+
 1. Read session notes or conversation transcript
 2. Identify repeated approaches or solutions
 3. Look for workflow improvements or discoveries
 4. Note any "aha moments" or unexpected successes
 
 **Questions to ask**:
+
 - What did we do that worked well?
 - Did we solve this problem before?
 - Would this approach help in future scenarios?
@@ -63,6 +68,7 @@
 **Quality bar**: Pattern must be proven in ≥2 real implementations (not theoretical)
 
 **Validation checklist**:
+
 - [ ] Pattern used successfully at least twice
 - [ ] Pattern solved a real problem (not premature optimization)
 - [ ] Pattern is generalizable (not overly specific)
@@ -70,6 +76,7 @@
 - [ ] Pattern is not already documented
 
 **Examples of invalid patterns**:
+
 - ❌ "We should probably do X" (theoretical, not proven)
 - ❌ Pattern used once (quality bar not met)
 - ❌ Highly specific to one feature (not generalizable)
@@ -107,11 +114,13 @@
 **File naming**: `.claude/skills/learned-pattern-[descriptive-name].md`
 
 **Examples**:
+
 - `learned-pattern-temp-first-file-creation.md`
 - `learned-pattern-parallel-review-execution.md`
 - `learned-pattern-agent-handoff-protocol.md`
 
 **Template structure**:
+
 ```markdown
 # [Pattern Name]
 
@@ -182,6 +191,7 @@
 ```
 
 **Actions**:
+
 1. Create new file using template above
 2. Fill in all sections with specific details from pattern
 3. Include concrete examples from codebase
@@ -195,11 +205,13 @@
 **Why**: Maintain single-source-of-truth with cross-references
 
 **Actions**:
+
 1. Open `docs/reference/LEARNINGS.md`
 2. Find appropriate section (Patterns/Frameworks/Pitfalls/Practices)
 3. Add entry with link to new skill file
 
 **Format**:
+
 ```markdown
 #### Pattern: [Name]
 
@@ -222,6 +234,7 @@
 **Only if**: FOR_CHRIS doc was created (decision rubric met)
 
 **Actions**:
+
 1. Open `archive/FOR_CHRIS_docs/README.md`
 2. Add entry to index table
 3. Include topic, filename, date, key concepts
@@ -233,11 +246,13 @@
 ## Expected Outcomes
 
 **Primary outputs**:
+
 - New skill file in `.claude/skills/learned-pattern-[name].md`
 - Cross-reference entry in `docs/reference/LEARNINGS.md`
 - Optional: FOR_CHRIS doc and index update
 
 **Quality indicators**:
+
 - ✅ Pattern is actionable (clear steps)
 - ✅ Pattern is proven (≥2 real uses)
 - ✅ Pattern is generalizable
@@ -245,6 +260,7 @@
 - ✅ Cross-references are complete
 
 **Failure indicators**:
+
 - ❌ Pattern is theoretical (not proven)
 - ❌ Pattern is too specific (not reusable)
 - ❌ Duplicates existing documentation
@@ -259,11 +275,13 @@
 **Context**: Discovered during v0.1 content migration and v0.2 kanji data generation
 
 **Validation**:
+
 - ✅ Used successfully in both v0.1 and v0.2
 - ✅ Prevented accidental overwrites
 - ✅ Generalizable to any file creation
 
 **Extraction**:
+
 1. Created `.claude/skills/learned-pattern-temp-first-file-creation.md`
 2. Documented step-by-step process
 3. Included examples from both versions
@@ -278,11 +296,13 @@
 **Context**: Discovered during v0.1 and v0.2 review phases
 
 **Validation**:
+
 - ✅ Used successfully in multiple reviews
 - ✅ Reduced review time significantly
 - ✅ Applicable to any multi-reviewer scenario
 
 **Extraction**:
+
 1. Created `.claude/skills/learned-pattern-parallel-review.md`
 2. Documented conditions for parallel vs. sequential
 3. Included timing benefits from real examples

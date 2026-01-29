@@ -37,9 +37,11 @@ description: Visual inspection of the running site using Playwright MCP to ident
 ## Step 1: Information Gathering
 
 ### Confirm URL
+
 Default: `http://localhost:8000/content/index.html`
 
 ### Identify Pages to Review
+
 Key pages to cover:
 
 | Page | Path |
@@ -52,6 +54,7 @@ Key pages to cover:
 | Kanji study | `/content/kanji/index.html` |
 
 ### Project Context
+
 - **Framework**: Vanilla HTML/CSS/JS (no build step)
 - **Styling**: `content/css/shared.css` + page-level `<style>` tags
 - **Naming**: BEM-inspired (`.component__element--modifier`)
@@ -86,17 +89,20 @@ For each page:
 ## Step 3: Issue Fixing
 
 ### Priority Order
+
 - **P1**: Layout/functionality breakage
 - **P2**: Responsive/accessibility issues
 - **P3**: Visual consistency polish
 
 ### Fix Principles
+
 1. **Edit `shared.css`** for shared issues; page `<style>` for page-specific
 2. **Follow existing patterns** — BEM naming, CSS custom properties
 3. **Minimal changes** — fix the issue, don't refactor surroundings
 4. **One fix at a time** — verify before moving to next
 
 ### Finding Source Files
+
 - Shared styles: `content/css/shared.css`
 - Shared JS: `content/js/shared.js`
 - Kanji module: `content/kanji/css/`, `content/kanji/js/`
@@ -107,6 +113,7 @@ For each page:
 ## Step 4: Re-verification
 
 After each fix:
+
 1. Reload page (browser_navigate to same URL)
 2. Screenshot the fixed area
 3. Compare before/after

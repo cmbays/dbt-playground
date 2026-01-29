@@ -78,12 +78,14 @@ Caching uses a 1 week TTL for CSS and JS files...
 The project uses two personas for documentation maintenance:
 
 **Documenter (`docs:`)** - Reactive, Current State
+
 - **Focus**: Version-specific facts, living documentation
 - **Owns**: CHANGELOG, CLAUDE.md, living docs (ARCHITECTURE, PROJECT_STRUCTURE, etc.)
 - **Trigger**: Version completion, architecture change, new standards
 - **Output**: Current state documentation
 
 **Sage (`sage:`)** - Proactive, Institutional Wisdom
+
 - **Focus**: Cross-session patterns, educational narratives
 - **Owns**: LEARNINGS.md, learned-pattern skills, FOR_CHRIS docs
 - **Trigger**: Pattern discovered (≥2 uses), bug with root cause, significant session
@@ -302,6 +304,7 @@ These events trigger Sage persona for learning extraction:
 5. UPDATE metrics at bottom
 
 6. COMMIT with message: `docs(learnings): add [pattern name] pattern`
+
 ```
 
 #### Create Learned Pattern Skill

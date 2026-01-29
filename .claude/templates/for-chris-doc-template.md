@@ -25,11 +25,13 @@ File Naming: [topic-description].md (e.g., kanji-module-architecture.md)
 [Executive summary - 2-3 sentences of what was accomplished]
 
 **Key Outcomes:**
+
 - Outcome 1
 - Outcome 2
 - Outcome 3
 
 **Related Files:**
+
 - `path/to/file1`
 - `path/to/file2`
 
@@ -46,11 +48,13 @@ File Naming: [topic-description].md (e.g., kanji-module-architecture.md)
 ### Approaches Considered
 
 **Option 1: [Approach Name]**
+
 - **Pros**:
 - **Cons**:
 - **Decision**: Rejected/Chosen because...
 
 **Option 2: [Approach Name]**
+
 - **Pros**:
 - **Cons**:
 - **Decision**: Rejected/Chosen because...
@@ -60,6 +64,7 @@ File Naming: [topic-description].md (e.g., kanji-module-architecture.md)
 [Why we chose this approach. What trade-offs did we accept?]
 
 **Decision Criteria:**
+
 - Criterion 1 and why it mattered
 - Criterion 2 and why it mattered
 
@@ -81,17 +86,21 @@ File Naming: [topic-description].md (e.g., kanji-module-architecture.md)
 ### Key Components
 
 **Component 1: [Name]**
+
 - **Purpose**: What it does
 - **Implementation**: How it works
 - **Example**:
+
   ```javascript
   // Code example showing usage
   ```
 
 **Component 2: [Name]**
+
 - **Purpose**: What it does
 - **Implementation**: How it works
 - **Example**:
+
   ```javascript
   // Code example showing usage
   ```
@@ -154,6 +163,7 @@ File Naming: [topic-description].md (e.g., kanji-module-architecture.md)
 **How to avoid**: [The correct approach]
 
 **Code example**:
+
 ```javascript
 // WRONG approach
 // ...
@@ -182,14 +192,17 @@ File Naming: [topic-description].md (e.g., kanji-module-architecture.md)
 ### Internal Documentation
 
 **LEARNINGS.md entries:**
+
 - [Pattern Name](../docs/reference/LEARNINGS.md#pattern-anchor) - Quick reference
 - [Another Pattern](../docs/reference/LEARNINGS.md#another-anchor) - Quick reference
 
 **Extracted Skills:**
+
 - [`.claude/skills/learned-pattern-[name].md`](../.claude/skills/learned-pattern-name.md) - Executable workflow
 - [`.claude/skills/learned-pattern-[name2].md`](../.claude/skills/learned-pattern-name2.md) - Executable workflow
 
 **Related FOR_CHRIS docs:**
+
 - [Related Topic](./related-topic.md) - Background context
 - [Another Topic](./another-topic.md) - Related architecture
 
@@ -228,6 +241,7 @@ File Naming: [topic-description].md (e.g., kanji-module-architecture.md)
 ---
 
 **Remember**:
+
 - Cross-reference, don't duplicate (link to LEARNINGS.md and skills)
 - Engaging tone, use analogies
 - Explain "why", not just "what"

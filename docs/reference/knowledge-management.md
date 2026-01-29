@@ -33,6 +33,7 @@ Session Work → LEARNINGS.md → Learned Skills → FOR_CHRIS docs
 **Format**: Concise, actionable, with code examples
 
 **When to Add**:
+
 - Pattern used successfully in multiple features
 - Decision framework that guides future choices
 - Common pitfall with prevention strategy
@@ -46,6 +47,7 @@ Session Work → LEARNINGS.md → Learned Skills → FOR_CHRIS docs
 **Format**: Step-by-step instructions with clear inputs/outputs
 
 **When to Add**:
+
 - Workflow used ≥2 times with consistent success
 - Process that other agents should follow
 - Automation opportunity identified
@@ -59,6 +61,7 @@ Session Work → LEARNINGS.md → Learned Skills → FOR_CHRIS docs
 **Format**: Engaging narrative with analogies and context
 
 **When to Add** (Decision Rubric - need ≥2):
+
 1. Significant architectural decision with trade-offs
 2. Novel pattern not in existing resources
 3. Workflow change affecting future development
@@ -84,11 +87,13 @@ Each type of knowledge has ONE authoritative location:
 ## Cross-Reference Guidelines
 
 **DO**:
+
 - Link to authoritative source
 - Reference specific sections/anchors
 - Keep links up to date
 
 **DON'T**:
+
 - Duplicate content across documents
 - Create parallel versions of same information
 - Let documents drift out of sync
@@ -102,6 +107,7 @@ Each type of knowledge has ONE authoritative location:
 **Trigger**: End of significant session or milestone
 
 **Process**:
+
 1. Review session context and changes
 2. Identify patterns worth capturing
 3. Check if pattern already documented
@@ -114,6 +120,7 @@ Each type of knowledge has ONE authoritative location:
 **Trigger**: Same approach used successfully ≥2 times
 
 **Process**:
+
 1. Document pattern in LEARNINGS.md
 2. Extract executable workflow to learned skill
 3. Cross-reference in both locations
@@ -123,6 +130,7 @@ Each type of knowledge has ONE authoritative location:
 **Trigger**: Decision rubric met (≥2 criteria)
 
 **Process**:
+
 1. Use FOR_CHRIS template
 2. Write engaging narrative
 3. Cross-reference technical docs

@@ -14,6 +14,7 @@ description: Research external repositories to extract architecture patterns, im
 **Invocation**: `/repo-research <github-url>` or `sage: research repo <url>`
 
 **Modes**:
+
 - Single repo: `/repo-research <url>`
 - Multi-repo comparison: `/repo-research <url1> <url2> <url3> --compare`
 - Depth control: `--depth=quick|standard|deep`
@@ -29,6 +30,7 @@ description: Research external repositories to extract architecture patterns, im
 - Technology evaluation for new features
 
 **Do NOT use for**:
+
 - Simple documentation lookups (use WebFetch instead)
 - Projects you already understand well
 - Quick API reference checks
@@ -38,10 +40,12 @@ description: Research external repositories to extract architecture patterns, im
 ## Prerequisites
 
 **Required inputs**:
+
 - GitHub repository URL (public repos only)
 - Research focus or question (optional but recommended)
 
 **Tools needed**:
+
 - `gh` CLI for repo cloning/exploration
 - Read/Glob/Grep for codebase analysis
 - WebFetch for README and documentation
@@ -53,6 +57,7 @@ description: Research external repositories to extract architecture patterns, im
 ### Step 1: Repository Overview & Metrics
 
 **Actions**:
+
 1. Clone or fetch repo metadata using `gh repo view <owner/repo> --json stargazerCount,forkCount,pushedAt,openIssues,closedIssues`
 2. Extract quantitative metrics:
    - Stars (community interest)
@@ -69,6 +74,7 @@ description: Research external repositories to extract architecture patterns, im
    - Documentation quality
 
 **Metrics template**:
+
 | Metric | Value | Assessment |
 |--------|-------|------------|
 | Stars | X | High (>5k) / Medium (1k-5k) / Low (<1k) |
@@ -78,6 +84,7 @@ description: Research external repositories to extract architecture patterns, im
 | Contributors | N | Diverse (>50) / Moderate (10-50) / Limited (<10) |
 
 **Health assessment rubric**:
+
 - **Thriving**: Active commits, high stars, healthy issue resolution, diverse contributors
 - **Stable**: Regular maintenance, moderate adoption, responsive to issues
 - **Stale**: Infrequent updates, low activity, but still functional
@@ -90,6 +97,7 @@ description: Research external repositories to extract architecture patterns, im
 ### Step 2: Structure Analysis
 
 **Actions**:
+
 1. Examine directory structure: `gh api repos/<owner>/<repo>/contents`
 2. Identify architectural patterns:
    - Folder organization
@@ -99,6 +107,7 @@ description: Research external repositories to extract architecture patterns, im
 3. Note naming conventions and file organization
 
 **Questions to answer**:
+
 - How is the codebase organized?
 - What patterns are used for separation?
 - How are shared resources managed?
@@ -111,6 +120,7 @@ description: Research external repositories to extract architecture patterns, im
 ### Step 3: Feature Inventory & Code Quality
 
 **Actions**:
+
 1. List major features from README/docs
 2. Explore implementation of key features
 3. Note:
@@ -132,6 +142,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 | **Security** | | Dependency scanning? Security policy? Vulnerability handling? |
 
 **Quality Rubric**:
+
 - **Excellent**: 80%+ test coverage, comprehensive docs, weekly commits, security scanning
 - **Good**: 50%+ coverage, good README + API docs, monthly commits, some security practices
 - **Fair**: Some tests, basic README, quarterly commits, minimal security
@@ -144,6 +155,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 ### Step 4: Pattern Extraction & Synthesis
 
 **Actions**:
+
 1. Identify reusable patterns:
    - Code patterns (components, utilities, abstractions)
    - Architecture patterns (data flow, state management)
@@ -153,11 +165,13 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 3. Assess applicability to our project
 
 **For single repo research**:
+
 - Extract patterns as documented above
 - Note innovative approaches
 - Identify potential adaptation needs
 
 **For multi-repo comparison mode** (`--compare`):
+
 1. **Convergent patterns** (present in 2+ repos):
    - Likely industry standards or best practices
    - High confidence for adoption
@@ -174,6 +188,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
    - Patterns that were refactored away in later versions
 
 **Synthesis questions**:
+
 - What patterns appear in 2+ repos? → Likely proven approaches
 - What patterns are unique to 1 repo? → Experimental or specialized
 - Which patterns solve [our specific problem] best?
@@ -186,6 +201,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 ### Step 5: Technology Assessment
 
 **Actions**:
+
 1. List dependencies and tools used
 2. Evaluate:
    - Technology choices and rationale (if documented)
@@ -200,6 +216,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 ### Step 6: Integration Opportunities
 
 **Actions**:
+
 1. Identify features/patterns applicable to our project
 2. Assess integration complexity:
    - Direct adoption (copy pattern)
@@ -215,6 +232,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 ### Step 7: Community Insights
 
 **Actions**:
+
 1. Gather community intelligence from:
    - Issue discussions (common requests, pain points)
    - Pull request conversations (design decisions)
@@ -225,24 +243,29 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 **Community Insights Template**:
 
 **Popular solutions** (most adopted in this space):
+
 - [Solution 1] - X stars, Y forks, [adoption indicators]
 - [Solution 2] - X stars, Y forks, [adoption indicators]
 
 **Controversial topics** (debated in issues/discussions):
+
 - [Topic 1]: Community split on [approach A vs B]
 - [Topic 2]: [Feature X] heavily requested but not implemented due to [reason]
 
 **Expert opinions** (maintainer comments, notable contributors):
+
 - Maintainer notes [decision X] made due to [constraint Y]
 - Top contributor recommends [pattern Z] for [use case]
 - Known limitations acknowledged: [limitation with explanation]
 
 **Ecosystem trends**:
+
 - Migration patterns: [old approach] → [new approach]
 - Emerging alternatives: [new library] gaining traction
 - Deprecated features: [feature] being phased out
 
 **Red flags** (potential concerns):
+
 - Unresolved critical issues open for >6 months
 - Maintainer burnout signals (slow response times)
 - Breaking changes without migration guides
@@ -255,6 +278,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 ### Step 8: Generate Report
 
 **Actions**:
+
 1. Use template: `.claude/templates/repo-research-report-template.md`
 2. Fill all sections with findings
 3. Include specific file/code references
@@ -264,6 +288,7 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
    - Multi-repo: `docs/research/REPO-COMPARISON-[topic]-[date].md`
 
 **For multi-repo comparison**, also create:
+
 - Individual reports for each repo (optional, for depth)
 - Comparison table with key metrics side-by-side
 - Synthesis section with best-of-breed recommendations
@@ -277,12 +302,14 @@ Evaluate across these dimensions (rate as excellent/good/fair/poor):
 ### To Product Manager (pm:)
 
 **What PM needs**:
+
 - Feature opportunities (what could we build?)
 - User value propositions (why would users want this?)
 - Competitive analysis (how does this compare?)
 - Priority recommendations
 
 **Handoff message**:
+
 ```
 sage: → pm:
 
@@ -305,12 +332,14 @@ Research complete for [repo-name].
 ### To Technical Architect (arch:)
 
 **What Architect needs**:
+
 - Architecture patterns (how did they solve X?)
 - Technical decisions (what tradeoffs did they make?)
 - Implementation approaches (how could we adopt this?)
 - Risk assessment (what could go wrong?)
 
 **Handoff message**:
+
 ```
 sage: → arch:
 
@@ -335,9 +364,11 @@ Research complete for [repo-name].
 ## Expected Outcomes
 
 **Primary output**:
+
 - `docs/research/REPO-RESEARCH-[repo-name]-[date].md`
 
 **Quality indicators**:
+
 - [ ] All template sections completed
 - [ ] Specific code/file references included
 - [ ] Recommendations are actionable
@@ -350,6 +381,7 @@ Research complete for [repo-name].
 ## Research Modes
 
 ### Single Repository Research
+
 ```
 /repo-research <url> [--depth=quick|standard|deep]
 ```
@@ -359,11 +391,13 @@ Standard workflow: Steps 1-8 for one repository
 ---
 
 ### Multi-Repository Comparison
+
 ```
 /repo-research <url1> <url2> <url3> --compare [--depth=quick|standard|deep]
 ```
 
 **Process**:
+
 1. Research each repo individually (Steps 1-6 for each)
 2. Skip Step 7 (Community Insights) for individual repos
 3. **Comparative Analysis** (replaces Step 7):
@@ -374,6 +408,7 @@ Standard workflow: Steps 1-8 for one repository
 4. Generate comparison report (Step 8)
 
 **Comparison Report Structure**:
+
 ```markdown
 # Repository Comparison: [Topic/Category]
 
@@ -424,6 +459,7 @@ Standard workflow: Steps 1-8 for one repository
 ## Depth Levels
 
 ### Quick Scan (15-20 min equivalent)
+
 - README analysis
 - Metrics extraction (Step 1)
 - Directory structure review
@@ -432,6 +468,7 @@ Standard workflow: Steps 1-8 for one repository
 - Quick recommendations
 
 ### Standard Research (30-45 min equivalent)
+
 - Full process (Steps 1-8)
 - Key files examined
 - Patterns documented
@@ -440,6 +477,7 @@ Standard workflow: Steps 1-8 for one repository
 - Integration plan drafted
 
 ### Deep Dive (60+ min equivalent)
+
 - Standard + code walkthrough of key features
 - Dependency analysis
 - Performance/security considerations
@@ -462,22 +500,26 @@ Focus: How do they handle theming and accessibility?
 ```
 
 **Metrics extracted**:
+
 - Stars: 12.5k (High interest)
 - Last commit: 2 days ago (Active)
 - Issues: 45 open / 890 closed (95% resolved - Healthy)
 - Test coverage: 87% (Excellent)
 
 **Report highlights**:
+
 - CSS custom properties for theming
 - ARIA attributes on all interactive components
 - Keyboard navigation patterns
 - Storybook for documentation
 
 **Community insights**:
+
 - Highly requested: Dark mode support (in progress)
 - Maintainer notes performance prioritized over feature count
 
 **Handoff to arch:**:
+
 - Theme system pattern applicable to our flashcard styling
 - Accessibility patterns for quiz interactions
 
@@ -492,23 +534,27 @@ Focus: Spaced repetition implementation and progress tracking
 ```
 
 **Metrics extracted**:
+
 - Stars: 3.2k (Medium interest)
 - Forks: 450 (Moderate adoption)
 - Last commit: 3 months ago (Maintained)
 - Contributors: 23 (Moderate)
 
 **Report highlights**:
+
 - SM-2 algorithm implementation
 - localStorage schema for progress
 - Statistics visualization approach
 - Gamification patterns
 
 **Code quality**:
+
 - Testing: Good (60% coverage, unit + integration tests)
 - Documentation: Excellent (detailed README, API docs, examples)
 - Architecture: Good (modular, clear separation)
 
 **Handoff to pm:**:
+
 - Spaced repetition as v1.0 feature candidate
 - Progress dashboard inspiration
 
@@ -530,15 +576,18 @@ Focus: Spaced repetition implementation and progress tracking
 | Documentation | Excellent | Fair | Good |
 
 **Convergent patterns** (all 3 repos):
+
 - Card flip animation using CSS transforms
 - Keyboard shortcuts (Space = flip, Arrow = next/prev)
 
 **Divergent patterns**:
+
 - Lib A: Web Workers for spaced repetition calculation (unique)
 - Lib B: Canvas-based rendering (unique, but abandoned)
 - Lib C: Vue.js component (framework-specific)
 
 **Recommendation**:
+
 - **Use Lib A** for production (best maintained, excellent tests/docs)
 - **Adopt pattern from Lib C**: Progress bar visualization is superior
 - **Avoid Lib B approach**: Canvas rendering adds complexity without benefit
@@ -548,18 +597,22 @@ Focus: Spaced repetition implementation and progress tracking
 ## Common Pitfalls
 
 ### Pitfall 1: Shallow Analysis
+
 **Symptom**: Report only summarizes README
 **Solution**: Actually explore code, not just docs
 
 ### Pitfall 2: Missing Context
+
 **Symptom**: Patterns extracted without understanding constraints
 **Solution**: Note why decisions were made, not just what
 
 ### Pitfall 3: Over-Engineering Recommendations
+
 **Symptom**: Suggesting complex patterns for simple needs
 **Solution**: Match recommendation complexity to our actual needs
 
 ### Pitfall 4: No Actionable Items
+
 **Symptom**: Interesting findings but no clear next steps
 **Solution**: Every section should connect to "what we could do"
 

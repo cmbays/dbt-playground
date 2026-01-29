@@ -841,16 +841,19 @@ Run `bash scripts/count-agent-tokens.sh` to measure current state.
 ### Implementation Strategy
 
 **Phase 1: Immediate (This Sprint)**
+
 - Add code-simplifier to Code Reviewer's tool set
 - Run code-simplifier on all incoming PRs
 - Document findings in review comments
 
 **Phase 2: Standard (Next 2 Sprints)**
+
 - Add code-simplifier to Architect (design phase)
 - Add code-simplifier to Developer (implementation)
 - Create quarterly Refactor-Cleaner task
 
 **Phase 3: Optimization (Month 2+)**
+
 - Analyze token savings from Phase 1-2
 - Adjust agent skill matrix based on learnings
 - Document patterns that increased/decreased complexity

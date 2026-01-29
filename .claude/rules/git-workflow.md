@@ -5,9 +5,11 @@ Standards for version control, branching, commits, and releases.
 ## Branch Naming
 
 ### Format
+
 `[category/]descriptive-name`
 
 ### Categories
+
 | Prefix | Purpose | Example |
 |--------|---------|---------|
 | `feat/` | New features or content | `feat/shopping-dialogue-page` |
@@ -18,6 +20,7 @@ Standards for version control, branching, commits, and releases.
 | `chore/` | Maintenance tasks | `chore/update-dependencies` |
 
 ### Guidelines
+
 - Use kebab-case (lowercase with hyphens)
 - Be descriptive but concise
 - Include issue number if applicable: `fix/nav-bug-#12`
@@ -25,6 +28,7 @@ Standards for version control, branching, commits, and releases.
 ## Commit Messages
 
 ### Format (Conventional Commits)
+
 ```
 type(scope): description
 
@@ -34,6 +38,7 @@ type(scope): description
 ```
 
 ### Types
+
 | Type | Purpose |
 |------|---------|
 | `feat` | New feature or content |
@@ -45,9 +50,11 @@ type(scope): description
 | `chore` | Maintenance, dependencies |
 
 ### Scope (Optional)
+
 Area of codebase: `shopping`, `kanji`, `shared-css`, `nav`
 
 ### Examples
+
 ```
 feat(restaurant): add dialogue page with audio support
 fix(nav): correct broken link to home-life index
@@ -58,6 +65,7 @@ chore: update .gitignore for temp files
 ```
 
 ### Guidelines
+
 - Use imperative mood ("add" not "added")
 - Keep first line under 72 characters
 - Add body for complex changes
@@ -66,9 +74,11 @@ chore: update .gitignore for temp files
 ## Pull Requests
 
 ### Title Format
+
 Same as commit messages: `type(scope): description`
 
 ### Description Template
+
 ```markdown
 ## Summary
 Brief description (1-3 sentences)
@@ -90,6 +100,7 @@ Brief description (1-3 sentences)
 ## Versioning
 
 ### Semantic Versioning
+
 `vMAJOR.MINOR.PATCH`
 
 | Component | When to Increment |
@@ -99,6 +110,7 @@ Brief description (1-3 sentences)
 | PATCH | Bug fixes, small corrections, typos |
 
 ### Git Tags
+
 ```bash
 # Create annotated tag
 git tag -a v0.3.0 -m "Complete shopping dialogue page"
@@ -114,6 +126,7 @@ git show v0.3.0
 ```
 
 ### When to Tag
+
 - After merging significant PRs
 - At version milestones
 - Before major refactoring (restore point)
@@ -121,6 +134,7 @@ git show v0.3.0
 ## Protected Operations
 
 ### NEVER Do Without Explicit Approval
+
 - `git push --force` or `git push -f`
 - `git reset --hard`
 - `git checkout .` or `git restore .`
@@ -129,6 +143,7 @@ git show v0.3.0
 - Force push to main/master
 
 ### Always Get Approval For
+
 - Rebasing shared branches
 - Amending pushed commits
 - Deleting branches with unmerged work
@@ -137,6 +152,7 @@ git show v0.3.0
 ## Workflow
 
 ### Feature Development
+
 ```bash
 # Create feature branch
 git checkout -b feat/feature-name
@@ -153,6 +169,7 @@ gh pr create --title "feat(scope): description" --body "..."
 ```
 
 ### Bug Fixes
+
 ```bash
 git checkout -b fix/bug-description
 # Fix the bug
@@ -163,6 +180,7 @@ gh pr create
 ```
 
 ### Commit Hygiene
+
 - Commit frequently with clear messages
 - Each commit should be a logical unit
 - Don't commit broken code
@@ -171,11 +189,13 @@ gh pr create
 ## Archive Retention
 
 ### Policy
+
 - Keep most recent of every MAJOR version
 - Keep most recent 3 of current MAJOR version
 - Pre-v1.0 treated as current major for retention
 
 ### Archive Process
+
 ```bash
 # Before deploying new version
 mkdir -p archive/v0.3/docs
@@ -188,17 +208,20 @@ cp docs/*.md archive/v0.3/docs/
 ## Safety Checks
 
 ### Before Committing
+
 - [ ] Run tests (if applicable)
 - [ ] Check `git status` for unexpected files
 - [ ] Review `git diff` for unintended changes
 - [ ] Verify no sensitive data in changes
 
 ### Before Pushing
+
 - [ ] Commits have clear messages
 - [ ] No debug code left in
 - [ ] Documentation updated if needed
 
 ### Before Merging
+
 - [ ] PR approved by reviewer
 - [ ] All checks pass
 - [ ] Conflicts resolved properly

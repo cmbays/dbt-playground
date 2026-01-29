@@ -5,6 +5,7 @@
 **Maintenance**: Owned by Sage persona. Updated when patterns are proven in ≥2 real implementations.
 
 **Related Documentation**:
+
 - Executable workflows: `.claude/skills/learned-pattern-*.md`
 - Educational narratives: `docs/for_chris/`
 - Bug-specific patterns: `docs/standards/TESTING.md#bug-learnings`
@@ -79,6 +80,7 @@ _Patterns for effective multi-agent workflows._
 **Description**: Chain specialized personas sequentially, each completing their phase before handoff.
 
 **Process**:
+
 1. PM defines requirements → PRD
 2. Architect designs solution → TDD
 3. Developer implements → Code
@@ -87,15 +89,18 @@ _Patterns for effective multi-agent workflows._
 6. Documenter archives → Updated docs
 
 **Benefits**:
+
 - Clear separation of concerns
 - Reduced context switching
 - Quality gates at each phase
 
 **Gotchas**:
+
 - Overhead for small tasks (use manual approach for <3 files)
 - Requires discipline to wait for handoffs
 
 **See also**:
+
 - Skill: `.claude/skills/orchestrate-workflow.md`
 - FOR_CHRIS: `archive/FOR_CHRIS_docs/agent-orchestration-comparison.md`
 
@@ -110,15 +115,18 @@ _Patterns for effective multi-agent workflows._
 **Description**: Run multiple independent review personas simultaneously (Code Reviewer, Design Reviewer, Security Reviewer) to reduce total time.
 
 **Benefits**:
+
 - Faster feedback cycle
 - Independent perspectives
 - Parallelizable work
 
 **When NOT to use**:
+
 - Reviews have dependencies (sequence them)
 - Reviewers need to see each other's feedback
 
 **See also**:
+
 - Command: `/review`
 
 ---
@@ -134,6 +142,7 @@ _Patterns for effective multi-agent workflows._
 **Problem**: Agents spawned via Task tool can use Write/Bash but may choose to return output rather than persist files.
 
 **Solution**:
+
 ```markdown
 Task: Design the localStorage schema
 
@@ -148,21 +157,25 @@ Verification before returning:
 ```
 
 **Key principles**:
+
 1. **Be explicit about outputs** - List exact file paths
 2. **Include verification steps** - Agent confirms files exist
 3. **Specify tools to use** - "Use Write tool for X, Bash for Y"
 4. **Don't assume** - Some agents prefer returning content
 
 **Benefits**:
+
 - Prevents lost work (agent returns content, doesn't persist)
 - Clear success criteria
 - Reproducible workflows
 
 **When NOT to use**:
+
 - Manual/direct work (no agent delegation)
 - Agent returning content is acceptable (analysis, recommendations)
 
 **See also**:
+
 - FOR_CHRIS: `archive/FOR_CHRIS_docs/agent-orchestration-comparison.md` - Full T1.1 case study
 - `.claude/agents/AGENTS.md` - Agent handoff best practices
 
@@ -179,6 +192,7 @@ Verification before returning:
 **Problem**: Agent lacks context and produces work that conflicts with existing architecture or repeats previous decisions.
 
 **Solution**:
+
 ```javascript
 Task({
   prompt: `You are the architect for Task T1.2 (GitHub #14).
@@ -200,6 +214,7 @@ Task({
 ```
 
 **Key elements to provide**:
+
 1. **Role**: "You are the [architect/developer/reviewer]"
 2. **Task ID**: Link to GitHub issue for acceptance criteria
 3. **Context files**: List files agent should read first
@@ -208,16 +223,19 @@ Task({
 6. **Deliverables**: Exact file paths to create
 
 **Benefits**:
+
 - Prevents conflicting with existing decisions
 - Avoids redesigning from scratch
 - Ensures consistency across tasks
 - Reduces back-and-forth clarifications
 
 **When NOT to use**:
+
 - Self-contained tasks with no dependencies
 - Exploratory research with no constraints
 
 **See also**:
+
 - `.claude/agents/AGENTS.md#agent-handoff-best-practices` - Full handoff protocol
 - Pattern: "Explicit Agent File Operations" (deliverables specification)
 
@@ -261,20 +279,24 @@ Task({
 ```
 
 **Rule of thumb**:
+
 - If you can describe the exact change in <2 sentences → Manual
 - If you need to say "design," "architect," or "analyze" → Agent
 
 **Benefits of following framework**:
+
 - Faster turnaround on simple tasks
 - Better use of agent capabilities on complex work
 - Reduced cognitive overhead deciding
 - Clearer team communication
 
 **Gotchas**:
+
 - Don't use agents for "quick tweaks" (agent overhead > manual time)
 - Don't skip agents for "seems easy" complex logic (bugs likely)
 
 **See also**:
+
 - `.claude/agents/AGENTS.md#when-to-use-agents` - Full agent selection guide
 - `.claude/agents/AGENTS.md#agent-selection-guide` - Agent type selection
 
@@ -293,6 +315,7 @@ _Patterns for safe and effective file manipulation._
 **Description**: Always create new versions in `temp/` directory first, test thoroughly, then move to final location with approval.
 
 **Process**:
+
 1. Create new file in `temp/[filename]`
 2. Test functionality completely
 3. Get user approval
@@ -301,15 +324,18 @@ _Patterns for safe and effective file manipulation._
 6. Clean temp (with explicit approval)
 
 **Benefits**:
+
 - No accidental overwrites
 - Easy rollback
 - Clear approval checkpoint
 
 **Anti-pattern**:
+
 - Direct overwrite of working files
 - Skipping temp directory for "small changes"
 
 **See also**:
+
 - CLAUDE.md: File Protection section
 - Workflow: Standard Workflow → PROTOTYPE Phase
 
@@ -328,21 +354,25 @@ _Patterns for maintaining accurate, useful documentation._
 **Description**: Separate documentation into two categories with different update patterns.
 
 **Living Docs** (always current):
+
 - `docs/ARCHITECTURE.md`
 - `docs/PROJECT_STRUCTURE.md`
 - `docs/DESIGN_PRINCIPLES.md`
 - Update: Whenever patterns change
 
 **Version Docs** (point-in-time):
+
 - `temp/v[X.Y]_PLAN.md`
 - `temp/v[X.Y]_TESTING.md`
 - Update: During that version only, then archive
 
 **Decision criteria**:
+
 - Will this information change in future versions? → Living doc
 - Is this specific to this version's decisions? → Version doc
 
 **See also**:
+
 - CLAUDE.md: Documentation Strategy
 
 ---
@@ -368,6 +398,7 @@ _Patterns for maintaining accurate, useful documentation._
    - No → Edit existing file
 
 **Examples**:
+
 - New kanji study mode → New file `kanji/index.html`
 - Adding kanji to existing data → Edit `kanji/data/kanji-data.js`
 - New topic (cooking) → New directory `topics/cooking/`
@@ -382,6 +413,7 @@ _Patterns for maintaining accurate, useful documentation._
 **Context**: Determining which workflow phases to execute for a given task.
 
 **Full workflow phases**:
+
 1. UNDERSTAND → 2. PLAN → 3. PROTOTYPE → 4. BUILD → 5. VERIFY → 6. DEPLOY
 
 **Decision criteria**:
@@ -397,6 +429,7 @@ _Patterns for maintaining accurate, useful documentation._
 **Rule**: When in doubt, use full workflow. Better safe than sorry.
 
 **See also**:
+
 - `docs/WORKFLOW_EXCEPTIONS.md` - Approved shortcuts
 - CLAUDE.md: Standard Workflow section
 
@@ -411,6 +444,7 @@ _Patterns for maintaining accurate, useful documentation._
 **Symptom**: "File not found" errors, wrong files modified
 
 **Example**:
+
 ```javascript
 // WRONG - Assumes directory structure
 const data = require('../../../data/kanji.json');
@@ -420,6 +454,7 @@ const data = require('../../../data/kanji.json');
 ```
 
 **Prevention**:
+
 1. Use `ls` to verify parent directory exists before creating nested files
 2. Use `glob` to find files by pattern rather than guessing paths
 3. Read existing files to understand current structure
@@ -427,6 +462,7 @@ const data = require('../../../data/kanji.json');
 **Proven failures**: Early v0.1 migrations, v0.2 data file locations
 
 **See also**:
+
 - `.claude/rules/coding-style.md` - File Organization
 
 ---
@@ -438,11 +474,13 @@ const data = require('../../../data/kanji.json');
 **Symptom**: Agent repeats work, misses requirements, asks questions already answered
 
 **Causes**:
+
 - Not reading prior conversation/artifacts
 - Insufficient handoff summary
 - Missing artifact links
 
 **Prevention**:
+
 1. Each agent reads previous persona's output before starting
 2. Handoff includes:
    - Summary of completed work
@@ -451,6 +489,7 @@ const data = require('../../../data/kanji.json');
 3. Use explicit artifact references (file paths, line numbers)
 
 **Example handoff**:
+
 ```markdown
 ## Handoff to Developer
 
@@ -468,6 +507,7 @@ const data = require('../../../data/kanji.json');
 **Proven failures**: v0.1 assembly line early iterations
 
 **See also**:
+
 - `.claude/agents/AGENTS.md` - Handoff Protocol section
 
 ---
@@ -481,6 +521,7 @@ const data = require('../../../data/kanji.json');
 **Why**: Creates immutable restore points, enables easy rollback
 
 **How**:
+
 ```bash
 # After merging version PR
 git tag -a v0.3.0 -m "Complete kanji study module"
@@ -488,11 +529,13 @@ git push origin v0.3.0
 ```
 
 **When**:
+
 - After significant feature completion
 - At planned version milestones
 - Before major refactoring (safety checkpoint)
 
 **Benefits**:
+
 - Easy checkout of specific versions: `git checkout v0.3.0`
 - Clear history of releases
 - Rollback safety net
@@ -500,6 +543,7 @@ git push origin v0.3.0
 **Proven in**: All versions since v0.1
 
 **See also**:
+
 - `.claude/rules/git-workflow.md` - Versioning section
 
 ---
@@ -511,22 +555,26 @@ git push origin v0.3.0
 **Why**: Quickly identify file currency and version association
 
 **How**:
+
 ```html
 <!-- Version: v0.3.0 - Updated: 2026-01-25 -->
 ```
 
 **Where**:
+
 - Top of HTML files
 - Top of CSS files (as comment)
 - Top of JavaScript files (as comment)
 
 **Update when**:
+
 - File is modified as part of versioned work
 - Not needed for every minor change (use judgment)
 
 **Proven in**: v0.1+ (established as standard)
 
 **See also**:
+
 - `.claude/rules/coding-style.md` - HTML Standards
 
 ---
@@ -538,24 +586,28 @@ git push origin v0.3.0
 **Why**: Prevents ambiguity, enables traceability (Task → TDD Section → PRD → User need), separates "what/why" (PM) from "how" (Architect)
 
 **Create TDDs for**:
+
 - New features with complex logic (SRS algorithms, state machines)
 - New data models (schemas, validation rules)
 - Features affecting multiple files
 - Architectural decisions with trade-offs
 
 **Skip TDDs for**:
+
 - Documentation updates
 - Simple UI tweaks (<50 lines)
 - Bug fixes (unless architectural)
 - Content additions following existing patterns
 
 **Reference pattern**:
+
 ```
 Task description: "Implement localStorage layer per TDD-001 §2"
 (Points to specific section of TDD)
 ```
 
 **Benefits**:
+
 - No ambiguity for developers ("how" is specified)
 - Traceability across artifacts
 - Reusability (multiple tasks reference same section)
@@ -564,6 +616,7 @@ Task description: "Implement localStorage layer per TDD-001 §2"
 **Proven in**: v0.3 Epic → TDD → Task workflow, PRD-001 → TDD-001 → Tasks #13-23
 
 **See also**:
+
 - `docs/guides/PROJECT_WORKFLOW.md` - Epic → TDD → Task pattern
 - Session: `temp/SESSION-2026-01-25-WORKFLOW-OPTIMIZATION.md`
 
@@ -574,12 +627,14 @@ Task description: "Implement localStorage layer per TDD-001 §2"
 ### Adding New Learnings
 
 **Quality bar**:
+
 - ✅ Pattern proven in ≥2 real implementations
 - ✅ Real examples from this codebase
 - ✅ Clear "when to apply" guidance
 - ✅ Cross-references to related docs/skills
 
 **Process**:
+
 1. Sage identifies pattern during session curation
 2. Validates pattern meets quality bar
 3. Chooses appropriate section (Patterns/Frameworks/Pitfalls/Practices)
@@ -587,6 +642,7 @@ Task description: "Implement localStorage layer per TDD-001 §2"
 5. Updates this Table of Contents
 
 **Format**:
+
 ```markdown
 #### Pattern: [Name]
 
@@ -604,11 +660,13 @@ Task description: "Implement localStorage layer per TDD-001 §2"
 ### Cross-Referencing
 
 **Single-source-of-truth hierarchy**:
+
 1. If pattern is executable workflow → Create skill in `.claude/skills/`
 2. If pattern is technical insight → Document here in LEARNINGS.md
 3. If pattern has high educational value → Create FOR_CHRIS doc
 
 **Always link between tiers**:
+
 - LEARNINGS → Link to related skills
 - FOR_CHRIS → Link to LEARNINGS and skills
 - Skills → Reference from LEARNINGS
@@ -634,6 +692,7 @@ _Learnings from the JLPT Mastery Engine Phase 1 implementation (SM-2 algorithm, 
 **Description**: Each module is self-contained with clear responsibilities, explicit dependencies, and browser exports via `window.ModuleName` pattern.
 
 **Module structure**:
+
 ```
 content/kanji/js/
 ├── srs-engine.js       # SM-2 algorithm (568 lines)
@@ -643,12 +702,14 @@ content/kanji/js/
 ```
 
 **Key characteristics**:
+
 1. **Single responsibility**: Each module owns one concern
 2. **Explicit dependencies**: JSDoc header lists dependencies
 3. **Browser exports**: `window.ModuleName = { ... }` pattern
 4. **Graceful fallbacks**: Modules check for dependencies before using
 
 **Example pattern** (from mastery-calculator.js):
+
 ```javascript
 function getStageMasteryScore(stage) {
   // Try to use srs-engine.js function if available
@@ -660,6 +721,7 @@ function getStageMasteryScore(stage) {
 ```
 
 **Benefits**:
+
 - Clear ownership and testability
 - Can be loaded independently for testing
 - Graceful degradation when dependencies missing
@@ -675,6 +737,7 @@ function getStageMasteryScore(stage) {
 **Description**: Include schema version in stored data for future migrations.
 
 **Implementation**:
+
 ```javascript
 const SCHEMA_VERSION = '1.0.0';  // Semver format
 
@@ -694,6 +757,7 @@ function createDefaultSchema() {
 ```
 
 **Benefits**:
+
 - Enables future data migrations
 - Clear audit trail of data age
 - Can detect and handle version mismatches
@@ -711,6 +775,7 @@ function createDefaultSchema() {
 **Problem**: XSS vulnerability from innerHTML with untrusted data.
 
 **Solution**:
+
 ```javascript
 // DANGEROUS - allows XSS
 element.innerHTML = kanji.character;
@@ -739,6 +804,7 @@ el.appendChild(rt);
 **Problem**: Corrupted or tampered localStorage data can crash the app.
 
 **Solution**: Comprehensive validation before use:
+
 ```javascript
 function loadSchema() {
   try {
@@ -766,6 +832,7 @@ function loadSchema() {
 ```
 
 **Key validation layers**:
+
 1. Null check (first-time user)
 2. JSON.parse in try-catch
 3. Schema structure validation
@@ -782,6 +849,7 @@ function loadSchema() {
 **Problem**: Invalid date strings cause calculation errors and break the app.
 
 **Solution**:
+
 ```javascript
 function updateStreak(schema) {
   try {
@@ -823,6 +891,7 @@ _Bug prevention patterns from Phase 1 browser testing._
 **Problem**: JavaScript's `||` operator treats `0`, `""`, and `false` as falsy, using the fallback even when the value is intentionally zero.
 
 **Bug example**:
+
 ```javascript
 // JLPT level sort order: N5=0, N4=1, N3=2, N2=3, N1=4
 const jlptOrder = { 'N5': 0, 'N4': 1, 'N3': 2, 'N2': 3, 'N1': 4 };
@@ -837,6 +906,7 @@ const sortValue = jlptOrder[kanji.jlpt_level] ?? 5;
 **Rule**: Use `??` when the default should only apply for `null`/`undefined`. Use `||` when any falsy value should trigger the fallback.
 
 **Quick reference**:
+
 | Operator | Triggers fallback for |
 |----------|----------------------|
 | `||` | `null`, `undefined`, `0`, `""`, `false`, `NaN` |
@@ -855,6 +925,7 @@ const sortValue = jlptOrder[kanji.jlpt_level] ?? 5;
 **Problem**: Module A uses camelCase properties, Module B returns snake_case - causes silent failures where values are `undefined`.
 
 **Bug example**:
+
 ```javascript
 // session-manager.js returns snake_case
 getQueueStatus() {
@@ -871,17 +942,20 @@ updateDisplay(status.newAvailable);   // undefined - shows 0
 ```
 
 **Prevention strategies**:
+
 1. **Document module interfaces** - JSDoc with exact property names
 2. **TypeScript/JSDoc types** - Catch mismatches at "compile" time
 3. **Console.log the actual object** - First debugging step
 4. **Establish project convention** - Pick one (snake_case or camelCase) and enforce
 
 **Project convention** (for this codebase):
+
 - **Internal JavaScript**: camelCase (`dueCount`, `newAvailable`)
 - **Data files/JSON**: snake_case (`jlpt_level`, `stroke_count`)
 - **Module interfaces**: Document explicitly in JSDoc header
 
 **Detection checklist**:
+
 - [ ] Values showing as `0`, `undefined`, or `NaN` unexpectedly?
 - [ ] Console.log the object - do property names match what you expect?
 - [ ] Check both producer and consumer modules for naming convention
@@ -897,6 +971,7 @@ updateDisplay(status.newAvailable);   // undefined - shows 0
 **Problem**: Using `const ModuleName = {...}` does NOT create `window.ModuleName` in browsers. Only `var` at global scope or explicit assignment creates window properties.
 
 **Bug example**:
+
 ```javascript
 // kanji-metadata.js - BROKEN
 const homeLifeKanji = [
@@ -914,9 +989,11 @@ window.homeLifeKanji = homeLifeKanji;  // Now accessible
 ```
 
 **Prevention strategies**:
+
 1. **Always add explicit exports** for browser modules: `window.ModuleName = ModuleName`
 2. **Verify in console**: After loading script, check `window.ModuleName` exists
 3. **Use Module pattern with explicit export**:
+
    ```javascript
    const MyModule = (function() {
      // private code
@@ -926,11 +1003,13 @@ window.homeLifeKanji = homeLifeKanji;  // Now accessible
    ```
 
 **Detection checklist**:
+
 - [ ] Does the script define variables/objects for other modules to use?
 - [ ] Are those variables accessible via `window.varName` in browser console?
 - [ ] Does the consuming code check for undefined before using?
 
 **See also**:
+
 - `.claude/skills/learned-pattern-javascript-defensive-coding.md#pattern-4`
 - MDN: [var vs let vs const](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let)
 
@@ -945,6 +1024,7 @@ window.homeLifeKanji = homeLifeKanji;  // Now accessible
 **Problem**: Initialization errors fail silently without try-catch, making debugging extremely difficult.
 
 **Bug example**:
+
 ```javascript
 // BROKEN: Silent failure
 function loadOrCreateSchema() {
@@ -979,18 +1059,21 @@ function loadOrCreateSchema() {
 ```
 
 **Key principles**:
+
 1. **Log before critical operations**: `console.log('Attempting X...')`
 2. **Log success with data**: `console.log('Loaded:', data)`
 3. **Catch and log errors with context**: Include function name, operation, and error
 4. **Decide: fail or fallback**: Either re-throw for visibility or return safe default
 
 **When to add comprehensive logging**:
+
 - Module initialization
 - localStorage operations
 - Cross-module calls
 - Data parsing (JSON, dates)
 
 **See also**:
+
 - `.claude/skills/learned-pattern-javascript-defensive-coding.md#pattern-5`
 - Pattern: "Defensive Null-Checking for localStorage"
 
@@ -1005,6 +1088,7 @@ function loadOrCreateSchema() {
 **Problem**: Test expects wrong value based on incorrect mental model of the implementation.
 
 **Bug example**:
+
 ```javascript
 // Implementation: AGAIN from guru_1 drops 2 stages
 // Stages: apprentice_1(0), apprentice_2(1), apprentice_3(2), apprentice_4(3), guru_1(4)
@@ -1018,6 +1102,7 @@ expect(result.stage).toBe('apprentice_3');
 ```
 
 **Prevention strategies**:
+
 1. **Trace through implementation manually** - Calculate expected value by hand
 2. **Test the test** - Verify test fails for wrong reasons initially
 3. **Add comments explaining calculation** - Future maintainers understand the math
@@ -1038,6 +1123,7 @@ expect(result.stage).toBe('apprentice_3');
 **Description**: Place test files in the same directory as source files for discoverability.
 
 **Structure**:
+
 ```
 content/kanji/js/
 ├── srs-engine.js
@@ -1048,6 +1134,7 @@ content/kanji/js/
 ```
 
 **Benefits**:
+
 - Easy to find tests for any module
 - Encourages test writing
 - Clear 1:1 mapping
@@ -1063,6 +1150,7 @@ content/kanji/js/
 **Problem**: Calling undefined module methods causes runtime errors.
 
 **Solution**: Check module availability before use:
+
 ```javascript
 function processSessionReview(schema, kanji, quality, responseTimeMs) {
   // Validate module is available
@@ -1075,6 +1163,7 @@ function processSessionReview(schema, kanji, quality, responseTimeMs) {
 ```
 
 **Pattern variants**:
+
 1. **Throw**: For required dependencies (above)
 2. **Fallback**: For optional dependencies (use local implementation)
 3. **No-op**: For optional features (skip silently)
@@ -1096,6 +1185,7 @@ _Learnings from the Phase 2 Engagement Layer implementation (XP/Levels, Streaks,
 **Description**: Use IIFE (Immediately Invoked Function Expression) pattern with explicit window export for browser compatibility, plus CommonJS export for Node.js testing.
 
 **Implementation**:
+
 ```javascript
 const ModuleName = (function() {
   'use strict';
@@ -1119,6 +1209,7 @@ if (typeof module !== 'undefined' && module.exports) {
 ```
 
 **Benefits**:
+
 - Works in browser without build tools
 - Testable in Node.js
 - Clear public API
@@ -1133,6 +1224,7 @@ if (typeof module !== 'undefined' && module.exports) {
 **Description**: Detect schema version on load, run migrations sequentially, update version stamp.
 
 **Implementation**:
+
 ```javascript
 function loadSchema() {
   const schema = JSON.parse(localStorage.getItem(KEY));
@@ -1156,6 +1248,7 @@ function migrateV1_0_to_V1_1(schema) {
 ```
 
 **Benefits**:
+
 - Non-destructive upgrades
 - Preserves user data
 - Supports skipped versions
@@ -1224,6 +1317,7 @@ async function handleToggle() {
 **Description**: Use SVG circle with `stroke-dasharray` to create partial rings.
 
 **Implementation**:
+
 ```javascript
 const circumference = 2 * Math.PI * radius;
 const offset = circumference * (1 - percentage / 100);
@@ -1247,6 +1341,7 @@ return `
 **Description**: Use CSS Grid with 7 rows (days) × 53 columns (weeks).
 
 **Implementation**:
+
 ```css
 .heatmap-grid {
   display: grid;
@@ -1261,6 +1356,7 @@ return `
 ## Metrics
 
 **Total Patterns**: 27 (as of 2026-01-25)
+
 - Proven Patterns: 7
 - Decision Frameworks: 2
 - Common Pitfalls: 2
@@ -1271,6 +1367,7 @@ return `
 **Last Updated**: 2026-01-25 (Added Phase 2 Engagement Layer patterns: IIFE module export, schema migration, appendChild bug, async toggle state bug, SVG progress rings, CSS grid heatmap)
 
 **Related Skills**:
+
 - `.claude/skills/learned-pattern-javascript-defensive-coding.md` - Executable checklist for defensive coding
 - `.claude/skills/learned-pattern-browser-testing.md` - Browser testing workflow
 

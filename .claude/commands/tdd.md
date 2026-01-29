@@ -3,11 +3,13 @@
 Execute test-driven development workflow.
 
 ## Usage
+
 ```
 /tdd [feature or component to implement]
 ```
 
 ## Examples
+
 ```
 /tdd kanji flashcard flip animation
 /tdd vocabulary filter by JLPT level
@@ -25,6 +27,7 @@ Execute test-driven development workflow.
 
 2. **Write Test Specification**
    Create `temp/v[X.Y]_TESTING.md`:
+
    ```markdown
    # Test Specification: [Feature]
 
@@ -42,6 +45,7 @@ Execute test-driven development workflow.
 
 3. **Create Test Scaffolding**
    For JavaScript features:
+
    ```javascript
    // temp/[feature].test.js
    describe('[Feature]', () => {
@@ -95,6 +99,7 @@ Execute test-driven development workflow.
 ## Testing Checklist
 
 ### For HTML/CSS
+
 - [ ] Renders correctly in Chrome
 - [ ] Renders correctly in Firefox
 - [ ] Renders correctly in Safari
@@ -104,6 +109,7 @@ Execute test-driven development workflow.
 - [ ] Dark mode (if applicable)
 
 ### For JavaScript
+
 - [ ] No console errors
 - [ ] Event handlers work
 - [ ] Edge cases handled
@@ -111,6 +117,7 @@ Execute test-driven development workflow.
 - [ ] Performance acceptable
 
 ### For Japanese Content
+
 - [ ] Furigana displays correctly
 - [ ] Romaji toggles work
 - [ ] Audio plays (if applicable)
@@ -161,4 +168,5 @@ This command activates the **Quality Tester** (`test:`) persona in collaboration
 ## Skill Integration
 
 May invoke:
+
 - `/feature-dev` for guided implementation

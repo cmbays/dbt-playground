@@ -8,7 +8,7 @@
 
 ## Documentation Hierarchy
 
-```
+```text
 dbt-playground Documentation
 |
 +-- CLAUDE.md                          [START HERE - Project Context]
@@ -109,41 +109,43 @@ dbt-playground Documentation
 
 ### Root Directory
 
-| Document | Purpose | Primary Audience |
-|----------|---------|------------------|
-| **[[CLAUDE.md]]** | Complete project context | Claude (every session) |
-| **[[DOCUMENTATION_INDEX.md]]** | Navigation map (this file) | Everyone |
-| **[[CHANGELOG.md]]** | Version history | Everyone |
-| **[[README.md]]** | Project overview | New contributors |
+| Document                       | Purpose                            | Primary Audience        |
+| ------------------------------ | ---------------------------------- | ----------------------- |
+| **[[CLAUDE.md]]**              | Complete project context           | Claude (every session)  |
+| **[[DOCUMENTATION_INDEX.md]]** | Navigation map (this file)         | Everyone                |
+| **[[CHANGELOG.md]]**           | Version history                    | Everyone                |
+| **[[README.md]]**              | Project overview                   | New contributors        |
 
 ### .claude/ Directory
 
-| Document | Purpose | Primary Audience |
-|----------|---------|------------------|
-| **[[.claude/agents/AGENTS.md]]** | Agent orchestration guide | All agents |
-| **[[.claude/agents/README.md]]** | Persona definitions | All agents |
-| **[[.claude/skills/*.md]]** | Reusable workflows | Relevant personas |
-| **[[.claude/rules/*.md]]** | Coding standards | All developers |
+| Document                       | Purpose                   | Primary Audience   |
+| ------------------------------ | ------------------------- | ------------------ |
+| **[[.claude/agents/AGENTS.md]]** | Agent orchestration guide | All agents        |
+| **[[.claude/agents/README.md]]** | Persona definitions       | All agents        |
+| **[[.claude/skills/*.md]]**    | Reusable workflows        | Relevant personas  |
+| **[[.claude/rules/*.md]]**     | Coding standards          | All developers     |
 
 ### docs/ Directory
 
-| Document | Purpose | Primary Audience |
-|----------|---------|------------------|
-| **[[docs/reference/ARCHITECTURE.md]]** | System architecture | Architect, Developer |
-| **[[docs/reference/PROJECT_STRUCTURE.md]]** | File organization | Multi-agent |
-| **[[docs/guides/PROJECT_WORKFLOW.md]]** | Epic → TDD → Task | Multi-agent |
-| **[[docs/standards/TESTING.md]]** | Testing framework | Tester, Developer |
+| Document                                  | Purpose                  | Primary Audience       |
+| ----------------------------------------- | ------------------------ | ---------------------- |
+| **[[docs/reference/ARCHITECTURE.md]]**    | System architecture      | Architect, Developer   |
+| **[[docs/reference/PROJECT_STRUCTURE.md]]** | File organization       | Multi-agent            |
+| **[[docs/guides/PROJECT_WORKFLOW.md]]**   | Epic → TDD → Task        | Multi-agent            |
+| **[[docs/standards/TESTING.md]]**         | Testing framework        | Tester, Developer      |
 
 ---
 
 ## Navigation Tips
 
 ### For New Agents
+
 1. Start with **[[CLAUDE.md]]** (auto-loaded)
 2. Check **[[.claude/agents/AGENTS.md]]** for orchestration guide
 3. Review **[[docs/README.md]]** for documentation organization
 
 ### For Documentation Updates
+
 1. Check **[[docs/reference/PROJECT_STRUCTURE.md]]** for file locations
 2. Update living documents immediately
 3. Update cross-references in this file

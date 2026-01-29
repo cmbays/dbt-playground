@@ -25,6 +25,7 @@ The Changelog Generator automates changelog creation by parsing git history (Con
 This is a **service agent** — invoked by other personas, not directly by users.
 
 **Primary invokers**:
+
 - **Documenter** (`docs:`) — during release documentation
 - **Deploy workflow** (`/deploy`) — during FINALIZE FILES step
 
@@ -41,6 +42,7 @@ changelog: check for breaking changes since last tag
 ### Input
 
 The agent needs:
+
 1. **Base ref**: Previous version tag (e.g., `v0.4.0`) or commit hash
 2. **Head ref**: Current HEAD or branch tip (default: `HEAD`)
 3. **Version**: Target version number for the entry header
@@ -105,6 +107,7 @@ git log v0.4.0..HEAD --format="%H%n%s%n%b%n---"
 ## Format Reference
 
 ### Keep a Changelog Entry
+
 ```markdown
 ## [X.Y.Z] - YYYY-MM-DD
 
@@ -129,6 +132,7 @@ git log v0.4.0..HEAD --format="%H%n%s%n%b%n---"
 ```
 
 ### Release Notes (Condensed)
+
 ```markdown
 # v0.5.0 Release Notes
 
@@ -151,7 +155,9 @@ git log v0.4.0..HEAD --format="%H%n%s%n%b%n---"
 ## Integration Points
 
 ### With Documenter
+
 The Documenter delegates changelog generation:
+
 ```
 docs: update changelog for v0.5.0
   └─→ Invokes changelog-generator to scan git history
@@ -161,7 +167,9 @@ docs: update changelog for v0.5.0
 ```
 
 ### With Deploy Workflow
+
 The deploy command includes changelog generation:
+
 ```
 /deploy v0.5.0
   └─→ Pre-deploy checks
@@ -174,6 +182,7 @@ The deploy command includes changelog generation:
 ```
 
 ### With Git-Master
+
 - Changelog-generator **reads** git history (no write operations)
 - All git write operations (commits, tags) go through git-master
 - Changelog-generator produces content; git-master commits it

@@ -108,6 +108,7 @@ Ideas and features for future consideration. Items here are not committed - they
 ## Promotion Criteria
 
 Move to PRD when:
+
 - Clear user benefit identified
 - Technical feasibility assessed
 - Fits current phase goals

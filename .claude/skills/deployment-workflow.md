@@ -9,6 +9,7 @@ This skill manages the deployment of approved changes, including archiving, vers
 ## Trigger
 
 Invoke when:
+
 - Code review approved
 - Version milestone reached
 - Ready for release
@@ -70,6 +71,7 @@ Invoke when:
 ## Version Determination
 
 ### Semantic Versioning
+
 | Change Type | Version Increment | Example |
 |-------------|-------------------|---------|
 | Major architecture change | MAJOR (X.0.0) | v1.0.0 → v2.0.0 |
@@ -77,6 +79,7 @@ Invoke when:
 | Bug fix, typo, tweak | PATCH (X.Y.Z) | v0.2.0 → v0.2.1 |
 
 ### Decision Guide
+
 ```
 Is this a breaking change or complete topic?
   YES → MAJOR
@@ -93,6 +96,7 @@ Is this a bug fix or correction?
 ## Archive Process
 
 ### Create Archive
+
 ```bash
 # Create version archive directory
 mkdir -p archive/v[X.Y]/docs
@@ -107,11 +111,13 @@ echo "# v[X.Y] Notes\n\nDeployed: YYYY-MM-DD\n\n## Changes\n- Change 1\n- Change
 ```
 
 ### Retention Policy
+
 - Keep most recent of every MAJOR version (v0.x, v1.x, v2.x)
 - Keep most recent 3 of current MAJOR version
 - Pre-v1.0 treated as current major for retention
 
 ### Prune Old Archives
+
 ```bash
 # Example: If deploying v0.5, keep v0.5, v0.4, v0.3
 # Remove v0.2 and earlier (but keep git tags)
@@ -121,6 +127,7 @@ rm -rf archive/v0.2
 ## File Finalization
 
 ### Move Approved Files
+
 ```bash
 # Move from temp to final locations
 mv temp/[approved-file] [final-location]
@@ -130,7 +137,9 @@ mv temp/shopping-dialogue.html topics/shopping/dialogue.html
 ```
 
 ### Update Version Stamps
+
 Add to top of modified HTML files:
+
 ```html
 <!-- Version: vX.Y.Z - Updated: YYYY-MM-DD -->
 ```
@@ -138,12 +147,15 @@ Add to top of modified HTML files:
 ### Update CHANGELOG
 
 **Automated** (preferred): Invoke the changelog-generator agent to scan git history:
+
 ```
 changelog: generate entries since v[PREVIOUS_TAG]
 ```
+
 This produces a draft in `temp/CHANGELOG_DRAFT_vX.Y.Z.md` for review. After curation, apply to CHANGELOG.md.
 
 **Manual** (fallback): Write entries directly in Keep a Changelog format:
+
 ```markdown
 ## [X.Y.Z] - YYYY-MM-DD
 
@@ -165,6 +177,7 @@ See [[changelog-generation.md]] for the full automated workflow.
 All git operations go through git-master for validation and audit logging.
 
 ### Stage and Commit
+
 ```bash
 # Use git: prefix for validated commits
 git: commit my changes with message "feat(shopping): add complete dialogue page"
@@ -174,24 +187,29 @@ git: commit my changes with message "feat(shopping): add complete dialogue page"
 ```
 
 Git-master will:
+
 - Stage specific files (never `git add .`)
 - Validate Conventional Commits format
 - Add Co-Authored-By automatically
 - Log to audit trail
 
 ### Tag
+
 ```bash
 git: create tag v0.3.0 "Complete shopping dialogue page"
 ```
 
 ### Push (Requires Approval)
+
 ```bash
 git: push to origin main
 git: push tag v0.3.0
 ```
 
 ### Direct Commands (Blocked by Hook)
+
 Direct git write commands are blocked by `pre-bash-check.js`:
+
 ```bash
 # These will be BLOCKED:
 git commit -m "..."    # Use git: commit instead
@@ -240,12 +258,14 @@ git tag -a v0.3.0      # Use git: create tag instead
 If issues discovered post-deploy:
 
 ### Quick Rollback
+
 ```bash
 # Checkout previous version
 git checkout v[previous]
 ```
 
 ### Revert Commit
+
 ```bash
 # Create revert commit
 git revert [commit-hash]
@@ -253,6 +273,7 @@ git push
 ```
 
 ### Tag Note
+
 ```bash
 # Add note to problematic tag
 git tag -a v[X.Y.Z]-bad -m "Known issues - see v[X.Y.Z+1]"
@@ -267,6 +288,7 @@ git tag -a v[X.Y.Z]-bad -m "Known issues - see v[X.Y.Z+1]"
 ## Exit Criteria
 
 Deployment complete when:
+
 - [ ] All checklist items done
 - [ ] Version tagged and pushed
 - [ ] CHANGELOG updated

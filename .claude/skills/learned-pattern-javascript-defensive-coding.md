@@ -13,12 +13,14 @@
 ## When to Use
 
 **Trigger conditions**:
+
 - Writing JavaScript that handles default values
 - Creating interfaces between modules
 - Building sorting/comparison logic
 - Writing or debugging tests
 
 **Proactive use**:
+
 - Code review checklist item
 - Pre-commit verification
 - Post-bug-fix pattern reinforcement
@@ -98,6 +100,7 @@ updateDisplay(status.new_available);   // Not status.newAvailable
 ### Prevention Strategies
 
 1. **Document interfaces with JSDoc**:
+
    ```javascript
    /**
     * @returns {{due_count: number, new_available: number}} Queue status
@@ -111,6 +114,7 @@ updateDisplay(status.new_available);   // Not status.newAvailable
    - Document in CLAUDE.md or coding-style.md
 
 3. **Type checking** (if available):
+
    ```typescript
    interface QueueStatus {
      due_count: number;
@@ -167,10 +171,12 @@ expect(result.stage).toBe('apprentice_3');  // Not 'apprentice_4'
 
 1. **Calculate expected values by hand** before writing assertions
 2. **Use implementation constants** in tests when possible:
+
    ```javascript
    const expectedStage = STAGES[STAGES.indexOf('guru_1') - 2];
    expect(result.stage).toBe(expectedStage);
    ```
+
 3. **Add comments** explaining non-obvious expected values
 4. **Test the test** - verify it fails for the right reasons
 

@@ -3,12 +3,14 @@
 Create a validated git commit through git: with Conventional Commits enforcement.
 
 ## Usage
+
 ```
 /commit [message]
 /commit "type(scope): description"
 ```
 
 ## Examples
+
 ```
 /commit "feat(kanji): add JLPT level filtering"
 /commit "fix(nav): correct broken link to home-life index"
@@ -19,6 +21,7 @@ Create a validated git commit through git: with Conventional Commits enforcement
 ## Commit Message Format
 
 ### Conventional Commits (Required)
+
 ```
 type(scope): description
 
@@ -29,6 +32,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Valid Types
+
 | Type | Purpose | Example |
 |------|---------|---------|
 | `feat` | New feature | `feat(shopping): add quiz page` |
@@ -40,11 +44,13 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 | `chore` | Maintenance | `chore: update dependencies` |
 
 ### Scope (Optional)
+
 Area of codebase: `kanji`, `shopping`, `shared-css`, `nav`, etc.
 
 ## Commit Workflow
 
 ### 1. Pre-Commit Validation
+
 ```
 git: validates:
 - [ ] Message follows Conventional Commits format
@@ -55,6 +61,7 @@ git: validates:
 ```
 
 ### 2. File Staging
+
 ```bash
 # git: stages SPECIFIC files (never git add .)
 git add [specific-files]
@@ -67,6 +74,7 @@ git add [specific-files]
 ```
 
 ### 3. Commit Execution
+
 ```bash
 # git: sets authorization and executes
 GIT_MASTER_AUTHORIZED=true git commit -m "$(cat <<'EOF'
@@ -80,6 +88,7 @@ EOF
 ```
 
 ### 4. Post-Commit Logging
+
 - Operation logged to audit trail
 - Commit hash recorded
 - Timestamp captured
@@ -97,6 +106,7 @@ When invoked without message (`/commit`), git: prompts:
 ## Validation Rules
 
 ### BLOCKED (Exit 1)
+
 - Empty commit message
 - Invalid type
 - First line > 72 characters
@@ -104,12 +114,14 @@ When invoked without message (`/commit`), git: prompts:
 - Staging sensitive files without approval
 
 ### WARNED (Proceed with caution)
+
 - Past tense in description ("added" → "add")
 - Missing Co-Authored-By
 - Large number of files
 - No body for complex changes
 
 ### ALLOWED (Proceed)
+
 - Valid Conventional Commits format
 - Specific files staged
 - Feature branch target
@@ -117,24 +129,28 @@ When invoked without message (`/commit`), git: prompts:
 ## Quick Commit Patterns
 
 ### Feature Work
+
 ```
 /commit "feat(kanji): add stroke order animation"
 /commit "feat(shopping): implement price comparison"
 ```
 
 ### Bug Fixes
+
 ```
 /commit "fix(audio): handle missing audio gracefully"
 /commit "fix(quiz): correct scoring calculation"
 ```
 
 ### Documentation
+
 ```
 /commit "docs: add git: agent documentation"
 /commit "docs(readme): update installation steps"
 ```
 
 ### Refactoring
+
 ```
 /commit "refactor(shared-js): extract audio player module"
 /commit "refactor: consolidate duplicate CSS patterns"
@@ -143,6 +159,7 @@ When invoked without message (`/commit`), git: prompts:
 ## Error Recovery
 
 ### Invalid Message Format
+
 ```
 [REJECTED] Commit message invalid: "updated the thing"
 
@@ -153,6 +170,7 @@ Try again with: /commit "feat(scope): add the thing"
 ```
 
 ### Protected Branch
+
 ```
 [REJECTED] Cannot commit directly to main
 

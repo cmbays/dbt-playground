@@ -19,6 +19,7 @@ This document defines our testing approach, documents test-driven development pr
 **Core Principle**: Test before deploy, learn from failures, improve the framework.
 
 Our testing approach prioritizes:
+
 1. **Preventing regressions** - Don't break what works
 2. **Catching issues early** - Test during BUILD phase, not after DEPLOY
 3. **Learning from bugs** - Document root causes and prevention strategies
@@ -102,9 +103,11 @@ For each build, create `temp/v[X.Y]_TESTING.md` with:
 ## Testing Checklist Categories
 
 ### 1. Navigation Testing
+
 **Purpose**: Ensure users can move between pages without broken links
 
 Tests:
+
 - Click every navigation button
 - Verify correct page loads
 - Check back button works
@@ -114,9 +117,11 @@ Tests:
 **Bug Prevention**: Navigation breaks are common during refactoring
 
 ### 2. Functionality Testing
+
 **Purpose**: Verify all interactive features work as designed
 
 Tests:
+
 - Audio playback (if applicable)
 - Hint toggles (if applicable)
 - Tense/tab switching (if applicable)
@@ -126,9 +131,11 @@ Tests:
 **Bug Prevention**: JavaScript errors can silently break functionality
 
 ### 3. Content Rendering Testing
+
 **Purpose**: Ensure content displays correctly across devices/browsers
 
 Tests:
+
 - Japanese characters render properly
 - Furigana positioning is correct (if applicable)
 - Images load and display correctly
@@ -138,9 +145,11 @@ Tests:
 **Bug Prevention**: Encoding and font issues vary by browser
 
 ### 4. Responsive Design Testing
+
 **Purpose**: Verify layout adapts to different screen sizes
 
 Tests:
+
 - Desktop view (>1024px width)
 - Tablet view (768px-1024px width)
 - Mobile view (<768px width)
@@ -150,9 +159,11 @@ Tests:
 **Bug Prevention**: CSS media queries need explicit testing
 
 ### 5. Cross-Browser Testing
+
 **Purpose**: Ensure consistent experience across browsers
 
 Browsers to test:
+
 - Chrome (primary)
 - Firefox (secondary)
 - Safari (if available)
@@ -161,9 +172,11 @@ Browsers to test:
 **Bug Prevention**: Browser inconsistencies are real, especially with CSS
 
 ### 6. Performance Testing
+
 **Purpose**: Ensure pages load quickly and smoothly
 
 Tests:
+
 - Page load time (<3 seconds ideal)
 - Smooth animations (no jank)
 - Audio loads without delay
@@ -190,11 +203,13 @@ When bugs are discovered, document them here:
 ### Current Bug Learnings
 
 #### 2026-01-25 - Property Name Convention Mismatch (Bug 1)
+
 **Severity**: High (silent failure, shows wrong data)
 **Discovered**: Browser testing - dashboard showed all zeros
 **Root Cause**: Dashboard used camelCase (`dueCount`, `newAvailable`) but SessionManager returned snake_case (`due_count`, `new_available`). Property access returned `undefined`, which displayed as `0`.
 **Fix Applied**: Changed dashboard to use snake_case property names matching the API
 **Prevention Strategy**:
+
 1. Document module interfaces with exact property names in JSDoc
 2. Console.log the actual object to see property names before assuming
 3. Establish project convention and enforce consistently
@@ -203,11 +218,13 @@ When bugs are discovered, document them here:
 ---
 
 #### 2026-01-25 - Falsy Zero in Sorting (Bug 2)
+
 **Severity**: Medium (incorrect sort order)
 **Discovered**: Browser testing - N5 kanji sorted last instead of first
 **Root Cause**: `jlptOrder[a.jlpt_level] || 5` treated N5's sort value of `0` as falsy, falling back to `5`. JavaScript `||` treats `0`, `""`, and `false` as falsy.
 **Fix Applied**: Changed to `?? 5` (nullish coalescing) which only falls back for `null`/`undefined`
 **Prevention Strategy**:
+
 1. Use `??` when default should only apply for null/undefined
 2. Use `||` only when any falsy value should trigger fallback
 3. Code review checklist: check all `||` operators with defaults
@@ -216,11 +233,13 @@ When bugs are discovered, document them here:
 ---
 
 #### 2026-01-25 - Incorrect Test Expectation (Bug 3)
+
 **Severity**: Low (false test failure)
 **Discovered**: Test verification - test expected wrong stage after AGAIN response
 **Root Cause**: Test expected `apprentice_4` for AGAIN from `guru_1` but implementation correctly returns `apprentice_3` (drops 2 stages: index 4 - 2 = index 2)
 **Fix Applied**: Updated test expectation to match correct implementation behavior
 **Prevention Strategy**:
+
 1. Trace through implementation manually to calculate expected values
 2. When test fails, verify expectation is correct before assuming implementation is wrong
 3. Add comments explaining non-obvious expected values
@@ -229,11 +248,13 @@ When bugs are discovered, document them here:
 ---
 
 #### 2026-01-25 - Missing Window Export for Browser (Bug 4)
+
 **Severity**: Critical (module completely inaccessible)
 **Discovered**: Browser testing - dashboard couldn't find kanji data
 **Root Cause**: `const homeLifeKanji = [...]` doesn't create `window.homeLifeKanji`. JavaScript `const` at file scope does not become a window property - only `var` or explicit assignment does.
 **Fix Applied**: Added explicit `window.homeLifeKanji = homeLifeKanji` export
 **Prevention Strategy**:
+
 1. Always add explicit window exports for browser modules
 2. Verify in console that `window.ModuleName` exists after loading
 3. Use the revealing module pattern with explicit export
@@ -242,11 +263,13 @@ When bugs are discovered, document them here:
 ---
 
 #### 2026-01-25 - Missing Error Handling in Initialization (Bug 5)
+
 **Severity**: High (silent failure, hard to diagnose)
 **Discovered**: Browser testing - page loaded but features broken, no console errors
 **Root Cause**: No try-catch around initialization, errors failed silently
 **Fix Applied**: Added comprehensive error handling with console.log tracing at each step
 **Prevention Strategy**:
+
 1. Wrap initialization in try-catch
 2. Add console.log before critical operations
 3. Log success with data after operations complete
@@ -267,15 +290,18 @@ When bugs are discovered, document them here:
 ## Testing Tools & Commands
 
 ### Manual Testing Checklist
+
 Located in: `temp/v[X.Y]_TESTING.md` (create for each version)
 
 ### Browser DevTools
+
 - Console: Check for JavaScript errors
 - Network tab: Verify all resources load
 - Device toolbar: Test responsive design
 - Lighthouse: Performance and accessibility audits
 
 ### Local Server
+
 ```bash
 # Run local server for testing
 python -m http.server 8000
@@ -283,7 +309,9 @@ python -m http.server 8000
 ```
 
 ### Future Automated Testing
+
 *As project matures, consider:*
+
 - HTML validation (W3C validator)
 - Link checking automation
 - Screenshot regression testing

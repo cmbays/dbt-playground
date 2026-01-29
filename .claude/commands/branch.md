@@ -3,6 +3,7 @@
 Create a validated git branch through git: with naming convention enforcement.
 
 ## Usage
+
 ```
 /branch [category/]name
 /branch feat/feature-name
@@ -10,6 +11,7 @@ Create a validated git branch through git: with naming convention enforcement.
 ```
 
 ## Examples
+
 ```
 /branch feat/kanji-stroke-order
 /branch fix/navigation-link-broken
@@ -21,11 +23,13 @@ Create a validated git branch through git: with naming convention enforcement.
 ## Branch Naming Format
 
 ### Required Format
+
 ```
 [category/]descriptive-name
 ```
 
 ### Valid Categories
+
 | Category | Purpose | Example |
 |----------|---------|---------|
 | `feat/` | New features or content | `feat/shopping-dialogue-page` |
@@ -36,6 +40,7 @@ Create a validated git branch through git: with naming convention enforcement.
 | `chore/` | Maintenance tasks | `chore/update-dependencies` |
 
 ### Naming Rules
+
 - **kebab-case**: lowercase with hyphens
 - **descriptive**: clear purpose in name
 - **concise**: not excessively long
@@ -44,6 +49,7 @@ Create a validated git branch through git: with naming convention enforcement.
 ## Branch Workflow
 
 ### 1. Pre-Creation Validation
+
 ```
 git: validates:
 - [ ] Category prefix is valid
@@ -53,18 +59,21 @@ git: validates:
 ```
 
 ### 2. Branch Creation
+
 ```bash
 # git: sets authorization and executes
 GIT_MASTER_AUTHORIZED=true git checkout -b [branch-name]
 ```
 
 ### 3. Remote Setup
+
 ```bash
 # Push and set upstream tracking
 GIT_MASTER_AUTHORIZED=true git push -u origin [branch-name]
 ```
 
 ### 4. Post-Creation Logging
+
 - Operation logged to audit trail
 - Branch name recorded
 - Base commit captured
@@ -80,17 +89,20 @@ When invoked without name (`/branch`), git: prompts:
 ## Validation Rules
 
 ### BLOCKED (Exit 1)
+
 - Invalid category prefix
 - Non-kebab-case name
 - Branch already exists
 - Reserved names (main, master, develop)
 
 ### WARNED (Proceed with caution)
+
 - Very long branch name (>50 chars)
 - Missing category prefix
 - Branching from non-main base
 
 ### ALLOWED (Proceed)
+
 - Valid category and name format
 - Clean working directory
 - Branching from main/master
@@ -98,6 +110,7 @@ When invoked without name (`/branch`), git: prompts:
 ## Quick Branch Patterns
 
 ### Feature Development
+
 ```
 /branch feat/shopping-quiz-page
 /branch feat/kanji-stroke-animation
@@ -105,6 +118,7 @@ When invoked without name (`/branch`), git: prompts:
 ```
 
 ### Bug Fixes
+
 ```
 /branch fix/broken-nav-link
 /branch fix/quiz-score-calculation
@@ -112,6 +126,7 @@ When invoked without name (`/branch`), git: prompts:
 ```
 
 ### Documentation
+
 ```
 /branch docs/update-readme
 /branch docs/add-api-reference
@@ -119,6 +134,7 @@ When invoked without name (`/branch`), git: prompts:
 ```
 
 ### Refactoring
+
 ```
 /branch refactor/extract-audio-module
 /branch refactor/consolidate-css
@@ -128,6 +144,7 @@ When invoked without name (`/branch`), git: prompts:
 ## Error Recovery
 
 ### Invalid Category
+
 ```
 [REJECTED] Invalid branch category: "feature/"
 
@@ -136,6 +153,7 @@ Use: /branch feat/your-feature-name
 ```
 
 ### Branch Exists
+
 ```
 [REJECTED] Branch already exists: feat/kanji-filter
 
@@ -146,6 +164,7 @@ Options:
 ```
 
 ### Not on Main
+
 ```
 [WARNING] Creating branch from feat/other-feature, not main
 

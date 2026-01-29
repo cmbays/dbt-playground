@@ -9,6 +9,7 @@ This skill provides a consistent code review process ensuring quality, security,
 ## Trigger
 
 Invoke when:
+
 - Implementation complete and verified
 - Pull request created
 - Code changes ready for review
@@ -31,6 +32,7 @@ Invoke when:
 ### Phase 2: Code Analysis
 
 #### Correctness Review
+
 - [ ] Logic is sound
 - [ ] Edge cases handled
 - [ ] No off-by-one errors
@@ -38,6 +40,7 @@ Invoke when:
 - [ ] Error handling present
 
 #### Security Review
+
 - [ ] No XSS vulnerabilities
 - [ ] Input validated
 - [ ] Output encoded
@@ -45,12 +48,14 @@ Invoke when:
 - [ ] External resources secured
 
 #### Pattern Adherence
+
 - [ ] Uses shared.css/shared.js
 - [ ] Follows naming conventions
 - [ ] Consistent with existing code
 - [ ] No unnecessary departures
 
 #### Quality Check
+
 - [ ] Code is readable
 - [ ] Functions are focused
 - [ ] No unnecessary complexity
@@ -58,6 +63,7 @@ Invoke when:
 - [ ] No dead code
 
 #### Performance
+
 - [ ] No obvious inefficiencies
 - [ ] Reasonable time complexity
 - [ ] No memory leaks
@@ -135,6 +141,7 @@ Positive observations:
 ## Common Issues
 
 ### HTML
+
 - Missing semantic elements
 - Broken navigation links
 - Missing accessibility attributes
@@ -142,6 +149,7 @@ Positive observations:
 - Missing version comment
 
 ### CSS
+
 - Not using custom properties
 - Inline styles (should be in shared.css)
 - Missing responsive styles
@@ -149,6 +157,7 @@ Positive observations:
 - Unused styles
 
 ### JavaScript
+
 - Uncaught exceptions
 - Missing error handling
 - Not using shared.js functions
@@ -156,6 +165,7 @@ Positive observations:
 - innerHTML with unsanitized data
 
 ### Japanese Content
+
 - Missing furigana
 - Incorrect romanization
 - Unnatural phrasing
@@ -164,13 +174,16 @@ Positive observations:
 ## Review Response
 
 ### For Authors
+
 When receiving review:
+
 1. Address all blockers/bugs
 2. Respond to questions
 3. Consider suggestions
 4. Thank reviewer for feedback
 
 ### Re-Review After Fixes
+
 - Verify blockers resolved
 - Check no new issues introduced
 - Update verdict
@@ -178,6 +191,7 @@ When receiving review:
 ## Quick Review (Minor Changes)
 
 For trivial changes (typos, formatting):
+
 - [ ] Change is correct
 - [ ] No side effects
 - [ ] Patterns followed
@@ -194,12 +208,14 @@ Can skip extensive security/performance review.
 ## Skill Invocation
 
 Can be combined with built-in:
+
 - `/code-review` for PR reviews
 - `/feature-dev:code-reviewer` for detailed analysis
 
 ## Exit Criteria
 
 Review complete when:
+
 - [ ] All files examined
 - [ ] All issues documented
 - [ ] Verdict rendered

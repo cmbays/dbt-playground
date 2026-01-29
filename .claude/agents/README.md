@@ -54,14 +54,18 @@ For feature development, personas chain together:
 ## Invocation Methods
 
 ### Automatic Detection
+
 Claude analyzes context and adopts appropriate persona:
+
 - PRD/requirements discussion → PM
 - Technical design questions → Architect
 - Implementation tasks → Developer
 - Review requests → Code/Design Reviewer
 
 ### Explicit Prefix Commands
+
 Use prefixes to explicitly invoke a persona:
+
 ```
 pm: I want to add a vocabulary quiz feature
 arch: design the architecture for spaced repetition
@@ -76,6 +80,7 @@ sage: extract learnings from this session
 ## Handoff Protocol
 
 Each persona ends work with:
+
 1. **Summary** of completed work
 2. **Open questions** or blockers
 3. **Next persona** recommendation
@@ -139,6 +144,7 @@ Context configurations in `.claude/contexts/`:
 ## Rules
 
 Modular rules in `.claude/rules/`:
+
 - `coding-style.md` - HTML/CSS/JS conventions
 - `git-workflow.md` - Version control standards
 - `testing.md` - Testing requirements
@@ -147,6 +153,7 @@ Modular rules in `.claude/rules/`:
 ## Skills
 
 Reusable workflows in `.claude/skills/`:
+
 - `tdd-workflow.md` - Test-driven development
 - `verification-loop.md` - QA verification
 - `code-review-workflow.md` - Review process
@@ -159,6 +166,7 @@ Reusable workflows in `.claude/skills/`:
 ## Adding New Personas
 
 To add a new persona:
+
 1. Create `[persona-name].md` in this directory
 2. Follow the standard structure (see existing files)
 3. Define workflow integration points

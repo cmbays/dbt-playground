@@ -3,11 +3,13 @@
 Perform comprehensive code review with structured feedback.
 
 ## Usage
+
 ```
 /review [file, folder, or PR reference]
 ```
 
 ## Examples
+
 ```
 /review topics/shopping/dialogue.html
 /review kanji/
@@ -81,11 +83,13 @@ Perform comprehensive code review with structured feedback.
 ## Persona Integration
 
 This command activates the **Code Reviewer** (`review:`) persona, with optional consultation from:
+
 - **Design Reviewer** (`design:`) for UI/UX issues
 - **Japanese Sensei** (`sensei:`) for content accuracy
 
 ## Skill Integration
 
 May invoke:
+
 - `/code-review` for PR reviews
 - `/feature-dev:code-reviewer` for implementation analysis

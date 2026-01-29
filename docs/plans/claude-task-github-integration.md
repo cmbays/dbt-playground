@@ -3,6 +3,7 @@
 ## Overview
 
 Integrate Claude Code's task primitives with GitHub issues to enable:
+
 - Cross-session task persistence for multi-agent workflows
 - Lightweight pull-on-demand + opt-in push-on-complete sync workflow
 - Enhanced Epic → TDD → Task orchestration with dependency tracking
@@ -13,6 +14,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 ## Current State
 
 **What We Have**:
+
 - 27 GitHub issues (3 epics, 24 tasks) in Project #1
 - Recent Claude task usage (as of 2026-01-25) with ad-hoc metadata
 - Heavy reliance on `gh` CLI for GitHub operations
@@ -20,6 +22,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 - Task persistence to `~/.claude/tasks/` available
 
 **What's Missing**:
+
 - Formalized metadata schema for GitHub-Claude linking
 - Metadata validation layer
 - Scripts to convert GitHub issues → Claude tasks
@@ -30,11 +33,13 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 ## Objectives
 
 ### Primary (MVP)
+
 1. **Establish metadata schema**: Define and validate task metadata conventions
 2. **Pull integration**: Script to convert GitHub issues → Claude tasks with metadata
 3. **Documentation**: Architecture diagrams and integration guides
 
 ### Secondary (Post-MVP)
+
 4. **Push integration**: Opt-in sync for Claude task completion → GitHub status updates
 5. **Epic workflow**: Orchestrate Epic → TDD → Task pattern with automation
 6. **Maintenance tools**: Cleanup scripts and edge case handling
@@ -92,6 +97,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 **Tasks**:
 
 1. **Test task persistence mechanism**
+
    ```bash
    # Create test task
    TaskCreate({subject: "Test Persistence", metadata: {test: true}})
@@ -104,6 +110,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    ```
 
 2. **Prototype issue-to-task conversion**
+
    ```bash
    # Manually convert issue #7 to understand data structure
    gh issue view 7 --json title,body,labels,number
@@ -123,10 +130,12 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    - Cross-session behavior
 
 **Deliverables**:
+
 - `temp/phase0-discovery-notes.md` (findings and validation results)
 - Prototype scripts in `temp/` for review
 
 **Acceptance Criteria**:
+
 - [ ] Task created in one session is visible in next session
 - [ ] Task metadata schema validated against real issues
 - [ ] Prototype issue-to-task conversion works for Epic and Task
@@ -143,6 +152,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 **Tasks**:
 
 1. **Create `.claude/scripts/core/validate-metadata.sh`**
+
    ```bash
    #!/usr/bin/env bash
    # Validates Claude task metadata against schema
@@ -156,6 +166,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    ```
 
 2. **Create `.claude/scripts/core/task-helpers.sh`**
+
    ```bash
    # Utility functions:
    # - get_task_metadata(task_id)
@@ -182,6 +193,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    - Document based on Phase 0 findings
 
 **Deliverables**:
+
 - `.claude/scripts/core/validate-metadata.sh`
 - `.claude/scripts/core/task-helpers.sh`
 - `docs/tdd/TDD-XXX-Task-Integration-Architecture.d2`
@@ -189,6 +201,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 - Configuration documentation
 
 **Acceptance Criteria**:
+
 - [ ] validate-metadata.sh rejects invalid schemas
 - [ ] validate-metadata.sh accepts all valid metadata types (epic, task, tdd, pm-work, documentation)
 - [ ] Architecture diagram shows all 4 layers clearly
@@ -204,6 +217,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 **Tasks**:
 
 1. **Create `.claude/scripts/github-sync/issue-to-task.sh`**
+
    ```bash
    #!/usr/bin/env bash
    # Converts GitHub issue to Claude TaskCreate call
@@ -246,6 +260,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    - Show validation error examples
 
 3. **Test with sample issues**
+
    ```bash
    # Test Epic conversion
    .claude/scripts/github-sync/issue-to-task.sh 7
@@ -264,11 +279,13 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    - Link to detailed guide
 
 **Deliverables**:
+
 - `.claude/scripts/github-sync/issue-to-task.sh` (Bash script)
 - `.claude/scripts/README.md`
 - Updated `docs/PROJECT_BOARD_GUIDE.md`
 
 **Acceptance Criteria**:
+
 - [ ] Script successfully converts Epic issue to TaskCreate call
 - [ ] Script successfully converts Task issue to TaskCreate call
 - [ ] Metadata validation runs and catches errors
@@ -282,16 +299,19 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 **Status**: After completing Phase 0, 1, and 2, we have:
 
 ✅ **Foundation Complete**
+
 - Metadata schema defined and validated
 - Architecture documented with diagrams
 - Task persistence understood and configured
 
 ✅ **Pull Integration Working**
+
 - Manual conversion of GitHub issues → Claude tasks
 - Metadata validation layer functional
 - Documentation complete for basic usage
 
 **Value Delivered**:
+
 - Can manually convert GitHub issues to Claude tasks with validated metadata
 - Clear architecture and conventions established
 - Ready for agent-based workflows
@@ -301,11 +321,13 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 ### Evaluation Criteria
 
 **Proceed with Phase 3-5 if**:
+
 - Manual workflow is too tedious
 - Multiple agents need automatic sync
 - High volume of task completions
 
 **Stop at MVP if**:
+
 - Manual workflow suffices
 - Small number of tasks
 - Sync complexity outweighs benefit
@@ -321,6 +343,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 **Tasks**:
 
 1. **Create `.claude/scripts/github-sync/task-to-status.sh`**
+
    ```bash
    #!/usr/bin/env bash
    # Manually sync Claude task completion to GitHub
@@ -356,6 +379,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 
 2. **Create wrapper function for opt-in auto-sync**
    - Document pattern in `docs/CLAUDE_TASK_INTEGRATION.md`:
+
    ```javascript
    // Opt-in auto-sync pattern
    function completeTaskWithSync(taskId, summary) {
@@ -386,10 +410,12 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    - Add examples of sync output
 
 **Deliverables**:
+
 - `.claude/scripts/github-sync/task-to-status.sh`
 - Updated documentation with opt-in pattern
 
 **Acceptance Criteria**:
+
 - [ ] Manual sync script works for completed tasks
 - [ ] Opt-in flag (`sync_on_complete`) respected
 - [ ] GitHub issue status updated correctly
@@ -406,6 +432,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 **Tasks**:
 
 1. **Create `.claude/scripts/workflows/epic-workflow.sh`**
+
    ```bash
    #!/usr/bin/env bash
    # Orchestrates Epic → TDD → Task workflow
@@ -439,6 +466,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    ```
 
 2. **Create `.claude/scripts/workflows/update-epic-tasks.sh`**
+
    ```bash
    # Batch update GitHub tasks to reference TDD sections
    # Requires TDD to exist first
@@ -463,11 +491,13 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    - Verify error handling
 
 **Deliverables**:
+
 - `.claude/scripts/workflows/epic-workflow.sh`
 - `.claude/scripts/workflows/update-epic-tasks.sh`
 - Updated agent documentation
 
 **Acceptance Criteria**:
+
 - [ ] Script validates issue is an Epic before proceeding
 - [ ] Script handles missing PRD link gracefully
 - [ ] Script generates TDD creation task with correct metadata
@@ -483,6 +513,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 **Tasks**:
 
 1. **Create `.claude/scripts/workflows/task-cleanup.sh`**
+
    ```bash
    #!/usr/bin/env bash
    # Clean up old completed tasks
@@ -527,6 +558,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
    - Example 5: Manual sync workflow
 
 **Deliverables**:
+
 - `.claude/scripts/workflows/task-cleanup.sh`
 - Enhanced error handling across all scripts
 - Complete workflow diagrams
@@ -534,6 +566,7 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 - FAQ section
 
 **Acceptance Criteria**:
+
 - [ ] Cleanup script identifies old tasks correctly
 - [ ] All scripts handle `gh` CLI errors gracefully
 - [ ] Diagrams clearly show all workflows
@@ -548,12 +581,14 @@ Integrate Claude Code's task primitives with GitHub issues to enable:
 ### Schema Validation Rules
 
 All metadata must pass validation via `validate-metadata.sh`:
+
 - **type** (required): One of `"epic"`, `"task"`, `"tdd"`, `"pm-work"`, `"documentation"`
 - **github_issue** (optional): Number, if present must be > 0
 - **sync_on_complete** (optional): Boolean, defaults to `false`
 - Type-specific fields validated based on type value
 
 ### Epic Task Metadata
+
 ```javascript
 {
   github_issue: 7,
@@ -568,6 +603,7 @@ All metadata must pass validation via `validate-metadata.sh`:
 ```
 
 ### TDD Creation Task Metadata
+
 ```javascript
 {
   github_issue: 7,  // Parent Epic
@@ -581,6 +617,7 @@ All metadata must pass validation via `validate-metadata.sh`:
 ```
 
 ### Implementation Task Metadata
+
 ```javascript
 {
   github_issue: 14,
@@ -596,6 +633,7 @@ All metadata must pass validation via `validate-metadata.sh`:
 ```
 
 ### PM Workflow Task Metadata (No GitHub Issue)
+
 ```javascript
 {
   type: "pm-work",
@@ -607,6 +645,7 @@ All metadata must pass validation via `validate-metadata.sh`:
 ```
 
 ### Documentation Task Metadata
+
 ```javascript
 {
   github_issue: null,
@@ -720,6 +759,7 @@ node .claude/scripts/issue-to-task.js 14
 ## Verification Steps
 
 ### Phase 0 Verification
+
 - [ ] Task created in session A is visible in session B
 - [ ] Task metadata persists correctly
 - [ ] Prototype issue-to-task conversion works for Epic #7
@@ -727,6 +767,7 @@ node .claude/scripts/issue-to-task.js 14
 - [ ] Discovery notes document findings
 
 ### Phase 1 Verification (MVP Part 1)
+
 - [ ] `validate-metadata.sh` rejects invalid metadata
 - [ ] `validate-metadata.sh` accepts all valid metadata types
 - [ ] Architecture diagram shows all 4 layers
@@ -734,6 +775,7 @@ node .claude/scripts/issue-to-task.js 14
 - [ ] Task persistence configured and verified
 
 ### Phase 2 Verification (MVP Part 2)
+
 - [ ] `issue-to-task.sh 7` generates correct Epic TaskCreate call
 - [ ] `issue-to-task.sh 14` generates correct Task TaskCreate call
 - [ ] Generated metadata passes validation
@@ -741,6 +783,7 @@ node .claude/scripts/issue-to-task.js 14
 - [ ] README documents usage with examples
 
 ### MVP Checkpoint Review
+
 - [ ] Manual GitHub → Claude conversion works
 - [ ] Metadata validation layer functional
 - [ ] Architecture documented
@@ -748,6 +791,7 @@ node .claude/scripts/issue-to-task.js 14
 - **Decision**: Proceed with Phases 3-5 or stop at MVP?
 
 ### Phase 3 Verification (If Implemented)
+
 - [ ] `task-to-status.sh` updates GitHub issue correctly
 - [ ] Opt-in flag (`sync_on_complete: true`) respected
 - [ ] Tasks without flag don't sync
@@ -755,6 +799,7 @@ node .claude/scripts/issue-to-task.js 14
 - [ ] Tasks without `github_issue` handled gracefully
 
 ### Phase 4 Verification (If Implemented)
+
 - [ ] `epic-workflow.sh 7` succeeds for well-formed Epic
 - [ ] Script validates Epic type before proceeding
 - [ ] Script handles missing PRD link gracefully
@@ -762,6 +807,7 @@ node .claude/scripts/issue-to-task.js 14
 - [ ] Generated tasks have correct metadata
 
 ### Phase 5 Verification (If Implemented)
+
 - [ ] `task-cleanup.sh` identifies old tasks correctly
 - [ ] Retention period configurable
 - [ ] All scripts handle `gh` CLI errors gracefully
@@ -773,6 +819,7 @@ node .claude/scripts/issue-to-task.js 14
 ## Success Criteria
 
 ### MVP Success Criteria (Phases 0-2)
+
 - ✅ Task persistence works across sessions
 - ✅ Metadata schema defined and validated
 - ✅ GitHub issues convert to Claude tasks with correct metadata
@@ -781,6 +828,7 @@ node .claude/scripts/issue-to-task.js 14
 - ✅ Integration enhances (not replaces) GitHub workflow
 
 ### Full Implementation Success Criteria (Phases 3-5, Optional)
+
 - ✅ Opt-in task completion → GitHub sync works
 - ✅ Epic workflow creates TDD → Task update chain with error handling
 - ✅ Cleanup removes old completed tasks (configurable retention)
@@ -793,6 +841,7 @@ node .claude/scripts/issue-to-task.js 14
 ## Notes
 
 ### Core Principles
+
 - **GitHub remains source of truth**: Don't create GitHub issues from Claude tasks automatically
 - **Metadata is critical**: All scripts rely on consistent, validated metadata schema
 - **Opt-in by default**: Auto-sync must be explicitly enabled via metadata flag
@@ -801,6 +850,7 @@ node .claude/scripts/issue-to-task.js 14
 - **Error handling**: Scripts fail gracefully with helpful messages
 
 ### Development Guidelines
+
 - **Test incrementally**: Verify each phase before moving to next
 - **Documentation first**: Write docs as you build, not after
 - **MVP checkpoint**: Evaluate value before proceeding to Phases 3-5
@@ -812,25 +862,30 @@ node .claude/scripts/issue-to-task.js 14
 ## Implementation Strategy
 
 ### Immediate Actions (Phase 0)
+
 1. Test task persistence mechanism
 2. Prototype issue-to-task conversion
 3. Validate metadata schema design
 4. Document findings in `temp/phase0-discovery-notes.md`
 
 ### MVP Path (Phases 1-2)
+
 1. Build metadata validation layer
 2. Create architecture documentation
 3. Implement manual GitHub → Claude conversion
 4. Document basic usage patterns
 
 ### Evaluation Checkpoint
+
 After MVP complete, evaluate:
+
 - Is manual workflow sufficient?
 - Do we need auto-sync (Phase 3)?
 - Is Epic orchestration valuable (Phase 4)?
 - What polish is needed (Phase 5)?
 
 ### Full Implementation (If Approved)
+
 1. Implement opt-in sync (Phase 3)
 2. Add Epic workflow automation (Phase 4)
 3. Polish with cleanup and comprehensive docs (Phase 5)

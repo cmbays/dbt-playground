@@ -11,7 +11,7 @@ tags: [workflow, github, tracking]
 # GitHub Project Board Guide
 
 **Japanese Study Site Roadmap**
-**Project URL**: https://github.com/users/cmbays/projects/2
+**Project URL**: <https://github.com/users/cmbays/projects/2>
 **Linked to Repository**: cmbays/japanese-study-site (discoverable from repo Projects tab)
 
 ---
@@ -19,12 +19,14 @@ tags: [workflow, github, tracking]
 ## Quick Reference
 
 ### Project Details
+
 - **Project Number**: 2
 - **Project ID**: PVT_kwHOAX7HsM4BNdiT
 - **Owner**: cmbays
 - **Type**: Repository-linked Board (Table + Kanban views)
 
 ### Key Commands
+
 ```bash
 # List all items in project
 gh project item-list 2 --owner cmbays
@@ -48,11 +50,13 @@ gh project view 2 --owner cmbays --web
 **Columns**: Backlog → Blocked → Ready → In Progress → Review → Done
 
 **How to use**:
+
 - Drag items between columns to update status
 - Focus on "In Progress" (limit: 3 items max)
 - Unblock items in "Blocked" column ASAP
 
 **Filtering**:
+
 - Filter by `phase:1` to see only Phase 1 tasks
 - Filter by `assignee:@me` to see your tasks
 - Filter by `type:task` to hide epics
@@ -67,6 +71,7 @@ gh project view 2 --owner cmbays --web
 **Columns to show**: Epic, Task ID, Title, Status, Effort, Persona
 
 **How to use**:
+
 - Expand each Epic to see its tasks
 - Check task dependencies in "Blocked By" column
 - Track Epic completion percentage
@@ -81,6 +86,7 @@ gh project view 2 --owner cmbays --web
 **Columns to show**: Wave, Task ID, Title, Status, Effort, Blocked By
 
 **How to use**:
+
 - Focus on current wave (Wave 1 = T1.1-T1.10, T2.1)
 - Identify bottlenecks (multiple tasks blocked by same task)
 - Plan next wave when current is 80% complete
@@ -95,6 +101,7 @@ gh project view 2 --owner cmbays --web
 **Columns to show**: Title, Epic, Status, Effort, Due Date
 
 **How to use**:
+
 - Daily: Check what you're working on
 - Claim new tasks by assigning to yourself
 - Update status as you progress
@@ -104,6 +111,7 @@ gh project view 2 --owner cmbays --web
 ## Custom Fields Explained
 
 ### Status
+
 **Type**: Single Select
 **Options**: Backlog, Blocked, Ready, In Progress, Review, Done
 
@@ -117,6 +125,7 @@ gh project view 2 --owner cmbays --web
 **Workflow**: Ready → In Progress → Review → Done
 
 ### Effort
+
 **Type**: Single Select
 **Options**: XS, S, M, L, XL
 
@@ -129,10 +138,12 @@ gh project view 2 --owner cmbays --web
 **Use for**: Sprint planning, capacity estimation
 
 ### Wave
+
 **Type**: Single Select
 **Options**: Wave 1, Wave 2, Wave 3, Wave 4, Wave 5
 
 Groups tasks by development phase:
+
 - **Wave 1**: Foundation (T1.1-T1.10, T2.1)
 - **Wave 2**: Queuing & Aggregation (T1.4-T1.7)
 - **Wave 3**: Session Experience (T2.2-T2.8)
@@ -142,10 +153,12 @@ Groups tasks by development phase:
 **Use for**: Milestone planning, dependency tracking
 
 ### Persona
+
 **Type**: Single Select
 **Options**: PM, Architect, Developer, Tester, Sensei, Design
 
 Indicates which persona/role is primary owner:
+
 - **PM**: Product Manager (requirements, planning)
 - **Architect**: Technical Architect (design, TDD)
 - **Developer**: Developer (implementation)
@@ -156,6 +169,7 @@ Indicates which persona/role is primary owner:
 **Use for**: Filtering tasks by role, assigning work
 
 ### Priority
+
 **Type**: Single Select
 **Options**: P0, P1, P2, P3
 
@@ -167,6 +181,7 @@ Indicates which persona/role is primary owner:
 **Default**: Most Phase 1 tasks are P1 (high priority for v0.3)
 
 ### Epic
+
 **Type**: Text
 **Format**: Issue reference (e.g., "#7", "#8", "#9")
 
@@ -177,12 +192,14 @@ Links task to parent Epic issue.
 ## Labels System
 
 ### Type Labels (Mutually Exclusive)
+
 - `type:epic` - Parent feature issues (3 total)
 - `type:task` - Implementation tasks (24 total)
 - `type:bug` - Defect reports
 - `type:question` - Clarification requests
 
 ### Status Labels (Sync with Custom Field)
+
 - `status:ready` - Ready to start
 - `status:blocked` - Waiting on dependencies
 - `status:in-dev` - Currently implementing
@@ -191,15 +208,18 @@ Links task to parent Epic issue.
 - `status:triage` - Bug needs assessment
 
 ### Effort Labels (Optional, use Custom Field instead)
+
 - `effort:xs` through `effort:xl`
 
 ### Phase Labels
+
 - `phase:1` - v0.3 Foundation
 - `phase:2` - v0.4 Engagement
 - `phase:3` - v0.5 Deep Learning
 - `phase:4` - v0.6 Active Recall
 
 ### Persona Labels
+
 - `persona:pm`, `persona:arch`, `persona:dev`, `persona:tester`, `persona:design`, `persona:sensei`
 
 ---
@@ -209,21 +229,27 @@ Links task to parent Epic issue.
 ### Starting a New Task
 
 1. **Find ready tasks**:
+
    ```bash
    gh issue list --label "status:ready" --milestone "v0.3 - Foundation"
    ```
+
    Or filter project board: `status:Ready`
 
 2. **Claim the task**:
+
    ```bash
    gh issue edit <ISSUE_NUMBER> --add-assignee @me
    ```
+
    Or assign via GitHub UI
 
 3. **Move to In Progress**:
+
    ```bash
    gh issue edit <ISSUE_NUMBER> --add-label "status:in-dev"
    ```
+
    Or drag on project board to "In Progress" column
 
 4. **Break down into Claude tasks** (optional):
@@ -242,19 +268,23 @@ Links task to parent Epic issue.
    - [ ] PR merged to main
 
 2. **Create pull request**:
+
    ```bash
    gh pr create --title "feat(scope): description" --fill
    ```
 
 3. **Move to Review**:
+
    ```bash
    gh issue edit <ISSUE_NUMBER> --add-label "status:review"
    ```
 
 4. **After PR merge**:
+
    ```bash
    gh issue close <ISSUE_NUMBER>
    ```
+
    (Automatically moves to "Done" on project board)
 
 ### Unblocking Tasks
@@ -266,6 +296,7 @@ When a blocker task completes:
    - Or search issues for "Blocked By: #<TASK_NUMBER>"
 
 2. **Update blocked tasks**:
+
    ```bash
    gh issue edit <BLOCKED_TASK> --remove-label "status:blocked" --add-label "status:ready"
    ```
@@ -293,33 +324,43 @@ When a blocker task completes:
 ## Filtering Tips
 
 ### Show Only Ready Tasks
+
 ```
 Filter: status:Ready AND phase:1
 ```
+
 Result: All Phase 1 tasks with no blockers
 
 ### Show Wave 1 Tasks
+
 ```
 Filter: wave:"Wave 1"
 ```
+
 Result: All foundation tasks (T1.1-T1.10, T2.1)
 
 ### Show My In-Progress Tasks
+
 ```
 Filter: assignee:@me AND status:"In Progress"
 ```
+
 Result: Everything you're currently working on
 
 ### Show Epic 1 Tasks
+
 ```
 Filter: epic:#7
 ```
+
 Result: All tasks belonging to PRD-001 (SRS Engine)
 
 ### Show High Priority Tasks
+
 ```
 Filter: priority:P0 OR priority:P1
 ```
+
 Result: All critical and high priority tasks
 
 ---
@@ -327,22 +368,27 @@ Result: All critical and high priority tasks
 ## Automation Rules
 
 ### Auto-add New Issues
+
 **Trigger**: Issue created with `type:task` or `type:epic` label
 **Action**: Add to project, set Status = Backlog
 
 ### Auto-move to In Progress
+
 **Trigger**: Label `status:in-dev` added
 **Action**: Set Status = In Progress
 
 ### Auto-move to Review
+
 **Trigger**: Label `status:review` added
 **Action**: Set Status = Review
 
 ### Auto-move to Done
+
 **Trigger**: Issue closed
 **Action**: Set Status = Done
 
 ### Blocked Alert
+
 **Trigger**: Label `status:blocked` added
 **Action**: Set Status = Blocked, add comment
 
@@ -351,6 +397,7 @@ Result: All critical and high priority tasks
 ## Metrics & Reporting
 
 ### Epic Progress
+
 ```bash
 # Count completed tasks per epic
 gh issue list --milestone "v0.3 - Foundation" --state closed --label "type:task" --json number,title
@@ -362,6 +409,7 @@ gh issue list --milestone "v0.3 - Foundation" --state closed --label "type:task"
 ```
 
 ### Wave Progress
+
 ```bash
 # List Wave 1 tasks
 gh issue list --milestone "v0.3 - Foundation" --label "type:task" --json number,title,state
@@ -370,10 +418,12 @@ gh issue list --milestone "v0.3 - Foundation" --label "type:task" --json number,
 ```
 
 ### Effort Estimation
+
 - Total effort: 8 S + 16 M = ~8 + ~32 = 40 person-days
 - With parallelization: ~6-8 weeks
 
 ### Velocity Tracking
+
 - Track: Tasks completed per week
 - Target: 3-4 tasks/week (assuming 1 developer)
 - Adjust wave planning based on velocity
@@ -383,24 +433,28 @@ gh issue list --milestone "v0.3 - Foundation" --label "type:task" --json number,
 ## Best Practices
 
 ### For Product Managers
+
 - Keep Epic issues updated with task progress
 - Review project board weekly
 - Adjust priorities based on blockers
 - Create new tasks as discoveries happen
 
 ### For Developers
+
 - Claim only what you can complete this week
 - Update status daily (or after each session)
 - Comment on blockers immediately
 - Link PRs to task issues
 
 ### For Reviewers
+
 - Check "Review" column daily
 - Review PRs within 24 hours
 - Leave clear, actionable feedback
 - Approve or request changes (don't leave hanging)
 
 ### For Everyone
+
 - **Don't skip "Ready" status**: Only claim tasks with no blockers
 - **Respect WIP limits**: Max 3 tasks in "In Progress"
 - **Keep it current**: Update status as you work, not at end of week
@@ -415,17 +469,20 @@ gh issue list --milestone "v0.3 - Foundation" --label "type:task" --json number,
 ### Overview
 
 Claude Task GitHub Integration enables:
+
 - **Cross-session task persistence** - Tasks survive Claude restarts
 - **GitHub-to-Claude conversion** - Convert issues to tasks with metadata
 - **Metadata validation** - Schema-based validation prevents errors
 - **Multi-agent coordination** - PM → Architect → Developer workflows
 
 **When to use**:
+
 - Session-level work (breaking down GitHub issues)
 - Agent handoffs and coordination
 - Temporary sub-tasks within a coding session
 
 **When NOT to use**:
+
 - Long-term planning (use GitHub issues)
 - External visibility (use GitHub issues)
 - Milestone tracking (use GitHub issues)
@@ -569,11 +626,13 @@ brew install jq
 **Cause**: Issue body doesn't match extraction patterns
 
 **Fix**: Check issue format. Script looks for:
+
 - Epic ID: PRD-XXX anywhere in title/body
 - PRD path: docs/specs/PRD-XXX*.md
 - Task ID: T*.* after "Task ID:" or "Task:"
 
 **Debug**:
+
 ```bash
 # View issue body
 gh issue view 7 --json body | jq -r '.body'
@@ -587,6 +646,7 @@ gh issue view 7 --json body | jq -r '.body'
 
 **Cause**: Issue wasn't added to project (or doesn't have `type:epic` or `type:task` label for automation)
 **Fix**:
+
 ```bash
 gh project item-add 2 --owner cmbays --url <ISSUE_URL>
 ```
@@ -600,6 +660,7 @@ gh project item-add 2 --owner cmbays --url <ISSUE_URL>
 
 **Cause**: Filter syntax incorrect
 **Fix**: Use exact custom field values (case-sensitive):
+
 - Status: "Ready" (not "ready")
 - Wave: "Wave 1" (not "wave 1")
 
@@ -613,15 +674,18 @@ gh project item-add 2 --owner cmbays --url <ISSUE_URL>
 ## Resources
 
 ### GitHub Documentation
+
 - [Projects (beta) documentation](https://docs.github.com/en/issues/planning-and-tracking-with-projects)
 - [GitHub CLI projects](https://cli.github.com/manual/gh_project)
 
 ### Project Files
+
 - Issue templates: `.github/ISSUE_TEMPLATE/`
 - Setup scripts: `.github/scripts/`
 - This guide: `docs/PROJECT_BOARD_GUIDE.md`
 
 ### Quick Links
+
 - [Project Board](https://github.com/users/cmbays/projects/2) (linked to repository, discoverable from repo's Projects tab)
 - [v0.3 Milestone](https://github.com/cmbays/japanese-study-site/milestone/1)
 - [All Issues](https://github.com/cmbays/japanese-study-site/issues)

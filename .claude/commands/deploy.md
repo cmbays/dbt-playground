@@ -3,11 +3,13 @@
 Execute version deployment workflow with proper archiving and tagging.
 
 ## Usage
+
 ```
 /deploy [version] [description]
 ```
 
 ## Examples
+
 ```
 /deploy v0.3.0 "Complete shopping dialogue page"
 /deploy patch "Fix navigation bug"
@@ -26,12 +28,14 @@ Execute version deployment workflow with proper archiving and tagging.
 ## Deployment Workflow
 
 ### 1. Pre-Deploy Checks
+
 - [ ] All tests pass
 - [ ] No uncommitted changes in working files
 - [ ] Temp folder reviewed
 - [ ] Living docs updated
 
 ### 2. Archive Process
+
 ```bash
 # Following retention policy:
 # - Keep most recent of every MAJOR version
@@ -43,6 +47,7 @@ cp -r docs/*.md archive/v[X.Y]/docs/
 ```
 
 ### 3. Finalize Files
+
 ```bash
 # Move approved temp files to final locations
 mv temp/[approved-files] [final-location]
@@ -52,6 +57,7 @@ mv temp/[approved-files] [final-location]
 ```
 
 ### 4. Git Operations
+
 ```bash
 # Stage changes
 git add [specific files]
@@ -71,6 +77,7 @@ git push origin vX.Y.Z
 ```
 
 ### 5. Post-Deploy
+
 - [ ] Verify deployment
 - [ ] Update CHANGELOG.md
 - [ ] Clean temp/ (with approval)
@@ -108,6 +115,7 @@ git push origin vX.Y.Z
 ## Rollback
 
 If issues discovered post-deploy:
+
 ```bash
 # Checkout previous version
 git checkout v[previous]

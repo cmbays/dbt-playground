@@ -46,6 +46,7 @@ This directory contains Bash scripts for integrating Claude Code task primitives
 **Location**: `.claude/scripts/core/validate-metadata.sh`
 
 **Usage**:
+
 ```bash
 .claude/scripts/core/validate-metadata.sh '<metadata-json>'
 ```
@@ -80,11 +81,13 @@ This directory contains Bash scripts for integrating Claude Code task primitives
 ```
 
 **Exit Codes**:
+
 - `0` - Metadata is valid
 - `1` - Metadata is invalid (schema violation)
 - `2` - System error (jq missing, invalid JSON syntax)
 
 **Validation Rules**:
+
 - **Required field**: `type` (must be one of: epic, task, tdd, pm-work, documentation)
 - **Epic**: Requires `epic_id` (pattern: PRD-XXX) and `prd`
 - **Task**: No required fields beyond `type`
@@ -100,6 +103,7 @@ This directory contains Bash scripts for integrating Claude Code task primitives
 **Location**: `.claude/scripts/core/task-helpers.sh`
 
 **Usage**:
+
 ```bash
 # Source the file to use functions
 source .claude/scripts/core/task-helpers.sh
@@ -154,6 +158,7 @@ get_task_type "$METADATA"      # → task
 **Location**: `.claude/scripts/github-sync/issue-to-task.sh`
 
 **Usage**:
+
 ```bash
 .claude/scripts/github-sync/issue-to-task.sh <issue-number>
 ```
@@ -189,6 +194,7 @@ get_task_type "$METADATA"      # → task
 ```
 
 **Exit Codes**:
+
 - `0` - Conversion successful, TaskCreate call on stdout
 - `1` - Validation error (metadata invalid, missing required fields)
 - `2` - GitHub error (issue not found, gh CLI failed, invalid argument)
@@ -206,6 +212,7 @@ get_task_type "$METADATA"      # → task
 | **Effort** | effort:* label | effort:m → M (uppercased) |
 
 **Workflow**:
+
 1. Fetch issue from GitHub (via `gh issue view`)
 2. Extract metadata based on issue type (epic, task, tdd)
 3. Validate metadata (via `validate-metadata.sh`)
@@ -251,6 +258,7 @@ get_task_type "$METADATA"      # → task
 **Status**: Not yet implemented
 
 **Planned Usage**:
+
 ```bash
 .claude/scripts/workflows/epic-workflow.sh <epic-issue-number>
 ```
@@ -274,6 +282,7 @@ get_task_type "$METADATA"      # → task
 ### Required
 
 - **gh CLI**: GitHub command-line tool
+
   ```bash
   brew install gh
   gh auth login
@@ -281,6 +290,7 @@ get_task_type "$METADATA"      # → task
   ```
 
 - **jq**: JSON parsing and manipulation
+
   ```bash
   brew install jq
   jq --version
@@ -289,6 +299,7 @@ get_task_type "$METADATA"      # → task
 ### Optional
 
 - **bats**: Bash testing framework (for automated tests)
+
   ```bash
   brew install bats-core
   ```
@@ -376,6 +387,7 @@ brew install jq
 **Solution**: Check issue body format and update patterns if needed. The script uses case-insensitive awk patterns for flexibility.
 
 **Debug**:
+
 ```bash
 # View issue body
 gh issue view 7 --json body | jq -r '.body'

@@ -22,6 +22,7 @@ Standards for testing, verification, and quality assurance.
 ## Manual Testing Checklist
 
 ### HTML/CSS
+
 - [ ] Chrome renders correctly
 - [ ] Firefox renders correctly
 - [ ] Safari renders correctly
@@ -30,6 +31,7 @@ Standards for testing, verification, and quality assurance.
 - [ ] Desktop (1024px+) works
 
 ### JavaScript
+
 - [ ] No console errors
 - [ ] Event handlers work
 - [ ] Edge cases handled
@@ -37,18 +39,21 @@ Standards for testing, verification, and quality assurance.
 - [ ] localStorage works
 
 ### Navigation
+
 - [ ] All internal links work
 - [ ] Breadcrumbs correct
 - [ ] Back button behavior expected
 - [ ] No broken links
 
 ### Accessibility
+
 - [ ] Keyboard navigation works
 - [ ] Focus states visible
 - [ ] Screen reader compatible
 - [ ] Color contrast sufficient
 
 ### Japanese Content
+
 - [ ] Furigana displays correctly
 - [ ] Romaji toggles work
 - [ ] Audio plays (if applicable)
@@ -57,10 +62,12 @@ Standards for testing, verification, and quality assurance.
 ## Test Documentation
 
 ### Location
+
 - Active testing: `temp/v[X.Y]_TESTING.md`
 - Archived: `archive/v[X.Y]/docs/TESTING.md`
 
 ### Template
+
 ```markdown
 # Test Results: v[X.Y] - [Feature]
 
@@ -107,11 +114,13 @@ Tester: [name/date]
 ## TDD Workflow
 
 ### Red-Green-Refactor
+
 1. **RED**: Write failing test/define criteria
 2. **GREEN**: Implement minimum to pass
 3. **REFACTOR**: Clean up, tests still pass
 
 ### Test-First for JavaScript
+
 ```javascript
 // 1. Define expected behavior
 describe('filterByLevel', () => {
@@ -135,6 +144,7 @@ function filterByLevel(kanji, level) {
 ## Edge Cases to Test
 
 ### User Input
+
 - Empty input
 - Very long input
 - Special characters
@@ -142,12 +152,14 @@ function filterByLevel(kanji, level) {
 - HTML injection attempts
 
 ### Data Handling
+
 - Missing data
 - Malformed JSON
 - Corrupted localStorage
 - Network failures (if applicable)
 
 ### UI States
+
 - Loading state
 - Empty state (no data)
 - Error state
@@ -155,6 +167,7 @@ function filterByLevel(kanji, level) {
 - Hover/focus states
 
 ### Boundaries
+
 - First item
 - Last item
 - Single item
@@ -164,6 +177,7 @@ function filterByLevel(kanji, level) {
 ## Bug Documentation
 
 ### When Found
+
 ```markdown
 ## Bug: [Short Description]
 
@@ -191,7 +205,9 @@ function filterByLevel(kanji, level) {
 ```
 
 ### After Fixed
+
 Add to `docs/TESTING.md` learning log:
+
 ```markdown
 ## Bug Learnings
 
@@ -204,12 +220,14 @@ Add to `docs/TESTING.md` learning log:
 ## Performance Testing
 
 ### Metrics to Check
+
 - Page load time
 - Time to interactive
 - JavaScript execution time
 - Memory usage (for long sessions)
 
 ### Tools
+
 - Browser DevTools (Performance tab)
 - Lighthouse audit
 - Network throttling tests
@@ -217,6 +235,7 @@ Add to `docs/TESTING.md` learning log:
 ## Verification Before Deployment
 
 ### Pre-Deploy Checklist
+
 - [ ] All manual tests pass
 - [ ] No console errors
 - [ ] No broken links
@@ -229,15 +248,18 @@ Add to `docs/TESTING.md` learning log:
 ## Continuous Testing
 
 ### After Every Change
+
 - Visual check in browser
 - Console for errors
 - Quick navigation test
 
 ### Before Every Commit
+
 - Run through feature checklist
 - Regression spot-check
 
 ### Before Every Release
+
 - Full test suite
 - Cross-browser check
 - Complete regression test

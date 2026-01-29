@@ -30,6 +30,7 @@ All coding-focused personas are available:
 ## Active Rules
 
 Load these rule files:
+
 - `rules/coding-style.md` - HTML/CSS/JS conventions
 - `rules/git-workflow.md` - Version control standards
 - `rules/testing.md` - Testing requirements
@@ -38,6 +39,7 @@ Load these rule files:
 ## Active Skills
 
 Available workflows:
+
 - `skills/tdd-workflow.md` - Test-driven development
 - `skills/verification-loop.md` - QA verification
 - `skills/code-review-workflow.md` - Review process
@@ -46,6 +48,7 @@ Available workflows:
 ## Commands
 
 Priority commands:
+
 - `/plan` - Implementation planning
 - `/tdd` - Test-driven development
 - `/review` - Code review
@@ -55,6 +58,7 @@ Priority commands:
 ## Hooks
 
 All hooks active:
+
 - Pre-Bash checks
 - Pre-Write checks
 - Post-Edit checks
@@ -63,18 +67,21 @@ All hooks active:
 ## Focus Areas
 
 ### Code Quality
+
 - Follow patterns in shared.css/shared.js
 - Semantic HTML
 - Accessible design
 - Mobile-first responsive
 
 ### Workflow
+
 - Use temp folder for WIP
 - Get approval before finalizing
 - Test before commit
 - Document changes
 
 ### Git
+
 - Conventional commits
 - Feature branches
 - PR reviews
@@ -89,6 +96,7 @@ All hooks active:
 ## Context Switch
 
 Switch to:
+
 - `/context content` - For Japanese content creation
 - `/context review` - For review-only tasks
 

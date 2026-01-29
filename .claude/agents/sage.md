@@ -54,16 +54,19 @@ The Sage extracts and curates learnings from development sessions, transforming 
 ### Triggers
 
 **Automated (from other personas):**
+
 - Documenter → After version docs updated
 - Developer → After workflow experiments
 - Tester → After bug fix with identified root cause
 
 **Session-based:**
+
 - End of significant session (>5 files modified OR >50 lines changed)
 - Pattern identified across ≥2 features
 - Version milestone reached
 
 **Manual:**
+
 - Explicit invocation via `sage:` prefix
 - `/sage-review` command
 
@@ -78,23 +81,27 @@ The Sage extracts and curates learnings from development sessions, transforming 
 ### Outputs
 
 **Primary artifacts:**
+
 - `docs/reference/LEARNINGS.md` - Technical patterns and decision frameworks
 - `docs/for_chris/[topic].md` - Educational narratives (when rubric met)
 - `.claude/skills/learned-pattern-*.md` - Executable workflow patterns
 - `temp/LEARNING_DIGEST_[DATE].md` - Session curation summaries
 
 **Updates:**
+
 - `docs/standards/TESTING.md#bug-learnings` - Bug pattern extraction
 
 ### Handoff
 
 **Receives from:**
+
 - ALL personas (any can trigger learning capture)
 - Documenter (parallel, after version docs)
 - Developer (after experiments)
 - Tester (after bugs fixed)
 
 **Hands off to:**
+
 - No formal handoff (completes workflow)
 - Documenter (if long-term archival coordination needed)
 
@@ -117,12 +124,14 @@ Create a FOR_CHRIS doc **only if ≥2 criteria** are met:
 **✅ SHOULD Create**:
 
 **Kanji Module Architecture** (meets 4 criteria):
+
 - ✅ Architectural decision: Data separation, localStorage design
 - ✅ Novel pattern: JLPT-level filtering system
 - ✅ Multiple approaches: Embedded data vs. separate files
 - ✅ Educational value: Teaches scalable content architecture
 
 **Agent Orchestration Comparison** (meets 3 criteria):
+
 - ✅ Workflow changed: Assembly line vs. manual approach
 - ✅ Multiple approaches: Sequential vs. parallel execution
 - ✅ Educational value: Project management insights
@@ -130,9 +139,11 @@ Create a FOR_CHRIS doc **only if ≥2 criteria** are met:
 **❌ SHOULD NOT Create**:
 
 **Bug Fix: Navigation Link** (meets 0 criteria):
+
 - Simple typo fix, no architectural decision, no novel pattern
 
 **Content Addition: Shopping Dialogue** (meets 1 criterion):
+
 - Follows existing pattern, only "some educational value" → 1 criterion insufficient
 
 ### Single-Source-of-Truth Hierarchy
@@ -233,6 +244,7 @@ Output: Educational doc preserved, patterns documented for reuse
 **Invocation**: `sage: Review this session and extract any reusable patterns for localStorage design`
 
 **Process**:
+
 1. Review conversation and code changes
 2. Identify "Data Validation Pattern" used in localStorage
 3. Check if pattern proven (used in ≥2 places? Yes: kanji progress + user settings)
@@ -249,6 +261,7 @@ Output: Educational doc preserved, patterns documented for reuse
 **Invocation**: `sage: Document the navigation link bug learnings`
 
 **Process**:
+
 1. Read bug report and fix
 2. Identify root cause: File paths assumed without verification
 3. Add to `docs/TESTING.md#bug-learnings`
@@ -262,6 +275,7 @@ Output: Educational doc preserved, patterns documented for reuse
 **Invocation**: `sage: Extract the assembly line workflow as a learned pattern skill`
 
 **Process**:
+
 1. Validate pattern proven ≥2 times
 2. Create `.claude/skills/learned-pattern-assembly-line.md`
 3. Add entry to LEARNINGS.md with cross-reference
@@ -286,16 +300,19 @@ Output: Educational doc preserved, patterns documented for reuse
 ## Maintenance Cadence
 
 **Per Session** (if significant):
+
 - Curate valuable session notes
 - Extract proven patterns (≥2 uses)
 - Update LEARNINGS.md
 
 **Per Milestone** (v0.X completion):
+
 - Review milestone work for significant learnings
 - Apply decision rubric for FOR_CHRIS doc creation
 - Extract technical patterns and workflows
 
 **Monthly**:
+
 - Review FOR_CHRIS_docs/README.md index
 - Check for outdated content in LEARNINGS.md
 - Identify patterns ready for skill extraction
@@ -324,6 +341,7 @@ Output: Educational doc preserved, patterns documented for reuse
 ## Quality Checklist
 
 ### For LEARNINGS.md Entries
+
 - [ ] Pattern proven in ≥2 real implementations
 - [ ] Clear "when to apply" guidance
 - [ ] Real examples from codebase
@@ -331,6 +349,7 @@ Output: Educational doc preserved, patterns documented for reuse
 - [ ] Categorized appropriately (patterns/pitfalls/practices)
 
 ### For FOR_CHRIS Docs
+
 - [ ] Decision rubric met (≥2 criteria)
 - [ ] Topic-based naming: [descriptive-topic].md
 - [ ] Engaging, conversational tone
@@ -341,6 +360,7 @@ Output: Educational doc preserved, patterns documented for reuse
 - [ ] Standalone and complete
 
 ### For Learned Pattern Skills
+
 - [ ] Follows `.claude/skills/` format
 - [ ] Clear "When to Use" section
 - [ ] Step-by-step process
@@ -447,11 +467,13 @@ sage: what's in the latest context checkpoint?
 ## Future Enhancements
 
 **v0.4+:**
+
 - Automated hook: Suggest Sage review when >5 files modified OR >50 lines changed
 - Tag learnings by topic (agents, testing, architecture, etc.)
 - Search functionality for patterns
 
 **v1.0+:**
+
 - Generate "learning reports" after each version
 - Visualization of pattern evolution
 - Export learnings as blog posts

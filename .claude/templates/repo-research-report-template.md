@@ -13,6 +13,7 @@
 [2-3 sentence overview of the repository and key findings]
 
 **Top 3 Takeaways**:
+
 1. [Most important finding]
 2. [Second most important]
 3. [Third most important]
@@ -24,9 +25,11 @@
 ## 1. Repository Overview
 
 ### Purpose
+
 [What problem does this repo solve? Who is it for?]
 
 ### Technology Stack
+
 | Layer | Technology |
 |-------|------------|
 | Language | |
@@ -69,6 +72,7 @@
 ## 2. Project Structure
 
 ### Directory Layout
+
 ```
 repo/
 ├── [folder]/ - [purpose]
@@ -78,14 +82,17 @@ repo/
 ```
 
 ### Organization Patterns
+
 [Describe how the codebase is organized - by feature, by layer, etc.]
 
 ### Key Observations
+
 - [Observation about structure]
 - [What works well]
 - [What's unusual or noteworthy]
 
 ### Applicability to Our Project
+
 | Their Pattern | Our Equivalent | Adoption Potential |
 |---------------|----------------|-------------------|
 | [pattern] | [our approach] | High/Medium/Low |
@@ -95,6 +102,7 @@ repo/
 ## 3. Architecture Patterns
 
 ### Pattern 1: [Pattern Name]
+
 **What it is**: [Description]
 **Where used**: [File/module references]
 **Why it works**: [Benefits]
@@ -102,6 +110,7 @@ repo/
 **Our applicability**: [How we could use this]
 
 ### Pattern 2: [Pattern Name]
+
 **What it is**: [Description]
 **Where used**: [File/module references]
 **Why it works**: [Benefits]
@@ -109,31 +118,38 @@ repo/
 **Our applicability**: [How we could use this]
 
 ### Pattern 3: [Pattern Name]
+
 [Continue as needed...]
 
 ### Pattern Synthesis (for multi-repo comparison)
 
 **Convergent Patterns** (present in 2+ repos):
+
 - [Pattern X]: Found in [Repo A, Repo B] - Likely industry standard
 - [Pattern Y]: Found in [Repo B, Repo C] - Proven approach
 
 **Divergent Patterns** (unique to one repo):
+
 - [Pattern Z]: Only in [Repo A] - Experimental/specialized approach
   - Reason for uniqueness: [Why this repo alone uses it]
   - Evaluation: Worth adopting / Needs more research / Skip
 
 **Best Practices Identified**:
+
 - [Practice 1]: Solves [problem] effectively
 - [Practice 2]: Avoids [common pitfall]
 
 **Anti-Patterns Identified**:
+
 - [Anti-pattern 1]: Causes [issue], seen in [Repo X]
 - [Anti-pattern 2]: Leads to [problem], refactored away in [Repo Y]
 
 ### Data Flow
+
 [Describe how data moves through the application]
 
 ### State Management
+
 [How is state handled? What patterns are used?]
 
 ---
@@ -151,13 +167,16 @@ repo/
 ### Feature Deep-Dives
 
 #### [Feature Name] (High Relevance)
+
 **What it does**: [Description]
 **Implementation approach**: [How they built it]
 **Key files**:
+
 - `path/to/file.js` - [purpose]
 - `path/to/other.js` - [purpose]
 
 **What we can learn**:
+
 - [Learning 1]
 - [Learning 2]
 
@@ -171,6 +190,7 @@ repo/
 ### High Priority (Quick Wins)
 
 #### Opportunity 1: [Name]
+
 - **What**: [Description]
 - **Value**: [Why it matters]
 - **Effort**: Low / Medium / High
@@ -178,19 +198,23 @@ repo/
 - **Risk**: [Potential issues]
 
 #### Opportunity 2: [Name]
+
 [Continue format...]
 
 ### Medium Priority (Planned Features)
 
 #### Opportunity 3: [Name]
+
 [Continue format...]
 
 ### Low Priority (Future Consideration)
 
 #### Opportunity 4: [Name]
+
 [Continue format...]
 
 ### Not Recommended
+
 | Idea | Why Not |
 |------|---------|
 | [Something] | [Reason - too complex, doesn't fit, etc.] |
@@ -206,15 +230,19 @@ repo/
 | [package] | [what it does] | Adopt / Evaluate / Skip |
 
 ### Build & Tooling
+
 [Notable build setup, CI/CD, developer experience tools]
 
 ### Testing Approach
+
 [How do they test? What coverage? What patterns?]
 
 ### Performance Considerations
+
 [Any performance optimizations or concerns noted]
 
 ### Security Considerations
+
 [Any security patterns or concerns noted]
 
 ---
@@ -222,11 +250,13 @@ repo/
 ## 7. Community Insights
 
 ### Popular Solutions (in this problem space)
+
 - **[Solution 1]**: X stars, Y forks - [Why it's popular]
 - **[Solution 2]**: X stars, Y forks - [Why it's popular]
 - **This repo vs. alternatives**: [Comparison]
 
 ### Controversial Topics
+
 - **[Topic 1]**: Community split on [approach A vs B]
   - Debate details: [Summary of arguments]
   - Resolution status: Ongoing / Decided / Forked project
@@ -235,6 +265,7 @@ repo/
   - Workarounds: [How users handle it]
 
 ### Expert Opinions
+
 - **Maintainer insights**:
   - [Decision X] made due to [constraint Y] (source: issue #123)
   - Known limitations: [Acknowledged issues]
@@ -245,6 +276,7 @@ repo/
   - Concerns about [aspect]
 
 ### Ecosystem Trends
+
 - **Migration patterns**: [Old approach] → [New approach]
   - Reason: [Why the shift]
 - **Emerging alternatives**: [New library] gaining traction
@@ -253,6 +285,7 @@ repo/
   - Migration path: [How to adapt]
 
 ### Red Flags
+
 - ⚠️ [Critical issue] unresolved for [timeframe]
 - ⚠️ Maintainer burnout signals: [Evidence]
 - ⚠️ Breaking changes without migration guides
@@ -267,16 +300,20 @@ repo/
 ## 8. Risks & Concerns
 
 ### Technical Risks
+
 - **[Risk 1]**: [Description and mitigation]
 - **[Risk 2]**: [Description and mitigation]
 
 ### Compatibility Concerns
+
 - [Concern about fitting with our stack/approach]
 
 ### Maintenance Concerns
+
 - [Concern about long-term maintenance if adopted]
 
 ### Licensing
+
 - **License**: [License type]
 - **Implications**: [What this means for us]
 
@@ -287,6 +324,7 @@ repo/
 ### For Product Manager (pm:)
 
 **Feature Opportunities**:
+
 1. **[Feature]** - [User value proposition]
    - Effort estimate: Low/Medium/High
    - Suggested priority: P1/P2/P3
@@ -296,10 +334,12 @@ repo/
    - Suggested priority: P1/P2/P3
 
 **User Stories to Consider**:
+
 - As a [user], I want [feature] so that [benefit]
 - As a [user], I want [feature] so that [benefit]
 
 **Questions for PM**:
+
 - [Question about user needs or priorities]
 - [Question about scope or timeline]
 
@@ -308,6 +348,7 @@ repo/
 ### For Technical Architect (arch:)
 
 **Architecture Recommendations**:
+
 1. **[Pattern/Approach]** - [Why and how to apply]
    - Complexity: Low/Medium/High
    - Files affected: [estimate]
@@ -317,10 +358,12 @@ repo/
    - Files affected: [estimate]
 
 **TDD Candidates**:
+
 - [ ] [Feature/pattern] - Ready for technical design
 - [ ] [Feature/pattern] - Needs more research
 
 **Technical Questions**:
+
 - [Question about implementation approach]
 - [Question about tradeoffs]
 
@@ -329,14 +372,17 @@ repo/
 ## 10. Action Items
 
 ### Immediate (This Sprint)
+
 - [ ] [Action item with owner]
 - [ ] [Action item with owner]
 
 ### Short-term (Next Sprint)
+
 - [ ] [Action item]
 - [ ] [Action item]
 
 ### Long-term (Backlog)
+
 - [ ] [Action item]
 - [ ] [Action item]
 
@@ -345,6 +391,7 @@ repo/
 ## 11. Appendix
 
 ### Key File References
+
 | File | Purpose | Notable Code |
 |------|---------|--------------|
 | `path/to/file` | [purpose] | Lines X-Y: [what's notable] |
@@ -352,6 +399,7 @@ repo/
 ### Code Snippets
 
 #### [Snippet Name]
+
 ```javascript
 // From: path/to/file.js
 // Purpose: [why this is notable]
@@ -360,6 +408,7 @@ repo/
 ```
 
 ### External Resources
+
 - [Link to relevant docs]
 - [Link to related articles]
 - [Link to similar projects]
@@ -369,16 +418,19 @@ repo/
 ## Handoff
 
 ### Status
+
 - [x] Research complete
 - [ ] PM review pending
 - [ ] Architect review pending
 - [ ] Action items assigned
 
 ### Next Persona
+
 **Primary**: `pm:` for feature prioritization
 **Secondary**: `arch:` for technical design
 
 ### Handoff Notes
+
 [Any context the next persona should know]
 
 ---

@@ -9,6 +9,7 @@ This skill provides validated git operations ensuring safety, format compliance,
 ## Trigger
 
 Invoke when:
+
 - Creating branches, commits, tags, or PRs
 - Merging or pushing changes
 - Any git write operation needed
@@ -42,10 +43,12 @@ Invoke when:
 ## Workflow A: Create Feature Branch
 
 ### Input
+
 - Branch name (validated against naming conventions)
 - Base branch (default: main)
 
 ### Process
+
 ```
 1. Validate branch name format
    - Must be [category/]kebab-case-name
@@ -70,6 +73,7 @@ Invoke when:
 ```
 
 ### Output
+
 - Branch created locally and on remote
 - Upstream tracking configured
 - Audit log updated
@@ -77,10 +81,12 @@ Invoke when:
 ## Workflow B: Create Validated Commit
 
 ### Input
+
 - Commit message (validated against Conventional Commits)
 - Files to stage (specific list, never `git add .`)
 
 ### Process
+
 ```
 1. Validate commit message format
    - Pattern: type(scope): description
@@ -120,16 +126,19 @@ Invoke when:
 ```
 
 ### Output
+
 - Commit created with validated message
 - Audit log updated
 
 ## Workflow C: Create Semantic Version Tag
 
 ### Input
+
 - Tag name (validated against semver)
 - Tag message/description
 
 ### Process
+
 ```
 1. Validate semantic version format
    - Pattern: vMAJOR.MINOR.PATCH
@@ -148,18 +157,21 @@ Invoke when:
 ```
 
 ### Output
+
 - Tag created locally and on remote
 - Audit log updated
 
 ## Workflow D: Create Pull Request
 
 ### Input
+
 - Source branch
 - Target branch (default: main)
 - PR title (Conventional Commits format)
 - PR body (template sections required)
 
 ### Process
+
 ```
 1. Verify branch is pushed to remote
    git ls-remote --heads origin [branch]
@@ -195,15 +207,18 @@ Invoke when:
 ```
 
 ### Output
+
 - PR created with URL
 - Audit log updated
 
 ## Workflow E: Merge PR with Safety Checks
 
 ### Input
+
 - PR number
 
 ### Process
+
 ```
 1. Fetch PR details
    gh pr view [PR#] --json state,reviews,statusCheckRollup
@@ -227,6 +242,7 @@ Invoke when:
 ```
 
 ### Output
+
 - PR merged
 - Branch cleaned up
 - Audit log updated
@@ -234,10 +250,12 @@ Invoke when:
 ## Workflow F: Push to Remote
 
 ### Input
+
 - Branch name
 - Remote (default: origin)
 
 ### Process
+
 ```
 1. Validate not pushing to protected branch without approval
    if [[ "$branch" == "main" ]]; then
@@ -254,15 +272,18 @@ Invoke when:
 ```
 
 ### Output
+
 - Changes pushed to remote
 - Audit log updated
 
 ## Workflow G: Pre-Merge Checklist
 
 ### Input
+
 - PR number
 
 ### Process
+
 ```
 REQUIRED CHECKS (Block merge if failed):
 
@@ -301,6 +322,7 @@ POST-MERGE ACTIONS (Automatic):
 ## Validation Reference
 
 ### Commit Message Validation
+
 ```javascript
 // Conventional Commits pattern
 const PATTERN = /^(feat|fix|docs|style|refactor|test|chore)(\([a-z0-9-]+\))?!?:\s.+/;
@@ -322,6 +344,7 @@ function validateCommit(message) {
 ```
 
 ### Branch Name Validation
+
 ```javascript
 // Valid categories
 const CATEGORIES = ['feat', 'fix', 'docs', 'refactor', 'style', 'chore'];
@@ -335,6 +358,7 @@ function validateBranch(name) {
 ```
 
 ### Semantic Version Validation
+
 ```javascript
 // Pattern: vMAJOR.MINOR.PATCH
 const PATTERN = /^v\d+\.\d+\.\d+$/;
@@ -375,6 +399,7 @@ function validateTag(tag) {
 ## Error Messages
 
 ### Invalid Commit Message
+
 ```
 [REJECTED] Commit message invalid
 
@@ -388,6 +413,7 @@ Example: fix(nav): correct broken link to home-life
 ```
 
 ### Protected Branch Violation
+
 ```
 [REJECTED] Cannot commit directly to main
 
@@ -399,6 +425,7 @@ Protected branches require PR workflow:
 ```
 
 ### Force Push Blocked
+
 ```
 [REJECTED] Force push blocked
 

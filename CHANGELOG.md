@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+
 - dbt project initialization
 - dbt-mcp integration
 - SQL database connection setup
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-01-28
 
 ### Added
+
 - Initial project scaffold forked from agent orchestration template
 - Agent orchestration system with 10 personas:
   - Product Manager, Architect, Developer, Code Reviewer
@@ -39,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Git governance via git-master agent with enforcement hooks
 
 ### Removed
+
 - Japanese study site content (previous project)
 - Domain-specific content directories (content/, topics/, kanji/)
 - Japanese-specific agents (sensei)
@@ -49,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Japanese PRDs and TDDs
 
 ### Changed
+
 - Rebranded from "japanese-study-site" to "dbt-playground"
 - Updated all documentation for generic data project use
 - Simplified project structure for dbt development
@@ -57,15 +61,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
-| Version | Date | Highlights |
-|---------|------|------------|
-| 0.1.0 | 2026-01-28 | Initial scaffold with agent orchestration |
+| Version | Date       | Highlights                                |
+| ------- | ---------- | ----------------------------------------- |
+| 0.1.0   | 2026-01-28 | Initial scaffold with agent orchestration |
 
 ---
 
 ## How to Read This Changelog
 
 ### Categories
+
 - **Added**: New features or content
 - **Changed**: Changes to existing functionality
 - **Deprecated**: Features to be removed in future
@@ -74,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security**: Security-related changes
 
 ### Version Numbers
+
 - **MAJOR.MINOR.PATCH** (Semantic Versioning)
 - MAJOR: Significant architectural changes
 - MINOR: New features, content additions

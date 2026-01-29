@@ -9,6 +9,7 @@ This skill provides a structured verification loop to ensure implementations mee
 ## Trigger
 
 Invoke when:
+
 - Implementation is complete
 - Before code review
 - After bug fixes
@@ -43,11 +44,13 @@ Invoke when:
 ## Verification Steps
 
 ### 1. Requirements Check
+
 - [ ] Review TDD/PRD requirements
 - [ ] Confirm all acceptance criteria met
 - [ ] Verify no scope creep
 
 ### 2. Automated Tests
+
 - [ ] Run test suite (if exists)
 - [ ] All tests pass
 - [ ] No console errors
@@ -55,18 +58,21 @@ Invoke when:
 ### 3. Manual Verification
 
 #### Functional
+
 - [ ] Feature works as specified
 - [ ] User interactions correct
 - [ ] Error states handled
 - [ ] Edge cases work
 
 #### Visual
+
 - [ ] Layout correct
 - [ ] Styling consistent
 - [ ] No visual regressions
 - [ ] Dark mode (if applicable)
 
 #### Navigation
+
 - [ ] Links work
 - [ ] Breadcrumbs correct
 - [ ] Back button behavior
@@ -81,12 +87,14 @@ Invoke when:
 | Safari | [ ] | [ ] |
 
 ### 5. Accessibility
+
 - [ ] Keyboard navigation works
 - [ ] Focus states visible
 - [ ] Color contrast sufficient
 - [ ] Screen reader compatible
 
 ### 6. Japanese Content (if applicable)
+
 - [ ] Furigana displays correctly
 - [ ] Romaji toggles work
 - [ ] Audio plays
@@ -95,6 +103,7 @@ Invoke when:
 ## Issue Handling
 
 ### Found Issue
+
 ```markdown
 ## Issue: [Short Description]
 
@@ -116,6 +125,7 @@ Invoke when:
 ```
 
 ### After Fix
+
 - Re-run full verification loop
 - Confirm original issue resolved
 - Check for regressions
@@ -164,6 +174,7 @@ Verified by: [date]
 ## Exit Criteria
 
 All of the following must be true:
+
 - [ ] Requirements check passed
 - [ ] All tests pass
 - [ ] Manual verification complete
@@ -181,6 +192,7 @@ All of the following must be true:
 ## Quick Verification (Minor Changes)
 
 For small fixes/patches:
+
 - [ ] Feature works
 - [ ] No console errors
 - [ ] No visual regression

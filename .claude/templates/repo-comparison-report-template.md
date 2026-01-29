@@ -14,6 +14,7 @@
 [2-3 sentence overview of the comparison and key findings]
 
 **Winner by Use Case**:
+
 - **Best for [use case 1]**: [Repo X] - [One-line reason]
 - **Best for [use case 2]**: [Repo Y] - [One-line reason]
 - **Best for [use case 3]**: [Repo Z] - [One-line reason]
@@ -61,6 +62,7 @@
 | [Feature 4] | ✅ Excellent | ❌ Missing | ⚠️ Beta | [Notes] |
 
 **Legend**:
+
 - ✅ Fully implemented and working well
 - ⚠️ Partial implementation or beta quality
 - ❌ Not implemented
@@ -68,12 +70,15 @@
 ### Unique Features
 
 **[Repo A] only**:
+
 - [Unique feature 1] - [Description and value]
 
 **[Repo B] only**:
+
 - [Unique feature 1] - [Description and value]
 
 **[Repo C] only**:
+
 - [Unique feature 1] - [Description and value]
 
 ---
@@ -83,22 +88,27 @@
 ### Convergent Patterns (2+ repos)
 
 #### Pattern 1: [Pattern Name]
+
 **Found in**: [Repo A], [Repo B]
 **Implementation differences**:
+
 - [Repo A]: [How they implement it]
 - [Repo B]: [How they implement it]
 
 **Assessment**: Industry standard / Proven approach / Emerging pattern
 
 **Recommendation**: ✅ Adopt / ⚠️ Evaluate / ❌ Skip
+
 - **If adopt**: Use [Repo X]'s implementation because [reason]
 
 #### Pattern 2: [Pattern Name]
+
 [Continue format...]
 
 ### Divergent Patterns (unique approaches)
 
 #### [Repo A]: [Unique Pattern]
+
 **What it is**: [Description]
 **Why unique**: [Reason this repo alone uses it]
 **Pros**: [Benefits of this approach]
@@ -106,9 +116,11 @@
 **Assessment**: Innovative / Experimental / Over-engineered / Niche
 
 **Recommendation**: ✅ Adopt / ⚠️ Evaluate / ❌ Skip
+
 - **Reasoning**: [Why or why not]
 
 #### [Repo B]: [Unique Pattern]
+
 [Continue format...]
 
 ### Best Practices Identified
@@ -141,6 +153,7 @@
 ### Compatibility Assessment
 
 **With our stack**:
+
 - [Repo A]: ✅ Highly compatible / ⚠️ Needs adaptation / ❌ Incompatible
 - [Repo B]: ✅ Highly compatible / ⚠️ Needs adaptation / ❌ Incompatible
 - [Repo C]: ✅ Highly compatible / ⚠️ Needs adaptation / ❌ Incompatible
@@ -173,6 +186,7 @@
 **Declining**: [Repo Z] - [Why it's losing favor]
 
 **Trend insights**:
+
 - [Observation about where the ecosystem is heading]
 - [Emerging patterns across all repos]
 
@@ -180,19 +194,22 @@
 
 ## 6. Use Case Recommendations
 
-### Use [Repo A] if:
+### Use [Repo A] if
+
 - ✅ [Criterion 1 - e.g., "You need production-grade stability"]
 - ✅ [Criterion 2 - e.g., "You value comprehensive documentation"]
 - ✅ [Criterion 3 - e.g., "You need feature X"]
 - ❌ Don't use if: [Deal-breaker scenario]
 
-### Use [Repo B] if:
+### Use [Repo B] if
+
 - ✅ [Criterion 1]
 - ✅ [Criterion 2]
 - ✅ [Criterion 3]
 - ❌ Don't use if: [Deal-breaker scenario]
 
-### Use [Repo C] if:
+### Use [Repo C] if
+
 - ✅ [Criterion 1]
 - ✅ [Criterion 2]
 - ✅ [Criterion 3]
@@ -205,9 +222,11 @@
 ### Recommended Approach
 
 **Primary repo to adopt**: [Repo X]
+
 - **Reasoning**: [Why this is the foundation]
 
 **Patterns to borrow from others**:
+
 1. **From [Repo Y]**: Adopt [pattern/feature Z]
    - **How**: [Implementation approach]
    - **Value**: [Why this improves our solution]
@@ -216,6 +235,7 @@
    - **Value**: [Why this improves our solution]
 
 **Patterns to avoid**:
+
 - ❌ [Anti-pattern from Repo X]: [Reason to avoid]
 - ❌ [Anti-pattern from Repo Y]: [Reason to avoid]
 
@@ -236,16 +256,19 @@ Our Implementation:
 ### By Repository
 
 **[Repo A]**:
+
 - **Pros**: [Benefits]
 - **Cons**: [Limitations]
 - **Risks**: [Potential issues]
 
 **[Repo B]**:
+
 - **Pros**: [Benefits]
 - **Cons**: [Limitations]
 - **Risks**: [Potential issues]
 
 **[Repo C]**:
+
 - **Pros**: [Benefits]
 - **Cons**: [Limitations]
 - **Risks**: [Potential issues]
@@ -265,6 +288,7 @@ Our Implementation:
 ### Overall Winner: [Repo X]
 
 **Reasoning**:
+
 1. [Primary reason - e.g., "Best maintained with active community"]
 2. [Secondary reason - e.g., "Most complete feature set for our needs"]
 3. [Tertiary reason - e.g., "Excellent documentation and examples"]
@@ -276,14 +300,17 @@ Our Implementation:
 ### Implementation Strategy
 
 **Phase 1**: [Initial adoption plan]
+
 - Start with [Repo X] core implementation
 - Integrate [feature/pattern from Repo X]
 
 **Phase 2**: [Enhancement plan]
+
 - Borrow [pattern Y] from [Repo Z]
 - Customize [feature] to our needs
 
 **Phase 3**: [Long-term plan]
+
 - Evaluate [alternative approach]
 - Consider contributing back to [Repo X]
 
@@ -294,6 +321,7 @@ Our Implementation:
 ### For Product Manager (pm:)
 
 **Feature Opportunities** (in priority order):
+
 1. **[Feature from winning repo]** - [User value]
    - Effort: Low/Medium/High
    - Priority: P1/P2/P3
@@ -302,9 +330,11 @@ Our Implementation:
    - Priority: P1/P2/P3
 
 **User Stories**:
+
 - As a [user], I want [feature] so that [benefit]
 
 **Questions for PM**:
+
 - [Question about priorities/scope]
 
 ---
@@ -312,6 +342,7 @@ Our Implementation:
 ### For Technical Architect (arch:)
 
 **Architecture Recommendations**:
+
 1. **Base implementation on [Repo X]**
    - Adopt [core patterns]
    - Complexity: Low/Medium/High
@@ -320,10 +351,12 @@ Our Implementation:
    - Complexity: Low/Medium/High
 
 **TDD Candidates**:
+
 - [ ] [Feature/pattern] - Ready for technical design
 - [ ] [Feature/pattern] - Needs POC first
 
 **Technical Questions**:
+
 - [Question about implementation approach]
 
 ---
@@ -331,14 +364,17 @@ Our Implementation:
 ## 11. Action Items
 
 ### Immediate
+
 - [ ] Create POC using [Repo X] - Owner: [name]
 - [ ] Evaluate [specific pattern] from [Repo Y] - Owner: [name]
 
 ### Short-term
+
 - [ ] Draft TDD for [feature] - Owner: arch
 - [ ] Create PRD for [feature] - Owner: pm
 
 ### Long-term
+
 - [ ] Full implementation - Owner: dev
 - [ ] Consider contributing [enhancement] back to [Repo X]
 
@@ -347,11 +383,13 @@ Our Implementation:
 ## 12. Appendix
 
 ### Individual Report Links
+
 - [[REPO-RESEARCH-[repo-a]-[date].md]] (optional)
 - [[REPO-RESEARCH-[repo-b]-[date].md]] (optional)
 - [[REPO-RESEARCH-[repo-c]-[date].md]] (optional)
 
 ### External Resources
+
 - [Repo A URL]
 - [Repo B URL]
 - [Repo C URL]

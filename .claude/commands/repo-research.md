@@ -3,11 +3,13 @@
 Research an external repository and generate a learnings report for pm: and arch: handoff.
 
 ## Usage
+
 ```
 /repo-research <github-url> [--depth=quick|standard|deep] [--focus="research question"]
 ```
 
 ## Examples
+
 ```
 /repo-research https://github.com/example/flashcard-app
 /repo-research https://github.com/example/ui-lib --depth=deep --focus="theming system"
@@ -73,6 +75,7 @@ Default: `standard`
 **Report Location**: `docs/research/REPO-RESEARCH-[repo-name]-[YYYY-MM-DD].md`
 
 **Report Sections**:
+
 1. Executive Summary
 2. Repository Overview
 3. Project Structure
@@ -89,11 +92,13 @@ Default: `standard`
 After research completes, Sage provides handoff messages for:
 
 **Product Manager (pm:)**
+
 - Feature opportunities with user value
 - Priority recommendations
 - Questions for scope decisions
 
 **Technical Architect (arch:)**
+
 - Architecture patterns to consider
 - TDD candidates
 - Technical concerns and tradeoffs

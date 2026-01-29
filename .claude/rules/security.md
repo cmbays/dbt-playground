@@ -5,6 +5,7 @@ Security guidelines for the Japanese learning website.
 ## Threat Model
 
 ### Current Context
+
 - Static website (no backend currently)
 - Client-side JavaScript only
 - localStorage for user data
@@ -12,6 +13,7 @@ Security guidelines for the Japanese learning website.
 - Public educational content
 
 ### Primary Threats
+
 | Threat | Risk Level | Mitigation |
 |--------|------------|------------|
 | XSS (Cross-site Scripting) | High | Sanitize dynamic content |
@@ -23,6 +25,7 @@ Security guidelines for the Japanese learning website.
 ## Content Security
 
 ### Dynamic Content
+
 ```javascript
 // NEVER use innerHTML with untrusted data
 element.innerHTML = userInput; // DANGEROUS
@@ -33,7 +36,9 @@ element.setAttribute('data-value', sanitize(input)); // For attributes
 ```
 
 ### Sanitization
+
 When innerHTML is necessary:
+
 ```javascript
 // Use DOMPurify or similar
 const clean = DOMPurify.sanitize(dirty);
@@ -46,6 +51,7 @@ parent.appendChild(el);
 ```
 
 ### External Links
+
 ```html
 <!-- Always use noopener noreferrer -->
 <a href="https://external.com" target="_blank" rel="noopener noreferrer">
@@ -56,6 +62,7 @@ parent.appendChild(el);
 ## Data Storage
 
 ### localStorage Security
+
 ```javascript
 // Always validate data from localStorage
 function getSafeData(key, defaultValue) {
@@ -80,6 +87,7 @@ function getSafeData(key, defaultValue) {
 ```
 
 ### Data Validation
+
 ```javascript
 // Validate before use
 function isValidProgress(data) {
@@ -94,6 +102,7 @@ function isValidProgress(data) {
 ```
 
 ### Never Store
+
 - Passwords or credentials
 - API keys or tokens
 - Personally identifiable information
@@ -102,6 +111,7 @@ function isValidProgress(data) {
 ## External Resources
 
 ### Subresource Integrity (SRI)
+
 ```html
 <!-- Always use integrity attribute for external scripts -->
 <script
@@ -118,6 +128,7 @@ function isValidProgress(data) {
 ```
 
 ### CDN Best Practices
+
 - Use reputable CDNs (cdnjs, unpkg, jsdelivr)
 - Always include integrity hashes
 - Have fallback to local copy if critical
@@ -126,6 +137,7 @@ function isValidProgress(data) {
 ## Headers (When Server Control Available)
 
 ### Recommended Headers
+
 ```
 Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.trusted.com; style-src 'self' 'unsafe-inline'
 X-Content-Type-Options: nosniff
@@ -137,6 +149,7 @@ Referrer-Policy: strict-origin-when-cross-origin
 ## Input Handling
 
 ### Form Inputs
+
 ```javascript
 // Always sanitize and validate
 function handleInput(input) {
@@ -165,6 +178,7 @@ function escapeHtml(text) {
 ```
 
 ### URL Parameters
+
 ```javascript
 // Validate URL parameters
 const params = new URLSearchParams(window.location.search);
@@ -181,6 +195,7 @@ if (!validLevels.includes(level)) {
 ## Secure Patterns
 
 ### Event Handlers
+
 ```javascript
 // AVOID inline handlers with dynamic data
 element.setAttribute('onclick', 'doSomething("' + userInput + '")'); // DANGEROUS
@@ -190,6 +205,7 @@ element.addEventListener('click', () => doSomething(userInput));
 ```
 
 ### JSON Parsing
+
 ```javascript
 // Always wrap in try/catch
 try {
@@ -205,6 +221,7 @@ try {
 ```
 
 ### Error Messages
+
 ```javascript
 // Don't expose internal details
 // BAD
@@ -222,6 +239,7 @@ catch (e) {
 ## Code Review Checklist
 
 ### For Every Change
+
 - [ ] No `eval()` or `new Function()` with user input
 - [ ] innerHTML only with sanitized content
 - [ ] External links have `rel="noopener noreferrer"`
@@ -232,6 +250,7 @@ catch (e) {
 - [ ] Error messages don't expose internals
 
 ### For External Resources
+
 - [ ] SRI hashes included
 - [ ] Loaded from reputable sources
 - [ ] Version pinned
@@ -240,6 +259,7 @@ catch (e) {
 ## Future Considerations
 
 When authentication is added:
+
 - Use secure session management
 - Implement CSRF protection
 - Use HTTPS only
@@ -248,6 +268,7 @@ When authentication is added:
 - Password hashing (bcrypt)
 
 When backend is added:
+
 - Input validation on server
 - Parameterized queries
 - API authentication

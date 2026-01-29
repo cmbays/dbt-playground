@@ -14,6 +14,7 @@ This directory contains Technical Design Documents that specify how features wil
 ## Purpose
 
 TDDs translate PRDs into technical specifications:
+
 - Architecture decisions
 - Component design
 - Data structures
@@ -29,11 +30,13 @@ TDD-[NUMBER]-[short-name].md
 ```
 
 Examples:
+
 - `TDD-001-sample-data-pipeline.md`
 - `TDD-002-incremental-models.md`
 - `TDD-003-data-quality-tests.md`
 
 Architecture diagrams use matching names:
+
 ```
 TDD-001-sample-data-pipeline.d2
 ```

@@ -14,6 +14,7 @@ This directory contains review documentation and artifacts from code and design 
 ## Purpose
 
 Capture review feedback and decisions:
+
 - Code review summaries
 - Design review reports
 - Review checklists
@@ -22,14 +23,17 @@ Capture review feedback and decisions:
 ## Review Types
 
 ### Code Review
+
 Performed by: Code Reviewer (`review:` prefix)
 Focus: Code quality, patterns, security, maintainability
 
 ### Design Review
+
 Performed by: Design Reviewer (`design:` prefix)
 Focus: UI/UX, accessibility, visual consistency
 
 ### Content Review
+
 Performed by: Japanese Sensei (`sensei:` prefix)
 Focus: Language accuracy, cultural appropriateness, pedagogy
 
@@ -40,6 +44,7 @@ Focus: Language accuracy, cultural appropriateness, pedagogy
 ```
 
 Examples:
+
 - `2025-01-24-code-flashcard-flip.md`
 - `2025-01-24-design-kanji-filter.md`
 - `2025-01-24-content-shopping-dialogue.md`
@@ -47,12 +52,14 @@ Examples:
 ## When to Create Review Artifacts
 
 Create formal review documents for:
+
 - Major feature implementations
 - Significant bug fixes
 - Architecture changes
 - Content additions
 
 Minor reviews can be captured in:
+
 - PR comments
 - Commit messages
 - Issue comments
@@ -86,6 +93,7 @@ Minor reviews can be captured in:
 ## Templates
 
 ### Quick Code Review
+
 ```markdown
 ## Code Review: [Feature]
 **Date**: YYYY-MM-DD
@@ -102,6 +110,7 @@ Brief assessment
 ```
 
 ### Quick Design Review
+
 ```markdown
 ## Design Review: [Feature]
 **Date**: YYYY-MM-DD

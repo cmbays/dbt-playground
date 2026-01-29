@@ -16,6 +16,7 @@
 - Bug fixed with valuable root cause analysis
 
 **Do NOT use for**:
+
 - Trivial sessions (<3 files modified)
 - Sessions with no reusable learnings
 - When learnings already curated in real-time
@@ -25,11 +26,13 @@
 ## Prerequisites
 
 **Required inputs**:
+
 - Session notes (`temp/SESSION-*.md`) OR conversation context
 - Understanding of what was accomplished
 - Access to codebase/documentation changes
 
 **Required knowledge**:
+
 - Single-source-of-truth hierarchy (Skills > LEARNINGS > FOR_CHRIS)
 - FOR_CHRIS doc decision rubric (≥2 criteria)
 - Quality bar for patterns (≥2 proven uses)
@@ -43,12 +46,14 @@
 **Inputs**: Session notes files, conversation history
 
 **Actions**:
+
 1. List all `temp/SESSION-*.md` files: `ls temp/SESSION-*.md`
 2. Read each uncurated session note
 3. Review conversation context if session notes incomplete
 4. Identify session scope: What was accomplished? What was tried?
 
 **Questions to guide**:
+
 - What was the main accomplishment?
 - What challenges were encountered?
 - What solutions worked?
@@ -66,6 +71,7 @@
 #### Tier 1: Executable Workflows → Skills
 
 **Criteria**:
+
 - ✅ Repeatable process with clear steps
 - ✅ Proven in ≥2 real implementations
 - ✅ Actionable (not just insights)
@@ -75,6 +81,7 @@
 **Delegate**: Use `continuous-learning.md` skill for extraction
 
 **Examples**:
+
 - Workflow for agent handoffs
 - Process for temp-first file creation
 - Steps for parallel review execution
@@ -84,6 +91,7 @@
 #### Tier 2: Technical Insights → LEARNINGS.md
 
 **Criteria**:
+
 - ✅ Technical pattern or decision framework
 - ✅ Proven valuable (≥2 uses OR high-impact single use)
 - ✅ Generalizable insight (not workflow steps)
@@ -93,6 +101,7 @@
 **Action**: Add entry directly to LEARNINGS.md
 
 **Examples**:
+
 - Decision framework: "When to create new files vs. edit"
 - Common pitfall: "File path assumptions"
 - Best practice: "Version stamps in modified files"
@@ -102,6 +111,7 @@
 #### Tier 3: Educational Narratives → FOR_CHRIS Docs
 
 **Criteria**: Decision rubric met (≥2 criteria)
+
 1. Significant architectural decision made
 2. Novel pattern not in existing docs
 3. Workflow changed affecting future dev
@@ -113,6 +123,7 @@
 **Action**: Create using template in `.claude/templates/for-chris-doc-template.md`
 
 **Examples**:
+
 - Agent orchestration comparison (created)
 - Kanji module architecture (future)
 - localStorage schema design (future)
@@ -122,6 +133,7 @@
 #### Tier 4: Bug Patterns → TESTING.md
 
 **Criteria**:
+
 - ✅ Bug with identified root cause
 - ✅ Preventable pattern (not one-off)
 
@@ -130,6 +142,7 @@
 **Action**: Add to bug learnings section
 
 **Examples**:
+
 - Root cause analysis
 - Prevention strategy
 - Detection approach
@@ -149,11 +162,13 @@
 ### Step 3: Extract to Appropriate Locations
 
 **For Tier 1 (Skills)**:
+
 1. Use `.claude/skills/continuous-learning.md` process
 2. Create new skill file
 3. Cross-reference in LEARNINGS.md
 
 **For Tier 2 (LEARNINGS.md)**:
+
 1. Open `docs/reference/LEARNINGS.md`
 2. Choose appropriate section:
    - Proven Patterns
@@ -161,6 +176,7 @@
    - Common Pitfalls
    - Best Practices
 3. Add entry using format:
+
    ```markdown
    #### Pattern/Framework/Pitfall/Practice: [Name]
 
@@ -169,10 +185,12 @@
    **Description**: Details
    **See also**: Links
    ```
+
 4. Update Table of Contents if new section added
 5. Update metrics at bottom
 
 **For Tier 3 (FOR_CHRIS docs)**:
+
 1. Verify decision rubric met (≥2 criteria)
 2. Choose descriptive topic name: `[topic-description].md`
 3. Copy template from `.claude/templates/for-chris-doc-template.md`
@@ -181,6 +199,7 @@
 6. Update `archive/FOR_CHRIS_docs/README.md` index
 
 **For Tier 4 (Bug patterns)**:
+
 1. Open `docs/TESTING.md`
 2. Navigate to `#bug-learnings` section
 3. Add entry with root cause, fix, prevention
@@ -196,6 +215,7 @@
 **File naming**: `temp/LEARNING_DIGEST_[YYYY-MM-DD].md`
 
 **Template**:
+
 ```markdown
 # Learning Digest - [Date]
 
@@ -264,6 +284,7 @@
 **IMPORTANT**: Always get explicit user approval before cleaning temp files
 
 **Ask**:
+
 ```
 I've curated the following session notes:
 - temp/SESSION-[date1].md
@@ -277,10 +298,12 @@ May I clean up these curated session files?
 ```
 
 **If approved**:
+
 - Move curated files to `archive/sessions/` OR delete (follow project policy)
 - Keep learning digest in temp/ for reference
 
 **If not approved**:
+
 - Leave session files in place
 - Note in digest which files remain
 
@@ -291,11 +314,13 @@ May I clean up these curated session files?
 ## Expected Outcomes
 
 **Primary outputs**:
+
 - `temp/LEARNING_DIGEST_[DATE].md` - Curation summary
 - Updated learning repositories (skills, LEARNINGS.md, FOR_CHRIS docs, TESTING.md)
 - Clean temp/ directory (with approval)
 
 **Quality indicators**:
+
 - ✅ All tiers considered for each learning
 - ✅ Single-source-of-truth hierarchy respected
 - ✅ Cross-references complete
@@ -303,6 +328,7 @@ May I clean up these curated session files?
 - ✅ Learning digest comprehensive
 
 **Success metrics**:
+
 - Sessions curated ÷ sessions accumulated ≥ 0.5 (at least half curated)
 - Learnings extracted > 0 (found reusable patterns)
 - No duplication across repositories
@@ -314,11 +340,13 @@ May I clean up these curated session files?
 ### Example 1: Post-Feature Curation (v0.2 Kanji Module)
 
 **Sessions**:
+
 - `temp/SESSION-2026-01-20.md` (kanji data structure)
 - `temp/SESSION-2026-01-21.md` (flashcard UI)
 - `temp/SESSION-2026-01-22.md` (JLPT filtering)
 
 **Learnings categorized**:
+
 - **Tier 1 (Skill)**: Data generation workflow → `learned-pattern-data-generation.md`
 - **Tier 2 (LEARNINGS)**: "Separate data from presentation" → Added to Proven Patterns
 - **Tier 3 (FOR_CHRIS)**: Kanji module architecture → `kanji-module-architecture.md` (rubric met: architectural decision, novel pattern, multiple approaches)
@@ -333,9 +361,11 @@ May I clean up these curated session files?
 ### Example 2: Bug Fix Curation
 
 **Session**:
+
 - `temp/SESSION-2026-01-15.md` (navigation link bug)
 
 **Learnings categorized**:
+
 - **Tier 1 (Skill)**: None (bug-specific fix)
 - **Tier 2 (LEARNINGS)**: "File path assumptions" pitfall → Added to Common Pitfalls
 - **Tier 3 (FOR_CHRIS)**: No (doesn't meet rubric)
@@ -376,6 +406,7 @@ May I clean up these curated session files?
 **Why it's wrong**: Violates single-source-of-truth hierarchy
 
 **Solution**:
+
 - If it has executable steps → Skill
 - If it's a technical insight → LEARNINGS.md
 - If it meets rubric → FOR_CHRIS doc

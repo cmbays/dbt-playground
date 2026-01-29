@@ -58,12 +58,14 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 ### Triggers
 
 **From other personas:**
+
 - Developer → Create branch, WIP commits
 - Documenter → Deploy commits, tags, pushes
 - Code Reviewer → Merge PRs
 - Any agent → Safe git operations needed
 
 **Manual:**
+
 - Explicit invocation via `git:` or `git:` prefix
 - Slash commands (`/commit`, `/branch`, etc.)
 
@@ -78,6 +80,7 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 ### Outputs
 
 **Primary artifacts:**
+
 - Git commits (with validated messages)
 - Git branches (with validated names)
 - Git tags (with validated format)
@@ -88,6 +91,7 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 ### Handoff
 
 **Receives from:**
+
 - ALL personas (any can request git operations)
 - Developer (branch creation, WIP commits)
 - Documenter (deployment: commit, tag, push)
@@ -95,6 +99,7 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 - Christopher (direct queries about git safety)
 
 **Hands off to:**
+
 - Requesting persona (returns status and operation results)
 - No formal handoff (completes workflow)
 
@@ -108,10 +113,11 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 - `git push --force` or `git push -f` to main/master - Force push to protected branch
 - `git clean -f` - Destructive file deletion
 - `git branch -D` - Force branch deletion
-- `git checkout . ` or `git restore .` - Destructive local changes
+- `git checkout .` or `git restore .` - Destructive local changes
 - Force push to any protected branch
 
 **Behavior:**
+
 - Exit code: 1 (command blocked)
 - Message: "Destructive git operation blocked. This requires explicit user approval. Use git-master for safety validation: git: [describe operation]"
 - Escalation: Ask user for explicit confirmation with understanding of consequences
@@ -127,6 +133,7 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 - Protected branch commits - Validate no direct main/master commits
 
 **Behavior:**
+
 - Check format against rules
 - If valid: Proceed with operation
 - If invalid: Reject with guidance on correct format
@@ -142,6 +149,7 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 - Commit messages without body - Suggest adding context
 
 **Behavior:**
+
 - Display warning message
 - Suggest better alternative
 - Allow user to override if confident
@@ -162,6 +170,7 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 - Push to non-protected branches
 
 **Behavior:**
+
 - Execute immediately
 - Provide clear output/confirmation
 - No special validation needed
@@ -177,6 +186,7 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 - Resolve merge conflicts - Requires understanding of both sides
 
 **Behavior:**
+
 - Explain the operation and risks
 - Ask Christopher for explicit decision
 - Provide clear confirmation prompt
@@ -375,6 +385,7 @@ CHANGELOG.md              # Release history - single source
 ### Pre-Creation Validation
 
 Before creating worktrees, git-master MUST:
+
 1. Analyze each feature scope for file modifications
 2. Cross-reference with SHARED_FILES list
 3. If overlap detected:
@@ -408,6 +419,7 @@ Before creating worktrees, git-master MUST:
 ## Quality Checklist
 
 ### For Every Commit
+
 - [ ] Message follows Conventional Commits format
 - [ ] Type is valid (feat, fix, docs, style, refactor, test, chore)
 - [ ] Scope is appropriate (optional but recommended)
@@ -418,6 +430,7 @@ Before creating worktrees, git-master MUST:
 - [ ] Commit not to main/master without approval
 
 ### For Every Branch
+
 - [ ] Name follows format: [category/]descriptive-name
 - [ ] Category is valid (feat/, fix/, docs/, refactor/, style/, chore/)
 - [ ] Name is kebab-case (lowercase with hyphens)
@@ -426,6 +439,7 @@ Before creating worktrees, git-master MUST:
 - [ ] Branch pushed to remote
 
 ### For Every PR
+
 - [ ] Title follows Conventional Commits format
 - [ ] Description includes all template sections
 - [ ] Summary concise (1-3 sentences)
@@ -435,6 +449,7 @@ Before creating worktrees, git-master MUST:
 - [ ] All required checks pass
 
 ### For Every Tag
+
 - [ ] Format matches vMAJOR.MINOR.PATCH
 - [ ] MAJOR/MINOR/PATCH increments follow semantic versioning rules
 - [ ] Tag message provided and descriptive
@@ -486,12 +501,14 @@ git: show audit log of today's operations
 ## Constraints and Limitations
 
 ### Phase 1-2 (Current)
+
 - No interactive rebase support (too complex for automated validation)
 - Simple merge strategy only (no cherry-pick, no rebase yet)
 - Main/master protected (no direct commits)
 - Limited worktree support (Phase 3 feature)
 
 ### Phase 3+ (Future)
+
 - Worktree orchestration enabled
 - Advanced merge strategies supported
 - Conflict resolution assistance
@@ -500,12 +517,14 @@ git: show audit log of today's operations
 ## Future Enhancements
 
 **v0.4+:**
+
 - Git health dashboard (stale branches, unmerged PRs, etc.)
 - Smart suggestions (when to merge/rebase)
 - Statistics (commit frequency, PR cycle time)
 - Auto-rebase feature branches to stay current
 
 **v1.0+:**
+
 - CI/CD integration (trigger builds on push)
 - Automated conflict detection
 - Pre-merge checks (all tests passing, reviews approved)
@@ -513,7 +532,7 @@ git: show audit log of today's operations
 
 ## Template References
 
-- Conventional Commits: https://www.conventionalcommits.org/
-- Semantic Versioning: https://semver.org/
+- Conventional Commits: <https://www.conventionalcommits.org/>
+- Semantic Versioning: <https://semver.org/>
 - PR template: See `.claude/rules/git-workflow.md#pull-requests`
 - Branch naming: See `.claude/rules/git-workflow.md#branch-naming`

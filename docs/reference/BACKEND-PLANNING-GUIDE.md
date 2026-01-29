@@ -15,6 +15,7 @@ Two documents have been created to plan backend infrastructure and agent splitti
 2. **TDD-006**: Backend Infrastructure Design (Technical Design)
 
 These documents are intentionally incomplete frameworks. PM and Architect personas should collaborate to:
+
 - Research actual technology options
 - Fill in decision rationale
 - Resolve open questions
@@ -178,12 +179,14 @@ When backend work begins:
 ### Technology Stack Axes (Architect)
 
 **Framework**:
+
 - Node.js/Express (familiar to frontend team)
 - Python/FastAPI (great for algorithms, different language)
 - Go (fast, compiled, unfamiliar)
 - Rust (extremely safe, steep learning curve)
 
 **Decision Criteria**:
+
 - Team's existing language skills
 - Ecosystem maturity
 - DevOps simplicity
@@ -195,11 +198,13 @@ When backend work begins:
 ---
 
 **Database**:
+
 - PostgreSQL (relational, robust, industry standard)
 - MongoDB (document-based, more flexible schema)
 - Firebase (fully managed, easiest to operate)
 
 **Decision Criteria**:
+
 - Data structure complexity
 - Scaling plan
 - Backup/recovery importance
@@ -211,11 +216,13 @@ When backend work begins:
 ---
 
 **Hosting**:
+
 - VPS (DigitalOcean, Linode): $5-20/month
 - Vercel/Railway: $0-50/month
 - AWS/GCP: Pay-per-use, can scale to $1000+
 
 **Decision Criteria**:
+
 - Expected user count
 - DevOps skills available
 - Cost tolerance
@@ -239,26 +246,31 @@ When backend work begins:
 ## Common Pitfalls & How to Avoid
 
 ### Pitfall 1: Over-Engineering for Scale
+
 **How it happens**: Choosing Kubernetes/microservices for MVP
 **Prevention**: Start simple (VPS + PostgreSQL), scale when needed
 **Guidance**: Architect should recommend what supports 1K-10K users, not 1M
 
 ### Pitfall 2: Technology Churn
+
 **How it happens**: Rewriting backend in different language mid-project
 **Prevention**: Research thoroughly before selection, commit to choice
 **Guidance**: Architect should document why alternatives were rejected
 
 ### Pitfall 3: Incomplete Data Migration
+
 **How it happens**: Users sign up, localStorage data is lost
 **Prevention**: Design migration strategy in advance, test thoroughly
 **Guidance**: PRD-006 should answer data migration question clearly
 
 ### Pitfall 4: Agent Splitting Too Early
+
 **How it happens**: Splitting dev team before backend is needed
 **Prevention**: This guide documents trigger point (infrastructure decision made)
 **Guidance**: Don't split until there's actual backend code to write
 
 ### Pitfall 5: API Contract Drift
+
 **How it happens**: Frontend and backend disagree on API format
 **Prevention**: Document API spec in TDD-006 before implementation starts
 **Guidance**: Make API spec the contract; code should follow spec, not vice-versa
@@ -309,6 +321,7 @@ When both documents are ready for handoff to Backend Developer:
 ## Questions?
 
 If either document is unclear:
+
 1. Check the CLAUDE.md for persona definitions
 2. Check the git history for similar decisions (architecture decisions in past)
 3. Reference the PRD templates and TDD templates in same directories

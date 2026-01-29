@@ -9,6 +9,7 @@ This skill implements the Red-Green-Refactor cycle for developing features with 
 ## Trigger
 
 Invoke when:
+
 - Implementing new JavaScript functionality
 - Adding interactive features
 - Building components with complex logic
@@ -24,6 +25,7 @@ Invoke when:
 
 2. **Write Test Specification**
    Create `temp/v[X.Y]_TESTING.md`:
+
    ```markdown
    # Test Specification: [Feature]
 
@@ -45,6 +47,7 @@ Invoke when:
    ```
 
 3. **Create Test Scaffolding** (for JS)
+
    ```javascript
    // temp/[feature].test.js
    describe('[Feature Name]', () => {

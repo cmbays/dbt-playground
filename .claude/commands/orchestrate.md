@@ -3,11 +3,13 @@
 Execute multi-persona workflow for feature development.
 
 ## Usage
+
 ```
 /orchestrate [feature request or issue]
 ```
 
 ## Example
+
 ```
 /orchestrate Add vocabulary quiz with spaced repetition
 ```
@@ -64,6 +66,7 @@ At each stage transition, output:
 ## Checkpoint Approvals
 
 The workflow pauses for user approval at:
+
 - After PRD (before architecture)
 - After TDD (before implementation)
 - After implementation (before reviews)
@@ -72,6 +75,7 @@ The workflow pauses for user approval at:
 ## Skip Options
 
 For smaller tasks, phases can be skipped:
+
 ```
 /orchestrate --skip-prd Add JLPT N4 filter option
 /orchestrate --dev-only Fix navigation bug in shopping page

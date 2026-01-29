@@ -3,6 +3,7 @@
 Activate structured planning mode for implementation tasks.
 
 ## Usage
+
 ```
 /plan [feature or task description]
 ```
@@ -78,6 +79,7 @@ If issues arise:
 ```
 
 Would create a plan covering:
+
 - Data structure changes
 - UI filter component
 - JavaScript filter logic

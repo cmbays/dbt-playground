@@ -9,6 +9,7 @@ This skill enables parallel development using git worktrees while preventing con
 ## Trigger
 
 Invoke when:
+
 - Multiple features need parallel development
 - Long-running feature shouldn't block other work
 - Need isolated environments for different branches
@@ -26,18 +27,20 @@ Main Repository
 ```
 
 Each worktree has its own:
+
 - Working directory
 - Checked out branch
 - Staging area
 
 But shares:
+
 - Git objects database
 - Remote configuration
 - Hooks
 
 ## When to Use Worktrees
 
-### USE Worktrees When:
+### USE Worktrees When
 
 | Scenario | Reason |
 |----------|--------|
@@ -47,7 +50,7 @@ But shares:
 | A/B testing implementations | Compare approaches |
 | Review while developing | Keep review context separate |
 
-### DON'T Use Worktrees When:
+### DON'T Use Worktrees When
 
 | Contraindication | Reason | Alternative |
 |------------------|--------|-------------|
@@ -222,6 +225,7 @@ git worktree prune
 ## Commands Reference
 
 ### Create Worktree
+
 ```bash
 # From existing branch
 git worktree add <path> <branch>
@@ -231,11 +235,13 @@ git worktree add -b <new-branch> <path> <base-branch>
 ```
 
 ### List Worktrees
+
 ```bash
 git worktree list
 ```
 
 ### Remove Worktree
+
 ```bash
 # Clean removal
 git worktree remove <path>
@@ -245,6 +251,7 @@ git worktree remove --force <path>
 ```
 
 ### Prune Stale References
+
 ```bash
 git worktree prune
 ```
@@ -304,6 +311,7 @@ fatal: working tree '/path' is locked
 ```
 
 **Solution**:
+
 ```bash
 git worktree unlock /path
 # or remove lock file
@@ -321,25 +329,30 @@ git worktree prune
 ## Best Practices
 
 ### 1. Limit Active Worktrees
+
 - 2-3 maximum recommended
 - Each consumes disk space
 - Context switching overhead
 
 ### 2. Clear Naming
+
 ```
 ../project-feat-shopping-quiz    # Clear purpose
 ../project-wt1                    # Unclear
 ```
 
 ### 3. Regular Sync
+
 - Rebase worktrees from main weekly
 - Prevents large merge conflicts later
 
 ### 4. Clean Exit
+
 - Always `git worktree remove`, don't just delete
 - Run `git worktree prune` periodically
 
 ### 5. Document Ownership
+
 - Registry shows who owns what
 - Prevents accidental conflicts
 

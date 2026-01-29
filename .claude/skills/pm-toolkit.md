@@ -3,6 +3,7 @@
 ## Trigger
 
 Activate when:
+
 - Comparing features for prioritization
 - Writing PRD success metrics or acceptance criteria
 - Scope questions arise during development
@@ -20,6 +21,7 @@ Score each criterion 1-3, then sum:
 | **Foundation** | Standalone feature | Enables 1-2 others | Enables 3+ features |
 
 **Interpretation:**
+
 - **8-12**: Build now (current phase)
 - **5-7**: Next phase
 - **< 5**: Backlog / revisit later
@@ -35,6 +37,7 @@ We'll know this works when [observable result].
 ```
 
 **Example:**
+
 ```
 We believe SRS-based review scheduling will improve kanji retention
 because spaced repetition is proven to strengthen long-term memory.

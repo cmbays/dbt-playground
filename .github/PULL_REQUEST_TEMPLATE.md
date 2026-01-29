@@ -1,7 +1,6 @@
 ## Summary
 <!-- Brief description of what this PR accomplishes (1-3 sentences) -->
 
-
 ## Changes
 <!-- Bullet list of specific changes made -->
 -
@@ -26,6 +25,7 @@ Related to #
 <!-- How was this tested? What should reviewers verify? -->
 
 ### Manual Testing
+
 - [ ] Tested in Chrome
 - [ ] Tested in Firefox
 - [ ] Tested in Safari
@@ -41,7 +41,6 @@ Related to #
 
 ## Screenshots
 <!-- Add screenshots if applicable (drag & drop images here) -->
-
 
 ## Checklist
 <!-- All items must be checked before merging -->
@@ -66,15 +65,16 @@ Related to #
 ## Deployment Notes
 <!-- Any special instructions for deployment? Files to archive? Settings to change? -->
 
-
 ## For Reviewers
 <!-- What should reviewers focus on? Any areas of concern? -->
 
 ### Focus Areas
+
 -
 -
 
 ### Questions for Reviewers
+
 -
 -
 

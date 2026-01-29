@@ -9,6 +9,7 @@ This skill automates the creation of CHANGELOG.md entries by parsing git commit 
 ## Trigger
 
 Invoke when:
+
 - Preparing a release (`/deploy`)
 - Documenter needs changelog update (`docs: update changelog`)
 - Checking what changed since last release
@@ -92,12 +93,14 @@ Each commit message `type(scope): description` maps to:
 ### Step 5: Output
 
 **Draft mode** (default):
+
 ```bash
 # Write to temp for review
 # File: temp/CHANGELOG_DRAFT_vX.Y.Z.md
 ```
 
 **Apply mode** (with approval):
+
 ```bash
 # Insert after ## [Unreleased] header in CHANGELOG.md
 # Or replace [Unreleased] with versioned header
@@ -106,21 +109,25 @@ Each commit message `type(scope): description` maps to:
 ## Usage Examples
 
 ### Generate Draft for Next Release
+
 ```
 changelog: generate entries since v0.4.0
 ```
 
 ### Generate and Apply
+
 ```
 changelog: generate and apply entries for v0.5.0
 ```
 
 ### Release Notes Only (Condensed)
+
 ```
 changelog: generate release notes for v0.5.0
 ```
 
 ### Check for Breaking Changes
+
 ```
 changelog: check breaking changes since v0.4.0
 ```

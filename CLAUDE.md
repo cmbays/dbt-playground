@@ -209,18 +209,18 @@ for different phases of development.
 
 ### Available Personas
 
-| Persona | Prefix | Primary Focus |
-|---------|--------|---------------|
-| Product Manager | `pm:` | Requirements, PRDs, GitHub issues |
-| Technical Architect | `arch:` | System design, TDDs |
-| Quality Tester | `test:` | Test specifications, verification |
-| Feature Developer | `dev:` | Implementation, coding |
-| Code Reviewer | `review:` | Code quality, patterns, security |
-| Design Reviewer | `design:` | UI/UX, accessibility |
-| Documenter | `docs:` | Documentation, changelog |
-| Security Reviewer | `security:` | Security audit, OWASP |
-| Sage | `sage:` | Learning curation, pattern extraction |
-| Git-Master | `git:` | Git operations, safety, validation |
+| Persona             | Prefix      | Primary Focus                         |
+| ------------------- | ----------- | ------------------------------------- |
+| Product Manager     | `pm:`       | Requirements, PRDs, GitHub issues     |
+| Technical Architect | `arch:`     | System design, TDDs                   |
+| Quality Tester      | `test:`     | Test specifications, verification     |
+| Feature Developer   | `dev:`      | Implementation, coding                |
+| Code Reviewer       | `review:`   | Code quality, patterns, security      |
+| Design Reviewer     | `design:`   | UI/UX, accessibility                  |
+| Documenter          | `docs:`     | Documentation, changelog              |
+| Security Reviewer   | `security:` | Security audit, OWASP                 |
+| Sage                | `sage:`     | Learning curation, pattern extraction |
+| Git-Master          | `git:`      | Git operations, safety, validation    |
 
 **Persona Profiles**: See `.claude/agents/` for detailed role definitions.
 
@@ -228,16 +228,16 @@ for different phases of development.
 
 Project-specific commands for common workflows (in `.claude/commands/`):
 
-| Command | Purpose |
-|---------|---------|
-| `/plan` | Structured planning |
-| `/review` | Code quality review workflow |
-| `/orchestrate` | Multi-persona feature workflow |
-| `/deploy` | Version deployment workflow |
-| `/tdd` | Test-driven development workflow |
-| `/repo-research` | External repo analysis |
-| `/commit` | Validated git commit via git-master |
-| `/branch` | Validated branch creation via git-master |
+| Command          | Purpose                                    |
+| ---------------- | ------------------------------------------ |
+| `/plan`          | Structured planning                        |
+| `/review`        | Code quality review workflow               |
+| `/orchestrate`   | Multi-persona feature workflow             |
+| `/deploy`        | Version deployment workflow                |
+| `/tdd`           | Test-driven development workflow           |
+| `/repo-research` | External repo analysis                     |
+| `/commit`        | Validated git commit via git-master        |
+| `/branch`        | Validated branch creation via git-master   |
 
 ### Assembly Line Workflow
 
@@ -269,16 +269,16 @@ Each persona ends work with:
 
 ### Artifact Locations
 
-| Artifact | Location |
-|----------|----------|
-| PRDs | `docs/specs/PRD-*.md` |
-| TDDs | `docs/tdd/TDD-*.md` |
-| Test specifications | `temp/v*_TESTING.md` |
-| Work-in-progress | `temp/` |
-| Reviews | `docs/reviews/` |
-| Changelog | `CHANGELOG.md` |
-| Technical patterns | `docs/reference/LEARNINGS.md` |
-| Learned skills | `.claude/skills/learned-pattern-*.md` |
+| Artifact            | Location                              |
+| ------------------- | ------------------------------------- |
+| PRDs                | `docs/specs/PRD-*.md`                 |
+| TDDs                | `docs/tdd/TDD-*.md`                   |
+| Test specifications | `temp/v*_TESTING.md`                  |
+| Work-in-progress    | `temp/`                               |
+| Reviews             | `docs/reviews/`                       |
+| Changelog           | `CHANGELOG.md`                        |
+| Technical patterns  | `docs/reference/LEARNINGS.md`         |
+| Learned skills      | `.claude/skills/learned-pattern-*.md` |
 
 ### Invocation Methods
 

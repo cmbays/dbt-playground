@@ -17,6 +17,7 @@
 - Before launching multiple parallel agents
 
 **Do NOT use for**:
+
 - Simple single-agent tasks
 - Quick fixes or typo corrections
 - When context is already well-documented in PRDs/TDDs
@@ -26,6 +27,7 @@
 ## Prerequisites
 
 **Required inputs**:
+
 - Understanding of current session state
 - Knowledge of what work is in progress or just completed
 - Awareness of upcoming agent handoffs or next steps
@@ -37,6 +39,7 @@
 ### Step 1: Assess Current State
 
 **Actions**:
+
 1. Identify the current task and its progress
 2. List recent decisions and their rationale
 3. Note active blockers or dependencies
@@ -51,6 +54,7 @@
 **Label examples**: `pre-architect`, `post-kanji-filter`, `milestone-v0.3`, `mid-session`
 
 **Template**:
+
 ```markdown
 # Context Checkpoint: [Label]
 
@@ -100,6 +104,7 @@
 When the checkpoint is specifically for an agent handoff, create a condensed briefing section at the top of the checkpoint:
 
 **Quick Briefing (<500 tokens)**:
+
 ```markdown
 ## Agent Briefing: [Target Persona]
 
@@ -125,6 +130,7 @@ When the checkpoint is specifically for an agent handoff, create a condensed bri
 **Primary output**: `temp/CONTEXT_CHECKPOINT_[date]_[label].md`
 
 **Quality indicators**:
+
 - Checkpoint is self-contained (readable without prior context)
 - Decisions include rationale (not just what, but why)
 - Next steps are actionable
@@ -139,6 +145,7 @@ When the checkpoint is specifically for an agent handoff, create a condensed bri
 **Invocation**: `sage: checkpoint before switching to architect for spaced repetition design`
 
 **Output**: `temp/CONTEXT_CHECKPOINT_2026-01-27_pre-architect.md`
+
 ```markdown
 # Context Checkpoint: Pre-Architect
 
@@ -172,6 +179,7 @@ Design spaced repetition system for kanji study module.
 **Invocation**: `sage: checkpoint — milestone v0.3 complete`
 
 **Output**: `temp/CONTEXT_CHECKPOINT_2026-01-27_milestone-v0.3.md`
+
 ```markdown
 # Context Checkpoint: Milestone v0.3
 

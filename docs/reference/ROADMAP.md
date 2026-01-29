@@ -23,6 +23,7 @@ Build a dbt analytics project while learning data transformation best practices 
 **Status**: In Progress
 
 **Goals**:
+
 - [x] Agent orchestration scaffold
 - [x] Documentation framework
 - [ ] dbt project initialization
@@ -30,6 +31,7 @@ Build a dbt analytics project while learning data transformation best practices 
 - [ ] dbt-mcp integration
 
 **Deliverables**:
+
 - Working dbt project structure
 - Connected database (local or cloud)
 - dbt-mcp configured and functional
@@ -43,6 +45,7 @@ Build a dbt analytics project while learning data transformation best practices 
 **Theme**: First End-to-End Pipeline
 
 **Goals**:
+
 - Create sample source data (seeds or external)
 - Build staging models
 - Build intermediate models
@@ -51,11 +54,13 @@ Build a dbt analytics project while learning data transformation best practices 
 - Document models
 
 **Potential Data Domains**:
+
 - E-commerce (orders, customers, products)
 - SaaS metrics (users, events, subscriptions)
 - Financial data (transactions, accounts)
 
 **Deliverables**:
+
 - Complete dbt project with 10-20 models
 - Full test coverage
 - Generated dbt docs
@@ -65,6 +70,7 @@ Build a dbt analytics project while learning data transformation best practices 
 **Theme**: dbt Best Practices
 
 **Goals**:
+
 - Incremental models
 - Snapshots (SCD Type 2)
 - Custom macros
@@ -72,6 +78,7 @@ Build a dbt analytics project while learning data transformation best practices 
 - Advanced testing patterns
 
 **Deliverables**:
+
 - Production-ready patterns demonstrated
 - Macro library
 - Testing utilities
@@ -81,12 +88,14 @@ Build a dbt analytics project while learning data transformation best practices 
 **Theme**: Production Workflows
 
 **Goals**:
+
 - CI/CD for dbt
 - Data quality monitoring
 - Documentation generation
 - Orchestration patterns
 
 **Deliverables**:
+
 - Automated testing pipeline
 - Quality dashboards or reports
 

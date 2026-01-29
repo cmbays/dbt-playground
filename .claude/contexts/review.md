@@ -28,6 +28,7 @@ Review-focused personas only:
 ## Active Rules
 
 Load these rule files:
+
 - `rules/coding-style.md` - For pattern checking
 - `rules/security.md` - For vulnerability assessment
 - `rules/testing.md` - For test coverage review
@@ -35,22 +36,26 @@ Load these rule files:
 ## Active Skills
 
 Available workflows:
+
 - `skills/code-review-workflow.md` - Review process
 - `skills/verification-loop.md` - Verification checks
 
 ## Commands
 
 Priority commands:
+
 - `/review` - Code review
 
 ## Hooks
 
 Reduced hook set:
+
 - Pre-Stop checks only (reminder of uncommitted work)
 
 ## Focus Areas
 
 ### Code Review
+
 - Pattern adherence
 - Logic correctness
 - Security vulnerabilities
@@ -58,12 +63,14 @@ Reduced hook set:
 - Accessibility
 
 ### Design Review
+
 - Visual consistency
 - Responsive behavior
 - User experience
 - Accessibility compliance
 
 ### Security Review
+
 - OWASP vulnerabilities
 - Input validation
 - Output encoding
@@ -72,6 +79,7 @@ Reduced hook set:
 ## Constraints
 
 In review context:
+
 - **DO**: Analyze, assess, report
 - **DO**: Provide specific feedback
 - **DO**: Reference standards
@@ -82,6 +90,7 @@ In review context:
 ## Review Output Format
 
 All reviews should follow structured format:
+
 ```markdown
 ## Review: [Target]
 
@@ -101,6 +110,7 @@ All reviews should follow structured format:
 ## Context Switch
 
 Switch to:
+
 - `/context dev` - To implement fixes
 
 ## Example Session
