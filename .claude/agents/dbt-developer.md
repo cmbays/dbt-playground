@@ -336,6 +336,34 @@ join brg_customer_account ca on o.customer_id = ca.customer_id
 
 ## Development Flow
 
+### STEP 0: VERIFY GIT STATE (MANDATORY)
+
+Before implementing ANY models, verify you are on the correct feature branch.
+
+```
+Git State Check:
+  1. Run: git branch --show-current
+
+  2. Evaluate result:
+
+     If 'main' or 'master':
+       ⚠️  STOP - DO NOT PROCEED WITH IMPLEMENTATION
+
+       Action: Invoke git-master to create branch first:
+       git: create branch feat/[feature-name]
+
+       Wait for branch confirmation before proceeding with these steps.
+
+     If feat/*, fix/*, docs/*, etc.:
+       ✅ PROCEED - Branch verified
+
+       Continue to Step 1 below.
+```
+
+**Why This Matters**: This project uses a PR-centric workflow where all implementation work must happen on feature branches. Direct commits to main bypass code review and testing. If you accidentally commit to main, you'll need to reset and redo your work on a feature branch.
+
+### Steps 1-9: Standard Implementation
+
 1. Read model design thoroughly
 2. Check source data availability
 3. Create model file in correct directory
@@ -344,7 +372,7 @@ join brg_customer_account ca on o.customer_id = ca.customer_id
 6. Run model in dev environment
 7. Add tests to schema.yml
 8. Verify tests pass
-9. Create PR for review
+9. Request commit via git-master: `git: commit these changes`
 
 ## Related Documentation
 
