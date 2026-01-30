@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+
+- Incremental refresh patterns for large fact tables (v0.6)
+- Advanced analytics models (clustering, cohort analysis) (v0.6)
+- Real-time monitoring and alerting (v0.6)
+
+---
+
+## [0.5.0] - 2026-01-30
+
+### Added
+
+- **Analytics Models**: 7 new specialized analytics models for healthcare
+  - `dim_conditions` - Master condition dimension (130 rows)
+  - `fct_patient_summary` - Annual patient aggregations (21,343 rows)
+  - `fct_provider_metrics` - Monthly provider metrics (33,463 rows)
+  - `fct_condition_cohorts` - Patient-condition cohorts (7,165 rows)
+  - `fct_cost_analysis` - Detailed cost analysis (53,346 rows)
+  - `v_patient_current_conditions` - Active conditions view (3,811 rows)
+  - `v_provider_active_patients` - Provider panels view (5,855 rows)
+
+- **Comprehensive Testing**: 45+ new tests (91 total for analytics models)
+  - Schema validation: 33 tests
+  - Grain validation: 3 tests (unique_combination_of_columns)
+  - Referential integrity: 8 tests (relationships)
+  - Data quality: 38 tests (dbt_expectations)
+  - Singular tests: 5 custom SQL validations
+  - 100% pass rate
+
+- **Documentation**:
+  - Complete YAML documentation with example queries (3+ per model)
+  - BI Integration Guide for Tableau, Looker, Power BI, Metabase, Superset
+  - Test coverage and validation documentation
+
+### Technical Highlights
+
+- Extends v0.4's dimensional foundation with specialized analytics
+- Implements 3 healthcare analytics use cases:
+  - Patient outcomes tracking
+  - Provider performance metrics
+  - Cost analysis and financial reporting
+- Maintains Kimball dimensional methodology and conformed dimensions
+- Follows dbt 1.11+ best practices (new `arguments:` syntax)
+- Synthea healthcare dataset with 100K+ synthetic patients/encounters
+
+### Compatibility
+
+- No breaking changes to v0.4 models
+- Fully compatible with existing dimensions and facts
+- Requires dbt 1.11.2+, DuckDB 1.10.0+
+
+---
+
+## [Unreleased-Tools]
+
 ### Added
 
 - **RSS Digest Tool**: AI/Claude/Agents content aggregator with 26 curated feeds
@@ -41,11 +96,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Specifies skip conditions and error handling
 
 - **Documentation**: PRD-015-WORKFLOW-ENHANCEMENT.md
-
-### Planned
-
-- Marts layer enhancements (v0.5)
-- Semantic layer and metrics (v0.6)
 
 ---
 
@@ -203,6 +253,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.5.0   | 2026-01-30 | v0.5 Analytics - 7 models, 91 tests, BI integration |
 | 0.4.0   | 2026-01-30 | v0.4 Dimensional Models - 12 models, Kimball patterns, SCD2 |
 | 0.3.0   | 2026-01-29 | v0.3 Staging Complete - 9 models, 80 tests, 440k+ rows |
 | 0.2.0   | 2026-01-29 | v0.2 Environment Ready - uv workflow, 16 Synthea sources |
