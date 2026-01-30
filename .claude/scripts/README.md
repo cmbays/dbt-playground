@@ -205,7 +205,7 @@ get_task_type "$METADATA"      # → task
 |----------------|-------------------|---------------|
 | **Epic ID** | PRD-XXX anywhere in title or body | "PRD-001: Feature" |
 | **PRD Path** | docs/specs/PRD-XXX*.md | docs/specs/PRD-001-Feature.md |
-| **TDD Path** | docs/tdd/TDD-XXX*.md | docs/tdd/TDD-001-Feature.md |
+| **TDD Path** | docs/specs/TDD-XXX*.md | docs/specs/TDD-001-Feature.md |
 | **Epic Reference** | #N after "Epic:" or "Part of" | "Epic: #7" → 7 |
 | **TDD Section** | §N after "Implements:" or "TDD Section:" | "Implements: §3" → §3 |
 | **Task ID** | T*.* after "Task ID:" or "Task:" | "Task ID: T1.2" → T1.2 |
@@ -458,7 +458,7 @@ bats test/issue-to-task.bats
 
 - **Integration Guide**: `docs/CLAUDE_TASK_INTEGRATION.md`
 - **PRD**: `docs/specs/PRD-004-Claude-Task-GitHub-Integration.md`
-- **TDD**: `docs/tdd/TDD-004-Claude-Task-GitHub-Integration.md`
+- **TDD**: `docs/specs/TDD-004-Claude-Task-GitHub-Integration.md`
 - **Testing**: `temp/v0.3_TESTING-task-integration.md`
 - **Project Board**: `docs/PROJECT_BOARD_GUIDE.md`
 

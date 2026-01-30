@@ -61,7 +61,7 @@ This project follows a **structured workflow** from high-level feature planning 
                          ↓
 ┌──────────────────────────────────────────────────────────┐
 │ 3. Architect: Create TDD                                  │
-│    Output: docs/tdd/TDD-XXX.md                            │
+│    Output: docs/specs/TDD-XXX.md                            │
 │    Defines: Architecture, algorithms, API contracts       │
 │    Contains: Schema design, pseudocode, test strategy     │
 └──────────────────────────────────────────────────────────┘
@@ -162,7 +162,7 @@ The Epic → TDD → Task pattern separates **product thinking** (what to build)
 
 **Artifacts Created**:
 
-- `docs/tdd/TDD-XXX.md`
+- `docs/specs/TDD-XXX.md`
 
 **Example**: See TDD-001 JLPT Mastery Engine (35KB, 1450 lines)
 
@@ -284,7 +284,7 @@ TaskCreate({
    - Task list: T1.1 - T1.10 (high-level only)
 
 3. **Architect creates TDD** (2026-01-25)
-   - Output: `docs/tdd/TDD-001-JLPT-Mastery-Engine.md` (35KB)
+   - Output: `docs/specs/TDD-001-JLPT-Mastery-Engine.md` (35KB)
    - §1: 4-layer architecture with data flow diagrams
    - §2: Complete localStorage schema (1032-line reference implementation)
    - §3: SM-2 algorithm with pseudocode
@@ -465,7 +465,7 @@ See: `docs/specs/PRD-001-JLPT-Mastery-Engine.md` as reference
 
 ### TDD Template
 
-See: `docs/tdd/TDD-001-JLPT-Mastery-Engine.md` as reference
+See: `docs/specs/TDD-001-JLPT-Mastery-Engine.md` as reference
 
 **Sections**:
 

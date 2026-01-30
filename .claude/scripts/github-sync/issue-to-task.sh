@@ -93,7 +93,7 @@ case "$TYPE" in
       }
     }')
 
-    # Extract TDD link (format: docs/tdd/TDD-*.md)
+    # Extract TDD link (format: docs/specs/TDD-*.md)
     TDD=$(echo "$BODY" | awk '{
       match($0, /docs\/tdd\/TDD-[0-9]{3}[^[:space:]`]*\.md/)
       if (RSTART) {

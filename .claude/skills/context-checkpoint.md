@@ -166,7 +166,7 @@ Design spaced repetition system for kanji study module.
 | Item | Status | Owner | Key Files |
 |------|--------|-------|-----------|
 | PRD complete | done | PM | docs/specs/PRD-spaced-repetition.md |
-| TDD needed | ready | Architect | docs/tdd/TDD-spaced-repetition.md |
+| TDD needed | ready | Architect | docs/specs/TDD-spaced-repetition.md |
 
 ## Next Steps
 1. Architect: Design data model and algorithm integration

@@ -663,4 +663,4 @@ Before completing comparison:
 - `.claude/agents/sage.md` - Sage persona definition
 - `.claude/skills/learning-curation.md` - For post-research pattern extraction
 - `docs/specs/` - Where PM creates PRDs from findings
-- `docs/tdd/` - Where Architect creates TDDs from findings
+- `docs/specs/` - Where Architect creates TDDs from findings

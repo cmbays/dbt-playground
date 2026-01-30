@@ -150,7 +150,7 @@ All task metadata must include a `type` field and conform to type-specific valid
   "type": "epic",           // Required
   "epic_id": "PRD-001",    // Required, must match PRD-\d{3}
   "prd": "docs/specs/PRD-001-Feature.md",  // Required
-  "tdd": "docs/tdd/TDD-001-Feature.md",    // Optional
+  "tdd": "docs/specs/TDD-001-Feature.md",    // Optional
   "phase": 1,              // Optional
   "tasks": [13, 14, 15],   // Optional, array of issue numbers
   "github_issue": 7,       // Optional but recommended
@@ -186,7 +186,7 @@ All task metadata must include a `type` field and conform to type-specific valid
   "tdd_id": "001",               // Required, must be 3 digits
   "epic_id": "PRD-001",          // Required, must match PRD-\d{3}
   "github_issue": 7,             // Optional
-  "deliverable": "docs/tdd/TDD-001.md",  // Optional
+  "deliverable": "docs/specs/TDD-001.md",  // Optional
   "context_doc": "temp/TDD-001-CONTEXT.md",  // Optional
   "sync_on_complete": true       // Optional
 }
@@ -235,7 +235,7 @@ TaskCreate({
     type: "epic",
     epic_id: "PRD-001",
     prd: "docs/specs/PRD-001-JLPT-Mastery-Engine.md",
-    tdd: "docs/tdd/TDD-001-JLPT-Mastery-Engine.md",
+    tdd: "docs/specs/TDD-001-JLPT-Mastery-Engine.md",
     phase: 1,
     tasks: [13, 14, 15, 16],
     sync_on_complete: false
@@ -274,7 +274,7 @@ TaskCreate({
     type: "tdd",
     tdd_id: "001",
     epic_id: "PRD-001",
-    deliverable: "docs/tdd/TDD-001-JLPT-Mastery-Engine.md",
+    deliverable: "docs/specs/TDD-001-JLPT-Mastery-Engine.md",
     sync_on_complete: true
   }
 })
@@ -725,7 +725,7 @@ jq --version
 ## Related Documentation
 
 - **PRD**: `docs/specs/PRD-004-Claude-Task-GitHub-Integration.md`
-- **TDD**: `docs/tdd/TDD-004-Claude-Task-GitHub-Integration.md`
+- **TDD**: `docs/specs/TDD-004-Claude-Task-GitHub-Integration.md`
 - **Testing**: `temp/v0.3_TESTING-task-integration.md`
 - **Discovery**: `temp/phase0-discovery-notes.md`
 - **Script README**: `.claude/scripts/README.md`
