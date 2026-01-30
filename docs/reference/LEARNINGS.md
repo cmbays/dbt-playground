@@ -502,7 +502,7 @@ const data = require('../../../data/kanji.json');
 
 **Requirements**: JLPT level filter with N5-N2 support
 
-**TDD**: See docs/tdd/TDD-kanji-filter.md lines 45-67 for component design
+**TDD**: See docs/specs/TDD-kanji-filter.md lines 45-67 for component design
 
 **Blockers**: None
 

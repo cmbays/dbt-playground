@@ -76,7 +76,7 @@ dbt-playground Documentation
 
 1. **[[docs/guides/PROJECT_WORKFLOW.md]]** - Epic → TDD → Task pattern
 2. **[[docs/specs/]]** - Find the PRD for requirements
-3. **[[docs/tdd/]]** - Find the TDD for specifications
+3. **[[docs/specs/]]** - Find the TDD for specifications
 4. **[[.claude/skills/tdd-workflow.md]]** - TDD process
 5. **[[.claude/rules/coding-style.md]]** - Code standards
 
