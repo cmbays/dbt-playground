@@ -203,22 +203,35 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 ```
 Trigger: Developer requests "git: create branch feat/new-feature"
          or "/branch feat/new-feature"
-Input: Branch name, optional scope description
+Input: Branch name, optional scope description, base branch (default: main)
 
 Process:
 1. Validate branch name format (feat/kebab-case)
 2. Check branch doesn't already exist
-3. Verify on main/master before branching
-4. Execute: git checkout -b [branch-name]
-5. Execute: git push -u origin [branch-name]
-6. Create draft PR (default --with-pr behavior):
+3. Determine base branch (default: main, error if unrecognized)
+4. Verify clean working directory before branching
+   git status --porcelain (must be empty)
+5. Fetch latest to ensure base branch is current
+   git fetch origin
+6. Execute: git checkout -b [branch-name] [base-branch]
+   ✓ EXPLICIT BASE BRANCH REQUIRED (prevents implicit parent)
+7. Execute: git push -u origin [branch-name]
+8. Create draft PR (default --with-pr behavior):
    gh pr create --draft \
      --title "[type]: [brief-from-branch-name]" \
      --body "## Scope\n[description]\n\n## Status\n- [ ] Implementation\n- [ ] Tests\n- [ ] Ready for review"
-7. Log operation to audit trail
+9. Log operation to audit trail with base branch noted
 
 Output: Branch created, pushed, draft PR created with URL
 ```
+
+**SAFETY VALIDATION:**
+
+- Branch name must follow format (feat/, fix/, docs/, etc.)
+- Base branch must be one of: main, master, develop, staging
+- Working directory must be clean
+- Base branch must exist locally (after fetch)
+- Command MUST include explicit base: `git checkout -b [name] [base]`
 
 **Why PR-first?**
 
@@ -337,7 +350,7 @@ git: merge PR #44
 
 ```
 Trigger: Christopher requests parallel work: "git: setup worktree for feat/feature-name"
-Input: Branch name, optional scope description
+Input: Branch name, optional scope description, base branch (default: main)
 
 Process:
 1. Pre-Creation Validation (see Worktree Contraindications below)
@@ -346,9 +359,14 @@ Process:
    - If overlap with existing worktrees: WARN and suggest alternatives
    - If task <15 min: Suggest branch switch instead
 
-2. Create branch:
-   git checkout -b feat/feature-name main
-   git push -u origin feat/feature-name
+2. Create branch with safety validation (see Workflow A):
+   - Validate branch name format (feat/kebab-case)
+   - Verify clean working directory: git status --porcelain (must be empty)
+   - Fetch latest base: git fetch origin
+   - Determine base branch (default: main, error if unrecognized)
+   - Create with explicit base: git checkout -b feat/feature-name [base-branch]
+   - Push and set upstream: git push -u origin feat/feature-name
+   ✓ Note: ALWAYS include explicit base branch (prevents accidental contamination)
 
 3. Create worktree directory:
    git worktree add ../dbt-playground--feat-feature-name feat/feature-name
@@ -366,14 +384,23 @@ Process:
        "path": "../dbt-playground--feat-feature-name",
        "pr": 42,
        "created": "2026-01-29T10:00:00Z",
-       "status": "active"
+       "status": "active",
+       "base_branch": "main"
      }
    }
 
-6. Log operation to audit trail
+6. Log operation to audit trail with base branch noted
 
 Output: Worktree created at ../dbt-playground--feat-feature-name, draft PR #42 created
 ```
+
+**SAFETY VALIDATION (same as Workflow A):**
+
+- Branch name must follow format (feat/, fix/, docs/, etc.)
+- Base branch must be one of: main, master, develop, staging
+- Working directory must be clean
+- Base branch must exist locally (after fetch)
+- Command MUST include explicit base: `git checkout -b [name] [base]`
 
 **Worktree + PR Integration**
 
