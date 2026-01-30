@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **uv Workflow**: Modernized Python environment with uv package manager
+  - `pyproject.toml` for project metadata and dependencies
+  - `uv.lock` for reproducible dependency versions
+  - `.python-version` for automatic Python 3.11 selection
+  - `docs/reference/UV_MIGRATION.md` comprehensive migration guide
+
 - **Source Tables**: Added 6 new Synthea source tables to `_synthea__sources.yml`
   - `allergies` - Patient allergies and reactions
   - `immunizations` - Patient immunization records
@@ -33,7 +39,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Documentation**: Updated project phase status to v0.2 with correct next milestone (v0.3)
+- **Documentation**: Updated all reference docs to reflect uv workflow
+  - `PROJECT_STRUCTURE.md` - Added uv files and dbt_project structure
+  - `ARCHITECTURE.md` - Added technology stack with uv dependencies
+  - `README.md` - Added Quick Start with uv setup instructions
+  - `coding-style.md` - Added Python/uv section
+  - `scripts/README.md` - Documented available scripts and uv usage
 
 ---
 
@@ -85,7 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
-| 0.2.0   | 2026-01-29 | v0.2 Environment Ready - 16 Synthea source tables  |
+| 0.2.0   | 2026-01-29 | v0.2 Environment Ready - uv workflow, 16 Synthea sources |
 | 0.1.0   | 2026-01-28 | Agent orchestration + dbt project planning complete |
 
 ---

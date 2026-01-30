@@ -8,11 +8,12 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: Environment Ready (v0.2)
+**Status**: Environment Ready (v0.2) - uv Workflow Modernized
 
-- dbt 1.11.2 + DuckDB 1.10.0 working
+- dbt 1.11.2 + duckdb-adapter 1.10.0 working
 - 16 Synthea source tables defined
 - dbt-mcp configured (restart Claude Code for MCP tools)
+- uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
 
 **Next**: v0.3 - Build 9 staging models from Synthea data.
 

@@ -3,7 +3,7 @@ audience: [multi-agent]
 priority: high
 size: medium
 dependencies: []
-last_updated: 2026-01-28
+last_updated: 2026-01-29
 status: active
 tags: [reference, structure, organization]
 ---
@@ -12,17 +12,35 @@ tags: [reference, structure, organization]
 
 ## Directory Overview
 
-```
+```text
 dbt-playground/
 ├── CLAUDE.md                  # Project context for Claude (auto-loaded)
 ├── README.md                  # Public readme
 ├── CHANGELOG.md               # Version history
 ├── DOCUMENTATION_INDEX.md     # Documentation navigation
 │
+├── pyproject.toml             # Python project config (uv)
+├── uv.lock                    # Locked dependency versions
+├── .python-version            # Python version (3.11)
+│
+├── dbt_project/               # dbt Project
+│   ├── dbt_project.yml           # dbt configuration
+│   ├── packages.yml              # dbt packages
+│   ├── models/                   # dbt models
+│   │   ├── staging/              # Source transformations
+│   │   ├── intermediate/         # Business logic
+│   │   └── marts/                # Analytics-ready tables
+│   ├── seeds/                    # Static data
+│   ├── macros/                   # Reusable SQL
+│   ├── tests/                    # Data tests
+│   ├── snapshots/                # SCD tracking
+│   └── analyses/                 # Ad-hoc queries
+│
 ├── docs/                      # Documentation
 │   ├── reference/            # Technical reference docs
 │   │   ├── PROJECT_STRUCTURE.md  # This file
 │   │   ├── ARCHITECTURE.md
+│   │   ├── UV_MIGRATION.md       # uv workflow guide
 │   │   └── LEARNINGS.md
 │   ├── guides/               # How-to guides
 │   ├── standards/            # Rules and conventions
@@ -71,6 +89,17 @@ dbt-playground/
 | `CLAUDE.md` | Project context - READ FIRST |
 | `.claude/agents/AGENTS.md` | Agent orchestration guide |
 | `docs/reference/ARCHITECTURE.md` | System architecture |
+| `docs/reference/UV_MIGRATION.md` | Python/uv workflow guide |
+
+### Key Files
+
+| File | Purpose | Git Tracked |
+|------|---------|-------------|
+| `pyproject.toml` | Project metadata, dependencies | Yes |
+| `uv.lock` | Locked dependency versions | Yes |
+| `.python-version` | Python version (3.11) | Yes |
+| `.venv/` | Virtual environment | No |
+| `dev.duckdb` | Development database | No |
 
 ### Adding New Features
 
@@ -119,4 +148,4 @@ dbt-playground/
 
 ---
 
-*Last Updated: 2026-01-28*
+*Last Updated: 2026-01-29*

@@ -3,7 +3,7 @@ audience: [architect, developer]
 priority: high
 size: medium
 dependencies: [PROJECT_STRUCTURE]
-last_updated: 2026-01-28
+last_updated: 2026-01-29
 status: active
 tags: [reference, architecture, technical]
 ---
@@ -31,10 +31,10 @@ tags: [reference, architecture, technical]
                │
                ▼
 ┌─────────────────────────────────────────┐
-│         dbt Project (TBD)               │
+│      dbt Project (healthcare_analytics) │
 │                                         │
-│  Models, Sources, Tests, Documentation  │
-│  dbt-mcp integration                    │
+│  16 Synthea sources, Staging models     │
+│  DuckDB 1.10.0, dbt-mcp integration     │
 └─────────────────────────────────────────┘
 ```
 
@@ -64,16 +64,16 @@ Benefits:
 - Traceable decisions
 - Onboarding support for future development
 
-#### dbt for Data Transformation (Planned)
+#### dbt for Data Transformation
 
-- SQL-based transformations
-- Version-controlled data models
+- SQL-based transformations (healthcare_analytics project)
+- Version-controlled data models (staging, intermediate, marts)
 - Built-in testing and documentation
 
 Benefits:
 
 - Industry-standard data tooling
-- Reproducible transformations
+- Reproducible transformations via uv-managed environment
 - Self-documenting data pipelines
 
 ---
@@ -114,17 +114,25 @@ Benefits:
 
 ### Current
 
+- **Python Environment**: uv-managed (pyproject.toml, uv.lock)
+- **dbt**: Data transformation framework (dbt 1.11.2)
+- **Database**: DuckDB 1.10.0 (dev.duckdb)
 - **Documentation**: Markdown with YAML frontmatter
 - **Version Control**: Git with conventional commits
 - **Agent System**: Claude Code with MCP servers
 - **Hooks**: JavaScript-based pre/post tool hooks
 
-### Planned (dbt Integration)
+### Python Dependencies
 
-- **dbt**: Data transformation framework
-- **SQL**: Data modeling language
+| Package | Purpose |
+|---------|---------|
+| `dbt-duckdb>=1.10.0` | dbt adapter for DuckDB |
+| `sqlfluff>=3.0.0` | SQL linting (dev) |
+| `pre-commit>=3.7.0` | Git hooks (dev) |
+
+### MCP Integration
+
 - **dbt-mcp**: AI-assisted dbt development
-- **Database**: TBD (PostgreSQL, DuckDB, etc.)
 
 ---
 
@@ -143,24 +151,26 @@ Key organizational principles:
 
 ## Future Considerations
 
-### dbt Project Structure (When Added)
+### dbt Project Structure
 
 ```text
-dbt-playground/
+dbt_project/
+├── dbt_project.yml   # dbt configuration (healthcare_analytics)
+├── packages.yml      # dbt packages (dbt-utils, codegen, etc.)
 ├── models/           # dbt models
-│   ├── staging/      # Source transformations
+│   ├── staging/      # Source transformations (16 Synthea tables)
 │   ├── intermediate/ # Business logic
 │   └── marts/        # Analytics-ready tables
 ├── tests/            # Data tests
 ├── macros/           # Reusable SQL
 ├── seeds/            # Static data
-└── dbt_project.yml   # dbt configuration
+├── snapshots/        # SCD tracking
+└── analyses/         # Ad-hoc queries
 ```
 
 ### MCP Server Integration
 
-- **dbt-mcp**: For AI-assisted dbt development
-- **Playwright MCP**: For web-based testing/visualization
+- **dbt-mcp**: For AI-assisted dbt development (configured in .mcp.json)
 
 ---
 
@@ -183,4 +193,4 @@ dbt-playground/
 
 ---
 
-*Last Updated: 2026-01-28*
+*Last Updated: 2026-01-29*
