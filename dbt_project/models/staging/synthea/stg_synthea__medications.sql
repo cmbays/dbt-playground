@@ -34,7 +34,7 @@ with_row_number as (
         *
         , row_number() over (
             partition by patient_id, encounter_id, medication_code, medication_start_at
-            order by medication_end_at nulls last, total_cost desc
+            order by medication_end_at asc nulls last, total_cost desc
         ) as _row_num
     from renamed
 ),
