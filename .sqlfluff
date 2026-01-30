@@ -1,12 +1,19 @@
 [sqlfluff]
 # Use DuckDB dialect for this project
 dialect = duckdb
-templater = jinja
+templater = dbt
 # Be less verbose for CI
 verbose = 0
 nocolor = True
 # Reasonable line length (moved from rules section per sqlfluff 2.x)
 max_line_length = 120
+
+# Exclude packages and target directories
+exclude_rules = None
+
+[sqlfluff:templater:dbt]
+project_dir = dbt_project
+profiles_dir = ~/.dbt
 
 [sqlfluff:indentation]
 indented_joins = True
@@ -36,9 +43,9 @@ capitalisation_policy = lower
 [sqlfluff:rules:capitalisation.types]
 capitalisation_policy = lower
 
-# Use trailing commas (per dbt best practice)
+# Use leading commas (per project coding standards)
 [sqlfluff:rules:layout.commas]
-comma_style = trailing
+comma_style = leading
 
 # Aliasing preferences
 [sqlfluff:rules:aliasing.table]
@@ -50,3 +57,11 @@ aliasing = explicit
 # Allow CTEs to use column aliases
 [sqlfluff:rules:references.consistent]
 single_table_references = consistent
+
+# Disable identifier capitalization check (source columns are UPPERCASE)
+[sqlfluff:rules:capitalisation.identifiers]
+capitalisation_policy = consistent
+
+# Disable self-alias warnings (we alias for clarity in transformations)
+[sqlfluff:rules:aliasing.self_alias.column]
+aliasing = explicit
