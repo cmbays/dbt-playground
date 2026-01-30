@@ -133,6 +133,52 @@ See `.claude/agents/AGENTS.md` for orchestration details.
 | `/plan` | Structured planning |
 | `/dbt-run` | Execute dbt commands |
 
+## Git Worktrees (Parallel Development)
+
+This project supports parallel Claude Code sessions using git worktrees. Each worktree provides an isolated directory with its own branch.
+
+### Detecting Worktree Context
+
+Check if you are in a worktree or the main repo:
+
+```bash
+git worktree list  # Shows all worktrees
+pwd                # Current directory
+git branch --show-current  # Current branch
+```
+
+**Directory naming**: `dbt-playground--{branch-slug}` (e.g., `dbt-playground--tuva`)
+
+### Worktree Workflow Rules
+
+| Rule | Rationale |
+|------|-----------|
+| One branch per worktree | Git enforces this to prevent conflicts |
+| Commit early and often | Per-model or per-feature granularity |
+| Push after each commit | So other worktrees see changes via `git fetch` |
+| Draft PRs at worktree creation | Track work-in-progress in GitHub |
+
+### State Tracking
+
+- **WORKFLOW_STATE.md** lives in the **main repo** (`temp/WORKFLOW_STATE.md`)
+- PR description is the source of truth for feature scope
+- Each worktree may have local state but it is not committed
+
+### Key Commands
+
+```bash
+# Create worktree with new branch
+git worktree add ../dbt-playground--feat-x -b feat/x main
+
+# List all worktrees
+git worktree list
+
+# Remove worktree after merge
+git worktree remove ../dbt-playground--feat-x
+```
+
+**Full guide**: See `docs/for_chris/GIT-WORKTREE-WORKFLOW.md`
+
 ## Notes for Claude
 
 - ASK rather than assume
