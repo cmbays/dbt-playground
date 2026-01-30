@@ -7,20 +7,25 @@ status: active
 tags: [specs, prd, requirements, index]
 ---
 
-# Product Requirement Documents (PRDs)
+# Product Requirement Documents (PRDs) and Technical Design Documents (TDDs)
 
-This directory contains Product Requirement Documents that define features before development begins.
+This directory contains both Product Requirement Documents (PRDs) that define features before development, and Technical Design Documents (TDDs) that specify how features will be implemented.
 
 ## Purpose
 
-PRDs capture the "what" and "why" of features:
+**PRDs** capture the "what" and "why" of features:
 
 - Problem being solved
 - User benefit
 - Acceptance criteria
 - Scope boundaries
 
-PRDs do NOT include technical implementation details (those go in TDDs).
+**TDDs** capture the "how" of features:
+
+- Architecture decisions
+- Component design
+- Data structures
+- Implementation sequence
 
 ## Naming Convention
 
@@ -47,7 +52,7 @@ Use `PRD-TEMPLATE.md` for new PRDs.
 ## Related
 
 - [FUTURE_FEATURES.md](FUTURE_FEATURES.md) - Feature ideas backlog
-- [../tdd/](../tdd/) - Technical Design Documents
+- [TDD-TEMPLATE.md](TDD-TEMPLATE.md) - Technical Design Document template
 
 ## Workflow
 
