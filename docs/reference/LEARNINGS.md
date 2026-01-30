@@ -62,6 +62,11 @@
   - [SVG Visualization Patterns](#svg-visualization-patterns)
     - [SVG Progress Rings with stroke-dasharray](#pattern-svg-progress-rings-with-stroke-dasharray)
     - [CSS Grid for Heatmap Calendar](#pattern-css-grid-for-heatmap-calendar)
+- [dbt + uv Patterns](#dbt--uv-patterns)
+  - [pyproject.toml for dbt Projects](#pattern-pyprojecttoml-for-dbt-projects)
+  - [PEP 723 Script Headers](#pattern-pep-723-script-headers)
+  - [Version Constraint Selection](#pattern-version-constraint-selection)
+  - [Lock File Strategy](#pattern-lock-file-strategy)
 
 ---
 
@@ -1353,9 +1358,173 @@ return `
 
 ---
 
+## dbt + uv Patterns
+
+_Learnings from modernizing dbt projects with uv-managed Python environments._
+
+### Pattern: pyproject.toml for dbt Projects
+
+**When to apply**: Setting up any new dbt project or migrating from requirements.txt
+
+**Proven in**: dbt-playground v0.2 uv migration
+
+**Description**: dbt projects should use simplified pyproject.toml without build-system configuration since they are not Python libraries.
+
+**Implementation**:
+
+```toml
+[project]
+name = "your-dbt-project"
+version = "0.1.0"
+description = "Brief description"
+requires-python = ">=3.11"
+dependencies = [
+    "dbt-duckdb>=1.10.0",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "sqlfluff>=3.0.0",
+    "pre-commit>=3.7.0",
+]
+```
+
+**Key decisions**:
+
+1. **No `[build-system]`**: dbt projects aren't pip-installable libraries
+2. **Loose version constraints**: Use `>=1.10.0` not exact pinning (lock file handles exact versions)
+3. **Dev tools separate**: Linters in `[tool.uv]` section
+
+**Anti-patterns**:
+
+- Adding `[build-system]` with setuptools/hatchling (unnecessary complexity)
+- Exact version pinning like `dbt-duckdb==1.11.2` (version may not exist)
+- Mixing production and dev dependencies
+
+---
+
+### Pattern: PEP 723 Script Headers
+
+**When to apply**: Standalone Python scripts that need to be self-documenting or have unique dependencies
+
+**Proven in**: dbt-playground scripts (extract_content.py, insert_shopping_dialogues.py)
+
+**Description**: Use PEP 723 inline script metadata to make scripts self-contained and runnable with `uv run`.
+
+**Implementation for stdlib-only scripts**:
+
+```python
+#!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
+"""Script docstring."""
+
+import sys
+from pathlib import Path
+```
+
+**Implementation for scripts with dependencies**:
+
+```python
+#!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "pandas>=2.0.0",
+#     "requests>=2.31.0",
+# ]
+# ///
+```
+
+**Benefits**:
+
+- Scripts document their own requirements
+- `uv run script.py` automatically handles dependencies
+- No separate requirements file per script
+
+**Gotchas**:
+
+- Some linters may strip PEP 723 headers (functionality preserved)
+- Use `dependencies = []` not omitting the key for stdlib-only
+
+**See also**: Skill: `.claude/skills/learned-pattern-uv-dbt-project-setup.md`
+
+---
+
+### Pattern: Version Constraint Selection
+
+**When to apply**: Choosing version constraints for Python packages in pyproject.toml
+
+**Proven in**: dbt-playground dbt-duckdb version selection
+
+**Description**: Use available package versions with floor constraints, not exact pins.
+
+**Decision framework**:
+
+| Scenario | Constraint | Example |
+|----------|------------|---------|
+| Stable API needed | Floor constraint | `>=1.10.0` |
+| Major version compat | Compatible release | `~=1.10` |
+| Exact reproducibility | Lock file | `uv.lock` handles this |
+| Latest always | No constraint | `dbt-duckdb` |
+
+**Common gotcha**: dbt adapter versions don't always match dbt-core versions. Example: `dbt-duckdb>=1.11.2` may not exist even if dbt 1.11.2 is out.
+
+**Verification**:
+
+```bash
+# Check what versions exist
+uv pip index versions dbt-duckdb
+```
+
+---
+
+### Pattern: Lock File Strategy
+
+**When to apply**: Deciding whether to commit uv.lock
+
+**Proven in**: dbt-playground reproducibility requirements
+
+**Description**: Commit `uv.lock` for reproducible builds; it ensures identical package versions across all machines.
+
+**Decision matrix**:
+
+| Project Type | Commit Lock? | Reason |
+|--------------|--------------|--------|
+| Application (dbt project) | **Yes** | Reproducible builds |
+| Library (pip-installable) | No | Let consumers resolve |
+| Team project | **Yes** | Same versions for all |
+| Solo experiment | Optional | Your preference |
+
+**Workflow**:
+
+```bash
+# Initial setup
+uv sync                    # Creates uv.lock
+git add uv.lock           # Commit it
+
+# After adding packages
+uv add pandas             # Updates uv.lock
+git add uv.lock pyproject.toml
+git commit -m "chore: add pandas"
+
+# Updating dependencies
+uv sync --upgrade         # Updates uv.lock to latest compatible
+```
+
+**Benefits**:
+
+- Reproducible CI/CD
+- No "works on my machine" issues
+- Clear audit trail of version changes
+
+---
+
 ## Metrics
 
-**Total Patterns**: 27 (as of 2026-01-25)
+**Total Patterns**: 31 (as of 2026-01-29)
 
 - Proven Patterns: 7
 - Decision Frameworks: 2
@@ -1363,8 +1532,9 @@ return `
 - Best Practices: 3
 - Phase 1 SRS Patterns: 11 (Architecture: 2, Security: 3, JavaScript Defensive: 5, Testing: 2)
 - Phase 2 Engagement Patterns: 6 (Architecture: 2, Bugs: 2, SVG: 2)
+- dbt + uv Patterns: 4 (pyproject.toml, PEP 723, version constraints, lock files)
 
-**Last Updated**: 2026-01-25 (Added Phase 2 Engagement Layer patterns: IIFE module export, schema migration, appendChild bug, async toggle state bug, SVG progress rings, CSS grid heatmap)
+**Last Updated**: 2026-01-29 (Added dbt + uv patterns: pyproject.toml for dbt projects, PEP 723 script headers, version constraint selection, lock file strategy)
 
 **Related Skills**:
 

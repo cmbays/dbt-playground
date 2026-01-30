@@ -2,7 +2,7 @@
 audience: [human, multi-agent]
 priority: low
 size: small
-last_updated: 2026-01-28
+last_updated: 2026-01-29
 status: active
 tags: [overview, readme, introduction]
 ---
@@ -13,17 +13,48 @@ A learning project for dbt (data build tool) and data analytics development usin
 
 **Purpose**: Learn dbt, data modeling, and analytics engineering while leveraging multi-agent workflows for development.
 
-**Status**: Initial setup - scaffolding agent orchestration for dbt project
+**Status**: v0.2 Environment Ready - dbt 1.11.2 + DuckDB 1.10.0 with 16 Synthea source tables
 
 ---
 
 ## Quick Start
 
+### Prerequisites
+
+- [uv](https://docs.astral.sh/uv/) - Python package manager
+
+### Setup
+
+```bash
+# Install uv (if not already installed)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Clone and setup
+git clone <repo-url>
+cd dbt-playground
+uv sync
+
+# Verify installation
+uv run dbt --version   # Should show dbt 1.11.2
+uv run dbt debug       # Should connect to dev.duckdb
+```
+
+### Run dbt
+
+```bash
+# From dbt_project/ directory
+cd dbt_project
+uv run dbt compile     # Compile models
+uv run dbt build       # Build and test
+uv run dbt docs generate && uv run dbt docs serve  # Documentation
+```
+
 ### For Developers
 
 1. **Start here**: Read `CLAUDE.md` for complete project context
-2. **Agent guide**: See `.claude/agents/AGENTS.md` for orchestration workflows
-3. **Documentation**: Browse `docs/` for standards and references
+2. **uv Guide**: See `docs/reference/UV_MIGRATION.md` for Python workflow
+3. **Agent guide**: See `.claude/agents/AGENTS.md` for orchestration workflows
+4. **Documentation**: Browse `docs/` for standards and references
 
 ---
 
@@ -39,7 +70,9 @@ A dbt project scaffold with comprehensive agent orchestration infrastructure for
 
 ### Technology Stack
 
-- **dbt**: Data transformation framework
+- **Python**: Managed by uv (pyproject.toml, uv.lock)
+- **dbt**: Data transformation framework (1.11.2)
+- **DuckDB**: Analytical database (1.10.0)
 - **SQL**: Data modeling and analytics
 - **MCP servers**: dbt-mcp for AI-assisted development
 - **Claude Code**: Agent orchestration system
@@ -54,12 +87,23 @@ dbt-playground/
 ├── CLAUDE.md              # Project context for Claude
 ├── CHANGELOG.md           # Version history
 │
+├── pyproject.toml         # Python project config (uv)
+├── uv.lock                # Locked dependency versions
+├── .python-version        # Python version (3.11)
+│
+├── dbt_project/           # dbt project
+│   ├── dbt_project.yml       # dbt configuration
+│   ├── models/               # staging/, intermediate/, marts/
+│   └── ...                   # seeds, macros, tests, etc.
+│
 ├── docs/                  # Documentation
-│   ├── reference/         # Architecture, structure docs
+│   ├── reference/         # Architecture, UV_MIGRATION.md
 │   ├── guides/            # How-to workflows
 │   ├── standards/         # Rules and conventions
-│   ├── specs/             # PRDs (when created)
+│   ├── specs/             # PRDs
 │   └── tdd/               # Technical design docs
+│
+├── scripts/               # Utility scripts (uv run compatible)
 │
 ├── temp/                  # Working files (development)
 │
@@ -68,8 +112,7 @@ dbt-playground/
     ├── commands/          # Slash commands
     ├── skills/            # Reusable workflows
     ├── rules/             # Coding standards
-    ├── hooks/             # Pre/post tool hooks
-    └── scripts/           # Utility scripts
+    └── hooks/             # Pre/post tool hooks
 ```
 
 ---
@@ -107,11 +150,26 @@ See `.claude/agents/AGENTS.md` for detailed orchestration guide.
 
 ## Getting Started with dbt
 
-To be configured:
+The dbt project is fully configured with:
 
-- dbt project initialization
-- Database connection (dbt-mcp integration)
-- Sample models and transformations
+- **Project**: `healthcare_analytics` using DuckDB
+- **Data Source**: Synthea (synthetic healthcare data) - 16 tables
+- **Layers**: staging (views), intermediate (views), marts (tables)
+
+### Common Commands
+
+Run from `dbt_project/` directory:
+
+| Task | Command |
+|------|---------|
+| Install dependencies | `uv sync` (from repo root) |
+| Run all models | `uv run dbt build` |
+| Compile SQL | `uv run dbt compile` |
+| Run tests | `uv run dbt test` |
+| Generate docs | `uv run dbt docs generate` |
+| Serve docs | `uv run dbt docs serve` |
+
+See `docs/reference/UV_MIGRATION.md` for complete uv workflow guide
 
 ---
 
