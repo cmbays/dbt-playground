@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **PR-Centric Development Workflow**: Comprehensive workflow enhancement for context preservation
+  - Draft PR creation at branch/worktree creation (`--with-pr` default)
+  - Multi-agent review posting to GitHub PRs via `gh` CLI
+  - Post-review agent queue (docs → sage → pm) before merge
+  - Supervisor final approval gate with checklist
+  - Auto-cleanup of worktree and branch after merge
+
+- **Agent Updates**: 6 agents enhanced for PR-centric workflow
+  - `git-master`: PR-first workflow, approval gate enforcement, auto-cleanup
+  - `supervisor`: Review orchestration, post-review queue, final approval
+  - `code-reviewer`: Inline PR comments and summary reviews
+  - `security-reviewer`: Security findings posted to PRs
+  - `documenter`: PR-commit mode for CHANGELOG updates
+  - `sage`: PR learning extraction with commit support
+
+- **Command Updates**: 2 commands enhanced
+  - `/branch`: Added `--with-pr` flag (default on) for draft PR creation
+  - `/review`: Added `--pr N` flag for posting reviews to GitHub
+
+- **New Workflow**: `.claude/workflows/post-review-queue.md`
+  - Defines post-review agent queue sequence
+  - Documents agent invocation templates
+  - Specifies skip conditions and error handling
+
+- **Documentation**: PRD-015-WORKFLOW-ENHANCEMENT.md
+
 ### Planned
 
 - Marts layer enhancements (v0.5)
