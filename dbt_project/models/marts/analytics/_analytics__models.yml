@@ -41,9 +41,21 @@ models:
 
       - name: patient_count
         description: Number of unique patients with this condition
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: encounter_count
         description: Total number of encounters with this condition
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: _loaded_at
         description: Timestamp when record was loaded
@@ -62,6 +74,15 @@ models:
     meta:
       grain: patient_id + year_actual
       owner: healthcare_analytics
+    data_tests:
+      # Grain test: enforce unique combination
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - patient_id
+              - year_actual
+          config:
+            severity: error
     columns:
       - name: patient_summary_key
         description: Surrogate key (MD5 hash of patient_id + year_actual)
@@ -87,38 +108,108 @@ models:
         description: Calendar year of the summary
         data_tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1900
+                max_value: 2100
+              config:
+                severity: warn
 
       - name: patient_age_at_year_end
         description: Patient age as of December 31 of the year
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 150
+              config:
+                severity: warn
 
       - name: encounter_count
         description: Number of encounters in the year
         data_tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 10000
+              config:
+                severity: error
 
       - name: procedure_count
         description: Number of procedures in the year
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: condition_count
         description: Number of distinct conditions diagnosed in the year
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: total_cost
         description: Total claim cost for the year
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 10000000
+              config:
+                severity: error
 
       - name: payer_coverage
         description: Amount covered by insurance
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: patient_responsibility
         description: Amount owed by patient (copay + coinsurance)
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: payer_coverage_pct
         description: Percentage of costs covered by insurance (0-100)
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 100
+              config:
+                severity: error
 
       - name: unique_providers
         description: Number of distinct providers seen
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+                max_value: 1000
+              config:
+                severity: error
 
       - name: unique_organizations
         description: Number of distinct organizations visited
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: _loaded_at
         description: Timestamp when record was loaded
@@ -133,6 +224,16 @@ models:
     meta:
       grain: provider_id + year_month_str
       owner: healthcare_analytics
+    data_tests:
+      # Grain test: enforce unique combination
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - provider_id
+              - year_actual
+              - month_actual
+          config:
+            severity: error
     columns:
       - name: provider_metrics_key
         description: Surrogate key (MD5 hash of provider_id + year_month_str)
@@ -164,11 +265,23 @@ models:
         description: Calendar year
         data_tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1900
+                max_value: 2100
+              config:
+                severity: warn
 
       - name: month_actual
         description: Calendar month (1-12)
         data_tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1
+                max_value: 12
+              config:
+                severity: error
 
       - name: year_month_str
         description: Year-month string (YYYY-MM)
@@ -177,30 +290,84 @@ models:
         description: Number of encounters in the month
         data_tests:
           - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: unique_patient_count
         description: Number of distinct patients seen
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: avg_patient_age
         description: Average age of patients seen
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 150
+              config:
+                severity: warn
 
       - name: avg_encounter_duration_minutes
         description: Average encounter duration in minutes
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: total_procedures
         description: Total procedures performed
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: total_cost
         description: Total claim cost for the month
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: total_payer_coverage
         description: Amount covered by insurance
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: avg_cost_per_encounter
         description: Average cost per encounter
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: encounters_per_patient_avg
         description: Average encounters per patient
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: _loaded_at
         description: Timestamp when record was loaded
@@ -215,6 +382,15 @@ models:
     meta:
       grain: patient_id + condition_code
       owner: healthcare_analytics
+    data_tests:
+      # Grain test: enforce unique combination
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - patient_id
+              - condition_code
+          config:
+            severity: error
     columns:
       - name: condition_cohort_key
         description: Surrogate key (MD5 hash of patient_id + condition_code)
@@ -263,15 +439,39 @@ models:
 
       - name: first_diagnosis_year
         description: Year of first diagnosis
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1900
+                max_value: 2100
+              config:
+                severity: warn
 
       - name: months_with_condition
         description: Months between first and last diagnosis (0 if single occurrence)
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: encounter_count
         description: Number of encounters with this condition
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: is_active
         description: True if condition has no end date (currently active)
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [true, false]
 
       - name: _loaded_at
         description: Timestamp when record was loaded
@@ -346,27 +546,72 @@ models:
 
       - name: year_actual
         description: Calendar year of encounter
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 1900
+                max_value: 2100
+              config:
+                severity: warn
 
       - name: encounter_class
         description: Type of encounter (ambulatory, wellness, etc.)
 
       - name: total_cost
         description: Total claim cost
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: payer_coverage
         description: Amount covered by insurance
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: patient_responsibility
         description: Amount owed by patient
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: coverage_pct
         description: Percentage covered by insurance (0-100)
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 100
+              config:
+                severity: error
 
       - name: patient_cost_pct
         description: Percentage owed by patient (0-100)
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 100
+              config:
+                severity: error
 
       - name: procedure_count
         description: Number of procedures in the encounter
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: cost_per_procedure
         description: Average cost per procedure (null if no procedures)
@@ -398,6 +643,11 @@ models:
 
       - name: condition_key
         description: Foreign key to dim_conditions
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_conditions')
+                field: condition_key
 
       - name: condition_code
         description: ICD/SNOMED condition code
@@ -428,9 +678,15 @@ models:
     columns:
       - name: provider_key
         description: Foreign key to dim_providers
+        data_tests:
+          - unique
+          - not_null
 
       - name: provider_id
         description: Natural provider identifier
+        data_tests:
+          - unique
+          - not_null
 
       - name: provider_name
         description: Full name of the provider
@@ -443,12 +699,30 @@ models:
 
       - name: active_patient_count
         description: Number of patients with active conditions
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: total_active_conditions
         description: Total number of active conditions managed
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
       - name: avg_conditions_per_patient
         description: Average number of active conditions per patient
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+              config:
+                severity: error
 
   - name: v_encounter_summary
     description: >
