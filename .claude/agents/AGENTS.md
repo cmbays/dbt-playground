@@ -27,6 +27,7 @@
 | dbt testing | **Agent** | `dbt-tester` | Data quality validation |
 | dbt documentation | **Agent** | `dbt-documenter` | Model/column descriptions |
 | Metrics/semantic layer | **Agent** | `semantic-analyst` | KPI definitions, natural language |
+| Healthcare terminology | **Agent** | `healthcare-analyst` | Clinical codes, data enrichment, compliance |
 
 ### Critical Rule: Be Explicit About File Operations
 
@@ -877,14 +878,36 @@ semantic: query "revenue by month for 2024"
 
 **See**: [[semantic-analyst.md]] for full persona details.
 
+#### Healthcare Analyst (`hc:`)
+
+Domain expert for healthcare terminology, clinical data patterns, and data enrichment.
+
+**When to use**:
+
+- Questions about healthcare code systems (ICD-10, SNOMED, CPT, LOINC, RxNorm)
+- Clinical data validation guidance
+- Data enrichment strategies (external sources, crosswalks)
+- Tuva integration consulting
+- HIPAA/compliance considerations
+
+**Example**:
+
+```
+hc: What ICD-10 codes should we map for diabetes conditions?
+hc: How should we enrich patient data with demographic information?
+hc: Review the Tuva connector models for clinical accuracy
+```
+
+**See**: [[healthcare-analyst.md]] for full persona details.
+
 ### dbt Assembly Line
 
 For dbt model development, agents chain together:
 
 ```
-Data Modeler → dbt Developer → dbt Tester → Code Reviewer → dbt Documenter
-     ↓              ↓              ↓              ↓              ↓
-  Design SQL    Implement      Add tests      Review        Document
+Healthcare Analyst → Data Modeler → dbt Developer → dbt Tester → Code Reviewer → dbt Documenter
+       ↓                  ↓              ↓              ↓              ↓              ↓
+  Domain Context      Design SQL    Implement      Add tests      Review        Document
 ```
 
 **Commands**:

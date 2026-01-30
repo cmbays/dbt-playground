@@ -793,6 +793,7 @@ E5 Testing    E6 MCP Integration
 
 | Agent | Primary Areas | Epic Focus |
 |-------|---------------|------------|
+| **healthcare-analyst** | Terminology guidance, clinical validation, data enrichment | E7, E8, E10, E11 |
 | **data-modeler** | Model design, naming, relationships, metric definitions | E3, E4, E7, E8, E10, E12 |
 | **dbt-developer** | SQL implementation, Jinja, optimization | E1, E3, E4, E7, E8, E10, E11, E12 |
 | **dbt-tester** | Schema tests, singular tests, freshness | E2, E3, E4, E5, E7, E8, E10, E11, E12 |
@@ -805,13 +806,14 @@ E5 Testing    E6 MCP Integration
 ### Assembly Line for dbt Models
 
 ```text
-For each model:
+For healthcare dbt models:
 
-1. data-modeler  -> Design model (grain, columns, relationships)
-2. dbt-developer -> Implement SQL with Jinja
-3. dbt-tester    -> Add schema and singular tests
-4. code-reviewer -> Review for patterns and quality
-5. dbt-documenter -> Add descriptions and examples
+0. healthcare-analyst -> Provide domain context (terminology, clinical patterns)
+1. data-modeler       -> Design model (grain, columns, relationships)
+2. dbt-developer      -> Implement SQL with Jinja
+3. dbt-tester         -> Add schema and singular tests
+4. code-reviewer      -> Review for patterns and quality
+5. dbt-documenter     -> Add descriptions and examples
 ```
 
 ---
