@@ -3,7 +3,7 @@ audience: [pm, architect]
 priority: low
 size: small
 dependencies: []
-last_updated: 2026-01-28
+last_updated: 2026-01-29
 status: active
 tags: [specs, backlog, ideas]
 ---
@@ -11,6 +11,69 @@ tags: [specs, backlog, ideas]
 # Future Features Backlog
 
 Ideas and features for future consideration. Items here are not committed - they represent possibilities to explore.
+
+## Metric Marts (Promoted to PRD-012)
+
+The metrics foundation feature has been promoted to active planning. See [PRD-012-SEMANTIC-LAYER](./PRD-012-SEMANTIC-LAYER.md) for full requirements.
+
+### Summary
+
+| Feature | Description | Status | Target |
+|---------|-------------|--------|--------|
+| Metric marts | Queryable SQL models with standardized metrics | Planned | v0.5.5 |
+| Core metrics | 4-5 metrics (total_encounters, claims_paid, etc.) | Planned | v0.5.5 |
+| Full dbt Semantic Layer | YAML semantic models + MetricFlow | Deferred | Post-warehouse migration |
+
+### Key Considerations
+
+- **DuckDB Limitation**: MetricFlow query engine has limited DuckDB support
+- **First Rollout**: Metric marts (SQL models) - works today
+- **Prerequisites**: Stable dimensional models (E4), comprehensive testing (E5)
+- **Future**: Full semantic layer when we migrate to supported warehouse
+
+---
+
+## Warehouse Evaluation for Semantic Layer
+
+**Status**: Future Consideration
+
+When the project matures beyond learning/prototyping, evaluate data warehouse solutions that fully support dbt Semantic Layer (MetricFlow).
+
+### Candidates to Evaluate
+
+| Warehouse | MetricFlow Support | Cost Model | Notes |
+|-----------|-------------------|------------|-------|
+| Snowflake | Full | Usage-based | Enterprise standard, excellent dbt integration |
+| BigQuery | Full | Usage-based | Good for GCP shops, serverless |
+| Databricks | Full | Usage-based | Good for ML/AI workloads |
+| PostgreSQL | Partial | Self-hosted | Lower cost, some limitations |
+| MotherDuck | TBD | Usage-based | Cloud DuckDB - may add MetricFlow support |
+
+### Evaluation Criteria
+
+- MetricFlow query engine support
+- dbt Cloud integration (optional)
+- Cost for learning/small workloads
+- Migration effort from DuckDB
+- BI tool integration options
+
+### When to Evaluate
+
+- After v1.0 milestone complete
+- When BI tool integration becomes a requirement
+- When dataset size exceeds DuckDB performance limits
+
+### Future Expansion Ideas (Post-Migration)
+
+| Feature | Description | Complexity | Priority |
+|---------|-------------|------------|----------|
+| YAML semantic models | Define semantic models in YAML | Medium | High |
+| MetricFlow queries | `dbt sl query` commands | Low | High |
+| Patient semantic model | Define patient-level metrics | Medium | Medium |
+| Clinical events metrics | Condition/medication/procedure counts | Medium | Low |
+| BI tool integration | Tableau, Looker, etc. via semantic layer | High | Medium |
+
+---
 
 ## Data Modeling Features
 
@@ -81,6 +144,8 @@ Ideas and features for future consideration. Items here are not committed - they
 - [ ] Jinja templating basics
 - [ ] Custom schema configuration
 - [ ] Environment handling (dev/prod)
+- [ ] Metric mart patterns
+- [ ] Semantic layer concepts (future)
 
 ### Data Engineering Skills
 
@@ -88,6 +153,7 @@ Ideas and features for future consideration. Items here are not committed - they
 - [ ] Data quality testing patterns
 - [ ] Incremental loading strategies
 - [ ] Documentation as code
+- [ ] Metric governance
 
 ### AI-Assisted Development
 
@@ -114,8 +180,14 @@ Move to PRD when:
 - Fits current phase goals
 - Resources available
 
+## Recently Promoted
+
+| Feature | PRD | Date | Version |
+|---------|-----|------|---------|
+| Metric Marts Foundation | PRD-012 | 2026-01-29 | v0.5.5 |
+
 ---
 
 *This is a living backlog. Ideas may be added, modified, or removed as the project evolves.*
 
-*Last Updated: 2026-01-28*
+*Last Updated: 2026-01-29*
