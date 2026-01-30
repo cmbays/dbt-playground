@@ -9,8 +9,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Intermediate models and business logic (v0.4)
-- Marts layer with facts and dimensions (v0.5)
+- Marts layer enhancements (v0.5)
+- Semantic layer and metrics (v0.6)
+
+---
+
+## [0.4.0] - 2026-01-30
+
+### Added
+
+- **Intermediate Models**: Business logic and enrichment layer
+  - `int_encounters__enriched` - Encounters with derived fields
+  - `int_patients__with_conditions` - Patients joined with conditions
+
+- **Dimension Models**: 5 core dimensions for analytics
+  - `dim_patients` - Patient master with demographics and relationships
+  - `dim_providers` - Healthcare providers (many-to-many with organizations)
+  - `dim_organizations` - Healthcare facility/organization master
+  - `dim_payers` - Insurance payer/payor information
+  - `dim_date` - Date dimension for time-based aggregations (spans 100 years)
+
+- **Fact Models**: 4 core facts for analytics
+  - `fct_encounters` - Base encounter facts with all encounter types
+  - `fct_clinical_events` - Events (conditions, observations, procedures) denormalized
+  - `fct_encounters_monthly` - Monthly aggregate of encounters
+  - `fct_encounters_yearly` - Yearly aggregate of encounters
+
+- **Snapshots**: Slowly Changing Dimension Type 2
+  - `snp_patients` - Tracks patient demographic changes over time
+
+- **Documentation**: v0.4 design and implementation
+  - Updated PRD-004-DIMENSIONAL-MODELS.md with implementation
+  - TDD-004-DIMENSIONAL-MODELS.md: Technical design for dimensional models
+  - v0.4_PLAN.md: Implementation plan and execution notes
+
+### Technical Highlights
+
+- Kimball dimensional modeling patterns
+- SCD Type 2 for patient dimension
+- Date spine for time series analysis
+- Proper grain and fact architecture
+- Comprehensive test coverage on all models
 
 ---
 
@@ -129,6 +168,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.4.0   | 2026-01-30 | v0.4 Dimensional Models - 12 models, Kimball patterns, SCD2 |
 | 0.3.0   | 2026-01-29 | v0.3 Staging Complete - 9 models, 80 tests, 440k+ rows |
 | 0.2.0   | 2026-01-29 | v0.2 Environment Ready - uv workflow, 16 Synthea sources |
 | 0.1.0   | 2026-01-28 | Agent orchestration + dbt project planning complete |
