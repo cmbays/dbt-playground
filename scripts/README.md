@@ -41,6 +41,7 @@ Shell scripts can be run directly:
 
 | Script | Purpose |
 |--------|---------|
+| `rss_digest.py` | RSS aggregator for AI/Claude content (26 feeds, interactive HTML output) |
 | `extract_content.py` | Content extraction utility |
 | `insert_shopping_dialogues.py` | Data insertion utility |
 
