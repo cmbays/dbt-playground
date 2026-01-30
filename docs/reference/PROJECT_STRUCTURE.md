@@ -12,6 +12,8 @@ tags: [reference, structure, organization]
 
 ## Directory Overview
 
+**Note**: When using git worktrees for parallel development, worktree directories are siblings to the main repo (e.g., `../dbt-playground--feat-x/`). See [Git Worktree Workflow](../for_chris/GIT-WORKTREE-WORKFLOW.md).
+
 ```text
 dbt-playground/
 ├── CLAUDE.md                  # Project context for Claude (auto-loaded)

@@ -568,7 +568,7 @@ Review all staging models for consistency, patterns, and best practices.
 **Milestone**: v0.4.0
 
 **Description**:
-Create the patient dimension with demographics and derived attributes.
+Create the patient dimension with demographics, derived attributes, and SCD Type 2 history tracking.
 
 **Acceptance Criteria**:
 
@@ -576,9 +576,14 @@ Create the patient dimension with demographics and derived attributes.
 - [ ] Natural key preserved (`patient_id`)
 - [ ] All demographic attributes included
 - [ ] Derived fields: `full_name`, `age_years`, `is_deceased`
+- [ ] SCD Type 2 columns: `valid_from`, `valid_to`, `is_current`
+- [ ] Initial load sets valid_from = birth_date, valid_to = NULL, is_current = TRUE
 - [ ] Materialized as table
 - [ ] Tests for unique/not_null on keys
 - [ ] Model compiles and runs successfully
+
+**Technical Notes**:
+SCD Type 2 enables historical analysis. For initial load, all records are current.
 
 ---
 
@@ -597,7 +602,7 @@ Create the provider dimension with specialty information.
 - [ ] Surrogate key generated (`provider_key`)
 - [ ] Natural key preserved (`provider_id`)
 - [ ] Specialty information included
-- [ ] Organization linkage maintained
+- [ ] Organization linkage maintained (`organization_key` FK)
 - [ ] Materialized as table
 - [ ] Tests for unique/not_null on keys
 - [ ] Model compiles and runs successfully
@@ -626,6 +631,33 @@ Create the organizations dimension for healthcare facilities.
 
 ---
 
+### Issue: Create dim_payers dimension
+
+**Epic**: E4-Dimensional-Models
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `marts`, `dimension`, `priority:high`
+**Milestone**: v0.4.0
+
+**Description**:
+Create the payers dimension for insurance companies with coverage metrics.
+
+**Acceptance Criteria**:
+
+- [ ] Surrogate key generated (`payer_key`)
+- [ ] Natural key preserved (`payer_id`)
+- [ ] All payer attributes included (name, address, phone)
+- [ ] Coverage metrics included (amount_covered, amount_uncovered)
+- [ ] Performance metrics included (covered_encounters, covered_medications, etc.)
+- [ ] Derived `coverage_rate` calculated (amount_covered / total)
+- [ ] Materialized as table
+- [ ] Tests for unique/not_null on keys
+- [ ] Model compiles and runs successfully
+
+**Technical Notes**:
+Full dimension with all Synthea payer attributes. Supports payer analysis use case.
+
+---
+
 ### Issue: Create dim_date dimension
 
 **Epic**: E4-Dimensional-Models
@@ -638,16 +670,16 @@ Create the calendar dimension for time-based analysis.
 
 **Acceptance Criteria**:
 
-- [ ] Date range covers 2015-01-01 to 2025-12-31 (or data range)
+- [ ] Date range covers 1909-01-01 to 2025-12-31 (117 years)
 - [ ] Date key in YYYYMMDD format
 - [ ] Standard calendar attributes (day, week, month, quarter, year)
 - [ ] Weekend flag
-- [ ] US holiday flags (optional)
+- [ ] US holiday flags
 - [ ] Materialized as table
 - [ ] Model compiles and runs successfully
 
 **Technical Notes**:
-Consider using `dbt_date` package for generation.
+Use `dbt_date` package for generation. Date range must cover patient births (earliest 1909) through future buffer (2025).
 
 ---
 
@@ -664,7 +696,7 @@ Create the encounters fact table with all measures and dimension keys.
 **Acceptance Criteria**:
 
 - [ ] Surrogate key generated (`encounter_key`)
-- [ ] All dimension keys present (patient, provider, organization, date)
+- [ ] All dimension keys present (patient, provider, organization, payer, date)
 - [ ] All measures included (costs, duration)
 - [ ] Derived measures calculated (patient_responsibility, duration_minutes)
 - [ ] Denormalized patient context (age at encounter)
@@ -692,6 +724,57 @@ Create unified clinical events fact from conditions, medications, and procedures
 - [ ] Consistent column mapping across sources
 - [ ] Code system preserved (SNOMED, RXNORM)
 - [ ] Materialized as table
+- [ ] Model compiles and runs successfully
+
+---
+
+### Issue: Create fct_encounters_monthly fact table
+
+**Epic**: E4-Dimensional-Models
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `marts`, `fact`, `aggregate`, `priority:medium`
+**Milestone**: v0.4.0
+
+**Description**:
+Create monthly aggregate of encounters for time-series analysis and dashboard performance.
+
+**Acceptance Criteria**:
+
+- [ ] Grain: One row per year_month x encounter_class
+- [ ] Aggregated encounter count
+- [ ] Unique patient count per period
+- [ ] Cost summaries (total_claim_cost, payer_coverage, patient_responsibility)
+- [ ] Average duration minutes
+- [ ] year_month in YYYY-MM format
+- [ ] Materialized as table
+- [ ] Unique combination test on grain columns
+- [ ] Model compiles and runs successfully
+
+**Technical Notes**:
+Supports US-2 Encounter Trends use case with pre-aggregated monthly data.
+
+---
+
+### Issue: Create fct_encounters_yearly fact table
+
+**Epic**: E4-Dimensional-Models
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `marts`, `fact`, `aggregate`, `priority:medium`
+**Milestone**: v0.4.0
+
+**Description**:
+Create yearly aggregate of encounters for annual reporting.
+
+**Acceptance Criteria**:
+
+- [ ] Grain: One row per year x encounter_class
+- [ ] Aggregated encounter count
+- [ ] Unique patient count per year
+- [ ] Cost summaries (total_claim_cost, payer_coverage, patient_responsibility)
+- [ ] Average duration minutes
+- [ ] Encounters per patient ratio
+- [ ] Materialized as table
+- [ ] Unique combination test on grain columns
 - [ ] Model compiles and runs successfully
 
 ---
@@ -731,6 +814,7 @@ Create intermediate model with patient condition history.
 - [ ] Total condition count per patient
 - [ ] First diagnosis date
 - [ ] Active conditions list (array or comma-separated)
+- [ ] Chronic condition flags (diabetes, hypertension, heart disease)
 - [ ] Model compiles and runs successfully
 
 ---
@@ -747,11 +831,13 @@ Add referential integrity tests between facts and dimensions.
 
 **Acceptance Criteria**:
 
-- [ ] fct_encounters references valid patient_id in dim_patients
+- [ ] fct_encounters references valid patient_id in dim_patients (where is_current = true)
 - [ ] fct_encounters references valid provider_id in dim_providers
 - [ ] fct_encounters references valid organization_id in dim_organizations
+- [ ] fct_encounters references valid payer_id in dim_payers
 - [ ] fct_encounters references valid date_key in dim_date
 - [ ] fct_clinical_events references valid patient_id
+- [ ] Aggregate facts reference valid date ranges
 - [ ] `dbt test --select marts` passes
 
 ---
@@ -769,6 +855,7 @@ Add comprehensive documentation to all dimensional models.
 **Acceptance Criteria**:
 
 - [ ] `_core__models.yml` created with all models
+- [ ] `_healthcare__models.yml` created for intermediate models
 - [ ] All models have descriptions explaining grain
 - [ ] All columns have descriptions
 - [ ] Example queries added to model descriptions
@@ -792,6 +879,8 @@ Review all dimensional models for patterns and best practices.
 - [ ] Surrogate keys generated deterministically
 - [ ] Naming conventions consistent
 - [ ] No unnecessary denormalization
+- [ ] SCD Type 2 implementation correct
+- [ ] Aggregate fact grains are correct
 - [ ] Query performance acceptable
 - [ ] Document any recommended improvements
 
@@ -923,6 +1012,794 @@ Document how agents should use MCP tools for dbt development.
 
 ---
 
+## Epic 7: Tuva Foundation (E7)
+
+### Issue: Install Tuva Project dbt package
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `priority:critical`
+**Milestone**: v0.6.0
+
+**Description**:
+Install the Tuva Project dbt package to enable healthcare analytics.
+
+**Acceptance Criteria**:
+
+- [ ] Add `tuva-health/the_tuva_project` version 0.15.3 to packages.yml
+- [ ] `dbt deps` installs package without conflicts
+- [ ] No version conflicts with existing packages
+- [ ] Document any configuration requirements
+
+---
+
+### Issue: Create stg_synthea__immunizations staging model
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `staging`, `tuva`, `priority:high`
+**Milestone**: v0.6.0
+
+**Description**:
+Create immunizations staging model required for Tuva's immunization input table.
+
+**Acceptance Criteria**:
+
+- [ ] Model reads from immunizations CSV
+- [ ] All columns renamed to snake_case
+- [ ] CVX codes preserved
+- [ ] Patient and encounter linkage maintained
+- [ ] `_loaded_at` metadata column added
+- [ ] Model compiles and runs successfully
+
+---
+
+### Issue: Create encounter type mapping seed
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: data-modeler
+**Labels**: `enhancement`, `tuva`, `seeds`, `priority:high`
+**Milestone**: v0.6.0
+
+**Description**:
+Create seed file mapping Synthea encounter classes to Tuva encounter types.
+
+**Acceptance Criteria**:
+
+- [ ] `encounter_type_mapping.csv` created in seeds/tuva_mappings/
+- [ ] Maps: ambulatory, wellness, urgentcare, emergency, inpatient, outpatient
+- [ ] Tuva types: outpatient, inpatient, emergency, etc.
+- [ ] `dbt seed` loads mapping successfully
+
+---
+
+### Issue: Create LOINC lab codes seed
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: data-modeler
+**Labels**: `enhancement`, `tuva`, `seeds`, `priority:high`
+**Milestone**: v0.6.0
+
+**Description**:
+Create seed file categorizing LOINC codes as vitals vs laboratory results.
+
+**Acceptance Criteria**:
+
+- [ ] `loinc_lab_codes.csv` created in seeds/tuva_mappings/
+- [ ] Common vital sign LOINC codes categorized
+- [ ] Lab result LOINC codes identified
+- [ ] `dbt seed` loads categorization successfully
+
+---
+
+### Issue: Create int_tuva__patient connector model
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `connector`, `priority:critical`
+**Milestone**: v0.6.0
+
+**Description**:
+Create connector model transforming stg_synthea__patients to Tuva patient format.
+
+**Acceptance Criteria**:
+
+- [ ] Gender mapped (M to male, F to female)
+- [ ] Race codes mapped to CDC standards
+- [ ] data_source column added ('synthea')
+- [ ] All required Tuva columns present
+- [ ] Model compiles and runs successfully
+
+---
+
+### Issue: Create int_tuva__encounter connector model
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `connector`, `priority:critical`
+**Milestone**: v0.6.0
+
+**Description**:
+Create connector model transforming stg_synthea__encounters to Tuva encounter format.
+
+**Acceptance Criteria**:
+
+- [ ] Encounter class mapped to Tuva types using seed
+- [ ] All required Tuva columns present
+- [ ] data_source column added
+- [ ] Model compiles and runs successfully
+
+---
+
+### Issue: Create remaining clinical connector models
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `connector`, `priority:high`
+**Milestone**: v0.6.0
+
+**Description**:
+Create connector models for condition, procedure, medication, observation, lab_result, immunization, practitioner, and location.
+
+**Acceptance Criteria**:
+
+- [ ] int_tuva__condition maps from stg_synthea__conditions
+- [ ] int_tuva__procedure maps from stg_synthea__procedures
+- [ ] int_tuva__medication maps from stg_synthea__medications
+- [ ] int_tuva__observation filters vitals from observations
+- [ ] int_tuva__lab_result filters labs from observations
+- [ ] int_tuva__immunization maps from stg_synthea__immunizations
+- [ ] int_tuva__practitioner maps from stg_synthea__providers
+- [ ] int_tuva__location maps from stg_synthea__organizations
+- [ ] All models compile and run successfully
+
+---
+
+### Issue: Configure Tuva clinical input layer
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `config`, `priority:critical`
+**Milestone**: v0.6.0
+
+**Description**:
+Configure dbt_project.yml to enable Tuva's clinical input layer.
+
+**Acceptance Criteria**:
+
+- [ ] clinical_input_enabled: true set in vars
+- [ ] claims_input_enabled: false set in vars
+- [ ] All input table refs point to connector models
+- [ ] `dbt compile --select tuva_health.*` succeeds
+
+---
+
+### Issue: Add tests to Tuva connector models
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-tester
+**Labels**: `testing`, `tuva`, `priority:high`
+**Milestone**: v0.6.0
+
+**Description**:
+Add schema tests to all Tuva connector models.
+
+**Acceptance Criteria**:
+
+- [ ] `_tuva_connector__models.yml` created
+- [ ] Primary keys have unique/not_null tests
+- [ ] Foreign keys validated
+- [ ] `dbt test --select tag:tuva_connector` passes
+
+---
+
+### Issue: Document Tuva connector models
+
+**Epic**: E7-Tuva-Foundation
+**Assignee**: dbt-documenter
+**Labels**: `documentation`, `tuva`, `priority:high`
+**Milestone**: v0.6.0
+
+**Description**:
+Document all Tuva connector models with transformation logic.
+
+**Acceptance Criteria**:
+
+- [ ] All connector models have descriptions
+- [ ] Transformation logic documented
+- [ ] Source-to-target mapping documented
+- [ ] `dbt docs generate` includes connector models
+
+---
+
+## Epic 8: Clinical Marts (E8)
+
+### Issue: Enable chronic conditions data mart
+
+**Epic**: E8-Clinical-Marts
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `marts`, `priority:critical`
+**Milestone**: v0.7.0
+
+**Description**:
+Enable and validate Tuva's chronic conditions data mart.
+
+**Acceptance Criteria**:
+
+- [ ] tuva_chronic_conditions_enabled: true configured
+- [ ] Mart builds successfully
+- [ ] Condition groupings populated for patients with conditions
+- [ ] ~40 condition groups available
+
+---
+
+### Issue: Enable ED classification data mart
+
+**Epic**: E8-Clinical-Marts
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `marts`, `priority:high`
+**Milestone**: v0.7.0
+
+**Description**:
+Enable and validate Tuva's ED classification data mart.
+
+**Acceptance Criteria**:
+
+- [ ] ed_classification_enabled: true configured
+- [ ] Mart builds successfully
+- [ ] Emergency encounters properly classified
+- [ ] Avoidable ED visits identified
+
+---
+
+### Issue: Enable readmissions data mart
+
+**Epic**: E8-Clinical-Marts
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `marts`, `priority:high`
+**Milestone**: v0.7.0
+
+**Description**:
+Enable and validate Tuva's readmissions data mart.
+
+**Acceptance Criteria**:
+
+- [ ] readmissions_enabled: true configured
+- [ ] Mart builds successfully
+- [ ] Index admissions identified
+- [ ] 30-day readmission flags calculated
+
+---
+
+### Issue: Enable data profiling mart
+
+**Epic**: E8-Clinical-Marts
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `quality`, `priority:high`
+**Milestone**: v0.7.0
+
+**Description**:
+Enable Tuva's data profiling for data quality validation.
+
+**Acceptance Criteria**:
+
+- [ ] data_profiling_enabled: true configured
+- [ ] Profiling runs successfully
+- [ ] Quality report generated
+- [ ] Pass rate documented (target: >95%)
+
+---
+
+### Issue: Validate clinical mart outputs
+
+**Epic**: E8-Clinical-Marts
+**Assignee**: dbt-tester
+**Labels**: `testing`, `tuva`, `priority:critical`
+**Milestone**: v0.7.0
+
+**Description**:
+Validate all clinical mart outputs for correctness.
+
+**Acceptance Criteria**:
+
+- [ ] Chronic condition groupings cover all patients with conditions
+- [ ] ED classifications are reasonable for data
+- [ ] Readmission rates within expected ranges
+- [ ] Data quality tests pass (>95%)
+- [ ] Sample analytics queries verified
+
+---
+
+### Issue: Document clinical mart usage
+
+**Epic**: E8-Clinical-Marts
+**Assignee**: dbt-documenter
+**Labels**: `documentation`, `tuva`, `priority:high`
+**Milestone**: v0.7.0
+
+**Description**:
+Document how to use Tuva clinical marts for analytics.
+
+**Acceptance Criteria**:
+
+- [ ] Chronic conditions usage guide
+- [ ] ED classification interpretation
+- [ ] Readmissions analysis examples
+- [ ] Sample SQL queries documented
+
+---
+
+## Epic 9: Claims Acquisition (E9)
+
+### Issue: Research and document CMS SynPUF data
+
+**Epic**: E9-Claims-Acquisition
+**Assignee**: developer
+**Labels**: `research`, `data`, `tuva`, `priority:critical`
+**Milestone**: v0.8.0
+
+**Description**:
+Research CMS SynPUF data structure and document acquisition plan.
+
+**Acceptance Criteria**:
+
+- [ ] CMS SynPUF documentation reviewed
+- [ ] File formats and structures documented
+- [ ] Storage requirements estimated
+- [ ] Download procedure documented
+
+---
+
+### Issue: Download CMS SynPUF data files
+
+**Epic**: E9-Claims-Acquisition
+**Assignee**: developer
+**Labels**: `enhancement`, `data`, `tuva`, `priority:critical`
+**Milestone**: v0.8.0
+
+**Description**:
+Download CMS Synthetic Public Use Files for claims analytics.
+
+**Acceptance Criteria**:
+
+- [ ] Beneficiary summary files downloaded
+- [ ] Inpatient claims files downloaded
+- [ ] Outpatient claims files downloaded
+- [ ] Carrier claims files downloaded
+- [ ] PDE (Part D) files downloaded
+- [ ] Files stored in dbt_project/data/cms_synpuf/
+
+---
+
+### Issue: Create CMS SynPUF source definitions
+
+**Epic**: E9-Claims-Acquisition
+**Assignee**: data-modeler
+**Labels**: `enhancement`, `staging`, `tuva`, `priority:high`
+**Milestone**: v0.8.0
+
+**Description**:
+Create source definitions for all CMS SynPUF tables.
+
+**Acceptance Criteria**:
+
+- [ ] `_cms_synpuf__sources.yml` created
+- [ ] All SynPUF tables defined
+- [ ] Column descriptions added
+- [ ] Basic tests on primary keys
+
+---
+
+### Issue: Verify CMS SynPUF data integrity
+
+**Epic**: E9-Claims-Acquisition
+**Assignee**: dbt-tester
+**Labels**: `testing`, `data`, `tuva`, `priority:high`
+**Milestone**: v0.8.0
+
+**Description**:
+Verify all SynPUF files are readable and have expected structure.
+
+**Acceptance Criteria**:
+
+- [ ] All files readable by DuckDB
+- [ ] Row counts documented
+- [ ] Column counts match CMS documentation
+- [ ] No corrupted files
+
+---
+
+## Epic 10: Claims Connector (E10)
+
+### Issue: Create CMS SynPUF staging models
+
+**Epic**: E10-Claims-Connector
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `staging`, `tuva`, `priority:critical`
+**Milestone**: v0.9.0
+
+**Description**:
+Create staging models for all CMS SynPUF tables.
+
+**Acceptance Criteria**:
+
+- [ ] stg_synpuf__beneficiary_summary created
+- [ ] stg_synpuf__inpatient_claims created
+- [ ] stg_synpuf__outpatient_claims created
+- [ ] stg_synpuf__carrier_claims created
+- [ ] stg_synpuf__pde created
+- [ ] All models compile and run
+
+---
+
+### Issue: Create int_tuva__eligibility connector
+
+**Epic**: E10-Claims-Connector
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `connector`, `priority:critical`
+**Milestone**: v0.9.0
+
+**Description**:
+Create connector model transforming beneficiary summary to Tuva eligibility.
+
+**Acceptance Criteria**:
+
+- [ ] Member spans derived from coverage months
+- [ ] Demographics mapped correctly
+- [ ] All required Tuva columns present
+- [ ] Model compiles and runs successfully
+
+---
+
+### Issue: Create int_tuva__medical_claim connector
+
+**Epic**: E10-Claims-Connector
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `connector`, `priority:critical`
+**Milestone**: v0.9.0
+
+**Description**:
+Create connector model unioning inpatient, outpatient, and carrier claims.
+
+**Acceptance Criteria**:
+
+- [ ] Inpatient claims mapped with claim_type='institutional'
+- [ ] Outpatient claims mapped with claim_type='institutional'
+- [ ] Carrier claims mapped with claim_type='professional'
+- [ ] All required Tuva columns present
+- [ ] Model compiles and runs successfully
+
+---
+
+### Issue: Create int_tuva__pharmacy_claim connector
+
+**Epic**: E10-Claims-Connector
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `connector`, `priority:critical`
+**Milestone**: v0.9.0
+
+**Description**:
+Create connector model transforming PDE to Tuva pharmacy claims.
+
+**Acceptance Criteria**:
+
+- [ ] NDC codes preserved
+- [ ] Days supply and quantity mapped
+- [ ] Payment amounts mapped
+- [ ] All required Tuva columns present
+- [ ] Model compiles and runs successfully
+
+---
+
+### Issue: Configure Tuva claims input layer
+
+**Epic**: E10-Claims-Connector
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `config`, `priority:critical`
+**Milestone**: v0.9.0
+
+**Description**:
+Configure dbt_project.yml to enable Tuva's claims input layer.
+
+**Acceptance Criteria**:
+
+- [ ] claims_input_enabled: true set in vars
+- [ ] Eligibility, medical_claim, pharmacy_claim refs configured
+- [ ] `dbt compile --select tuva_health.*` succeeds with claims
+- [ ] Tuva claims validation tests pass
+
+---
+
+### Issue: Test claims connector models
+
+**Epic**: E10-Claims-Connector
+**Assignee**: dbt-tester
+**Labels**: `testing`, `tuva`, `priority:high`
+**Milestone**: v0.9.0
+
+**Description**:
+Add tests and validate claims connector models.
+
+**Acceptance Criteria**:
+
+- [ ] Schema tests on all connector models
+- [ ] Tuva validation tests pass
+- [ ] Referential integrity verified
+- [ ] `dbt test` passes for claims connectors
+
+---
+
+## Epic 11: Financial Marts (E11)
+
+### Issue: Enable Financial PMPM data mart
+
+**Epic**: E11-Financial-Marts
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `marts`, `priority:critical`
+**Milestone**: v1.0.0
+
+**Description**:
+Enable and validate Tuva's Financial PMPM data mart.
+
+**Acceptance Criteria**:
+
+- [ ] pmpm_enabled: true configured
+- [ ] Mart builds successfully
+- [ ] PMPM by service category calculated
+- [ ] Member months accurate
+
+---
+
+### Issue: Enable CMS-HCC risk adjustment mart
+
+**Epic**: E11-Financial-Marts
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `marts`, `priority:critical`
+**Milestone**: v1.0.0
+
+**Description**:
+Enable and validate Tuva's CMS-HCC risk adjustment data mart.
+
+**Acceptance Criteria**:
+
+- [ ] cms_hcc_enabled: true configured
+- [ ] Mart builds successfully
+- [ ] HCC conditions assigned
+- [ ] RAF scores calculated
+
+---
+
+### Issue: Enable claims preprocessing
+
+**Epic**: E11-Financial-Marts
+**Assignee**: dbt-developer
+**Labels**: `enhancement`, `tuva`, `marts`, `priority:high`
+**Milestone**: v1.0.0
+
+**Description**:
+Enable Tuva's claims preprocessing for encounter grouping.
+
+**Acceptance Criteria**:
+
+- [ ] claims_preprocessing_enabled: true configured
+- [ ] Claims grouped into encounters
+- [ ] Encounter types assigned
+- [ ] Mart builds successfully
+
+---
+
+### Issue: Validate financial mart outputs
+
+**Epic**: E11-Financial-Marts
+**Assignee**: dbt-tester
+**Labels**: `testing`, `tuva`, `priority:critical`
+**Milestone**: v1.0.0
+
+**Description**:
+Validate all financial mart outputs for correctness.
+
+**Acceptance Criteria**:
+
+- [ ] PMPM values within expected ranges
+- [ ] HCC scores between 0.5 - 5.0 RAF
+- [ ] All financial tests pass
+- [ ] Sample analytics queries verified
+
+---
+
+### Issue: Document financial analytics
+
+**Epic**: E11-Financial-Marts
+**Assignee**: dbt-documenter
+**Labels**: `documentation`, `tuva`, `priority:high`
+**Milestone**: v1.0.0
+
+**Description**:
+Document how to use Tuva financial marts for analytics.
+
+**Acceptance Criteria**:
+
+- [ ] PMPM analysis guide
+- [ ] HCC risk score interpretation
+- [ ] Cost analysis examples
+- [ ] Sample SQL queries documented
+
+---
+
+### Issue: Complete v1.0 milestone
+
+**Epic**: E11-Financial-Marts
+**Assignee**: developer
+**Labels**: `milestone`, `release`, `priority:critical`
+**Milestone**: v1.0.0
+
+**Description**:
+Finalize v1.0 release with complete Tuva integration.
+
+**Acceptance Criteria**:
+
+- [ ] All Tuva clinical marts operational
+- [ ] All Tuva financial marts operational
+- [ ] Documentation complete
+- [ ] CHANGELOG updated
+- [ ] Git tag v1.0.0 created
+- [ ] CLAUDE.md updated to reflect completion
+
+---
+
+## Epic 12: Developer Experience - Git Worktrees (E12)
+
+### Issue: Set up git worktree workflow infrastructure
+
+**Epic**: E12-Developer-Experience
+**Assignee**: developer
+**Labels**: `enhancement`, `workflow`, `priority:critical`
+**Milestone**: v0.4.1
+
+**Description**:
+Establish git worktree conventions and workflow for parallel Claude Code sessions. Each session ("team") can work in isolation without branch conflicts.
+
+**Acceptance Criteria**:
+
+- [ ] Worktree naming convention documented: `dbt-playground-{track}`
+- [ ] Worktree directory location: sibling to main repo (`../dbt-playground-{track}/`)
+- [ ] Branch naming tied to worktree: `feat/{track}-{feature}` or `feat/{track}`
+- [ ] Track names defined (tuva, marts, docs, infra, fix)
+- [ ] Workflow tested with at least 2 concurrent worktrees
+- [ ] No interference between worktrees confirmed
+
+**Technical Notes**:
+
+```bash
+# Create worktree
+git worktree add ../dbt-playground-tuva -b feat/tuva-connectors main
+
+# List worktrees
+git worktree list
+
+# Remove worktree after PR merge
+git worktree remove ../dbt-playground-tuva
+```
+
+---
+
+### Issue: Update CLAUDE.md with worktree guidance
+
+**Epic**: E12-Developer-Experience
+**Assignee**: developer
+**Labels**: `documentation`, `workflow`, `priority:high`
+**Milestone**: v0.4.1
+
+**Description**:
+Add a section to CLAUDE.md explaining how to work with git worktrees for parallel development.
+
+**Acceptance Criteria**:
+
+- [ ] New "Git Worktrees" section in CLAUDE.md
+- [ ] Worktree naming convention documented
+- [ ] Commands for creating worktrees documented
+- [ ] Commands for checking current worktree/branch
+- [ ] Commands for cleanup after PR merge
+- [ ] Guidance on draft PR creation at worktree setup
+- [ ] Note about commit-per-model granularity
+
+**Content to Include**:
+
+```markdown
+## Git Worktrees (Parallel Development)
+
+When running multiple Claude Code sessions, each session should operate in its own git worktree.
+
+### Creating a Worktree
+git worktree add ../dbt-playground-{track} -b feat/{track}-{feature} main
+
+### Check Current Context
+git worktree list
+pwd  # Verify which worktree you're in
+
+### After PR Merge
+git worktree remove ../dbt-playground-{track}
+git branch -d feat/{track}-{feature}
+```
+
+---
+
+### Issue: Create FOR_CHRIS learning doc on worktrees
+
+**Epic**: E12-Developer-Experience
+**Assignee**: sage
+**Labels**: `documentation`, `learning`, `priority:high`
+**Milestone**: v0.4.1
+
+**Description**:
+Create a learning document in docs/for_chris/ explaining git worktrees for parallel development.
+
+**Acceptance Criteria**:
+
+- [ ] `docs/for_chris/GIT_WORKTREES.md` created
+- [ ] Explains what git worktrees are and why they matter
+- [ ] Covers the problem (parallel sessions conflict) and solution
+- [ ] Step-by-step guide for creating worktrees
+- [ ] Visual diagram of worktree structure
+- [ ] Commands reference for common operations
+- [ ] Best practices (max 3-4 concurrent, cleanup after merge)
+- [ ] Troubleshooting section
+
+**Structure**:
+
+```markdown
+# Git Worktrees for Parallel Development
+
+## Why Worktrees?
+- Problem: Multiple Claude sessions share one directory
+- Solution: Each session gets its own worktree
+
+## Quick Reference
+| Action | Command |
+|--------|---------|
+| Create worktree | git worktree add ... |
+| List worktrees | git worktree list |
+| Remove worktree | git worktree remove ... |
+
+## Step-by-Step Guide
+...
+
+## Best Practices
+...
+```
+
+---
+
+### Issue: Update supervisor/orchestrate to be worktree-aware
+
+**Epic**: E12-Developer-Experience
+**Assignee**: developer
+**Labels**: `enhancement`, `agents`, `priority:medium`
+**Milestone**: v0.4.1
+
+**Description**:
+Update the supervisor agent documentation to understand and work with multiple worktrees.
+
+**Acceptance Criteria**:
+
+- [ ] Supervisor persona docs updated with worktree awareness
+- [ ] Can identify which worktree/branch a session is in
+- [ ] Can list active worktrees and their assigned features
+- [ ] Can recommend which worktree to use for a task
+- [ ] Prevents conflicting assignments (same feature in multiple worktrees)
+- [ ] `/orchestrate` command acknowledges worktree context
+
+**Technical Notes**:
+
+```bash
+# Supervisor can use these commands to understand context
+git worktree list
+git branch --show-current
+pwd
+```
+
+---
+
 ## Summary by Milestone
 
 ### v0.2.0 - Foundation (E1 + E2)
@@ -970,16 +1847,30 @@ Document how agents should use MCP tools for dbt development.
 | Create dim_patients dimension | E4 | Critical | dbt-developer |
 | Create dim_providers dimension | E4 | High | dbt-developer |
 | Create dim_organizations dimension | E4 | High | dbt-developer |
+| Create dim_payers dimension | E4 | High | dbt-developer |
 | Create dim_date dimension | E4 | Critical | dbt-developer |
 | Create fct_encounters fact table | E4 | Critical | dbt-developer |
 | Create fct_clinical_events fact table | E4 | High | dbt-developer |
+| Create fct_encounters_monthly fact table | E4 | Medium | dbt-developer |
+| Create fct_encounters_yearly fact table | E4 | Medium | dbt-developer |
 | Create int_encounters__enriched intermediate model | E4 | Medium | dbt-developer |
 | Create int_patients__with_conditions intermediate model | E4 | Medium | dbt-developer |
 | Add referential integrity tests to marts | E4 | High | dbt-tester |
 | Document dimensional models | E4 | High | dbt-documenter |
 | Code review dimensional models | E4 | High | code-reviewer |
 
-**Total Issues**: 11
+**Total Issues**: 14
+
+### v0.4.1 - Developer Experience (E12)
+
+| Issue | Epic | Priority | Assignee |
+|-------|------|----------|----------|
+| Set up git worktree workflow infrastructure | E12 | Critical | developer |
+| Update CLAUDE.md with worktree guidance | E12 | High | developer |
+| Create FOR_CHRIS learning doc on worktrees | E12 | High | sage |
+| Update supervisor/orchestrate to be worktree-aware | E12 | Medium | developer |
+
+**Total Issues**: 4
 
 ### v0.5.0 - Production Quality (E5 + E6)
 
@@ -991,6 +1882,83 @@ Document how agents should use MCP tools for dbt development.
 | Test MCP discovery tools | E6 | High | developer |
 | Test MCP SQL execution tools | E6 | High | dbt-developer |
 | Document agent workflow with MCP | E6 | Medium | sage |
+
+**Total Issues**: 6
+
+---
+
+### v0.6.0 - Tuva Foundation (E7)
+
+| Issue | Epic | Priority | Assignee |
+|-------|------|----------|----------|
+| Install Tuva Project dbt package | E7 | Critical | dbt-developer |
+| Create stg_synthea__immunizations staging model | E7 | High | dbt-developer |
+| Create encounter type mapping seed | E7 | High | data-modeler |
+| Create LOINC lab codes seed | E7 | High | data-modeler |
+| Create int_tuva__patient connector model | E7 | Critical | dbt-developer |
+| Create int_tuva__encounter connector model | E7 | Critical | dbt-developer |
+| Create remaining clinical connector models | E7 | High | dbt-developer |
+| Configure Tuva clinical input layer | E7 | Critical | dbt-developer |
+| Add tests to Tuva connector models | E7 | High | dbt-tester |
+| Document Tuva connector models | E7 | High | dbt-documenter |
+
+**Total Issues**: 10
+
+---
+
+### v0.7.0 - Clinical Analytics (E8)
+
+| Issue | Epic | Priority | Assignee |
+|-------|------|----------|----------|
+| Enable chronic conditions data mart | E8 | Critical | dbt-developer |
+| Enable ED classification data mart | E8 | High | dbt-developer |
+| Enable readmissions data mart | E8 | High | dbt-developer |
+| Enable data profiling mart | E8 | High | dbt-developer |
+| Validate clinical mart outputs | E8 | Critical | dbt-tester |
+| Document clinical mart usage | E8 | High | dbt-documenter |
+
+**Total Issues**: 6
+
+---
+
+### v0.8.0 - Claims Ready (E9)
+
+| Issue | Epic | Priority | Assignee |
+|-------|------|----------|----------|
+| Research and document CMS SynPUF data | E9 | Critical | developer |
+| Download CMS SynPUF data files | E9 | Critical | developer |
+| Create CMS SynPUF source definitions | E9 | High | data-modeler |
+| Verify CMS SynPUF data integrity | E9 | High | dbt-tester |
+
+**Total Issues**: 4
+
+---
+
+### v0.9.0 - Claims Connector (E10)
+
+| Issue | Epic | Priority | Assignee |
+|-------|------|----------|----------|
+| Create CMS SynPUF staging models | E10 | Critical | dbt-developer |
+| Create int_tuva__eligibility connector | E10 | Critical | dbt-developer |
+| Create int_tuva__medical_claim connector | E10 | Critical | dbt-developer |
+| Create int_tuva__pharmacy_claim connector | E10 | Critical | dbt-developer |
+| Configure Tuva claims input layer | E10 | Critical | dbt-developer |
+| Test claims connector models | E10 | High | dbt-tester |
+
+**Total Issues**: 6
+
+---
+
+### v1.0.0 - Full Analytics Platform (E11)
+
+| Issue | Epic | Priority | Assignee |
+|-------|------|----------|----------|
+| Enable Financial PMPM data mart | E11 | Critical | dbt-developer |
+| Enable CMS-HCC risk adjustment mart | E11 | Critical | dbt-developer |
+| Enable claims preprocessing | E11 | High | dbt-developer |
+| Validate financial mart outputs | E11 | Critical | dbt-tester |
+| Document financial analytics | E11 | High | dbt-documenter |
+| Complete v1.0 milestone | E11 | Critical | developer |
 
 **Total Issues**: 6
 
@@ -1011,9 +1979,20 @@ Document how agents should use MCP tools for dbt development.
 | `intermediate` | Intermediate models |
 | `dimension` | Dimension tables |
 | `fact` | Fact tables |
+| `aggregate` | Aggregate fact tables |
 | `data` | Data-related work |
 | `mcp` | MCP integration |
 | `quality` | Data quality |
+| `tuva` | Tuva Project integration |
+| `connector` | Tuva connector models |
+| `seeds` | Seed file work |
+| `config` | Configuration changes |
+| `research` | Research/discovery work |
+| `milestone` | Milestone completion |
+| `release` | Release-related work |
+| `workflow` | Developer workflow improvements |
+| `agents` | Agent system updates |
+| `learning` | Learning documentation |
 | `priority:critical` | Must have for milestone |
 | `priority:high` | Should have for milestone |
 | `priority:medium` | Nice to have |
@@ -1047,4 +2026,5 @@ Or use the GitHub web interface to create issues manually.
 ---
 
 *Document Created: 2026-01-28*
-*Total Issues: 41*
+*Document Updated: 2026-01-29*
+*Total Issues: 80 (44 original + 32 Tuva integration + 4 Developer Experience)*

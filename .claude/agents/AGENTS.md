@@ -772,6 +772,17 @@ active_track: feat/customer-analytics
     └─────────────┘  └─────────────┘  └─────────────┘
 ```
 
+**Multi-Worktree Support**:
+
+Supervisor can manage multiple parallel work tracks across git worktrees:
+
+- Each worktree = isolated Claude Code session
+- Supervisor tracks all active worktrees via `git worktree list`
+- Routes tasks to appropriate worktree/session
+- `super: status` shows all active tracks including worktree locations
+
+See [[docs/for_chris/GIT-WORKTREE-WORKFLOW.md]] for worktree workflow details.
+
 **See**: [[supervisor.md]] for full persona details, [[../commands/supervisor.md]] for command usage.
 
 ### dbt Development Agents
