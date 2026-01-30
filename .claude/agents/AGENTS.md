@@ -1161,7 +1161,7 @@ Task({
 
 ```javascript
 Task({
-  prompt: "Implement [feature] per TDD in docs/tdd/...",
+  prompt: "Implement [feature] per TDD in docs/specs/...",
   subagent_type: "feature-dev"
 })
 ```
@@ -1370,7 +1370,7 @@ Task({
 
 - [[docs/for_chris/]] - Educational narratives and case studies
 - [[docs/reviews/]] - Past code reviews
-- [[docs/tdd/]] - Technical design documents
+- [[docs/specs/]] - Technical design documents
 
 ### GitHub Integration
 
@@ -1499,7 +1499,7 @@ Agents are responsible for keeping documentation current. Follow these protocols
 | New workflow discovered | AGENTS.md, WORKFLOW_EXCEPTIONS.md |
 | Bug fixed with learnings | TESTING.md (Bug Learnings section) |
 | PRD completed | docs/specs/ (move from draft to approved) |
-| TDD completed | docs/tdd/, link from PRD |
+| TDD completed | docs/specs/, link from PRD |
 | Version deployed | CHANGELOG.md, living docs timestamps |
 | Pattern changed | DESIGN_PRINCIPLES.md or CONTENT_STANDARDS.md |
 | New persona needed | .claude/agents/README.md, create persona file |
@@ -1623,7 +1623,7 @@ Before committing documentation changes:
 | Artifact Type | Location | Managed By |
 |---------------|----------|------------|
 | PRDs | `docs/specs/PRD-*.md` | PM persona |
-| TDDs | `docs/tdd/TDD-*.md` | Architect persona |
+| TDDs | `docs/specs/TDD-*.md` | Architect persona |
 | Test specs | `temp/v*_TESTING.md` | Tester persona |
 | Build plans | `temp/v*_PLAN.md` | Any persona |
 | Work in progress | `temp/` | Developer persona |

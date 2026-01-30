@@ -162,7 +162,7 @@ arch: what's the best way to implement localStorage persistence? use context7
 
 ### Outputs
 
-- TDD in `docs/tdd/`
+- TDD in `docs/specs/`
 - Architecture diagrams (design.d2)
 - Implementation approach recommendation
 - Risk assessment
@@ -185,8 +185,8 @@ arch: what's the best way to implement localStorage persistence? use context7
 
 | Artifact | Location | When |
 |----------|----------|------|
-| TDD | `docs/tdd/TDD-*.md` | Each feature |
-| Architecture diagram | `docs/tdd/*.d2` | Complex features |
+| TDD | `docs/specs/TDD-*.md` | Each feature |
+| Architecture diagram | `docs/specs/*.d2` | Complex features |
 | Option analysis | In TDD | When multiple approaches |
 
 ## Quality Checklist

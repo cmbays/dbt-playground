@@ -82,7 +82,7 @@ The Supervisor enforces quality gates at each phase transition. **Transitions ar
 |------------|-------------------|------------------|
 | START → PM | None | User request clarified |
 | PM → Architect | PRD exists | `docs/specs/PRD-*.md` matches feature |
-| Architect → Tester | TDD exists | `docs/tdd/TDD-*.md` matches feature |
+| Architect → Tester | TDD exists | `docs/specs/TDD-*.md` matches feature |
 | Tester → Developer | Test spec exists | `temp/v*_TESTING.md` or test plan |
 | Developer → Reviewer | Implementation complete | Files in expected locations |
 | Reviewer → Documenter | Reviews approved | No BLOCKER comments pending |

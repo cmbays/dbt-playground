@@ -27,7 +27,7 @@ This command initiates a sequential persona chain:
 ├─────────────────────────────────────────────────────────────┤
 │  2. TECHNICAL ARCHITECT (arch:)                             │
 │     - Design system architecture                            │
-│     - Create TDD in docs/tdd/                               │
+│     - Create TDD in docs/specs/                               │
 │     - Identify implementation approach                      │
 │     - Consult data-modeler: for dimensional modeling needs  │
 ├─────────────────────────────────────────────────────────────┤
@@ -86,7 +86,7 @@ For smaller tasks, phases can be skipped:
 | Phase | Output Location |
 |-------|-----------------|
 | PRD | `docs/specs/PRD-*.md` |
-| TDD | `docs/tdd/TDD-*.md` |
+| TDD | `docs/specs/TDD-*.md` |
 | Test Spec | `temp/v*_TESTING.md` |
 | Implementation | `temp/` then final location |
 | Reviews | `docs/reviews/` or inline |

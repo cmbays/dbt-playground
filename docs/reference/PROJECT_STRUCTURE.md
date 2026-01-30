@@ -113,7 +113,7 @@ dbt-playground/
 ### Adding New Features
 
 1. Create PRD in `docs/specs/PRD-XXX.md`
-2. Create TDD in `docs/tdd/TDD-XXX.md`
+2. Create TDD in `docs/specs/TDD-XXX.md`
 3. Implement with test-driven development
 4. Document in relevant files
 

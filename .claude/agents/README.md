@@ -52,7 +52,7 @@ For feature development, the Supervisor orchestrates the workflow:
                           │ Delegates to /orchestrate
                           ▼
 1. PM         → Draft PRD in docs/specs/
-2. Architect  → Create TDD in docs/tdd/
+2. Architect  → Create TDD in docs/specs/
 3. Tester     → Write test specification
 4. Developer  → Implement until tests pass
 5. Reviewers  → Code + Design review (parallel)
@@ -103,8 +103,8 @@ Each persona ends work with:
 | Artifact Type | Location |
 |---------------|----------|
 | PRDs | `docs/specs/PRD-*.md` |
-| TDDs | `docs/tdd/TDD-*.md` |
-| Architecture diagrams | `docs/tdd/*.d2` |
+| TDDs | `docs/specs/TDD-*.md` |
+| Architecture diagrams | `docs/specs/*.d2` |
 | Test specifications | `temp/v*_TESTING.md` |
 | Work-in-progress code | `temp/` |
 | Changelog | `CHANGELOG.md` |

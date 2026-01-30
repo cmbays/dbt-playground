@@ -209,7 +209,7 @@ These events trigger Sage persona for learning extraction:
    - Reusable workflow -> .claude/skills/
    - Standard/rule -> .claude/rules/
    - Product spec -> docs/specs/
-   - Technical design -> docs/tdd/
+   - Technical design -> docs/specs/
 
 3. USE consistent structure:
    ```markdown
