@@ -16,6 +16,8 @@ Usage:
 
 import argparse
 import json
+import re
+import subprocess
 import webbrowser
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -25,6 +27,7 @@ import feedparser
 import httpx
 from rich.console import Console
 from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
 
 console = Console()
 
@@ -124,8 +127,14 @@ def fetch_feed(name: str, url: str, timeout: float = 10.0) -> list[dict[str, Any
             })
 
         return entries
+    except httpx.RequestError as e:
+        console.print(f"[yellow]Warning: Network error fetching {name}: {e}[/yellow]")
+        return []
+    except httpx.HTTPStatusError as e:
+        console.print(f"[yellow]Warning: HTTP {e.response.status_code} fetching {name}[/yellow]")
+        return []
     except Exception as e:
-        console.print(f"[yellow]Warning: Failed to fetch {name}: {e}[/yellow]")
+        console.print(f"[yellow]Warning: Failed to parse {name}: {type(e).__name__}: {e}[/yellow]")
         return []
 
 
@@ -439,6 +448,38 @@ def generate_html(entries: list[dict[str, Any]], output_path: Path) -> None:
         let activeSource = null;
         let searchQuery = '';
 
+        // Escape HTML to prevent XSS from malicious feed content
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, c => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[c]);
+        }
+
+        // Sanitize URL to prevent javascript: protocol injection
+        function sanitizeUrl(url) {
+            if (!url) return '#';
+            try {
+                const parsed = new URL(url);
+                if (!['http:', 'https:'].includes(parsed.protocol)) {
+                    return '#';
+                }
+                return url;
+            } catch {
+                return '#';
+            }
+        }
+
+        // Strip HTML tags from summary text
+        function stripHtml(str) {
+            if (!str) return '';
+            return str.replace(/<[^>]*>/g, '');
+        }
+
         function getCategoryClass(cat) {
             if (cat.includes('Claude')) return 'claude';
             if (cat.includes('Agent')) return 'agents';
@@ -474,15 +515,15 @@ def generate_html(entries: list[dict[str, Any]], output_path: Path) -> None:
             container.innerHTML = filtered.map(entry => `
                 <div class="entry">
                     <div class="entry-header">
-                        <a href="${entry.link}" target="_blank" class="entry-title">${entry.title}</a>
+                        <a href="${sanitizeUrl(entry.link)}" target="_blank" rel="noopener noreferrer" class="entry-title">${escapeHtml(entry.title)}</a>
                     </div>
                     <div class="entry-meta">
-                        <span class="entry-source">${entry.source}</span>
+                        <span class="entry-source">${escapeHtml(entry.source)}</span>
                         <span>${new Date(entry.published).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     </div>
-                    <p class="entry-summary">${entry.summary.replace(/<[^>]*>/g, '')}</p>
+                    <p class="entry-summary">${escapeHtml(stripHtml(entry.summary))}</p>
                     <div class="entry-categories">
-                        ${entry.categories.map(cat => `<span class="category-tag ${getCategoryClass(cat)}">${cat}</span>`).join('')}
+                        ${entry.categories.map(cat => `<span class="category-tag ${getCategoryClass(cat)}">${escapeHtml(cat)}</span>`).join('')}
                     </div>
                 </div>
             `).join('');
@@ -593,8 +634,6 @@ def cmd_generate(args):
 
 def cmd_list(args):
     """List all configured feeds with status."""
-    from rich.table import Table
-
     console.print("[bold]📋 Configured RSS Feeds[/bold]\n")
 
     table = Table(show_header=True, header_style="bold cyan")
@@ -608,7 +647,11 @@ def cmd_list(args):
             with httpx.Client(timeout=5.0, follow_redirects=True) as client:
                 response = client.head(url, headers={"User-Agent": "RSS-Digest/1.0"})
                 status = "[green]✓[/green]" if response.status_code == 200 else f"[yellow]{response.status_code}[/yellow]"
-        except Exception:
+        except httpx.RequestError as e:
+            console.print(f"[dim]  {name}: {type(e).__name__}[/dim]")
+            status = "[red]✗[/red]"
+        except Exception as e:
+            console.print(f"[dim]  {name}: {type(e).__name__}: {e}[/dim]")
             status = "[red]✗[/red]"
 
         table.add_row(name, url[:60] + "..." if len(url) > 60 else url, status)
@@ -619,7 +662,6 @@ def cmd_list(args):
 
 def cmd_config(args):
     """Open the script for editing."""
-    import subprocess
     script_path = Path(__file__).resolve()
     console.print(f"[bold]Opening {script_path} for editing...[/bold]")
     console.print("\n[dim]Edit the FEEDS dictionary to add/remove feeds.[/dim]\n")
@@ -638,8 +680,6 @@ def cmd_config(args):
 
 def cmd_schedule(args):
     """Show and manage schedule status."""
-    import subprocess
-
     console.print("[bold]⏰ RSS Digest Schedule[/bold]\n")
 
     # Check launchctl status
@@ -658,7 +698,6 @@ def cmd_schedule(args):
                 content = plist_path.read_text()
                 # Simple extraction
                 if "<key>Hour</key>" in content:
-                    import re
                     hour_match = re.search(r"<key>Hour</key>\s*<integer>(\d+)</integer>", content)
                     minute_match = re.search(r"<key>Minute</key>\s*<integer>(\d+)</integer>", content)
                     if hour_match and minute_match:
@@ -667,8 +706,10 @@ def cmd_schedule(args):
             console.print("[yellow]Schedule is not loaded[/yellow]")
             console.print("\n[dim]To enable:[/dim]")
             console.print("  launchctl load ~/Library/LaunchAgents/com.dbt-playground.rss-digest.plist")
+    except subprocess.SubprocessError as e:
+        console.print(f"[red]Could not check schedule: {type(e).__name__}: {e}[/red]")
     except Exception as e:
-        console.print(f"[red]Could not check schedule: {e}[/red]")
+        console.print(f"[red]Could not check schedule: {type(e).__name__}: {e}[/red]")
 
     console.print("\n[bold]Commands:[/bold]")
     console.print("  [cyan]Run now:[/cyan]     launchctl start com.dbt-playground.rss-digest")
