@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **RSS Digest Tool**: AI/Claude/Agents content aggregator with 26 curated feeds
+  - `scripts/rss_digest.py` - Fetches RSS from Anthropic, OpenAI, researchers, newsletters
+  - Generates interactive HTML digest with category filtering and full-text search
+  - Dark mode support for comfortable reading
+  - `/rss` command with subcommands: `list`, `config`, `schedule`, `add`, `remove`
+  - Daily scheduling via launchd (7 AM) with `com.dbt-playground.rss-digest.plist`
+
 - **PR-Centric Development Workflow**: Comprehensive workflow enhancement for context preservation
   - Draft PR creation at branch/worktree creation (`--with-pr` default)
   - Multi-agent review posting to GitHub PRs via `gh` CLI
