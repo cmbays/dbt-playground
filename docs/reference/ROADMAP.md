@@ -3,7 +3,7 @@ audience: [pm, architect]
 priority: medium
 size: medium
 dependencies: []
-last_updated: 2026-01-28
+last_updated: 2026-01-29
 status: active
 tags: [reference, roadmap, planning]
 ---
@@ -14,91 +14,91 @@ tags: [reference, roadmap, planning]
 
 Build a dbt analytics project while learning data transformation best practices and AI-assisted development with dbt-mcp.
 
-## Current Phase
+## Completed Phases
 
-### Phase 0: Foundation (v0.1) - Complete
+### v0.1.0 - Foundation
 
-**Theme**: Project Setup & Scaffolding
+**Theme**: Project Setup & Agent Orchestration
 
-**Status**: Complete
-
-**Goals**:
-
-- [x] Agent orchestration scaffold
-- [x] Documentation framework
-- [x] dbt project initialization
-- [x] Database connection setup (DuckDB)
-- [x] dbt-mcp integration
+**Status**: Complete (2026-01-28)
 
 **Deliverables**:
 
-- [x] Working dbt project structure (`dbt_project/`)
-- [x] Connected database (DuckDB local)
-- [x] dbt-mcp configured and functional
-- [x] Synthea sample data (1000+ patients)
+- [x] Agent orchestration with 16 personas
+- [x] 21 workflow skills including 6 dbt-specific
+- [x] 13 slash commands
+- [x] dbt project initialization
+- [x] Database connection (DuckDB)
+- [x] dbt-mcp integration
+
+### v0.2.0 - Environment Ready
+
+**Theme**: Source Data & uv Workflow
+
+**Status**: Complete (2026-01-29)
+
+**Deliverables**:
+
+- [x] 16 Synthea source tables defined
+- [x] uv workflow modernized (pyproject.toml, uv.lock)
+- [x] Pre-commit hooks (markdownlint, yamllint, sqlfluff)
+- [x] dbt-mcp configured
+
+### v0.3.0 - Staging Layer
+
+**Theme**: First Data Transformations
+
+**Status**: Complete (2026-01-29)
+
+**Deliverables**:
+
+- [x] 9 staging models (440K+ rows)
+- [x] 80 data tests (all passing)
+- [x] Comprehensive model documentation
+- [x] load_synthea_sources macro
+- [x] Surrogate key patterns
+
+---
+
+## Current Phase
+
+### v0.4.0 - Intermediate Layer (Next)
+
+**Theme**: Business Logic & Transformations
+
+**Goals**:
+
+- Build intermediate models with business logic
+- Implement date spine for time series
+- Create reusable macros
+- Add data quality assertions
+
+**Deliverables**:
+
+- 5-10 intermediate models
+- Custom macro library
+- Advanced testing patterns
 
 ---
 
 ## Upcoming Phases
 
-### Phase 1: Sample Data Project (v0.2)
+### v0.5.0 - Marts Layer
 
-**Theme**: First End-to-End Pipeline
-
-**Goals**:
-
-- Create sample source data (seeds or external)
-- Build staging models
-- Build intermediate models
-- Build mart models
-- Add data tests
-- Document models
-
-**Potential Data Domains**:
-
-- E-commerce (orders, customers, products)
-- SaaS metrics (users, events, subscriptions)
-- Financial data (transactions, accounts)
-
-**Deliverables**:
-
-- Complete dbt project with 10-20 models
-- Full test coverage
-- Generated dbt docs
-
-### Phase 2: Advanced Patterns (v0.3)
-
-**Theme**: dbt Best Practices
+**Theme**: Analytics-Ready Models
 
 **Goals**:
 
-- Incremental models
-- Snapshots (SCD Type 2)
-- Custom macros
-- Jinja templating
-- Advanced testing patterns
-
-**Deliverables**:
-
-- Production-ready patterns demonstrated
-- Macro library
-- Testing utilities
-
-### Phase 3: Integration & Automation (v0.4)
-
-**Theme**: Production Workflows
-
-**Goals**:
-
-- CI/CD for dbt
-- Data quality monitoring
+- Build fact and dimension tables
+- Implement Kimball dimensional modeling
+- Create aggregated metrics
 - Documentation generation
-- Orchestration patterns
 
 **Deliverables**:
 
-- Automated testing pipeline
-- Quality dashboards or reports
+- Complete dimensional model
+- Generated dbt docs
+- BI-ready tables
 
 ---
 
@@ -139,4 +139,4 @@ Build a dbt analytics project while learning data transformation best practices 
 
 ---
 
-*Last Updated: 2026-01-28*
+*Last Updated: 2026-01-29*
