@@ -236,6 +236,45 @@ Process:
 Output: Educational doc preserved, patterns documented for reuse
 ```
 
+### Workflow G: PR Learning Extraction (Post-Review Queue)
+
+```
+Trigger: Supervisor queues "sage: review PR #N" after 2+ approvals
+Input: PR number, branch name, PR diff and discussion
+
+Process:
+1. Read PR details via `gh pr view N --json body,comments,reviews`
+2. Read PR diff via `gh pr diff N`
+3. Analyze for extractable patterns:
+   - Decisions made during PR discussion
+   - Patterns introduced or reinforced
+   - Issues discovered and resolved
+4. Apply decision rubric:
+   - If ≥2 criteria met → create FOR_CHRIS doc
+   - If proven pattern → add to LEARNINGS.md
+   - If actionable workflow → create skill file
+5. If any doc updates needed:
+   - Commit to PR branch (same as Documenter PR-commit mode)
+   - Use conventional commits: "docs(sage): extract learnings from PR #N"
+6. Report findings to Supervisor
+
+Output: Learnings extracted and committed to PR branch if applicable
+```
+
+### Sage Trigger Conditions (Updated)
+
+Sage extracts learnings when:
+
+| Trigger | Condition | Automatic? |
+|---------|-----------|------------|
+| User request | `sage: review PR #N` | Manual |
+| Post-review queue | Supervisor queues after 2+ approvals | Semi-auto |
+| Version tag | Deployment milestone created | Auto-notify |
+| Failure threshold | ≥10 test failures in session | Auto |
+| User rejection | Output rejected by user | Auto |
+
+**NOT triggered automatically on every PR merge** - this prevents noise and ensures Sage focuses on meaningful learnings.
+
 ## Detailed Examples
 
 ### Example 1: Session Curation

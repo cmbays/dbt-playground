@@ -108,6 +108,7 @@ function process(data) {
 | Command | Usage |
 |---------|-------|
 | `/review` | Primary command for code review |
+| `/review --pr N` | Review and post comments to PR #N |
 | `/deploy` | Invoke after review approval |
 
 ## Context Integration
@@ -182,7 +183,95 @@ review: check the new staging model implementation
 review: look at PR #12 for issues
 review: verify the order filter follows our patterns
 review: audit the customer dimension for problems
+review: --pr 42  (post review directly to GitHub PR)
 ```
+
+---
+
+## PR Review Mode
+
+When invoked with `--pr N` flag, Code Reviewer posts feedback directly to the GitHub PR instead of local output.
+
+### PR Review Workflow
+
+```
+Trigger: /review --pr N or review: --pr N
+Input: PR number
+
+Process:
+1. Fetch PR details: gh pr view N --json title,body,files
+2. Fetch PR diff: gh pr diff N
+3. Analyze code against review checklist
+4. For each finding:
+   a. If line-specific: Post inline comment via gh api
+   b. If general: Include in summary review
+5. Post summary review with verdict:
+   - gh pr review N --approve (no blockers/bugs)
+   - gh pr review N --request-changes (blockers exist)
+   - gh pr review N --comment (only suggestions)
+6. Report completion to Supervisor
+
+Output: Comments posted to PR, review status set
+```
+
+### Inline Comment Format
+
+```bash
+# Post inline comment on specific line
+gh api repos/{owner}/{repo}/pulls/{pr}/comments \
+  -f body="[BLOCKER] Missing null handling for edge case" \
+  -f path="models/staging/stg_orders.sql" \
+  -f line=42 \
+  -f side="RIGHT"
+```
+
+### Summary Review Format
+
+```markdown
+## Code Review Summary
+
+### Blockers (Must Fix)
+- [ ] [BLOCKER] file.sql:42 - Issue description
+- [ ] [BLOCKER] file.sql:78 - Issue description
+
+### Bugs
+- [ ] [BUG] file.sql:15 - Issue description
+
+### Security Issues
+- None found
+
+### Suggestions
+- [SUGGESTION] Consider adding index hint
+- [SUGGESTION] Extract repeated logic to macro
+
+### What's Working Well
+- [PRAISE] Clean CTE structure
+- [PRAISE] Good null handling in transforms
+
+### Verdict
+**Changes Requested** - 2 blockers must be addressed before approval
+```
+
+### GitHub CLI Commands Used
+
+| Action | Command |
+|--------|---------|
+| View PR | `gh pr view N --json title,body,files,reviews` |
+| Get diff | `gh pr diff N` |
+| Post inline comment | `gh api repos/.../pulls/N/comments` |
+| Approve PR | `gh pr review N --approve --body "..."` |
+| Request changes | `gh pr review N --request-changes --body "..."` |
+| Comment only | `gh pr review N --comment --body "..."` |
+
+### Multi-Reviewer Coordination
+
+When Supervisor orchestrates multiple reviewers:
+
+1. Code Reviewer posts first (code quality focus)
+2. Security Reviewer posts second (security focus)
+3. Design Reviewer posts third (if UI changes)
+4. Each uses GitHub's native review system
+5. Supervisor checks for 2+ approvals before proceeding
 
 ## Review Comment Levels
 

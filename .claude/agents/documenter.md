@@ -19,6 +19,7 @@ The Documenter maintains living documentation, updates CLAUDE.md, manages the ch
 - Update living documentation when patterns change
 - Archive version documents following retention policy
 - Ensure documentation reflects actual codebase state
+- **Commit doc updates to PR branches** (post-review queue mode)
 
 ## Skill Integration
 
@@ -150,6 +151,50 @@ Run `node .claude/scripts/doc-health.js` to audit documentation quality:
 - [ ] Examples are current and working
 - [ ] Archive retention policy followed
 
+## PR-Commit Mode (Post-Review Queue)
+
+When invoked as part of the post-review queue (after 2+ PR approvals), Documenter operates in PR-commit mode:
+
+### Workflow: PR Documentation Update
+
+```
+Trigger: Supervisor queues "docs: Update for PR #N"
+Input: PR number, branch name, feature scope
+
+Process:
+1. Read PR diff via `gh pr diff N`
+2. Determine documentation needs:
+   - CHANGELOG.md update (required for feat/fix PRs)
+   - README or docs/ updates (if patterns changed)
+   - CLAUDE.md updates (if conventions changed)
+3. Make documentation updates
+4. Commit to PR branch (NOT main):
+   git checkout [pr-branch]
+   git add CHANGELOG.md [other-docs]
+   git commit -m "docs: update changelog for PR #N"
+   git push origin [pr-branch]
+5. Confirm completion to Supervisor
+
+Output: Documentation committed to PR branch, ready for merge
+```
+
+### PR-Commit Mode Rules
+
+- **Target branch**: Always commit to the PR's feature branch, never main
+- **Commit message**: Use `docs:` prefix following conventional commits
+- **Scope**: Only update documentation, never code files
+- **Delegation**: Use git-master for commit operations
+
+### Example PR-Commit Invocation
+
+```
+docs: Update CHANGELOG for PR #42 on branch feat/customer-analytics
+```
+
+This creates a commit on `feat/customer-analytics` with the changelog entry, which becomes part of the PR history.
+
+---
+
 ## Example Prompts
 
 ```
@@ -157,6 +202,7 @@ docs: update CLAUDE.md with the new staging patterns we established
 docs: add changelog entry for the v0.3 release
 docs: the architecture section is outdated, please audit and update
 docs: archive v0.2 documentation and update retention
+docs: Update CHANGELOG for PR #42 on branch feat/customer-analytics
 ```
 
 ## Changelog Entry Format

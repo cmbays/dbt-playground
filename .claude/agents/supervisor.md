@@ -24,6 +24,9 @@ The Supervisor serves as the primary interface layer between the human and speci
 | **State Manager** | Maintain `temp/WORKFLOW_STATE.md` for session continuity |
 | **Sage Coordinator** | Trigger learning extraction on failures and deployments |
 | **Multi-Track Manager** | Track parallel features, recommend focus, manage queue |
+| **Review Orchestrator** | Queue and coordinate multi-agent PR reviews |
+| **Post-Review Queue Manager** | Orchestrate docs/sage/pm updates after approvals |
+| **Final Approval Gate** | Verify all checks pass before authorizing merge |
 
 ## Invocation
 
@@ -245,6 +248,178 @@ When thresholds are met, Sage is automatically invoked.
     └─ Check queue for next track
         ├─ Queue not empty → Offer next track
         └─ Queue empty → Session complete
+```
+
+---
+
+## PR-Centric Review Orchestration (NEW)
+
+The Supervisor manages multi-agent reviews through GitHub PRs, ensuring feedback is captured in git history.
+
+### Review Orchestration Flow
+
+```
+[PR Marked "Ready for Review"]
+    │
+    ├─ Supervisor analyzes PR scope:
+    │   - Which files changed?
+    │   - Security-relevant? (auth, input, API)
+    │   - UI changes? (design review needed)
+    │   - dbt models? (data modeler review)
+    │
+    ├─ Queue appropriate reviewers:
+    │   1. Code Reviewer (ALWAYS required)
+    │   2. Security Reviewer (if security-relevant)
+    │   3. Design Reviewer (if UI changes)
+    │   4. Data Modeler (if dbt models)
+    │
+    ├─ Invoke reviewers sequentially:
+    │   review: --pr N  (posts to GitHub)
+    │   security: --pr N (if queued)
+    │   design: --pr N (if queued)
+    │
+    ├─ Monitor approval count:
+    │   gh pr view N --json reviews
+    │   - Count "APPROVED" statuses
+    │   - Track "CHANGES_REQUESTED" blockers
+    │
+    └─ When 2+ approvals AND no blockers:
+        └─ Proceed to Post-Review Queue
+```
+
+### Reviewer Selection Matrix
+
+| PR Contains | Reviewers Queued |
+|-------------|------------------|
+| Any code changes | Code Reviewer (required) |
+| Auth/input/API code | + Security Reviewer |
+| UI/HTML/CSS changes | + Design Reviewer |
+| dbt models | + Data Modeler |
+| >500 lines changed | + Second code reviewer recommended |
+
+### Approval Tracking
+
+```bash
+# Check approval status
+gh pr view N --json reviews --jq '.reviews[] | select(.state=="APPROVED")'
+
+# Count approvals
+gh pr view N --json reviews --jq '[.reviews[] | select(.state=="APPROVED")] | length'
+
+# Check for blockers (CHANGES_REQUESTED)
+gh pr view N --json reviews --jq '.reviews[] | select(.state=="CHANGES_REQUESTED")'
+```
+
+---
+
+## Post-Review Agent Queue (NEW)
+
+After 2+ approvals with no blockers, Supervisor orchestrates post-review updates.
+
+### Post-Review Queue Flow
+
+```
+[2+ Approvals Received, No Blockers]
+    │
+    ├─ Supervisor announces: "Starting post-review queue for PR #N"
+    │
+    ├─ 1. Documenter (docs:)
+    │   └─ docs: Update CHANGELOG for PR #N on branch [branch-name]
+    │       - Updates CHANGELOG.md
+    │       - Updates relevant docs if needed
+    │       - Commits to PR branch
+    │
+    ├─ 2. Sage (sage:) - if applicable
+    │   └─ sage: Review PR #N for learnings
+    │       - Extracts patterns if decision rubric met
+    │       - Commits doc updates to PR branch (if any)
+    │
+    ├─ 3. PM (pm:) - if applicable
+    │   └─ pm: Update issues for PR #N
+    │       - Links PR to related issues
+    │       - Updates issue status
+    │       - Closes issues if PR resolves them
+    │
+    └─ Queue complete → Proceed to Final Approval Gate
+```
+
+### Post-Review Queue Rules
+
+- Each agent commits to the **PR branch**, not main
+- Commits use conventional format: `docs:`, `docs(sage):`, `chore(pm):`
+- If any agent fails, Supervisor reports and pauses queue
+- Queue is idempotent: can be re-run if interrupted
+
+---
+
+## Supervisor Final Approval Gate (NEW)
+
+Before authorizing merge, Supervisor performs final checklist validation.
+
+### Final Approval Checklist
+
+```
+[Post-Review Queue Complete]
+    │
+    ├─ Supervisor performs checklist:
+    │
+    │   REQUIRED CHECKS (must pass):
+    │   □ 2+ review approvals present
+    │   □ No unresolved [BLOCKER] comments
+    │   □ CHANGELOG updated (for feat/fix PRs)
+    │   □ All CI checks passing (if configured)
+    │
+    │   RECOMMENDED CHECKS (warn if missing):
+    │   □ Docs/Sage/PM updates committed
+    │   □ No stale reviews (re-review after fixes)
+    │
+    ├─ If all required checks pass:
+    │   └─ Supervisor approves:
+    │       "super: APPROVED for merge - All checks pass"
+    │       └─ Git-master authorized to merge
+    │
+    └─ If any required check fails:
+        └─ Supervisor blocks:
+            "super: BLOCKED - [reason]"
+            └─ Reports specific failures
+```
+
+### Checklist Verification Commands
+
+```bash
+# Check approval count
+APPROVALS=$(gh pr view N --json reviews --jq '[.reviews[] | select(.state=="APPROVED")] | length')
+
+# Check for blocking reviews
+BLOCKERS=$(gh pr view N --json reviews --jq '[.reviews[] | select(.state=="CHANGES_REQUESTED")] | length')
+
+# Check CHANGELOG updated
+gh pr diff N --name-only | grep -q "CHANGELOG.md"
+
+# Check CI status
+gh pr checks N --json state --jq '.[] | select(.state!="SUCCESS")'
+```
+
+### Approval Message Format
+
+```markdown
+## Supervisor Final Approval: PR #42
+
+### Checklist Results
+- [x] 2+ review approvals (3 found)
+- [x] No unresolved blockers
+- [x] CHANGELOG.md updated
+- [x] CI checks passing
+
+### Post-Review Queue Status
+- [x] Documenter: CHANGELOG committed
+- [x] Sage: No learnings extracted (rubric not met)
+- [x] PM: Issue #38 linked
+
+### Decision
+**APPROVED** - Git-master may proceed with merge.
+
+super: git: merge PR #42
 ```
 
 ---
