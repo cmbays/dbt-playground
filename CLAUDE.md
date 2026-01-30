@@ -8,14 +8,15 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: Environment Ready (v0.2) - uv Workflow Modernized
+**Status**: Staging Models Complete (v0.3)
 
 - dbt 1.11.2 + duckdb-adapter 1.10.0 working
-- 16 Synthea source tables defined
+- 16 Synthea source tables defined + data loading macro
+- 9 staging models with comprehensive tests (80 data tests)
 - dbt-mcp configured (restart Claude Code for MCP tools)
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
 
-**Next**: v0.3 - Build 9 staging models from Synthea data.
+**Next**: v0.4 - Build intermediate models with business logic.
 
 ## Project Structure
 
@@ -57,10 +58,50 @@ See `docs/reference/PROJECT_STRUCTURE.md` for complete structure.
 
 ### Python: Use `uv` exclusively
 
+This project uses [uv](https://docs.astral.sh/uv/) for reproducible Python environment management.
+
+#### Initial Setup
+
 ```bash
-uv pip install <package>
-uvx <tool-name>  # Run without installing
+# Install dependencies from pyproject.toml
+uv sync
+
+# Install with dev dependencies (sqlfluff, pre-commit)
+uv sync --all-extras
 ```
+
+#### Common Commands
+
+| Command | Purpose |
+|---------|---------|
+| `uv sync` | Install/update dependencies |
+| `uv add <package>` | Add production dependency |
+| `uv add --dev <package>` | Add development dependency |
+| `uv run <command>` | Run command in project venv |
+| `uv run dbt build` | Run dbt commands |
+| `uvx <tool>` | Run tool without installing |
+
+#### Running Scripts
+
+Scripts use PEP 723 inline metadata for dependencies. Run with:
+
+```bash
+# Run scripts with uv (automatically respects Python version)
+uv run scripts/extract_content.py <args>
+
+# Or activate venv first
+source .venv/bin/activate
+python scripts/extract_content.py <args>
+```
+
+#### Key Project Files
+
+| File | Purpose |
+|------|---------|
+| `pyproject.toml` | Project metadata, dependencies, tool configs |
+| `uv.lock` | Locked dependency versions (committed for reproducibility) |
+| `.python-version` | Python version pin (3.11) |
+| `scripts/*.py` | Standalone scripts with PEP 723 headers |
 
 ### Pre-commit Hooks
 

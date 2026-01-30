@@ -9,9 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Build staging models from Synthea data (v0.3)
 - Intermediate models and business logic (v0.4)
 - Marts layer with facts and dimensions (v0.5)
+
+---
+
+## [0.3.0] - 2026-01-29
+
+### Added
+
+- **Staging Models**: 9 comprehensive staging models for Synthea healthcare data
+  - `stg_synthea__patients` - Patient demographics (1,171 rows)
+  - `stg_synthea__encounters` - Healthcare visits (53,346 rows)
+  - `stg_synthea__conditions` - Patient diagnoses (8,376 rows)
+  - `stg_synthea__medications` - Prescriptions (42,989 rows)
+  - `stg_synthea__procedures` - Medical procedures (34,981 rows)
+  - `stg_synthea__observations` - Vitals/lab results (299,697 rows)
+  - `stg_synthea__providers` - Healthcare professionals (5,855 rows)
+  - `stg_synthea__organizations` - Healthcare facilities (1,119 rows)
+  - `stg_synthea__payers` - Insurance payers (10 rows)
+
+- **Data Loading**: `load_synthea_sources` macro for loading CSV data into DuckDB
+  - Usage: `dbt run-operation load_synthea_sources`
+
+- **Testing**: 80 data tests covering all staging models
+  - Primary key tests (unique, not_null) on all models
+  - Referential integrity tests (relationships) between models
+  - Accepted values tests for categorical columns
+  - Surrogate keys with row_number for deduplication
+
+### Technical Notes
+
+- Models use CTE pattern per coding standards
+- Column names transformed from UPPERCASE to snake_case
+- SSN hashed for privacy (md5)
+- Observations table has ~10% null encounter_ids (valid data)
+- dbt_utils.generate_surrogate_key used for composite primary keys
 
 ---
 
@@ -96,6 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.3.0   | 2026-01-29 | v0.3 Staging Complete - 9 models, 80 tests, 440k+ rows |
 | 0.2.0   | 2026-01-29 | v0.2 Environment Ready - uv workflow, 16 Synthea sources |
 | 0.1.0   | 2026-01-28 | Agent orchestration + dbt project planning complete |
 
