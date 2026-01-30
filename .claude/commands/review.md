@@ -6,15 +6,27 @@ Perform comprehensive code review with structured feedback.
 
 ```
 /review [file, folder, or PR reference]
+/review --pr N                    # Post review directly to GitHub PR
+/review --pr N --security         # Include security review
 ```
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `--pr N` | Post review comments directly to GitHub PR #N |
+| `--security` | Include security review (requires --pr) |
+| `--design` | Include design review (requires --pr) |
 
 ## Examples
 
 ```
-/review models/staging/stripe/
-/review models/marts/
-/review #12
-/review (reviews staged changes)
+/review models/staging/stripe/        # Local review output
+/review models/marts/                 # Local review output
+/review #12                           # Local review of PR #12
+/review --pr 42                       # Post review to GitHub PR #42
+/review --pr 42 --security            # Post code + security review
+/review (reviews staged changes)      # Local review of staged changes
 ```
 
 ## Review Process
@@ -86,6 +98,7 @@ This command activates the **Code Reviewer** (`review:`) persona, with optional 
 
 - **Design Reviewer** (`design:`) for UI/UX issues
 - **Data Modeler** (`dbt-model:`) for dimensional modeling accuracy
+- **Security Reviewer** (`security:`) for security-focused analysis
 
 ## Skill Integration
 
@@ -93,3 +106,63 @@ May invoke:
 
 - `/code-review` for PR reviews
 - `/feature-dev:code-reviewer` for implementation analysis
+
+---
+
+## PR Review Mode (--pr flag)
+
+When using `--pr N`, the review is posted directly to GitHub instead of local output.
+
+### PR Review Workflow
+
+```
+1. Fetch PR details: gh pr view N --json title,body,files
+2. Fetch PR diff: gh pr diff N
+3. Run review checklist against changes
+4. Post inline comments for line-specific issues
+5. Post summary review with verdict
+6. Set review status (approve/request-changes/comment)
+```
+
+### Inline Comments
+
+Line-specific issues are posted as inline comments on the PR:
+
+```bash
+gh api repos/{owner}/{repo}/pulls/{pr}/comments \
+  -f body="[BLOCKER] Missing null handling" \
+  -f path="models/staging/stg_orders.sql" \
+  -f line=42
+```
+
+### Summary Review
+
+A summary review is posted with the final verdict:
+
+```bash
+# Approve (no blockers)
+gh pr review N --approve --body "## Code Review Summary..."
+
+# Request changes (blockers exist)
+gh pr review N --request-changes --body "## Code Review Summary..."
+
+# Comment only (suggestions only)
+gh pr review N --comment --body "## Code Review Summary..."
+```
+
+### Multi-Reviewer Flow
+
+When Supervisor orchestrates reviews:
+
+1. `/review --pr N` posts Code Review
+2. `/review --pr N --security` posts Security Review (if flagged)
+3. `/review --pr N --design` posts Design Review (if flagged)
+4. Each review appears as separate GitHub review
+5. Supervisor monitors for 2+ approvals
+
+### Benefits of PR Review Mode
+
+- **Audit trail**: All feedback captured in PR history
+- **Cross-session visibility**: Other agents can see feedback via `gh pr view`
+- **GitHub integration**: Uses native review system (approve/request-changes)
+- **Iteration tracking**: Subsequent reviews show as new reviews

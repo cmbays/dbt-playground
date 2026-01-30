@@ -19,7 +19,10 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 - **Validate commit formats** - Ensure Conventional Commits compliance and proper attribution
 - **Manage branch lifecycle** - Create, validate naming, track status, cleanup stale branches
 - **Create and validate PRs** - Ensure template usage and proper descriptions
+- **Create draft PRs at branch creation** - PR-first workflow for context capture
 - **Orchestrate git worktrees** - Create, assign, and cleanup worktrees for parallel development
+- **Enforce approval gate** - Require Supervisor approval before merge
+- **Auto-cleanup after merge** - Remove worktree and branch after PR merged
 - **Maintain audit trail** - Log all git operations for transparency and debugging
 
 ## Invocation
@@ -195,11 +198,12 @@ The Git-Master centralizes all git operations, enforces safety rules proactively
 
 ## Workflows
 
-### Workflow A: Create Feature Branch
+### Workflow A: Create Feature Branch with Draft PR (PR-First)
 
 ```
 Trigger: Developer requests "git: create branch feat/new-feature"
-Input: Branch name
+         or "/branch feat/new-feature"
+Input: Branch name, optional scope description
 
 Process:
 1. Validate branch name format (feat/kebab-case)
@@ -207,10 +211,21 @@ Process:
 3. Verify on main/master before branching
 4. Execute: git checkout -b [branch-name]
 5. Execute: git push -u origin [branch-name]
-6. Log operation to audit trail
+6. Create draft PR (default --with-pr behavior):
+   gh pr create --draft \
+     --title "[type]: [brief-from-branch-name]" \
+     --body "## Scope\n[description]\n\n## Status\n- [ ] Implementation\n- [ ] Tests\n- [ ] Ready for review"
+7. Log operation to audit trail
 
-Output: Branch created and pushed, confirmation with branch name
+Output: Branch created, pushed, draft PR created with URL
 ```
+
+**Why PR-first?**
+
+- Captures development context early in git history
+- Makes parallel work visible across sessions
+- PR description becomes source of truth for scope
+- Enables `gh pr view` for cross-session context
 
 ### Workflow B: Create and Validate Commit
 
@@ -271,48 +286,102 @@ Process:
 Output: Confirmation with PR URL and number
 ```
 
-### Workflow E: Merge PR with Safety Checks
+### Workflow E: Merge PR with Supervisor Approval Gate
 
 ```
-Trigger: Code Reviewer requests "git: merge PR #44"
-Input: PR number
+Trigger: Supervisor requests "git: merge PR #44" with approval
+Input: PR number, Supervisor approval confirmation
 
 Process:
-1. Fetch PR details via gh CLI
-2. Check all required checks passed
-3. Check PR title format (Conventional Commits)
-4. Check PR description complete (template sections present)
-5. Verify no conflicts
-6. Execute merge: gh pr merge [PR#] --merge
-7. Clean up branch: git branch -d [branch-name]
-8. Push: git push origin :[branch-name] (delete remote)
-9. Log merge to audit trail
+1. VERIFY SUPERVISOR APPROVAL:
+   - Check for "super: APPROVED" in request context
+   - If not present: BLOCK merge, respond:
+     "Merge blocked: Requires Supervisor approval. Use: super: approve PR #44"
 
-Output: Confirmation of merge with branch cleanup
+2. Fetch PR details via gh CLI:
+   gh pr view N --json title,body,reviews,mergeable
+
+3. Validate merge readiness:
+   - [ ] 2+ APPROVED reviews present
+   - [ ] No CHANGES_REQUESTED reviews outstanding
+   - [ ] CHANGELOG.md updated (for feat/fix PRs)
+   - [ ] No merge conflicts
+   - [ ] All CI checks passing (if configured)
+
+4. If all checks pass:
+   - Execute merge: gh pr merge [PR#] --merge
+   - Log merge to audit trail
+
+5. POST-MERGE AUTO-CLEANUP (Workflow H):
+   - Trigger automatic cleanup workflow
+
+Output: Confirmation of merge, cleanup initiated
 ```
 
-### Workflow F: Orchestrate Git Worktrees (Phase 3)
+**Approval Gate Enforcement**
+
+Git-master will NOT merge without explicit Supervisor approval:
 
 ```
-Trigger: Christopher requests parallel work: "git: setup worktrees for feat/a and feat/b"
-Input: List of branches for worktrees
+# BLOCKED - no approval
+git: merge PR #44
+→ "Merge blocked: Requires Supervisor approval"
+
+# ALLOWED - with approval
+super: APPROVED for merge
+git: merge PR #44
+→ "Merge executing..."
+```
+
+### Workflow F: Orchestrate Git Worktrees with Draft PRs
+
+```
+Trigger: Christopher requests parallel work: "git: setup worktree for feat/feature-name"
+Input: Branch name, optional scope description
 
 Process:
 1. Pre-Creation Validation (see Worktree Contraindications below)
-   - Analyze each feature scope for file modifications
+   - Analyze feature scope for file modifications
    - Cross-reference with SHARED_FILES list
-   - If overlap detected: WARN and suggest alternatives
+   - If overlap with existing worktrees: WARN and suggest alternatives
    - If task <15 min: Suggest branch switch instead
-2. Create worktree directories:
-   - git worktree add ../dbt-playground-feat-a feat/feature-a
-   - git worktree add ../dbt-playground-feat-b feat/feature-b
-3. Create worktree registry entry (temp/WORKTREE_REGISTRY.json)
-4. Assign agents to worktrees
-5. Alert on potential conflicts (shared files: shared.css, shared.js)
-6. Track status (active, completed, merged)
 
-Output: Worktree setup complete with paths and assignments
+2. Create branch:
+   git checkout -b feat/feature-name main
+   git push -u origin feat/feature-name
+
+3. Create worktree directory:
+   git worktree add ../dbt-playground--feat-feature-name feat/feature-name
+   # Note: Uses -- separator for directory naming
+
+4. Create draft PR (PR-first workflow):
+   cd ../dbt-playground--feat-feature-name
+   gh pr create --draft \
+     --title "feat: feature-name" \
+     --body "## Scope\n[description]\n\n## Status\n- [ ] Implementation\n- [ ] Tests\n- [ ] Ready for review\n\n---\n*Draft PR for worktree: ../dbt-playground--feat-feature-name*"
+
+5. Update worktree registry (temp/WORKTREE_REGISTRY.json):
+   {
+     "feat/feature-name": {
+       "path": "../dbt-playground--feat-feature-name",
+       "pr": 42,
+       "created": "2026-01-29T10:00:00Z",
+       "status": "active"
+     }
+   }
+
+6. Log operation to audit trail
+
+Output: Worktree created at ../dbt-playground--feat-feature-name, draft PR #42 created
 ```
+
+**Worktree + PR Integration**
+
+Each worktree gets a corresponding draft PR immediately:
+
+- PR captures scope and becomes source of truth
+- Cross-session agents can see work via `gh pr list`
+- Merge triggers auto-cleanup of worktree (Workflow H)
 
 ### Workflow G: Pre-Merge Checklist Validation
 
@@ -349,6 +418,50 @@ POST-MERGE ACTIONS (Automatic):
 
 Output: Merge allowed/blocked with checklist results
 ```
+
+### Workflow H: Auto-Cleanup After Merge
+
+```
+Trigger: PR merged successfully (from Workflow E)
+Input: PR number, branch name, worktree path (if applicable)
+
+Process:
+1. Detect merge completion:
+   gh pr view N --json state --jq '.state'
+   # Expected: "MERGED"
+
+2. Identify cleanup targets:
+   - Branch name from PR
+   - Worktree path (if exists): ../dbt-playground--[branch-slug]
+
+3. Remove worktree (if exists):
+   git worktree remove ../dbt-playground--[branch-slug] --force
+   # Log: "Worktree removed: ../dbt-playground--[branch-slug]"
+
+4. Delete local branch:
+   git branch -d [branch-name]
+   # Log: "Local branch deleted: [branch-name]"
+
+5. Prune remote tracking:
+   git fetch --prune
+   # Log: "Remote tracking pruned"
+
+6. Update worktree registry (if applicable):
+   # Remove entry from temp/WORKTREE_REGISTRY.json
+
+7. Log cleanup completion to audit trail
+
+Output: Cleanup complete, branch and worktree removed
+```
+
+**Auto-Cleanup Rules**
+
+| Condition | Action |
+|-----------|--------|
+| PR merged | Delete local branch, prune remote |
+| Worktree exists | Remove worktree directory |
+| PR closed (not merged) | Warn user, don't auto-cleanup |
+| Cleanup fails | Log error, manual intervention needed |
 
 ## Worktree Contraindications
 

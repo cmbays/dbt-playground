@@ -5,10 +5,18 @@ Create a validated git branch through git: with naming convention enforcement.
 ## Usage
 
 ```
-/branch [category/]name
+/branch [category/]name [--with-pr] [--no-pr]
 /branch feat/feature-name
 /branch fix/bug-description
+/branch feat/new-feature --with-pr "Feature description"
 ```
+
+## Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--with-pr` | **ON** | Create draft PR immediately after branch creation |
+| `--no-pr` | off | Skip draft PR creation (branch only) |
 
 ## Examples
 
@@ -72,11 +80,40 @@ GIT_MASTER_AUTHORIZED=true git checkout -b [branch-name]
 GIT_MASTER_AUTHORIZED=true git push -u origin [branch-name]
 ```
 
-### 4. Post-Creation Logging
+### 4. Draft PR Creation (Default: ON)
+
+When `--with-pr` is enabled (default), git-master creates a draft PR:
+
+```bash
+# Create draft PR with scope in description
+gh pr create --draft \
+  --title "[type]: [brief description]" \
+  --body "## Scope
+
+[User-provided description or placeholder]
+
+## Status
+- [ ] Implementation in progress
+- [ ] Tests passing
+- [ ] Ready for review
+
+---
+*Draft PR created automatically by git-master*"
+```
+
+**Why draft PR at branch creation?**
+
+- Captures development context early
+- Makes parallel work visible to team
+- PR description becomes source of truth for scope
+- Enables cross-session visibility via `gh pr view`
+
+### 5. Post-Creation Logging
 
 - Operation logged to audit trail
 - Branch name recorded
 - Base commit captured
+- PR number recorded (if created)
 
 ## Interactive Mode
 
@@ -172,17 +209,29 @@ This may include unmerged changes from feat/other-feature.
 Continue? (y/n)
 ```
 
-## Branch Lifecycle
+## Branch Lifecycle (PR-First Workflow)
 
-### Creation → Development → PR → Merge → Cleanup
+### Creation → Development → Review → Post-Review → Merge → Cleanup
 
 ```
-1. /branch feat/new-feature     # Create
-2. /commit "feat: add thing"    # Develop
-3. gh pr create                 # PR (via git:)
-4. gh pr merge                  # Merge (via git:)
-5. git branch -d feat/new-feat  # Cleanup (via git:)
+1. /branch feat/new-feature         # Creates branch + draft PR
+2. /commit "feat: add thing"        # Develop (regular commits)
+3. gh pr ready                      # Mark PR ready for review
+4. [Multi-agent review via super:]  # Code/Security/Design reviewers
+5. [Post-review queue]              # Docs/Sage/PM updates
+6. super: APPROVED                  # Supervisor final approval
+7. git: merge PR #N                 # Merge (via git-master)
+8. [Auto-cleanup]                   # Branch + worktree removed
 ```
+
+### Draft PR at Creation
+
+The default `--with-pr` flag means:
+
+- Draft PR created immediately with branch
+- PR description captures feature scope
+- All development visible in PR from start
+- Cross-session agents can read PR context via `gh pr view`
 
 ## Persona Integration
 

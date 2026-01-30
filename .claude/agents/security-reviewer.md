@@ -214,7 +214,92 @@ security: review the new staging model implementation
 security: check for PII exposure in mart models
 security: audit database connection handling
 security: evaluate data access patterns in macros
+security: --pr 42  (post security review to GitHub PR)
 ```
+
+---
+
+## PR Security Review Mode
+
+When invoked with `--pr N` flag, Security Reviewer posts findings directly to the GitHub PR.
+
+### PR Security Review Workflow
+
+```
+Trigger: /review --pr N --security or security: --pr N
+Input: PR number
+
+Process:
+1. Fetch PR details: gh pr view N --json files
+2. Fetch PR diff: gh pr diff N
+3. Identify security-relevant changes:
+   - User input handling
+   - Authentication/authorization
+   - Data access patterns
+   - External integrations
+   - Credential handling
+4. Run security analysis against OWASP checklist
+5. For each finding:
+   a. Severity assessment (Critical/High/Medium/Low/Info)
+   b. Post inline comment if line-specific
+   c. Include in summary if general
+6. Post summary review with security verdict:
+   - gh pr review N --approve (no Critical/High findings)
+   - gh pr review N --request-changes (Critical/High exist)
+   - gh pr review N --comment (only Medium/Low/Info)
+7. Report completion to Supervisor
+
+Output: Security comments posted to PR, review status set
+```
+
+### Security Inline Comment Format
+
+```bash
+# Post security finding on specific line
+gh api repos/{owner}/{repo}/pulls/{pr}/comments \
+  -f body="[SECURITY:HIGH] Unsanitized user input in SQL query - potential injection" \
+  -f path="models/staging/stg_user_input.sql" \
+  -f line=23 \
+  -f side="RIGHT"
+```
+
+### Security Summary Format
+
+```markdown
+## Security Review Summary
+
+### Critical Findings
+- None
+
+### High Severity
+- [ ] [SECURITY:HIGH] file.sql:23 - SQL injection risk
+
+### Medium Severity
+- [ ] [SECURITY:MEDIUM] file.sql:45 - Missing input validation
+
+### Low Severity / Informational
+- [SECURITY:LOW] Consider adding rate limiting
+- [SECURITY:INFO] Recommend CSP headers
+
+### Positive Findings
+- PII properly masked in staging layer
+- Environment variables used for credentials
+
+### Verdict
+**Changes Requested** - 1 high-severity finding must be addressed
+```
+
+### When Security Review is Required
+
+Supervisor automatically queues security review when PR contains:
+
+- Changes to authentication/authorization logic
+- User input handling code
+- API endpoint modifications
+- Database query construction
+- Credential or secret management
+- External service integrations
+- Data export/import functionality
 
 ## Common Vulnerabilities to Watch
 
