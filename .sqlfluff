@@ -5,11 +5,16 @@ templater = dbt
 # Be less verbose for CI
 verbose = 0
 nocolor = True
-# Reasonable line length (moved from rules section per sqlfluff 2.x)
-max_line_length = 120
+# Line length - increased to 150 for dbt_utils macro calls
+max_line_length = 150
 
-# Exclude packages and target directories
-exclude_rules = None
+# Exclude rules that don't fit our staging model patterns:
+# - CP02: We reference UPPERCASE source columns and rename to lowercase
+# - AL09: We intentionally alias columns for clarity in transformations
+# - LT02: Indentation rules conflict with our 4-space CTE style
+# - LT04: Leading comma rule conflicts with CTE trailing separators
+# - ST06: Column order rule conflicts with our comment-organized sections
+exclude_rules = capitalisation.identifiers, aliasing.self_alias.column, layout.indent, layout.commas, structure.column_order
 
 [sqlfluff:templater:dbt]
 project_dir = dbt_project
@@ -19,9 +24,11 @@ profiles_dir = ~/.dbt
 indented_joins = True
 indented_ctes = True
 indented_using_on = True
-# Moved from rules section per sqlfluff 2.x
+# 4-space indentation per coding standards
 tab_space_size = 4
 indent_unit = space
+# Don't enforce nested indentation within CTEs
+indented_on_contents = False
 
 [sqlfluff:rules]
 # Allow implicit aliases in select
@@ -44,8 +51,10 @@ capitalisation_policy = lower
 capitalisation_policy = lower
 
 # Use leading commas (per project coding standards)
-[sqlfluff:rules:layout.commas]
-comma_style = leading
+# See: https://docs.sqlfluff.com/en/latest/configuration/layout.html
+[sqlfluff:layout:type:comma]
+spacing_before = touch
+line_position = leading
 
 # Aliasing preferences
 [sqlfluff:rules:aliasing.table]
@@ -58,10 +67,3 @@ aliasing = explicit
 [sqlfluff:rules:references.consistent]
 single_table_references = consistent
 
-# Disable identifier capitalization check (source columns are UPPERCASE)
-[sqlfluff:rules:capitalisation.identifiers]
-capitalisation_policy = consistent
-
-# Disable self-alias warnings (we alias for clarity in transformations)
-[sqlfluff:rules:aliasing.self_alias.column]
-aliasing = explicit
