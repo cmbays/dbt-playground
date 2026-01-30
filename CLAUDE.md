@@ -179,6 +179,24 @@ git worktree remove ../dbt-playground--feat-x
 
 **Full guide**: See `docs/for_chris/GIT-WORKTREE-WORKFLOW.md`
 
+## Interactive Playgrounds
+
+Visual tools for learning and development. Launch via commands or explore the HTML files directly.
+
+| Playground | Command | Purpose |
+|------------|---------|---------|
+| Worktree Coordinator | `/playground:worktrees` | Manage parallel git worktree sessions |
+| Agent Visualizer | `/playground:agents` | View agent workflows and handoffs |
+| Schema Explorer | `/playground:schema` | Browse Synthea healthcare data |
+| Lineage Explorer | `/playground:lineage` | Trace dbt data flow |
+| Dashboard Builder | `/playground:dashboards` | Mock analytics layouts |
+
+**Quick Start**: Run `/playground` to see all available tools and their status.
+
+**Location**: `playgrounds/` directory contains single-file HTML implementations.
+
+See `docs/for_chris/PLAYGROUND-TOOLS.md` for detailed guide.
+
 ## Notes for Claude
 
 - ASK rather than assume
