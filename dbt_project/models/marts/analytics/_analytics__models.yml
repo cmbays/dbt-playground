@@ -1,0 +1,502 @@
+version: 2
+
+models:
+  # ============================================================================
+  # DIMENSIONS
+  # ============================================================================
+
+  - name: dim_conditions
+    description: >
+      Master condition dimension for healthcare analytics.
+      One row per unique ICD condition code, deduplicated from staging.
+      Use for filtering and grouping by condition across fact tables.
+    config:
+      tags: ['analytics', 'marts', 'dimension']
+    meta:
+      grain: condition_code
+      owner: healthcare_analytics
+    columns:
+      - name: condition_key
+        description: Surrogate key (row_number)
+        data_tests:
+          - unique
+          - not_null
+
+      - name: condition_code
+        description: ICD/SNOMED code (natural key)
+        data_tests:
+          - unique
+          - not_null
+
+      - name: condition_description
+        description: Full condition name/description
+        data_tests:
+          - not_null
+
+      - name: first_occurrence_date
+        description: Earliest date this condition was diagnosed in the dataset
+
+      - name: last_occurrence_date
+        description: Most recent date this condition was diagnosed
+
+      - name: patient_count
+        description: Number of unique patients with this condition
+
+      - name: encounter_count
+        description: Total number of encounters with this condition
+
+      - name: _loaded_at
+        description: Timestamp when record was loaded
+
+  # ============================================================================
+  # FACT TABLES
+  # ============================================================================
+
+  - name: fct_patient_summary
+    description: >
+      Annual patient-level aggregations for outcomes tracking.
+      One row per patient per calendar year.
+      Grain: (patient_id, year_actual)
+    config:
+      tags: ['analytics', 'marts', 'fact']
+    meta:
+      grain: patient_id + year_actual
+      owner: healthcare_analytics
+    columns:
+      - name: patient_summary_key
+        description: Surrogate key (MD5 hash of patient_id + year_actual)
+        data_tests:
+          - unique
+          - not_null
+
+      - name: patient_key
+        description: Foreign key to dim_patients
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patients')
+                field: patient_key
+
+      - name: patient_id
+        description: Natural patient identifier
+        data_tests:
+          - not_null
+
+      - name: year_actual
+        description: Calendar year of the summary
+        data_tests:
+          - not_null
+
+      - name: patient_age_at_year_end
+        description: Patient age as of December 31 of the year
+
+      - name: encounter_count
+        description: Number of encounters in the year
+        data_tests:
+          - not_null
+
+      - name: procedure_count
+        description: Number of procedures in the year
+
+      - name: condition_count
+        description: Number of distinct conditions diagnosed in the year
+
+      - name: total_cost
+        description: Total claim cost for the year
+
+      - name: payer_coverage
+        description: Amount covered by insurance
+
+      - name: patient_responsibility
+        description: Amount owed by patient (copay + coinsurance)
+
+      - name: payer_coverage_pct
+        description: Percentage of costs covered by insurance (0-100)
+
+      - name: unique_providers
+        description: Number of distinct providers seen
+
+      - name: unique_organizations
+        description: Number of distinct organizations visited
+
+      - name: _loaded_at
+        description: Timestamp when record was loaded
+
+  - name: fct_provider_metrics
+    description: >
+      Monthly provider-level utilization and performance metrics.
+      One row per provider per calendar month.
+      Grain: (provider_id, year_actual, month_actual)
+    config:
+      tags: ['analytics', 'marts', 'fact']
+    meta:
+      grain: provider_id + year_month_str
+      owner: healthcare_analytics
+    columns:
+      - name: provider_metrics_key
+        description: Surrogate key (MD5 hash of provider_id + year_month_str)
+        data_tests:
+          - unique
+          - not_null
+
+      - name: provider_key
+        description: Foreign key to dim_providers
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_providers')
+                field: provider_key
+
+      - name: provider_id
+        description: Natural provider identifier
+        data_tests:
+          - not_null
+
+      - name: organization_key
+        description: Foreign key to dim_organizations
+
+      - name: organization_id
+        description: Natural organization identifier
+
+      - name: year_actual
+        description: Calendar year
+        data_tests:
+          - not_null
+
+      - name: month_actual
+        description: Calendar month (1-12)
+        data_tests:
+          - not_null
+
+      - name: year_month_str
+        description: Year-month string (YYYY-MM)
+
+      - name: encounter_count
+        description: Number of encounters in the month
+        data_tests:
+          - not_null
+
+      - name: unique_patient_count
+        description: Number of distinct patients seen
+
+      - name: avg_patient_age
+        description: Average age of patients seen
+
+      - name: avg_encounter_duration_minutes
+        description: Average encounter duration in minutes
+
+      - name: total_procedures
+        description: Total procedures performed
+
+      - name: total_cost
+        description: Total claim cost for the month
+
+      - name: total_payer_coverage
+        description: Amount covered by insurance
+
+      - name: avg_cost_per_encounter
+        description: Average cost per encounter
+
+      - name: encounters_per_patient_avg
+        description: Average encounters per patient
+
+      - name: _loaded_at
+        description: Timestamp when record was loaded
+
+  - name: fct_condition_cohorts
+    description: >
+      Patient-condition cohort analysis for disease management.
+      One row per unique patient-condition combination.
+      Grain: (patient_id, condition_code)
+    config:
+      tags: ['analytics', 'marts', 'fact']
+    meta:
+      grain: patient_id + condition_code
+      owner: healthcare_analytics
+    columns:
+      - name: condition_cohort_key
+        description: Surrogate key (MD5 hash of patient_id + condition_code)
+        data_tests:
+          - unique
+          - not_null
+
+      - name: patient_key
+        description: Foreign key to dim_patients
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_patients')
+                field: patient_key
+
+      - name: patient_id
+        description: Natural patient identifier
+        data_tests:
+          - not_null
+
+      - name: condition_key
+        description: Foreign key to dim_conditions
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_conditions')
+                field: condition_key
+
+      - name: condition_code
+        description: ICD/SNOMED condition code
+        data_tests:
+          - not_null
+
+      - name: condition_description
+        description: Full condition name
+
+      - name: first_diagnosis_date
+        description: Date of first diagnosis
+        data_tests:
+          - not_null
+
+      - name: last_diagnosis_date
+        description: Date of most recent diagnosis (null if first occurrence only)
+
+      - name: first_diagnosis_year
+        description: Year of first diagnosis
+
+      - name: months_with_condition
+        description: Months between first and last diagnosis (0 if single occurrence)
+
+      - name: encounter_count
+        description: Number of encounters with this condition
+
+      - name: is_active
+        description: True if condition has no end date (currently active)
+
+      - name: _loaded_at
+        description: Timestamp when record was loaded
+
+  - name: fct_cost_analysis
+    description: >
+      Detailed cost breakdown for financial analysis.
+      One row per encounter with cost allocation details.
+      Grain: encounter_id (simplified from original spec)
+    config:
+      tags: ['analytics', 'marts', 'fact']
+    meta:
+      grain: encounter_id
+      owner: healthcare_analytics
+    columns:
+      - name: cost_analysis_key
+        description: Surrogate key (MD5 hash of encounter_id)
+        data_tests:
+          - unique
+          - not_null
+
+      - name: encounter_key
+        description: Foreign key to fct_encounters
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('fct_encounters')
+                field: encounter_key
+
+      - name: encounter_id
+        description: Natural encounter identifier
+        data_tests:
+          - unique
+          - not_null
+
+      - name: patient_key
+        description: Foreign key to dim_patients
+
+      - name: patient_id
+        description: Natural patient identifier
+
+      - name: payer_key
+        description: Foreign key to dim_payers
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_payers')
+                field: payer_key
+
+      - name: payer_id
+        description: Natural payer identifier
+
+      - name: provider_key
+        description: Foreign key to dim_providers
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_providers')
+                field: provider_key
+
+      - name: provider_id
+        description: Natural provider identifier
+
+      - name: encounter_date_key
+        description: Foreign key to dim_date
+
+      - name: encounter_date
+        description: Date of the encounter
+
+      - name: year_actual
+        description: Calendar year of encounter
+
+      - name: encounter_class
+        description: Type of encounter (ambulatory, wellness, etc.)
+
+      - name: total_cost
+        description: Total claim cost
+
+      - name: payer_coverage
+        description: Amount covered by insurance
+
+      - name: patient_responsibility
+        description: Amount owed by patient
+
+      - name: coverage_pct
+        description: Percentage covered by insurance (0-100)
+
+      - name: patient_cost_pct
+        description: Percentage owed by patient (0-100)
+
+      - name: procedure_count
+        description: Number of procedures in the encounter
+
+      - name: cost_per_procedure
+        description: Average cost per procedure (null if no procedures)
+
+      - name: _loaded_at
+        description: Timestamp when record was loaded
+
+  # ============================================================================
+  # OPERATIONAL VIEWS
+  # ============================================================================
+
+  - name: v_patient_current_conditions
+    description: >
+      Current (active) conditions for each patient.
+      Filters fct_condition_cohorts to only active conditions.
+      Use for patient panels and disease management dashboards.
+    config:
+      materialized: table
+      tags: ['analytics', 'marts', 'view']
+    meta:
+      grain: patient_id + condition_code
+      owner: healthcare_analytics
+    columns:
+      - name: patient_key
+        description: Foreign key to dim_patients
+
+      - name: patient_id
+        description: Natural patient identifier
+
+      - name: condition_key
+        description: Foreign key to dim_conditions
+
+      - name: condition_code
+        description: ICD/SNOMED condition code
+
+      - name: condition_description
+        description: Full condition name
+
+      - name: first_diagnosis_date
+        description: Date of first diagnosis
+
+      - name: months_with_condition
+        description: Duration of condition in months
+
+      - name: encounter_count
+        description: Number of encounters with this condition
+
+  - name: v_provider_active_patients
+    description: >
+      Active patient count per provider for panel management.
+      Aggregates patients with recent encounters by provider.
+      Use for provider workload analysis.
+    config:
+      materialized: table
+      tags: ['analytics', 'marts', 'view']
+    meta:
+      grain: provider_id
+      owner: healthcare_analytics
+    columns:
+      - name: provider_key
+        description: Foreign key to dim_providers
+
+      - name: provider_id
+        description: Natural provider identifier
+
+      - name: provider_name
+        description: Full name of the provider
+
+      - name: organization_key
+        description: Foreign key to dim_organizations
+
+      - name: organization_id
+        description: Natural organization identifier
+
+      - name: active_patient_count
+        description: Number of patients with active conditions
+
+      - name: total_active_conditions
+        description: Total number of active conditions managed
+
+      - name: avg_conditions_per_patient
+        description: Average number of active conditions per patient
+
+  - name: v_encounter_summary
+    description: >
+      Enriched encounter view with dimension attributes.
+      Ephemeral (not persisted) - used as a building block for other queries.
+      Joins encounters with patient, provider, and organization details.
+    config:
+      materialized: ephemeral
+      tags: ['analytics', 'marts', 'view']
+    columns:
+      - name: encounter_id
+        description: Unique encounter identifier
+
+      - name: encounter_date
+        description: Date of the encounter
+
+      - name: patient_id
+        description: Patient identifier
+
+      - name: patient_name
+        description: Full patient name
+
+      - name: provider_id
+        description: Provider identifier
+
+      - name: provider_name
+        description: Full provider name
+
+      - name: organization_id
+        description: Organization identifier
+
+      - name: organization_name
+        description: Organization name
+
+      - name: payer_id
+        description: Payer identifier
+
+      - name: payer_name
+        description: Payer name
+
+      - name: encounter_class
+        description: Type of encounter
+
+      - name: total_cost
+        description: Total claim cost
+
+      - name: payer_coverage
+        description: Amount covered by insurance
+
+      - name: patient_responsibility
+        description: Amount owed by patient
