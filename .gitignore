@@ -31,3 +31,4 @@ dbt_project/*.duckdb
 dbt_project/*.duckdb.wal
 dbt_project/data/synthea/*.csv
 logs/
+dev.duckdb
