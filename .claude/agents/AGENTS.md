@@ -673,6 +673,106 @@ Git-Master is a **horizontal service agent** - unlike vertical agents that own s
 
 **See**: [[git-master.md]] for full persona details, [[../skills/git-operations.md]] for workflows.
 
+### Workflow Supervisor (Meta-Orchestrator)
+
+**Agent**: Supervisor (`super:` prefix)
+
+The Supervisor is the **meta-orchestrator** - it serves as the primary interface layer between the human and specialist agents, wrapping `/orchestrate` with verification and state management.
+
+**When to use**:
+
+- Starting a new work session
+- Resuming work from a previous session
+- Managing multiple parallel work tracks
+- Handling urgent interrupts during active work
+- Ensuring quality gates are enforced
+
+**How it works**:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  User Request                                           │
+│  "Add customer analytics mart"                          │
+└────────────────────────┬────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│  SUPERVISOR (super:)                                    │
+│  - Asks clarifying questions                            │
+│  - Determines /orchestrate flags                        │
+│  - Creates/updates temp/WORKFLOW_STATE.md               │
+│  - Enforces artifact verification at phase gates        │
+│  - Invokes Sage on failures/deployments                 │
+└────────────────────────┬────────────────────────────────┘
+                         │ Delegates to
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│  /orchestrate [feature] [flags]                         │
+│  PM → Arch → Tester → Dev → Review → Docs               │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Key Capabilities**:
+
+| Capability | Description |
+|------------|-------------|
+| Interface Layer | Clarifies scope before delegating |
+| Quality Gates | Blocks transitions if artifacts missing |
+| State Management | Maintains `temp/WORKFLOW_STATE.md` |
+| Sage Coordination | Triggers learning extraction |
+| Multi-Track | Manages parallel features and queue |
+
+**Commands**:
+
+- `/supervisor` - Wake up for new/resumed session
+- `super: resume` - Resume from state file
+- `super: status` - Show all track status
+- `super: queue [feature]` - Add to interrupt queue
+
+**Sage Trigger Conditions**:
+
+| Trigger | Action |
+|---------|--------|
+| User rejection | Invoke Sage for learning |
+| ≥10 test failures | Invoke Sage for patterns |
+| Agent confusion | Invoke Sage for clarification gaps |
+| Successful deployment | Invoke Sage for positive patterns |
+
+**State File** (`temp/WORKFLOW_STATE.md`):
+
+```yaml
+---
+last_updated: 2026-01-29T14:30:00
+active_track: feat/customer-analytics
+---
+
+## Active Tracks
+### Track: feat/customer-analytics (ACTIVE)
+- Phase: ARCHITECTURE
+- Artifacts:
+  - [x] PRD: docs/specs/PRD-004-customer-analytics.md
+  - [ ] TDD: (pending)
+```
+
+**Relationship to Other Agents**:
+
+```
+                    ┌─────────────────┐
+                    │   SUPERVISOR    │  ← Meta-orchestrator
+                    │    (super:)     │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              │              │              │
+              ▼              ▼              ▼
+    ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+    │ /orchestrate│  │    Sage     │  │ Git-Master  │
+    │ (assembly)  │  │ (learning)  │  │ (git ops)   │
+    └─────────────┘  └─────────────┘  └─────────────┘
+```
+
+**See**: [[supervisor.md]] for full persona details, [[../commands/supervisor.md]] for command usage.
+
 ### dbt Development Agents
 
 The dbt agents form a specialized pipeline for data modeling, transformation, and analytics development.

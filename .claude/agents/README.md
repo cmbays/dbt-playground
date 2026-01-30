@@ -25,6 +25,7 @@ The agent system provides specialized personas for different aspects of developm
 
 | Persona | Prefix | File | Primary Focus |
 |---------|--------|------|---------------|
+| **Supervisor** | `super:` | `supervisor.md` | **Meta-orchestrator, workflow state, quality gates** |
 | Product Manager | `pm:` | `product-manager.md` | Requirements, PRDs, GitHub issues |
 | Technical Architect | `arch:` | `architect.md` | System design, TDDs, architecture |
 | Quality Tester | `test:` | `tester.md` | Test specs, verification |
@@ -38,9 +39,18 @@ The agent system provides specialized personas for different aspects of developm
 
 ## Assembly Line Workflow
 
-For feature development, personas chain together:
+For feature development, the Supervisor orchestrates the workflow:
 
 ```
+┌─────────────────────────────────────────────────────────────┐
+│  SUPERVISOR (super:)                                        │
+│  - Clarifies scope, determines flags                        │
+│  - Maintains temp/WORKFLOW_STATE.md                         │
+│  - Enforces quality gates at each transition                │
+│  - Invokes Sage on failures/deployments                     │
+└─────────────────────────┬───────────────────────────────────┘
+                          │ Delegates to /orchestrate
+                          ▼
 1. PM         → Draft PRD in docs/specs/
 2. Architect  → Create TDD in docs/tdd/
 3. Tester     → Write test specification
@@ -50,6 +60,8 @@ For feature development, personas chain together:
    ├─→ Documenter → Update changelog and docs
    └─→ Sage       → Extract learnings and patterns
 ```
+
+**Note**: You can invoke `/orchestrate` directly for single features, or use the Supervisor (`super:`) for session-level orchestration with state management and quality gates.
 
 ## Invocation Methods
 
@@ -126,6 +138,7 @@ Project-specific commands in `.claude/commands/`:
 
 | Command | Purpose |
 |---------|---------|
+| `/supervisor` | Wake up Supervisor for session management |
 | `/plan` | Structured implementation planning |
 | `/review` | Code quality review workflow |
 | `/orchestrate` | Multi-persona feature workflow |
