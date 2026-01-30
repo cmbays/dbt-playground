@@ -23,7 +23,8 @@ This PRD defines five interactive playground tools designed to enhance learning,
 | 2 | Git Worktree Coordinator | Manage parallel sessions, prevent conflicts | v0.6.0 |
 | 3 | Data Lineage Explorer | Trace data flow through dbt DAG | v0.6.2 |
 | 4 | Healthcare Data Schema Explorer | Browse Synthea data structure interactively | v0.6.1 |
-| 5 | Dashboard Mockup Builder | Design analytics dashboards visually | v0.6.3 |
+| 5 | Mermaid Diagram Designer | Create/edit/export architecture & workflow diagrams | v0.6.0 |
+| 6 | Dashboard Mockup Builder | Design analytics dashboards visually | v0.6.3 |
 
 ### Success Metrics (Global)
 
@@ -55,6 +56,7 @@ Visual tools for learning and development. Launch via commands or explore in the
 | Worktree Coordinator | `/playground:worktrees` | Manage parallel sessions |
 | Lineage Explorer | `/playground:lineage` | Trace dbt data flow |
 | Schema Explorer | `/playground:schema` | Browse Synthea data |
+| Mermaid Diagram Designer | `/playground:mermaid` | Create architecture diagrams visually |
 | Dashboard Builder | `/playground:dashboards` | Mock analytics layouts |
 
 Quick start: Run `/playground` to see available tools.
@@ -82,6 +84,7 @@ New slash commands for playground access:
 /playground:worktrees          # Launch Worktree Coordinator
 /playground:lineage [model]    # Launch Lineage Explorer
 /playground:schema [table]     # Launch Schema Explorer
+/playground:mermaid            # Launch Mermaid Diagram Designer
 /playground:dashboards         # Launch Dashboard Builder
 ```
 
@@ -826,7 +829,170 @@ Explain healthcare code systems used in the data.
 
 ---
 
-## Playground 5: Dashboard Mockup Builder
+## Playground 5: Mermaid Diagram Designer
+
+### Value Proposition
+
+Architecture and workflow documentation uses ASCII art boxes that are hard to maintain. Mermaid diagrams render in GitHub, VS Code, terminals, and web browsers, but require markdown knowledge. The Mermaid Designer provides **visual, drag-and-drop diagram creation** with instant live preview and markdown export.
+
+### User Personas
+
+| Persona | Use Case | Frequency |
+|---------|----------|-----------|
+| Architect | Document dbt DAG architecture | Per design |
+| Documenter | Create architecture diagrams for docs | Per feature |
+| Product Manager | Visualize workflows and processes | Per spec |
+| Developer | Design data pipelines visually | Per implementation |
+
+### Core Features
+
+#### F5.1: Live Diagram Editor
+
+Create mermaid diagrams with visual feedback.
+
+```text
+┌─────────────────────────────────────────────────────────────────────────┐
+│  MERMAID DIAGRAM DESIGNER                           [Save] [Export]    │
+├────────────────────────────┬──────────────────────────────────────────┤
+│                            │                                           │
+│  CODE EDITOR               │  LIVE PREVIEW                             │
+│  ────────────              │  ────────────                             │
+│  flowchart TD              │  ┌───────────────┐                        │
+│    A["Staging"]            │  │    Staging    │                        │
+│    B["Intermediate"]       │  └───────┬───────┘                        │
+│    C["Marts"]              │          │                                │
+│    A --> B                 │          ▼                                │
+│    B --> C                 │  ┌───────────────┐                        │
+│                            │  │ Intermediate  │                        │
+│  [Templates] [Snippets]    │  └───────┬───────┘                        │
+│                            │          │                                │
+│                            │          ▼                                │
+│                            │  ┌───────────────┐                        │
+│                            │  │     Marts     │                        │
+│                            │  └───────────────┘                        │
+│                            │                                           │
+│                            │  [Dark Mode] [Zoom: 100%]                │
+├────────────────────────────┴──────────────────────────────────────────┤
+│  [Flowchart] [ER Diagram] [Sequence] [Gantt] [Class] [State] [Git]    │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Acceptance Criteria**:
+
+- [ ] Live preview as user types
+- [ ] Syntax highlighting for mermaid code
+- [ ] Error messages for invalid syntax
+- [ ] Multiple diagram types (flowchart, ER, sequence, class)
+- [ ] Dark/light mode toggle
+
+#### F5.2: Diagram Templates
+
+Pre-built templates for common architecture patterns.
+
+| Template | Type | Use Case |
+|----------|------|----------|
+| dbt Layer Architecture | Flowchart | Document staging/intermediate/marts flow |
+| Data Lineage | Flowchart | Show model dependencies |
+| Entity Relationships | ER Diagram | Schema design |
+| Workflow / Agent Orchestration | Flowchart | Process flows |
+| Healthcare Events | Sequence Diagram | Clinical workflow |
+
+**Acceptance Criteria**:
+
+- [ ] Select from template library
+- [ ] Template pre-populates code editor
+- [ ] Customize template for specific use case
+- [ ] Save customization as new template
+
+#### F5.3: Export Formats
+
+Export diagrams in multiple formats.
+
+| Format | Use Case |
+|--------|----------|
+| Markdown Block | Embed in PRDs, TDDs, docs |
+| SVG | Version control, editing |
+| PNG | Presentations, Slack |
+| HTML Standalone | Share as single file |
+
+**Acceptance Criteria**:
+
+- [ ] Export as markdown code block (copy to clipboard)
+- [ ] Export as SVG file
+- [ ] Export as PNG file
+- [ ] Generate standalone HTML with embedded diagram
+
+#### F5.4: Diagram Library
+
+Save and organize frequently-used diagrams.
+
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│  DIAGRAM LIBRARY                                  [New] [Import] │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Architecture                  Workflows                        │
+│  ────────────────────          ────────────────────             │
+│  ▢ dbt-layers-v0.4             ▢ Agent Orchestration           │
+│  ▢ synthea-erd                 ▢ Data Acquisition              │
+│  ▢ mart-dim-fact               ▢ Model Development             │
+│  ▢ staging-flow                ▢ PR Workflow                   │
+│                                                                 │
+│  [Rename] [Copy] [Delete]      [Rename] [Copy] [Delete]       │
+│                                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│  Total diagrams: 8  |  Last updated: 2h ago                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Acceptance Criteria**:
+
+- [ ] Save diagram with name and description
+- [ ] Organize diagrams by category/folder
+- [ ] Search by name or tags
+- [ ] Show preview on hover
+- [ ] Load from library into editor
+
+#### F5.5: Mermaid Reference Panel
+
+Quick access to mermaid syntax and examples.
+
+**Acceptance Criteria**:
+
+- [ ] Show mermaid documentation in side panel
+- [ ] Provide syntax examples for each diagram type
+- [ ] Allow copying snippets to editor
+- [ ] Link to official mermaid docs
+
+### Integration Points
+
+| System | Integration |
+|--------|-------------|
+| Documentation (MD files) | Embed exported diagrams in TDDs, PRDs |
+| CLAUDE.md | Link to diagram templates |
+| dbt architecture | Auto-generate lineage diagrams from manifest |
+| Agent Visualizer | Export workflows as diagrams |
+
+### Success Criteria
+
+- Architects create architecture diagrams in <5 minutes
+- All docs use mermaid instead of ASCII art
+- Diagrams version-control alongside code (SVG/MD format)
+- dbt DAG can be exported as mermaid diagram
+
+### Technical Notes
+
+**Library**: Use [mermaid.js](https://mermaid.js.org/) for rendering.
+
+**Storage**: Diagrams saved as `.mmd` files or markdown blocks in `docs/diagrams/`.
+
+**Export**: Use mermaid CLI for PNG/SVG generation.
+
+**Integration**: API for dbt-mcp to generate lineage diagrams programmatically.
+
+---
+
+## Playground 6: Dashboard Mockup Builder
 
 ### Value Proposition
 
@@ -1015,6 +1181,7 @@ Share mockups in multiple formats.
 ```text
 Phase 1 (v0.6.0) - Foundation
 ├── 2. Git Worktree Coordinator (unblocks parallel development)
+├── 5. Mermaid Diagram Designer (simplest, improves documentation immediately)
 
 Phase 2 (v0.6.1) - Visibility
 ├── 1. Agent Orchestration Visualizer (uses WORKFLOW_STATE.md)
@@ -1024,7 +1191,7 @@ Phase 3 (v0.6.2) - Analysis
 ├── 3. Data Lineage Explorer (uses manifest.json)
 
 Phase 4 (v0.6.3) - Design
-├── 5. Dashboard Mockup Builder (requires metrics understanding)
+├── 6. Dashboard Mockup Builder (requires metrics understanding)
 ```
 
 ### Dependency Matrix
@@ -1033,6 +1200,7 @@ Phase 4 (v0.6.3) - Design
 |------------|------------|---------|
 | Worktree Coordinator | git, gh CLI | Parallel development |
 | Agent Visualizer | WORKFLOW_STATE.md | Workflow debugging |
+| Mermaid Designer | mermaid.js library | Architecture documentation |
 | Schema Explorer | DuckDB, sources.yml | Model design |
 | Lineage Explorer | manifest.json, compile | Impact analysis |
 | Dashboard Builder | Mart models, Schema Explorer | Metric planning |
@@ -1042,6 +1210,7 @@ Phase 4 (v0.6.3) - Design
 | Playground | Complexity | Estimated Hours | Risk |
 |------------|------------|-----------------|------|
 | Worktree Coordinator | Medium | 16-24 | Low |
+| Mermaid Designer | Low | 8-12 | Low |
 | Agent Visualizer | Low-Medium | 12-16 | Low |
 | Schema Explorer | Medium | 20-28 | Low |
 | Lineage Explorer | Medium-High | 24-32 | Medium |
