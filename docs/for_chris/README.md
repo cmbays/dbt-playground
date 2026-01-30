@@ -33,6 +33,7 @@ Create a FOR_CHRIS doc when ≥2 of these criteria are met:
 
 | Document | Topic | Date |
 |----------|-------|------|
+| [PLAYGROUND-TOOLS.md](PLAYGROUND-TOOLS.md) | Interactive visual tools for learning | 2026-01-29 |
 | [GIT-WORKTREE-WORKFLOW.md](GIT-WORKTREE-WORKFLOW.md) | Parallel development with git worktrees | 2026-01-29 |
 | [SUPERVISOR_ORCHESTRATION.md](SUPERVISOR_ORCHESTRATION.md) | Meta-orchestration and multi-track workflows | 2026-01-29 |
 | [UV_PYTHON_MODERNIZATION.md](UV_PYTHON_MODERNIZATION.md) | Python/uv dependency management for dbt | 2026-01-29 |

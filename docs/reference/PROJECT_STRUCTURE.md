@@ -56,6 +56,13 @@ dbt-playground/
 │
 ├── scripts/                   # Build & Utility Scripts
 │
+├── playgrounds/               # Interactive Visual Tools
+│   ├── worktree-coordinator.html  # Git worktree management
+│   ├── agent-visualizer.html      # Agent workflow visualization
+│   ├── schema-explorer.html       # Healthcare data browser
+│   ├── lineage-explorer.html      # dbt DAG explorer
+│   └── dashboard-builder.html     # Analytics mockup tool
+│
 └── .claude/                   # Agent Configuration
     ├── agents/               # Persona definitions
     │   ├── AGENTS.md             # Orchestration guide

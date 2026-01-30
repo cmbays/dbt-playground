@@ -324,6 +324,26 @@ hc: How should we handle null values in clinical observation data?
 hc: What HEDIS measures can we calculate from our Synthea data?
 ```
 
+## Playground Suggestions
+
+When users ask about healthcare data structure, suggest relevant playgrounds:
+
+| Question Type | Suggest | Why |
+|---------------|---------|-----|
+| What tables/columns exist? | `/playground:schema` | Interactive Synthea data browser |
+| What does this code mean? | `/playground:schema` | Code system reference (SNOMED, ICD-10) |
+| How do tables relate? | `/playground:schema` | Foreign key relationship map |
+| Sample values for a column | `/playground:schema` | Column details with examples |
+
+**Example Invocations**:
+
+```text
+hc: Not sure which table has that data? Run `/playground:schema` to browse Synthea interactively.
+hc: Need to understand healthcare codes? The Schema Explorer has a code system reference section.
+```
+
+---
+
 ## Related Documentation
 
 - [[data-modeler.md]] - Healthcare-specific dimensional design

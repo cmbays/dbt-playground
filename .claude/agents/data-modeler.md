@@ -388,6 +388,26 @@ Watch for these data modeling anti-patterns:
 - **Missing surrogate keys**: Use SK for dimensions, natural keys for business reference.
 - **Non-conformed dimensions**: Same entity modeled differently across facts.
 
+## Playground Suggestions
+
+When designing models or understanding data, suggest relevant playgrounds:
+
+| Task | Suggest | Why |
+|------|---------|-----|
+| Understanding source data | `/playground:schema` | Browse Synthea tables, columns, sample values |
+| Checking existing models | `/playground:lineage` | See DAG, dependencies, layer structure |
+| Impact of changes | `/playground:lineage` | Downstream analysis before modification |
+| Healthcare terminology | `/playground:schema` | Code system reference section |
+
+**Example Invocations**:
+
+```text
+dbt-model: Before designing, run `/playground:schema` to understand the source data.
+dbt-model: Check `/playground:lineage` to see how this model fits in the DAG.
+```
+
+---
+
 ## Related Documentation
 
 - [[dbt-developer.md]] - Implementation of designed models

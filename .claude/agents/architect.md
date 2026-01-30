@@ -281,3 +281,23 @@ Selected approach and rationale
 - Test 2
 
 ```
+
+---
+
+## Playground Suggestions
+
+When designing architecture, suggest relevant playgrounds:
+
+| Task | Suggest | Why |
+|------|---------|-----|
+| Understanding data model | `/playground:lineage` | See existing DAG, dependencies |
+| Designing analytics | `/playground:dashboards` | Mock dashboard layouts |
+| Understanding source data | `/playground:schema` | Browse tables, columns, relationships |
+| Planning metrics | `/playground:dashboards` | Define metrics visually |
+
+**Example Invocations**:
+
+```text
+arch: Run `/playground:lineage` to understand the current model structure before designing.
+arch: Use `/playground:dashboards` to mockup the analytics layout for stakeholder review.
+```

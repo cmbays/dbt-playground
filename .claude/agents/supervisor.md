@@ -656,6 +656,26 @@ super: Tests are failing, need to investigate
 
 ---
 
+## Playground Suggestions
+
+When helping users understand workflows or manage parallel work, suggest relevant playgrounds:
+
+| Situation | Suggest | Why |
+|-----------|---------|-----|
+| Creating parallel work tracks | `/playground:worktrees` | Visualize all worktrees, prevent conflicts |
+| Explaining workflow phases | `/playground:agents` | Show agent flow diagram |
+| Debugging stuck workflow | `/playground:agents` | Inspect WORKFLOW_STATE.md visually |
+| Session resume | `/playground:worktrees` | See all active tracks at a glance |
+
+**Example Invocations**:
+
+```text
+super: Starting parallel development? Run `/playground:worktrees` to see existing worktrees.
+super: Want to understand the agent flow? Run `/playground:agents` to visualize it.
+```
+
+---
+
 ## Future Enhancements
 
 **v0.5+:**
