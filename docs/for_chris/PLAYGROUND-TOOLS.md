@@ -2,8 +2,8 @@
 audience: [sage, human]
 priority: medium
 size: medium
-last_updated: 2026-01-29
-status: draft
+last_updated: 2026-01-31
+status: current
 tags: [learning, playgrounds, visualization, tools]
 ---
 
@@ -39,9 +39,29 @@ Before playgrounds, each of these required different tools, commands, or documen
 
 ---
 
-## The Five Playgrounds
+## The Six Playgrounds
 
-### 1. Git Worktree Coordinator (Phase 1)
+### 0. Workflow Hub & Chronicle (Foundation - v0.6-0.7)
+
+**Workflow Hub** (`/playground:hub`) - Central command center providing:
+
+- Quick Resume panel with current branch, phase, health score
+- Active Tracks view from WORKFLOW_STATE.md
+- Agent Activity timeline showing recent contributions
+- Git Worktree summary for parallel session awareness
+- Navigation to all other playgrounds
+
+**Workflow Chronicle** (`/playground:chronicle`) - Timeline visualization providing:
+
+- Stratified timeline with Events, Features, Decisions, Bedrock layers
+- Agent attribution tracking (who contributed what)
+- Health Pulse composite score (0-100)
+- Negative Space registry (decisions NOT made)
+- JSON export for agent consumption
+
+**Build Order Rationale**: Built as foundation because observability enables everything else. Without visibility into workflow state, other tools operate blind.
+
+### 1. Git Worktree Coordinator (Phase 1 - v0.6.0)
 
 **The Analogy**: Think of git worktrees like separate workbenches in a workshop. Each workbench has its own project, but they all share the same toolbox (git repository). The Coordinator is your workshop map.
 
@@ -56,7 +76,26 @@ Before playgrounds, each of these required different tools, commands, or documen
 
 **Build Order Rationale**: Built first because parallel development is the foundation for everything else. Without coordination, the other playgrounds could be built in conflicting worktrees.
 
-### 2. Agent Orchestration Visualizer (Phase 2)
+### 2. Mermaid Diagram Designer (Phase 1.5 - v0.6.0)
+
+**The Analogy**: Technical architecture needs visual communication. The Mermaid Designer is your whiteboard for creating dbt layer diagrams, agent workflows, and ER diagrams.
+
+**What It Solves**:
+
+- "How do I visualize the dbt layer architecture?"
+- "Can I create an agent workflow diagram quickly?"
+- "How do I share a technical diagram without Figma?"
+
+**Key Features**:
+
+- 6 built-in templates (dbt-layers, agent-workflow, er-healthcare, etc.)
+- Zoom/pan with mouse (scroll to zoom, drag to pan)
+- Export to Markdown, SVG, PNG, HTML
+- Live preview as you edit
+
+**Build Order Rationale**: Built alongside Worktree Coordinator because visual communication is essential for team alignment.
+
+### 3. Agent Orchestration Visualizer (Phase 2 - Planned v0.7.1)
 
 **The Analogy**: The agent system is like a factory assembly line. Each station (PM, Architect, Developer, etc.) does specific work and passes artifacts to the next. The Visualizer is the factory floor monitor showing which station is active and what's moving through.
 
@@ -71,7 +110,7 @@ Before playgrounds, each of these required different tools, commands, or documen
 
 **Build Order Rationale**: Needs WORKFLOW_STATE.md to exist (which the Supervisor creates). Built in Phase 2 after Worktree Coordinator establishes parallel development.
 
-### 3. Healthcare Schema Explorer (Phase 2)
+### 4. Healthcare Schema Explorer (Phase 2 - Planned v0.7.1)
 
 **The Analogy**: Synthea data is like a foreign language with its own vocabulary (SNOMED codes), grammar (relationships), and dialects (different table purposes). The Schema Explorer is your phrase book and translator.
 
@@ -86,7 +125,7 @@ Before playgrounds, each of these required different tools, commands, or documen
 
 **Build Order Rationale**: Can be built in parallel with Agent Visualizer since they share no dependencies. Essential for anyone designing dbt models.
 
-### 4. Data Lineage Explorer (Phase 3)
+### 5. Data Lineage Explorer (Phase 3 - Planned v0.7.2)
 
 **The Analogy**: A dbt project is like a river system. Sources are springs, staging models are tributaries, and marts are the main river. The Lineage Explorer lets you trace water (data) from any point upstream or downstream.
 
@@ -101,7 +140,7 @@ Before playgrounds, each of these required different tools, commands, or documen
 
 **Build Order Rationale**: Needs dbt models to exist (intermediate and marts). Built after Schema Explorer since understanding source data comes before understanding transformations.
 
-### 5. Dashboard Mockup Builder (Phase 4)
+### 6. Dashboard Mockup Builder (Phase 4 - Planned v0.7.3)
 
 **The Analogy**: Before building a house, architects create mockups. Before building dashboards, analysts should mockup layouts. The Builder is your analytics sketchpad.
 
