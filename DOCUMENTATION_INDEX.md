@@ -2,7 +2,7 @@
 
 **Purpose**: Navigate all documentation efficiently. This is the map to everything documented in the project.
 
-**Last Updated**: 2026-01-28
+**Last Updated**: 2026-01-31
 
 ---
 
@@ -53,7 +53,9 @@ dbt-playground Documentation
     |
     |-- reference/                     [Technical Documentation]
     |   |-- ARCHITECTURE.md            [System architecture]
-    |   +-- PROJECT_STRUCTURE.md       [File organization]
+    |   |-- PROJECT_STRUCTURE.md       [File organization]
+    |   |-- GITHUB_ENFORCEMENT.md      [GitHub Actions strategy]
+    |   +-- GITHUB_ACTIONS.md          [GitHub Actions reference]
     |
     |-- specs/                         [Product Requirements]
     |   +-- PRD-*.md
@@ -91,6 +93,12 @@ dbt-playground Documentation
 1. **[[.claude/skills/deployment-workflow.md]]** - Full deployment process
 2. **[[.claude/rules/git-workflow.md]]** - Git standards
 3. **[[CLAUDE.md#versioning-strategy]]** - Version numbering
+
+### "I Need to Understand GitHub Actions"
+
+1. **[[docs/reference/GITHUB_ENFORCEMENT.md]]** - Workflow strategy and details
+2. **[[docs/reference/GITHUB_ACTIONS.md]]** - Quick reference
+3. **[[docs/for_chris/GITHUB_ACTIONS_GUIDE.md]]** - Setup and troubleshooting
 
 ### "I Need to Update Documentation"
 
@@ -131,6 +139,8 @@ dbt-playground Documentation
 | ----------------------------------------- | ------------------------ | ---------------------- |
 | **[[docs/reference/ARCHITECTURE.md]]**    | System architecture      | Architect, Developer   |
 | **[[docs/reference/PROJECT_STRUCTURE.md]]** | File organization       | Multi-agent            |
+| **[[docs/reference/GITHUB_ENFORCEMENT.md]]** | GitHub Actions strategy | Multi-agent            |
+| **[[docs/reference/GITHUB_ACTIONS.md]]**  | GitHub Actions reference | Multi-agent            |
 | **[[docs/guides/PROJECT_WORKFLOW.md]]**   | Epic → TDD → Task        | Multi-agent            |
 | **[[docs/standards/TESTING.md]]**         | Testing framework        | Tester, Developer      |
 
@@ -154,4 +164,4 @@ dbt-playground Documentation
 
 *This index should be updated whenever new documentation is added or documentation structure changes.*
 
-**Last major update**: 2026-01-28 (rebrand to dbt-playground)
+**Last major update**: 2026-01-31 (added GitHub Actions documentation)

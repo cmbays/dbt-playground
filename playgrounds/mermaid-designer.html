@@ -708,9 +708,10 @@ flowchart TD
   </div>
 
   <!-- Load Mermaid and Panzoom from CDN -->
+  <!-- NOTE: Using different CDNs to avoid esm.sh bundler conflicts between mermaid/d3 and panzoom -->
   <script type="module">
     import mermaid from 'https://esm.sh/mermaid@10.6.1';
-    import panzoom from 'https://esm.sh/panzoom@9.4.3';
+    import panzoom from 'https://cdn.jsdelivr.net/npm/panzoom@9.4.3/+esm';
 
     // Initialize Mermaid
     mermaid.initialize({

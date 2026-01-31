@@ -33,6 +33,7 @@ Create a FOR_CHRIS doc when ≥2 of these criteria are met:
 
 | Document | Topic | Date |
 |----------|-------|------|
+| [GITHUB_ACTIONS_GUIDE.md](GITHUB_ACTIONS_GUIDE.md) | GitHub Actions setup, testing, and troubleshooting | 2026-01-31 |
 | [2026-01-30_DAILY_SUMMARY.md](2026-01-30_DAILY_SUMMARY.md) | Daily summary: v0.5 + Workflow Chronicle + PR enforcement | 2026-01-30 |
 | [UNDERSTANDING_PR_WORKFLOW.md](UNDERSTANDING_PR_WORKFLOW.md) | PR-first development philosophy and defense-in-depth enforcement | 2026-01-30 |
 | [PLAYGROUND-TOOLS.md](PLAYGROUND-TOOLS.md) | Interactive visual tools for learning | 2026-01-29 |

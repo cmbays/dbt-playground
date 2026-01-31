@@ -12,7 +12,7 @@ tags: [overview, navigation, index]
 
 **Purpose**: Central navigation for all project documentation
 
-**Last Updated**: 2026-01-28
+**Last Updated**: 2026-01-31
 
 ---
 
@@ -40,6 +40,8 @@ Technical references for system design and architecture.
 
 - **[ARCHITECTURE.md](reference/ARCHITECTURE.md)** - System architecture and technical decisions (Arch, Dev) [high priority]
 - **[PROJECT_STRUCTURE.md](reference/PROJECT_STRUCTURE.md)** - File organization and naming (all personas) [high priority]
+- **[GITHUB_ENFORCEMENT.md](reference/GITHUB_ENFORCEMENT.md)** - GitHub Actions automation strategy (all personas) [high priority]
+- **[GITHUB_ACTIONS.md](reference/GITHUB_ACTIONS.md)** - GitHub Actions quick reference (all personas) [medium priority]
 - **[ROADMAP.md](reference/ROADMAP.md)** - Product roadmap and future plans (PM, Arch) [low priority, large]
 
 ### 📋 Specifications
@@ -149,6 +151,12 @@ When referencing other docs:
 
 ## Recent Changes
 
+### 2026-01-31: GitHub Actions Documentation
+
+- **Added** `reference/GITHUB_ENFORCEMENT.md` - Detailed workflow strategy
+- **Added** `reference/GITHUB_ACTIONS.md` - Quick reference guide
+- **Added** `for_chris/GITHUB_ACTIONS_GUIDE.md` - Setup and troubleshooting
+
 ### 2026-01-28: Project Rebrand
 
 - **Rebranded** from japanese-study-site to dbt-playground
@@ -172,4 +180,4 @@ When referencing other docs:
 
 ---
 
-*This index is automatically maintained. Last updated by PM (Claude) on 2026-01-28.*
+*This index is automatically maintained. Last updated on 2026-01-31.*

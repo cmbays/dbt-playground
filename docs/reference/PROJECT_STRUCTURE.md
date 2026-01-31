@@ -25,6 +25,13 @@ dbt-playground/
 ├── uv.lock                    # Locked dependency versions
 ├── .python-version            # Python version (3.11)
 │
+├── .github/                   # GitHub Configuration
+│   └── workflows/             # GitHub Actions
+│       ├── pr-validation.yml      # Conventional commit enforcement
+│       ├── issue-linker.yml       # Issue reference checking
+│       ├── pr-labeler.yml         # Auto-labeling PRs
+│       └── dbt-test.yml           # dbt CI tests
+│
 ├── dbt_project/               # dbt Project
 │   ├── dbt_project.yml           # dbt configuration
 │   ├── packages.yml              # dbt packages
@@ -43,6 +50,8 @@ dbt-playground/
 │   │   ├── PROJECT_STRUCTURE.md  # This file
 │   │   ├── ARCHITECTURE.md
 │   │   ├── UV_MIGRATION.md       # uv workflow guide
+│   │   ├── GITHUB_ENFORCEMENT.md # GitHub Actions strategy
+│   │   ├── GITHUB_ACTIONS.md     # GitHub Actions reference
 │   │   └── LEARNINGS.md
 │   ├── guides/               # How-to guides
 │   ├── standards/            # Rules and conventions
