@@ -7,12 +7,13 @@ Visual tools for learning, development, and debugging in dbt-playground.
 | Playground | File | Purpose | Status |
 |------------|------|---------|--------|
 | Workflow Hub | `workflow-hub.html` | Central command center, session resume | **v0.6.0** |
+| Workflow Chronicle | `workflow-chronicle.html` | Stratified timeline, health pulse, agent export | **v0.7.0** |
 | Worktree Coordinator | `worktree-coordinator.html` | Manage parallel git worktrees | **v0.6.0** |
 | Mermaid Designer | `mermaid-designer.html` | Create and export Mermaid diagrams | **v0.6.0** |
-| Agent Visualizer | `agent-visualizer.html` | View agent workflows and state | Planned (v0.6.1) |
-| Schema Explorer | `schema-explorer.html` | Browse Synthea healthcare data | Planned (v0.6.1) |
-| Lineage Explorer | `lineage-explorer.html` | Trace dbt data flow | Planned (v0.6.2) |
-| Dashboard Builder | `dashboard-builder.html` | Mock analytics layouts | Planned (v0.6.3) |
+| Agent Visualizer | `agent-visualizer.html` | View agent workflows and state | Planned (v0.7.1) |
+| Schema Explorer | `schema-explorer.html` | Browse Synthea healthcare data | Planned (v0.7.1) |
+| Lineage Explorer | `lineage-explorer.html` | Trace dbt data flow | Planned (v0.7.2) |
+| Dashboard Builder | `dashboard-builder.html` | Mock analytics layouts | Planned (v0.7.3) |
 
 ## Quick Start
 
@@ -50,6 +51,30 @@ Visualize and manage git worktrees for parallel development:
 - Copy commands for common operations
 - Keyboard shortcuts (R: refresh, ?: help)
 
+### Workflow Chronicle
+
+Stratified timeline visualization with health pulse and agent export:
+
+1. Open `workflow-chronicle.html` in a browser
+2. Run `uv run scripts/generate-chronicle-data.py` to populate data
+3. View commits, branches, and bedrock layers
+
+**Features**:
+
+- Glance panel with branch, phase, health, agent stats
+- Stratified timeline (Surface/Features/Decisions/Bedrock layers)
+- Agent contribution tracking (Co-Authored-By)
+- JSON export for agent consumption (`?format=json`)
+
+**CLI Companions**:
+
+```bash
+uv run scripts/workflow-timeline.py    # Git-based timeline
+uv run scripts/workflow-glance.py      # 3-second health check
+uv run scripts/compute-health-pulse.py # Composite health score
+uv run scripts/check-negative-space.py # Query rejected decisions
+```
+
 ### Mermaid Designer
 
 Create diagrams with live preview and multiple export options:
@@ -73,6 +98,7 @@ Access playgrounds via slash commands:
 ```text
 /playground              # Open Workflow Hub (default entry point)
 /playground:hub          # Workflow Hub explicitly
+/playground:chronicle    # Workflow Chronicle (stratified timeline)
 /playground:worktrees    # Git Worktree Coordinator
 /playground:mermaid      # Mermaid Diagram Designer
 /playground:agents       # Agent Visualizer (planned)
@@ -104,9 +130,10 @@ All playgrounds share these shortcuts:
 
 ```text
 Phase 1 (v0.6.0): Workflow Hub, Worktree Coordinator, Mermaid Designer  <-- Complete
-Phase 2 (v0.6.1): Agent Visualizer, Schema Explorer
-Phase 3 (v0.6.2): Lineage Explorer
-Phase 4 (v0.6.3): Dashboard Builder
+Phase 2 (v0.7.0): Workflow Chronicle (stratified timeline)              <-- Complete
+Phase 3 (v0.7.1): Agent Visualizer, Schema Explorer
+Phase 4 (v0.7.2): Lineage Explorer
+Phase 5 (v0.7.3): Dashboard Builder
 ```
 
 ## Documentation
