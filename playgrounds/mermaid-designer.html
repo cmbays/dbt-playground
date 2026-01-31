@@ -117,11 +117,33 @@
 
     /* Editor Panel */
     .editor-panel {
-      width: 40%;
-      min-width: 300px;
+      width: 30%;
+      min-width: 250px;
       display: flex;
       flex-direction: column;
       border-right: 1px solid var(--border-color);
+      transition: width 200ms ease, min-width 200ms ease;
+    }
+
+    .editor-panel.collapsed {
+      width: 40px;
+      min-width: 40px;
+    }
+
+    .editor-panel.collapsed .editor-wrapper {
+      display: none;
+    }
+
+    .editor-panel.collapsed .panel-header {
+      flex-direction: column;
+      padding: 0.75rem 0.5rem;
+      gap: 0.5rem;
+    }
+
+    .editor-panel.collapsed .panel-header-title,
+    .editor-panel.collapsed #diagram-type {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
     }
 
     .panel-header {
@@ -133,6 +155,31 @@
       align-items: center;
       font-size: 0.8125rem;
       font-weight: 600;
+      gap: 0.5rem;
+    }
+
+    .panel-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .collapse-toggle {
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 150ms ease, transform 200ms ease;
+    }
+
+    .collapse-toggle:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .editor-panel.collapsed .collapse-toggle {
+      transform: rotate(180deg);
     }
 
     .editor-wrapper {
@@ -557,9 +604,16 @@
 
   <main class="main">
     <!-- Editor Panel -->
-    <div class="editor-panel">
+    <div class="editor-panel" id="editor-panel">
       <div class="panel-header">
-        <span>Code Editor</span>
+        <div class="panel-header-left">
+          <span class="collapse-toggle" onclick="toggleEditor()" title="Toggle Editor (Ctrl+B)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </span>
+          <span class="panel-header-title">Code Editor</span>
+        </div>
         <span id="diagram-type" style="color: var(--text-muted); font-weight: normal;">flowchart</span>
       </div>
       <div class="editor-wrapper">
@@ -593,6 +647,7 @@ flowchart TD
   <footer class="footer">
     <div class="footer-status" id="status">Ready</div>
     <div class="keyboard-hints">
+      <kbd>Ctrl+B</kbd> Toggle Editor
       <kbd>Ctrl+Enter</kbd> Render
       <kbd>Ctrl+S</kbd> Save
       <kbd>?</kbd> Help
@@ -923,12 +978,27 @@ flowchart TD
     };
 
     window.resetZoom = function() {
-      if (panzoomInstance) {
-        panzoomInstance.moveTo(0, 0);
-        panzoomInstance.zoomAbs(0, 0, 1);
-        currentZoom = 1;
-        updateZoomDisplay();
-      }
+      if (!panzoomInstance) return;
+      const svg = previewContainer.querySelector('svg');
+      const wrapper = document.querySelector('.preview-wrapper');
+      if (!svg || !wrapper) return;
+
+      // Get dimensions
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const svgRect = svg.getBoundingClientRect();
+
+      // Reset to 1:1 scale
+      panzoomInstance.zoomAbs(0, 0, 1);
+
+      // Center the SVG at 1:1 scale
+      // After zoom, recalculate SVG size at scale 1
+      const svgBBox = svg.getBBox();
+      const centerX = (wrapperRect.width - svgBBox.width) / 2;
+      const centerY = (wrapperRect.height - svgBBox.height) / 2;
+      panzoomInstance.moveTo(Math.max(0, centerX), Math.max(0, centerY));
+
+      currentZoom = 1;
+      updateZoomDisplay();
     };
 
     window.fitToView = function() {
@@ -936,21 +1006,47 @@ flowchart TD
       const wrapper = document.querySelector('.preview-wrapper');
       if (!svg || !wrapper || !panzoomInstance) return;
 
-      // Get the SVG's natural dimensions
+      // Get the SVG's bounding box (natural dimensions)
       const svgBBox = svg.getBBox();
       const wrapperRect = wrapper.getBoundingClientRect();
 
       // Calculate scale to fit with padding
-      const padding = 40;
-      const scaleX = (wrapperRect.width - padding) / svgBBox.width;
-      const scaleY = (wrapperRect.height - padding) / svgBBox.height;
-      const scale = Math.min(scaleX, scaleY, 2); // Cap at 200%
+      const padding = 60;
+      const availableWidth = wrapperRect.width - padding;
+      const availableHeight = wrapperRect.height - padding;
+      const scaleX = availableWidth / svgBBox.width;
+      const scaleY = availableHeight / svgBBox.height;
+      const scale = Math.min(scaleX, scaleY, 3); // Cap at 300%
 
-      // Reset position and apply new zoom
-      panzoomInstance.moveTo(0, 0);
+      // Apply zoom first
       panzoomInstance.zoomAbs(0, 0, scale);
+
+      // Calculate centered position
+      const scaledWidth = svgBBox.width * scale;
+      const scaledHeight = svgBBox.height * scale;
+      const centerX = (wrapperRect.width - scaledWidth) / 2;
+      const centerY = (wrapperRect.height - scaledHeight) / 2;
+
+      // Move to center
+      panzoomInstance.moveTo(Math.max(0, centerX), Math.max(0, centerY));
+
       currentZoom = scale;
       updateZoomDisplay();
+    };
+
+    // Toggle editor panel collapse
+    window.toggleEditor = function() {
+      const panel = document.getElementById('editor-panel');
+      panel.classList.toggle('collapsed');
+
+      // After collapse/expand, refit diagram if it was fitted
+      setTimeout(() => {
+        if (panzoomInstance) {
+          // Trigger a small zoom event to let panzoom recalculate bounds
+          const transform = panzoomInstance.getTransform();
+          panzoomInstance.zoomAbs(0, 0, transform.scale);
+        }
+      }, 250);
     };
 
     // Cleanup panzoom on page unload to prevent memory leaks
@@ -1321,6 +1417,12 @@ ${code}
       if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
         showSaveDialog();
+      }
+
+      // Ctrl+B to toggle editor
+      if (e.ctrlKey && e.key === 'b') {
+        e.preventDefault();
+        window.toggleEditor();
       }
 
       // Escape to close modals
