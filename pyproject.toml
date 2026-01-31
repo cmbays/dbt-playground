@@ -16,4 +16,6 @@ dev = [
     "sqlfluff>=3.0.0",
     "sqlfluff-templater-dbt>=3.0.0",
     "pre-commit>=3.7.0",
+    "flask>=3.1.2",
+    "flask-cors>=6.0.2",
 ]
