@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Auto-manage issues via labels and GitHub Project settings
     - Supports single project for all repo tracking
 
+- **ADR Adoption Phase 1**: Formalized architecture decision tracking (PRD-021)
+  - `docs/specs/PRD-021-ADR-ADOPTION.md` - Initiative specification
+  - `docs/reference/ADR_INDEX.md` - Centralized ADR discovery (5 ADRs indexed)
+  - `docs/specs/TDD-TEMPLATE.md` - ADR section with significance criteria, examples
+  - `docs/reference/ROADMAP.md` - Epic E13 (Decision Management) roadmap entry
+  - Goal: Find decision rationale in <2 minutes
+
 ### Documentation
 
 - Added PR-Issue Linking syntax table to git-workflow.md
