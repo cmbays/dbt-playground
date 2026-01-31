@@ -17,31 +17,68 @@ jobs:
           script: |
             const body = context.payload.pull_request.body || '';
 
-            // Match: Closes #N, Fixes #N, Resolves #N, Related to #N
-            const issuePattern = /(closes?|fixes?|resolves?|related to)\s+#(\d+)/gi;
-            const matches = [...body.matchAll(issuePattern)];
+            // Pattern for closing keywords (case-insensitive)
+            // Closes, Close, Fixes, Fix, Resolves, Resolve
+            const closingPattern = /(closes?|fixes?|resolves?)\s+#(\d+)/gi;
 
-            if (matches.length === 0) {
-              core.setFailed('PR must reference at least one issue. Add "Closes #N" or "Related to #N" in the description.');
+            // Pattern for non-closing keywords (case-insensitive)
+            // Related to, See also
+            const relatedPattern = /(related to|see also)\s+#(\d+)/gi;
+
+            const closingMatches = [...body.matchAll(closingPattern)];
+            const relatedMatches = [...body.matchAll(relatedPattern)];
+
+            const closingIssues = closingMatches.map(m => ({
+              keyword: m[1],
+              number: m[2],
+              type: 'closing'
+            }));
+
+            const relatedIssues = relatedMatches.map(m => ({
+              keyword: m[1],
+              number: m[2],
+              type: 'related'
+            }));
+
+            const allIssues = [...closingIssues, ...relatedIssues];
+
+            if (allIssues.length === 0) {
+              core.setFailed('PR must reference at least one issue. Add "Closes #N", "Related to #N", or "See also #N" in the description.');
               return;
             }
 
-            // Log linked issues
-            const issueNumbers = matches.map(m => m[2]);
-            console.log(`Linked issues: ${issueNumbers.join(', ')}`);
+            // Log categorized links
+            if (closingIssues.length > 0) {
+              console.log(`Closing issues: ${closingIssues.map(i => `#${i.number} (${i.keyword})`).join(', ')}`);
+            }
+            if (relatedIssues.length > 0) {
+              console.log(`Related issues: ${relatedIssues.map(i => `#${i.number} (${i.keyword})`).join(', ')}`);
+            }
 
-            // Verify issues exist
-            for (const num of issueNumbers) {
+            // Verify issues exist and check state
+            const warnings = [];
+            for (const issue of allIssues) {
               try {
-                await github.rest.issues.get({
+                const response = await github.rest.issues.get({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: parseInt(num)
+                  issue_number: parseInt(issue.number)
                 });
+
+                // Warn if closing an already-closed issue
+                if (issue.type === 'closing' && response.data.state === 'closed') {
+                  warnings.push(`Issue #${issue.number} is already closed`);
+                }
               } catch (e) {
-                core.setFailed(`Issue #${num} not found`);
+                core.setFailed(`Issue #${issue.number} not found`);
                 return;
               }
             }
 
-            console.log('All linked issues verified');
+            // Output warnings but don't fail
+            if (warnings.length > 0) {
+              console.log('\nWarnings:');
+              warnings.forEach(w => console.log(`  - ${w}`));
+            }
+
+            console.log('\nAll linked issues verified');

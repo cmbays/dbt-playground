@@ -41,6 +41,7 @@ Phase 1 focuses on PR quality enforcement without blocking development velocity.
 | Issue Linker | `issue-linker.yml` | PR open/edit | Require issue references |
 | PR Labeler | `pr-labeler.yml` | PR open/sync | Auto-apply labels |
 | dbt Tests | `dbt-test.yml` | PR + push to main | Run dbt build and tests |
+| Project Automation | `project-automation.yml` | Issue open/labeled | Auto-add to GitHub Project |
 
 ---
 
@@ -88,12 +89,21 @@ Pattern: ^(feat|fix|docs|style|refactor|test|chore|build|ci)(\(.+\))?!?:\s*.+
 **What it checks**:
 
 1. PR body contains issue reference (case-insensitive):
-   - `Closes #N`
-   - `Fixes #N`
-   - `Resolves #N`
-   - `Related to #N`
+   - **Closing keywords** (auto-close on merge): `Closes #N`, `Fixes #N`, `Resolves #N`
+   - **Related keywords** (link only): `Related to #N`, `See also #N`
 
 2. Referenced issues actually exist in the repository
+
+3. Warns if a closing keyword references an already-closed issue
+
+**Categorized Logging**:
+
+The workflow logs issues by category:
+
+```text
+Closing issues: #94 (Closes), #95 (Fixes)
+Related issues: #91 (Related to)
+```
 
 **Failure behavior**: Check fails if no issue reference found or issue doesn't exist.
 
@@ -258,6 +268,41 @@ For the PR Labeler to work, these labels must exist in the repository:
 
 ---
 
+### 5. Project Automation (`project-automation.yml`)
+
+**Purpose**: Automatically add labeled issues to GitHub Projects for roadmap tracking.
+
+**Triggers**:
+
+- `issues: opened`
+- `issues: labeled`
+
+**What it does**:
+
+1. Checks if issue has qualifying labels: `workflow`, `phase-3`, `enhancement`, or `bug`
+2. Adds issue to the v0.8 Roadmap project
+3. Logs the addition with issue details
+
+**Prerequisites**:
+
+- GitHub Project created (see setup instructions below)
+- `PROJECT_TOKEN` secret configured with `project` scope
+
+**GitHub Project Setup**:
+
+1. Navigate to: https://github.com/users/cmbays/projects
+2. Create new "Board" project named "v0.8 Roadmap"
+3. Add Status field with options: Backlog, In Progress, In Review, Done
+4. Configure built-in automation:
+   - Item added -> Set status to Backlog
+   - Item closed -> Set status to Done
+5. Note the project URL for workflow configuration
+6. Add `PROJECT_TOKEN` secret to repository settings
+
+**Location**: [`.github/workflows/project-automation.yml`](../../.github/workflows/project-automation.yml)
+
+---
+
 ## Future Phases
 
 ### Phase 2 (Planned)
@@ -266,11 +311,10 @@ For the PR Labeler to work, these labels must exist in the repository:
 - Auto-assign reviewers based on CODEOWNERS
 - Stale PR management
 
-### Phase 3 (Planned)
+### Phase 3 (Complete)
 
-- Branch protection enforcement
-- Required status checks
-- Deployment previews
+- PR-Issue linking enhancements (closing vs related keywords)
+- GitHub Projects integration with auto-add
 
 ---
 
