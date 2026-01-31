@@ -11,8 +11,6 @@ last_updated: 2026-01-31
 supersedes: PRD-014 (Playground 7: Workflow Hub section)
 ---
 
-# PRD-019: Workflow Hub v0.7 MVP
-
 ## Overview
 
 ### Vision Statement
@@ -308,6 +306,7 @@ Hub Browser
 
 - **Epic Issue**: #85 (GitHub)
 - **Research Issue**: #86 (Kanban evaluation)
+- **Workflow Stages**: [WORKFLOW_STAGES.md](../reference/WORKFLOW_STAGES.md) (canonical 5-stage definitions)
 - **Supersedes**: PRD-014 Playground 7 (Workflow Hub section)
 - **Foundation**: PRD-016 (Agent Context Management)
 
