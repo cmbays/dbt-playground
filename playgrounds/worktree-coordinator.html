@@ -609,6 +609,14 @@
     const statusEl = document.getElementById('status');
     const helpModal = document.getElementById('help-modal');
 
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
+    }
+
     // Check if server is available and auto-load
     async function checkServerAndLoad() {
       try {
@@ -764,31 +772,36 @@
 
       const mainClass = worktree.isMain ? 'main-repo' : '';
 
-      let detailsHtml = `<span><strong>Branch:</strong> ${worktree.branch || worktree.head?.substring(0,7) || 'detached'}</span>`;
+      // Escape user-provided data for XSS prevention
+      const safeBranch = escapeHtml(worktree.branch || worktree.head?.substring(0,7) || 'detached');
+      const safeName = escapeHtml(worktree.name);
+      const safePath = escapeHtml(worktree.path);
+
+      let detailsHtml = `<span><strong>Branch:</strong> ${safeBranch}</span>`;
 
       if (worktree.status?.ahead > 0) {
-        detailsHtml += `<span><strong>Ahead:</strong> ${worktree.status.ahead}</span>`;
+        detailsHtml += `<span><strong>Ahead:</strong> ${escapeHtml(worktree.status.ahead)}</span>`;
       }
       if (worktree.status?.behind > 0) {
-        detailsHtml += `<span><strong>Behind:</strong> ${worktree.status.behind}</span>`;
+        detailsHtml += `<span><strong>Behind:</strong> ${escapeHtml(worktree.status.behind)}</span>`;
       }
 
       const commands = worktree.isMain ? `
-        <button class="btn" onclick="copyText('git worktree add ../${worktree.name}--feature -b feat/feature-name')">New Worktree</button>
+        <button class="btn" onclick="copyText('git worktree add ../${safeName}--feature -b feat/feature-name')">New Worktree</button>
         <button class="btn" onclick="copyText('git worktree list')">List All</button>
       ` : `
-        <button class="btn" onclick="copyText('cd ${worktree.path}')">Go to Directory</button>
-        <button class="btn" onclick="copyText('git worktree remove ${worktree.path}')">Remove</button>
+        <button class="btn" onclick="copyText('cd ${safePath}')">Go to Directory</button>
+        <button class="btn" onclick="copyText('git worktree remove ${safePath}')">Remove</button>
       `;
 
       return `
         <div class="worktree-card ${mainClass}">
           <div class="worktree-header">
             <div>
-              <div class="worktree-name">${worktree.name}</div>
-              <div class="worktree-path">${worktree.path}</div>
+              <div class="worktree-name">${safeName}</div>
+              <div class="worktree-path">${safePath}</div>
             </div>
-            <span class="status-badge ${statusClass}">${statusText}</span>
+            <span class="status-badge ${statusClass}">${escapeHtml(statusText)}</span>
           </div>
           <div class="worktree-details">
             ${detailsHtml}
