@@ -113,6 +113,38 @@ gh pr create --draft --title "feat: description" --body "WIP scope"
 
 This ensures all parallel work is visible in GitHub.
 
+## PR-Issue Linking
+
+All PRs must reference at least one issue for traceability.
+
+### Supported Syntax
+
+| Syntax | Behavior | Example |
+|--------|----------|---------|
+| `Closes #N` | Link + auto-close on merge | `Closes #94` |
+| `Fixes #N` | Link + auto-close on merge | `Fixes #42` |
+| `Resolves #N` | Link + auto-close on merge | `Resolves #100` |
+| `Related to #N` | Link only, no auto-close | `Related to #91` |
+| `See also #N` | Link only, no auto-close | `See also #88` |
+
+**Notes**:
+
+- Keywords are case-insensitive (`CLOSES`, `closes`, `Closes` all work)
+- Multiple issues can be referenced in one PR
+- GitHub creates bidirectional links automatically
+- Issue Linker workflow validates references exist
+
+### Multiple Issues Example
+
+```markdown
+## Summary
+This PR adds customer analytics...
+
+Closes #94
+Closes #95
+Related to #91
+```
+
 ## Versioning
 
 `vMAJOR.MINOR.PATCH` (Semantic Versioning)
