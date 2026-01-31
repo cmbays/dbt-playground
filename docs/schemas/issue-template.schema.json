@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GitHub Issue Template",
+  "description": "Schema for batch issue creation YAML templates",
+  "type": "object",
+  "required": ["version", "issues"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "description": "Template version",
+      "enum": [1]
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Default values for all issues",
+      "additionalProperties": false,
+      "properties": {
+        "labels": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Default labels to apply to all issues"
+        },
+        "milestone": {
+          "type": "string",
+          "description": "Default milestone for all issues"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Default assignee for all issues"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Default priority level"
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "minItems": 1,
+      "description": "List of issues to create",
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "description": "Issue title (required)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Issue body/description"
+          },
+          "labels": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Labels for this issue"
+          },
+          "milestone": {
+            "type": "string",
+            "description": "Milestone for this issue"
+          },
+          "assignee": {
+            "type": "string",
+            "description": "GitHub username to assign"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Priority level"
+          }
+        }
+      }
+    }
+  }
+}
