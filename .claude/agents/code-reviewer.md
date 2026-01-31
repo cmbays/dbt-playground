@@ -233,12 +233,16 @@ Process:
      * inline: Line-specific feedback (requires file + line)
      * file_level: Overall file feedback (requires file, no line)
      * pr_summary: Holistic feedback (conceptual, multi-file)
-5. Invoke git-master to post comments:
-   git: pr-comment N --findings temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
+5. Invoke git-master to post review via GitHub-MCP (v0.7+):
+   git: post-review-from-findings N temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
+
+   **Example**: `git: post-review-from-findings 87 temp/AGENT_REPORTS/phase2-test/CODE_REVIEWER_FINDINGS.yaml`
 6. Write CODE_REVIEW.md to AGENT_REPORTS folder (permanent record)
 7. Report completion to Supervisor
 
 Output: Findings file + inline comments + summary posted to PR + CODE_REVIEW.md
+
+**Note**: GitHub-MCP handles routing to GitHub API. Findings file format is same for both MCP and gh CLI.
 ```
 
 **IMPORTANT**: Use the correct comment level for each type of feedback:
@@ -299,8 +303,9 @@ pr_summary: |
 
 **Invoke git-master to post comments**:
 
-```text
-git: pr-comment 66 --findings temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
+```bash
+# GitHub-MCP version (v0.7+) - RECOMMENDED
+git: post-review-from-findings 66 temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
 ```
 
 Git-master handles:

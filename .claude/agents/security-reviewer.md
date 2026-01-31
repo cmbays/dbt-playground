@@ -255,11 +255,17 @@ Process:
    a. Severity assessment (Critical/High/Medium/Low/Info)
    b. Post inline comment if line-specific
    c. Include in summary if general
-6. Post summary review with security verdict:
-   - gh pr review N --approve (no Critical/High findings)
-   - gh pr review N --request-changes (Critical/High exist)
-   - gh pr review N --comment (only Medium/Low/Info)
-7. Report completion to Supervisor
+6. Write findings to SECURITY_REVIEWER_FINDINGS.yaml:
+   - Create temp/AGENT_REPORTS/[feature]/SECURITY_REVIEWER_FINDINGS.yaml
+   - Structure same as CODE_REVIEWER_FINDINGS (inline, file_level, pr_summary)
+   - verdict: approved (no Critical/High) OR changes-requested (Critical/High exist)
+
+7. Post review via git-master GitHub-MCP (v0.7+):
+   git: post-review-from-findings N temp/AGENT_REPORTS/[feature]/SECURITY_REVIEWER_FINDINGS.yaml
+
+   **Example**: `git: post-review-from-findings 87 temp/AGENT_REPORTS/phase2-test/SECURITY_REVIEWER_FINDINGS.yaml`
+
+8. Report completion to Supervisor
 
 Output: Security comments posted to PR, review status set
 ```

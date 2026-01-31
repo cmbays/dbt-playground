@@ -667,12 +667,23 @@ Git-master centralizes all PR commenting for consistency across reviewer agents.
 | **File-level** | Overall file feedback (no specific line) | `gh api` with `path` only |
 | **PR summary** | Holistic feedback (not file-specific) | `gh pr review --comment` |
 
-### Invocation
+### Invocation (GitHub-MCP Version - v0.7+)
+
+**Status**: Phase 2 GitHub-MCP integration complete ✅
+
+With GitHub-MCP configured, git-master uses MCP tools for programmatic GitHub API access:
 
 ```bash
-# From findings file (standard method)
-git: pr-comment 66 --findings temp/AGENT_REPORTS/[feature]/review-findings.yaml
+# From findings file (standard method) - RECOMMENDED
+git: post-review-from-findings 66 temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
 
+# Example with actual PR and findings path
+git: post-review-from-findings 87 temp/AGENT_REPORTS/phase2-test/CODE_REVIEWER_FINDINGS.yaml
+```
+
+**Previous Method (gh CLI - v0.6)**: The invocation syntax below still works if MCP is not available:
+
+```bash
 # Single inline comment
 git: pr-comment 66 --file "path/to/file.md" --line 105 --level SUGGESTION --body "Comment text"
 
@@ -685,7 +696,7 @@ git: pr-comment 66 --summary --body "Holistic review summary"
 
 ### Findings File Format
 
-Reviewers write findings to `temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml`:
+**Used by both MCP (v0.7+) and gh CLI (v0.6) methods**. Reviewers write findings to `temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml`:
 
 ```yaml
 # CODE_REVIEWER_FINDINGS.yaml
