@@ -481,13 +481,13 @@
       Git Worktree Coordinator
     </h1>
     <div class="header-actions">
-      <button class="btn" id="refresh-btn" onclick="refreshDisplay()" title="Re-parse the pasted data">
+      <button class="btn" id="refresh-btn" onclick="refreshDisplay()" title="Refresh data from server or re-parse">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M23 4v6h-6"></path>
           <path d="M1 20v-6h6"></path>
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
         </svg>
-        Re-Parse
+        Refresh
       </button>
       <button class="btn" onclick="showHelp()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -538,7 +538,7 @@
       Ready
     </div>
     <div class="keyboard-hints">
-      <kbd>R</kbd> Re-Parse
+      <kbd>R</kbd> Refresh
       <kbd>?</kbd> Help
       <kbd>Esc</kbd> Close
     </div>
@@ -572,7 +572,7 @@
 
         <h3>Keyboard Shortcuts</h3>
         <ul>
-          <li><code>R</code> - Refresh / re-parse data</li>
+          <li><code>R</code> - Refresh (tries server first, then re-parses)</li>
           <li><code>?</code> - Show this help</li>
           <li><code>Esc</code> - Close modals</li>
         </ul>
@@ -864,19 +864,30 @@
       }
     }
 
-    // Refresh display
-    function refreshDisplay() {
+    // Refresh display - try server first, then re-parse existing data
+    async function refreshDisplay() {
       const refreshBtn = document.getElementById('refresh-btn');
 
       // Add visual feedback - spinner animation
       refreshBtn.classList.add('refreshing');
-      setTimeout(() => refreshBtn.classList.remove('refreshing'), 500);
 
+      // Try to load fresh data from server first
+      const serverLoaded = await loadFromServer();
+
+      // Remove spinner after operation completes
+      setTimeout(() => refreshBtn.classList.remove('refreshing'), 300);
+
+      if (serverLoaded) {
+        // Server loaded successfully, data already parsed
+        return;
+      }
+
+      // Server not available, fall back to re-parsing existing data
       if (gitOutput.value.trim()) {
         parseAndDisplay();
-        setStatus('Data re-parsed successfully', 'success');
+        setStatus('Data re-parsed (server unavailable)', 'success');
       } else {
-        setStatus('No data to re-parse - paste git output first', 'error');
+        setStatus('No data - paste git output or start server', 'error');
       }
     }
 

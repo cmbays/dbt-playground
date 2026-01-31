@@ -961,27 +961,76 @@ flowchart TD
     });
 
     // Cleanup orphaned Mermaid elements (fixes MD-005 bug)
+    // Mermaid can create error elements directly in document.body that persist after failed renders
     function cleanupOrphanedMermaidElements() {
-      // Remove Mermaid-created SVG elements outside the preview container
-      // Mermaid creates elements with IDs like "mermaid-1234567890" or "dmermaid-1234567890"
-      document.querySelectorAll('svg[id^="mermaid-"], svg[id^="dmermaid-"]').forEach(el => {
-        if (!previewContainer.contains(el)) {
-          el.remove();
-        }
+      const selectorsToClean = [
+        // Mermaid-created SVG elements with ID patterns
+        'svg[id^="mermaid-"]',
+        'svg[id^="dmermaid-"]',
+        // Mermaid error containers (accessibility attribute)
+        '[aria-roledescription="error"]',
+        // Mermaid container divs
+        'div[id^="dmermaid-"]',
+        'div[id^="mermaid-"]',
+        // Mermaid error icon class
+        '.error-icon',
+        // Mermaid error text class
+        '.error-text',
+        // Any SVG with Mermaid-specific classes that ended up outside container
+        'svg.mermaid',
+        // Mermaid parser error elements (red/coral background error displays)
+        'svg[aria-labelledby*="mermaid"]',
+        // Fallback: any SVG containing Mermaid error patterns
+        'svg[id*="mermaid"]'
+      ];
+
+      selectorsToClean.forEach(selector => {
+        document.querySelectorAll(selector).forEach(el => {
+          if (!previewContainer.contains(el)) {
+            el.remove();
+          }
+        });
       });
-      // Remove Mermaid error containers (they have aria-roledescription="error")
-      document.querySelectorAll('[aria-roledescription="error"]').forEach(el => {
-        if (!previewContainer.contains(el)) {
-          el.remove();
-        }
-      });
-      // Remove any orphaned Mermaid container divs
-      document.querySelectorAll('div[id^="dmermaid-"], div[id^="mermaid-"]').forEach(el => {
-        if (!previewContainer.contains(el)) {
+
+      // Also clean up any direct children of body that look like Mermaid errors
+      // (Mermaid sometimes appends directly to body)
+      document.body.querySelectorAll(':scope > svg, :scope > div[style*="position"]').forEach(el => {
+        // Check if it looks like a Mermaid element
+        const html = el.outerHTML.toLowerCase();
+        if (html.includes('mermaid') || html.includes('syntax error') ||
+            (el.tagName === 'SVG' && el.querySelector('[fill="#552222"], [fill="#ffaaaa"]'))) {
           el.remove();
         }
       });
     }
+
+    // Set up MutationObserver to catch dynamically created orphan elements
+    const orphanObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE && !previewContainer.contains(node)) {
+            // Check if it's a Mermaid-related element
+            const el = node;
+            const id = el.id || '';
+            const ariaRole = el.getAttribute('aria-roledescription') || '';
+
+            if (id.includes('mermaid') || ariaRole === 'error' ||
+                el.classList.contains('error-icon') || el.classList.contains('error-text')) {
+              el.remove();
+            }
+          }
+        }
+      }
+    });
+
+    // Start observing document.body for orphaned elements
+    orphanObserver.observe(document.body, {
+      childList: true,
+      subtree: false  // Only direct children to avoid performance issues
+    });
+
+    // Run cleanup on page load in case any orphans persisted
+    document.addEventListener('DOMContentLoaded', cleanupOrphanedMermaidElements);
 
     // Render diagram
     window.renderDiagram = async function() {
