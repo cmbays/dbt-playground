@@ -132,14 +132,17 @@ dbt-playground/
 
 ### Standard Process
 
+The canonical 5-stage workflow. See [WORKFLOW_STAGES.md](./WORKFLOW_STAGES.md) for complete reference with entry/exit criteria and quality gates.
+
 ```
 1. UNDERSTAND → Read CLAUDE.md, docs/
 2. PLAN       → Create temp/v[X.Y]_PLAN.md
-3. PROTOTYPE  → Build prototype in temp/
-4. BUILD      → Create implementation
-5. VERIFY     → Test, document in temp/v[X.Y]_TESTING.md
-6. DEPLOY     → Finalize, tag version
+3. BUILD      → Create implementation
+4. VERIFY     → Test, document in temp/v[X.Y]_TESTING.md
+5. DEPLOY     → Finalize, tag version
 ```
+
+Quality gates are enforced by the Supervisor agent at each stage transition.
 
 ### File Protection Rules
 

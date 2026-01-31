@@ -146,6 +146,19 @@ arch: what's the best way to implement localStorage persistence? use context7
 
 ## Workflow Integration
 
+The Architect is primarily active during the **PLAN stage** of the 5-stage workflow. See [WORKFLOW_STAGES.md](../../docs/reference/WORKFLOW_STAGES.md) for complete workflow reference.
+
+### Stage: PLAN
+
+The Architect's primary responsibility is translating requirements into technical designs:
+
+| PLAN Activity | Architect Responsibility |
+|---------------|-------------------------|
+| Design system | Create TDD with architecture decisions |
+| Evaluate options | Present trade-offs (minimal/clean/pragmatic) |
+| Document patterns | Ensure consistency with existing codebase |
+| Risk assessment | Identify technical risks and dependencies |
+
 ### Triggers
 
 - PRD completed and approved

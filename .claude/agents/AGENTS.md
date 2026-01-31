@@ -1371,6 +1371,8 @@ Run `bash scripts/count-agent-tokens.sh` to measure current state.
 
 ## Assembly Line Workflows
 
+The agent assembly line maps to the canonical 5-stage workflow (UNDERSTAND → PLAN → BUILD → VERIFY → DEPLOY). See [WORKFLOW_STAGES.md](../../docs/reference/WORKFLOW_STAGES.md) for complete stage definitions and quality gates.
+
 ### Standard Feature Development Pipeline
 
 ```
@@ -1687,7 +1689,7 @@ Start here on every new session to quickly orient yourself:
 
 1. **[[CLAUDE.md]]** - Project context, current phase, critical rules
    - Current status: Analytics Layer Complete (v0.6.0)
-   - Key workflow: UNDERSTAND -> PLAN -> BUILD -> VERIFY -> DEPLOY
+   - Key workflow: UNDERSTAND → PLAN → BUILD → VERIFY → DEPLOY (see [[docs/reference/WORKFLOW_STAGES.md]])
    - Critical: Use git-master for all git operations
 
 2. **This file (AGENTS.md)** - How to work effectively with the system
