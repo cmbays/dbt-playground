@@ -1004,46 +1004,11 @@ flowchart TD
       });
     }
 
-    // Flag to pause observer during rendering (prevents removing elements mid-render)
-    let isRendering = false;
-
-    // Set up MutationObserver to catch dynamically created orphan elements
-    // Only active when NOT rendering, to avoid interfering with Mermaid's process
-    const orphanObserver = new MutationObserver((mutations) => {
-      // Don't interfere during active rendering
-      if (isRendering) return;
-
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node.nodeType === Node.ELEMENT_NODE && !previewContainer.contains(node)) {
-            // Check if it's a Mermaid-related element
-            const el = node;
-            const id = el.id || '';
-            const ariaRole = el.getAttribute('aria-roledescription') || '';
-
-            if (id.includes('mermaid') || ariaRole === 'error' ||
-                el.classList.contains('error-icon') || el.classList.contains('error-text')) {
-              el.remove();
-            }
-          }
-        }
-      }
-    });
-
-    // Start observing document.body for orphaned elements
-    orphanObserver.observe(document.body, {
-      childList: true,
-      subtree: false  // Only direct children to avoid performance issues
-    });
-
-    // Run cleanup on page load in case any orphans persisted
+    // Run cleanup on page load in case any orphans persisted from previous session
     document.addEventListener('DOMContentLoaded', cleanupOrphanedMermaidElements);
 
     // Render diagram
     window.renderDiagram = async function() {
-      // Set flag to pause MutationObserver during rendering
-      isRendering = true;
-
       // CLEANUP: Remove any orphaned elements from previous renders
       cleanupOrphanedMermaidElements();
 
@@ -1051,13 +1016,11 @@ flowchart TD
       if (!code) {
         previewContainer.innerHTML = '<p style="color: var(--text-muted);">Enter diagram code to see preview</p>';
         setStatus('Ready');
-        isRendering = false;
         return;
       }
 
       if (!window.mermaidLib) {
         previewContainer.innerHTML = '<p style="color: var(--text-muted);">Loading Mermaid...</p>';
-        isRendering = false;
         return;
       }
 
@@ -1089,9 +1052,6 @@ flowchart TD
 
         previewContainer.innerHTML = `<div class="preview-error">${escapeHtml(error.message)}</div>`;
         setStatus('Syntax error', 'error');
-      } finally {
-        // Always re-enable the observer after rendering completes
-        isRendering = false;
       }
     };
 
