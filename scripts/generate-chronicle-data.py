@@ -284,7 +284,8 @@ def load_negative_space() -> list[DecisionData]:
     try:
         with open(NEGATIVE_SPACE_FILE) as f:
             data = yaml.safe_load(f)
-    except yaml.YAMLError:
+    except yaml.YAMLError as e:
+        console.print(f"[yellow]Warning: Failed to parse {NEGATIVE_SPACE_FILE}: {e}[/yellow]")
         return []
 
     if not data or "decisions_not_made" not in data:
