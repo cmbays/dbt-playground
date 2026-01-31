@@ -13,7 +13,40 @@ A learning project for dbt (data build tool) and data analytics development usin
 
 **Purpose**: Learn dbt, data modeling, and analytics engineering while leveraging multi-agent workflows for development.
 
-**Status**: v0.2 Environment Ready - dbt 1.11.2 + DuckDB 1.10.0 with 16 Synthea source tables
+**Status**: v0.5.0 Analytics Complete - 7 specialized analytics models with comprehensive testing
+
+---
+
+## Latest Release: v0.5.0 - Analytics Enhancements
+
+The v0.5 release extends v0.4's dimensional foundation with 7 specialized analytics models for healthcare.
+
+### New Models
+
+| Model | Description | Rows |
+|-------|-------------|------|
+| dim_conditions | Master condition dimension | 130 |
+| fct_patient_summary | Annual patient aggregations | 21,343 |
+| fct_provider_metrics | Monthly provider metrics | 33,463 |
+| fct_condition_cohorts | Patient-condition relationships | 7,165 |
+| fct_cost_analysis | Detailed cost breakdown | 53,346 |
+| v_patient_current_conditions | Active conditions view | 3,811 |
+| v_provider_active_patients | Provider panels view | 5,855 |
+
+### Testing and Quality
+
+- 91 tests (100% pass rate)
+- Schema validation, grain validation, data quality checks
+- 5 custom singular tests for business rules
+- Complete test documentation in `temp/v0.5_TESTING.md`
+
+### Documentation
+
+- Full YAML documentation with example queries (3+ per model)
+- BI integration guide: `docs/guides/BI_INTEGRATION_GUIDE.md`
+- Comprehensive test coverage report
+
+See [CHANGELOG.md](CHANGELOG.md) for complete details.
 
 ---
 

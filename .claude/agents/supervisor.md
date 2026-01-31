@@ -83,7 +83,7 @@ The Supervisor enforces quality gates at each phase transition. **Transitions ar
 | START → PM | None | User request clarified |
 | PM → Architect | PRD exists | `docs/specs/PRD-*.md` matches feature |
 | Architect → Tester | TDD exists | `docs/specs/TDD-*.md` matches feature |
-| Tester → Developer | Test spec exists | `temp/v*_TESTING.md` or test plan |
+| Tester → Developer | Test spec exists + Feature branch created | `temp/v*_TESTING.md` or test plan + `git branch --show-current != main` |
 | Developer → Reviewer | Implementation complete | Files in expected locations |
 | Reviewer → Documenter | Reviews approved | No BLOCKER comments pending |
 | Documenter → Deploy | All tests pass | `dbt build` succeeds |
@@ -97,6 +97,59 @@ The Supervisor enforces quality gates at each phase transition. **Transitions ar
 4. If present → Update WORKFLOW_STATE.md → Proceed
 5. Log verification result
 ```
+
+### Git State Verification (NEW)
+
+Before transitioning to Developer phase, Supervisor MUST verify git state to enforce PR-centric workflow.
+
+#### Git State Check (Tester → Developer Only)
+
+```
+[Phase Transition: Tester → Developer]
+    │
+    ├─ 1. Check current branch:
+    │      Command: git branch --show-current
+    │      Expected: Not 'main' or 'master'
+    │
+    │      If on main/master:
+    │        ❌ BLOCK transition
+    │        Message: "Cannot proceed to Developer phase on main branch"
+    │        Action: "Invoke git-master: git: create branch feat/[feature-name]"
+    │        Wait: For branch creation and confirmation
+    │
+    ├─ 2. Validate branch naming (recommended):
+    │      Pattern: ^(feat|fix|docs|refactor|chore|style|test)/
+    │      If invalid: WARN (allow continuation, but suggest rename)
+    │
+    ├─ 3. Check draft PR exists (optional but recommended):
+    │      Command: gh pr list --head [current-branch] --state open
+    │      If no PR: WARN "Draft PR not found"
+    │              Suggest: "git: create draft PR for visibility"
+    │
+    └─ 4. If all checks pass:
+         ✅ Record git state in WORKFLOW_STATE.md
+         ✅ Proceed to Developer phase
+```
+
+#### WORKFLOW_STATE.md Git State Recording
+
+When git state is verified, add to track entry:
+
+```yaml
+### Track: feat/example-feature (ACTIVE)
+- **Branch**: feat/example-feature
+- **Git State Verified**: 2026-01-30T10:00:00Z
+- **PR**: #54 (Draft)
+```
+
+#### Error Scenarios and Recovery
+
+| Scenario | Detection | Action |
+|----------|-----------|--------|
+| On main branch | `git branch --show-current == main` | BLOCK, invoke git-master |
+| Invalid branch name | Branch doesn't match feat/fix/docs/etc | WARN, suggest rename |
+| No draft PR | `gh pr list` returns empty | WARN, suggest PR creation |
+| Detached HEAD | Branch name is empty/hash | WARN, investigate with git-master |
 
 ### Rejection Protocol
 

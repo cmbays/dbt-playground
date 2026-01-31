@@ -62,6 +62,9 @@
   - [SVG Visualization Patterns](#svg-visualization-patterns)
     - [SVG Progress Rings with stroke-dasharray](#pattern-svg-progress-rings-with-stroke-dasharray)
     - [CSS Grid for Heatmap Calendar](#pattern-css-grid-for-heatmap-calendar)
+- [Workflow Enforcement Patterns](#workflow-enforcement-patterns)
+  - [PR-Centric Development with Defense-in-Depth Enforcement](#pattern-pr-centric-development-with-defense-in-depth-enforcement)
+  - [Phase Gate Design: Artifacts and State Verification](#pattern-phase-gate-design-artifacts-and-state-verification)
 - [dbt + uv Patterns](#dbt--uv-patterns)
   - [pyproject.toml for dbt Projects](#pattern-pyprojecttoml-for-dbt-projects)
   - [PEP 723 Script Headers](#pattern-pep-723-script-headers)
@@ -1358,6 +1361,331 @@ return `
 
 ---
 
+## Workflow Enforcement Patterns
+
+_Learnings from the v0.5 PR workflow bypass incident and defense-in-depth enforcement design._
+
+### Pattern: PR-Centric Development with Defense-in-Depth Enforcement
+
+**When to apply**: Any project with multi-stage workflows (planning, implementation, review, deploy) where skipping stages has significant consequences
+
+**Proven in**: v0.5 marts-enhancements PR workflow bypass (2026-01-30)
+
+**Description**: Documentation-only workflow enforcement is insufficient. High-stakes workflows need defense-in-depth with multiple enforcement layers that progressively increase difficulty of bypass.
+
+#### The Problem: Document-Only Enforcement Fails
+
+The v0.5 implementation initially committed directly to main instead of the designated feature branch (`feat/marts-enhancements`). This happened despite:
+
+- `V0.5_ORCHESTRATION_SUMMARY.md` explicitly documenting the branch strategy
+- `v0.5_PLAN.md` specifying "Create feature branch/worktree and begin model development"
+- PRD-015 requiring "draft PR creation at branch/worktree creation"
+
+**Root cause**: The workflow documented the requirement but provided no enforcement mechanism. The phase gate verified document artifacts (PRD exists, TDD exists) but not git state (correct branch, draft PR created).
+
+**Key insight**: Documenting "what should happen" is necessary but insufficient. The workflow assumed correct behavior rather than verifying it.
+
+#### Defense-in-Depth Enforcement Layers
+
+**Layer 1: Persona-Level Verification (Soft Check)**
+
+Add explicit verification step to agent personas that will do implementation work:
+
+```markdown
+## Development Flow
+
+1. **VERIFY GIT STATE FIRST**:
+   - Run: `git branch --show-current`
+   - If on `main`: STOP - invoke `git: create branch feat/[feature-name]`
+   - If on feature branch: proceed
+```
+
+Benefits: Quick catch during normal workflow, no tooling required
+Weakness: Relies on agent compliance, easily skipped under pressure
+
+**Layer 2: Supervisor Phase Gate (Soft Enforcement)**
+
+Add git state to Supervisor's artifact verification matrix:
+
+| Transition | Required Artifacts | Git State Check |
+|------------|-------------------|-----------------|
+| Tester -> Developer | Test spec exists | `git branch --show-current != main` |
+| Developer -> Reviewer | Implementation complete | Draft PR exists for branch |
+
+Benefits: Explicit checkpoint before implementation phase
+Weakness: Still soft - can be overridden by operator
+
+**Layer 3: Pre-Commit Hook (Hard Local Enforcement)**
+
+Install git hook that blocks commits to protected branches:
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+branch=$(git branch --show-current)
+if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
+    echo "ERROR: Direct commits to main are blocked."
+    echo "Create a feature branch first: git checkout -b feat/your-feature"
+    exit 1
+fi
+```
+
+Benefits: Prevents the action at the moment of attempt
+Weakness: Local-only, can be bypassed with --no-verify
+
+**Layer 4: Pre-Push Hook (Hard Local Enforcement)**
+
+Block pushes of direct commits to protected branches:
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-push
+while read local_ref local_sha remote_ref remote_sha; do
+    if [[ "$remote_ref" == "refs/heads/main" ]]; then
+        echo "ERROR: Direct pushes to main are blocked."
+        exit 1
+    fi
+done
+```
+
+Benefits: Catches bypass of pre-commit hook
+Weakness: Still local, can be bypassed
+
+**Layer 5: GitHub Branch Protection (Hard Remote Enforcement)**
+
+Configure GitHub repository settings:
+
+- Require pull request reviews before merging
+- Require status checks to pass
+- Include administrators in restrictions
+- Block direct pushes to main
+
+Benefits: Enforced at server level, cannot be bypassed locally
+Weakness: Requires repository admin access to configure
+
+#### Decision Framework: When to Apply Each Layer
+
+| Layer | Effort | Bypass Difficulty | When to Use |
+|-------|--------|-------------------|-------------|
+| Persona verification | Low | Easy | Always (baseline) |
+| Supervisor phase gate | Low | Medium | Multi-agent workflows |
+| Pre-commit hook | Medium | Medium (--no-verify) | Team projects |
+| Pre-push hook | Medium | Medium | Remote collaboration |
+| Branch protection | Medium | Hard (admin required) | Production projects |
+
+**Rule**: Apply layers progressively based on risk. Solo experiments may need only Layer 1. Production systems need all 5.
+
+#### Implementation Roadmap
+
+**Immediate (v0.5)**:
+
+1. Add branch check to dbt-Developer persona
+2. Add git state to Supervisor artifact matrix
+3. Update implementation plan templates
+
+**Short-term (v0.6)**:
+
+1. Create and install pre-commit hook
+2. Create and install pre-push hook
+3. Document hook installation in onboarding
+
+**Long-term (v1.0+)**:
+
+1. Configure GitHub branch protection rules
+2. Add CI check for PR branch structure
+3. Automate hook installation via setup script
+
+#### Key Learnings
+
+1. **Soft checks are necessary but not sufficient**: They catch honest mistakes but not determined bypasses
+2. **Defense-in-depth is not paranoia**: Each layer catches what the previous missed
+3. **Local enforcement complements remote enforcement**: Can't always rely on server-side checks
+4. **Audit trail matters**: When violations happen, having multiple checkpoints helps identify where the gap occurred
+5. **Make correct behavior easier than incorrect**: If creating a branch is friction, violations increase
+
+**See also**:
+
+- Pattern: "Phase Gate Design: Artifacts and State Verification" (below)
+- Skill: `.claude/skills/learned-workflow-enforcement.md`
+- FOR_CHRIS: `docs/for_chris/UNDERSTANDING_PR_WORKFLOW.md`
+
+---
+
+### Pattern: Phase Gate Design: Artifacts and State Verification
+
+**When to apply**: Designing phase transitions in any multi-stage workflow
+
+**Proven in**: v0.5 PR workflow bypass analysis, Supervisor phase gate design
+
+**Description**: Effective phase gates verify both produced artifacts (documents, code) AND precondition states (git state, environment). Verifying only one creates gaps that enable workflow bypasses.
+
+#### The Anti-Pattern: Artifact-Only Verification
+
+The original Supervisor phase gate verified:
+
+| Transition | Required Artifacts |
+|------------|-------------------|
+| PM -> Architect | PRD exists |
+| Architect -> Tester | TDD exists |
+| Tester -> Developer | Test spec exists |
+| Developer -> Reviewer | Implementation complete |
+
+**Problem**: This only checks "was the previous step completed?" not "are preconditions for the next step met?"
+
+When transitioning to Developer phase, the gate verified that test specs existed but not that:
+
+- A feature branch was created
+- A draft PR was opened
+- The working directory was on the correct branch
+
+Result: Implementation began on main instead of the feature branch.
+
+#### The Better Pattern: Artifacts AND State
+
+Phase gates should verify two categories:
+
+**1. Completion Evidence (Backward-Looking)**
+
+Did the previous phase produce expected outputs?
+
+```markdown
+| Transition | Required Artifacts |
+|------------|-------------------|
+| Architect -> Tester | TDD-*.md exists |
+```
+
+**2. Precondition State (Forward-Looking)**
+
+Are conditions met for the next phase to succeed?
+
+```markdown
+| Transition | Precondition State |
+|------------|-------------------|
+| Tester -> Developer | Feature branch exists, draft PR created |
+```
+
+#### Combined Verification Matrix
+
+| Transition | Artifact Check | State Check | Verification Command |
+|------------|----------------|-------------|---------------------|
+| PM -> Architect | PRD-*.md exists | None (planning phase) | `ls docs/specs/PRD-*.md` |
+| Architect -> Tester | TDD-*.md exists | None | `ls docs/tdd/TDD-*.md` |
+| Tester -> Developer | Test spec exists | Branch created, draft PR | `git branch --show-current`, `gh pr list` |
+| Developer -> Reviewer | Files created | No uncommitted changes | `git status --porcelain` |
+| Reviewer -> Documenter | Reviews approved | No BLOCKER comments | `gh pr reviews` |
+| Documenter -> Deploy | CHANGELOG updated | All tests pass | `dbt build --select state:modified` |
+
+#### State Categories to Verify
+
+**Git State**:
+
+- Current branch matches expected (`git branch --show-current`)
+- No uncommitted changes for handoff phases (`git status`)
+- Remote is synced (`git fetch && git status`)
+- PR exists and is correct state (`gh pr view`)
+
+**Environment State**:
+
+- Dependencies installed (`uv sync` succeeded)
+- Database accessible (`dbt debug`)
+- Required secrets/config present
+
+**Process State**:
+
+- Previous agents completed their phase
+- No blocking issues pending
+- Stakeholder approvals obtained (if required)
+
+#### Implementing State Verification
+
+**Step 1: Identify preconditions for each phase**
+
+List what must be true before phase can begin:
+
+```markdown
+## Developer Phase Preconditions
+- [ ] Feature branch created (not main)
+- [ ] Branch pushed to origin
+- [ ] Draft PR created
+- [ ] Test specifications exist
+- [ ] No blocking design questions
+```
+
+**Step 2: Map preconditions to verifiable checks**
+
+```bash
+# Branch check
+branch=$(git branch --show-current)
+[[ "$branch" != "main" ]] || exit 1
+
+# PR check
+gh pr view --json state --jq '.state' | grep -q "OPEN"
+```
+
+**Step 3: Add to phase gate verification**
+
+```markdown
+## Supervisor: Tester -> Developer Transition
+
+### Artifacts (backward-looking)
+- [ ] Test spec exists: `temp/v*_TESTING.md`
+
+### Preconditions (forward-looking)
+- [ ] On feature branch: `git branch --show-current` != main
+- [ ] Draft PR exists: `gh pr list --head [branch] --state open`
+```
+
+**Step 4: Document failure handling**
+
+What happens if precondition fails?
+
+```markdown
+If precondition fails:
+1. BLOCK transition
+2. Report specific failure: "Feature branch not created"
+3. Provide fix command: "git: create branch feat/[feature-name]"
+4. Do NOT proceed until precondition met
+```
+
+#### Decision Points for Phase Gate Design
+
+**When to add state verification**:
+
+- Transition involves environment change (different branch, different service)
+- Failure after transition is expensive (hard to undo)
+- Multiple actors involved (handoff points)
+
+**When artifact verification is sufficient**:
+
+- Same-context transitions (PM -> Architect, both work on same docs)
+- Low-risk phases (can easily redo)
+- Solo work (single actor, no handoff)
+
+#### Common State Verification Gaps
+
+| Gap | Symptom | Fix |
+|-----|---------|-----|
+| No branch check | Commits on main | Add git state to Tester -> Developer |
+| No PR check | Work invisible to team | Require draft PR before implementation |
+| No sync check | Merge conflicts later | Verify `git fetch && git status` shows synced |
+| No environment check | "Works on my machine" | Verify `dbt debug` passes |
+
+#### Key Takeaways
+
+1. **Artifact verification is backward-looking**: "Did previous phase complete?"
+2. **State verification is forward-looking**: "Can next phase succeed?"
+3. **Both are required for robust phase gates**: One without the other creates gaps
+4. **Precondition failures should block, not warn**: Phase gates exist to prevent problems
+5. **Each phase transition should have explicit verification criteria**: Document what you check
+
+**See also**:
+
+- Pattern: "PR-Centric Development with Defense-in-Depth Enforcement" (above)
+- `.claude/agents/supervisor.md` - Artifact Requirements Matrix
+- Skill: `.claude/skills/learned-workflow-enforcement.md`
+
+---
+
 ## dbt + uv Patterns
 
 _Learnings from modernizing dbt projects with uv-managed Python environments._
@@ -1524,7 +1852,7 @@ uv sync --upgrade         # Updates uv.lock to latest compatible
 
 ## Metrics
 
-**Total Patterns**: 31 (as of 2026-01-29)
+**Total Patterns**: 33 (as of 2026-01-30)
 
 - Proven Patterns: 7
 - Decision Frameworks: 2
@@ -1532,9 +1860,10 @@ uv sync --upgrade         # Updates uv.lock to latest compatible
 - Best Practices: 3
 - Phase 1 SRS Patterns: 11 (Architecture: 2, Security: 3, JavaScript Defensive: 5, Testing: 2)
 - Phase 2 Engagement Patterns: 6 (Architecture: 2, Bugs: 2, SVG: 2)
+- Workflow Enforcement Patterns: 2 (Defense-in-depth, Phase gate design)
 - dbt + uv Patterns: 4 (pyproject.toml, PEP 723, version constraints, lock files)
 
-**Last Updated**: 2026-01-29 (Added dbt + uv patterns: pyproject.toml for dbt projects, PEP 723 script headers, version constraint selection, lock file strategy)
+**Last Updated**: 2026-01-30 (Added workflow enforcement patterns: PR-centric defense-in-depth enforcement, phase gate artifacts + state verification)
 
 **Related Skills**:
 
