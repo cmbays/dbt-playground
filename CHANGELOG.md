@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Phase 3: GitHub Project Management**
+  - Issue creation CLI (`scripts/github-ops.py`) with batch YAML templates (#92)
+  - Milestone tracking with CLI commands and CLAUDE.md status section (#93)
+  - Enhanced PR-Issue linking with "See also #N" syntax (#94)
+  - Categorized logging in issue-linker (closing vs related keywords)
+  - Warning when closing keyword references already-closed issue
+  - GitHub Projects integration workflow for auto-adding labeled issues (#95)
+
+### Documentation
+
+- Added PR-Issue Linking syntax table to git-workflow.md
+- Updated GITHUB_ENFORCEMENT.md with Phase 3 workflows
+- Added PROJECT_TOKEN secret requirements documentation
+
 ### Planned
 
 - Incremental refresh patterns for large fact tables (v0.7)
