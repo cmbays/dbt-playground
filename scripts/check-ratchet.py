@@ -17,6 +17,7 @@ Usage:
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -130,7 +131,6 @@ def get_current_test_count() -> int:
         timeout=120,
     )
 
-    import re
     match = re.search(r'PASS=(\d+)', result.stdout + result.stderr)
     return int(match.group(1)) if match else 0
 
@@ -146,6 +146,7 @@ def get_current_model_count() -> int:
         capture_output=True,
         text=True,
         cwd=dbt_project_dir,
+        timeout=60,
     )
 
     return len([l for l in result.stdout.split("\n") if l.strip()])
@@ -177,6 +178,7 @@ def check_all_metrics() -> list[tuple[str, bool, str, float, float]]:
                     capture_output=True,
                     text=True,
                     cwd=dbt_project_dir,
+                    timeout=60,
                 )
                 # Filter to only include lines that are actual model references
                 lines = [l for l in result.stdout.split("\n") if l.strip() and l.startswith("healthcare_analytics.")]

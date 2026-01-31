@@ -166,8 +166,10 @@ def compute_quick_health() -> tuple[int, str]:
 
         return score, rating
 
-    except Exception:
-        # Graceful fallback on any error
+    except Exception as e:
+        # Graceful fallback on any error, but log it for debugging
+        import sys
+        print(f"[dim]Health computation failed: {e}[/dim]", file=sys.stderr)
         return None, None
 
 
