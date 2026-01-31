@@ -98,29 +98,106 @@ Build a dbt analytics project while learning data transformation best practices 
 - [x] Session summary templates
 - [x] Agent job descriptions and orchestration docs
 
+### v0.7.0 - Workflow Hub MVP
+
+**Theme**: Multi-Session Orchestration (Phase 1)
+
+**Status**: Complete (2026-01-31)
+
+**Deliverables**:
+
+- [x] Token budget display with color thresholds (PR #103)
+- [x] GitHub issues backlog with P0/P1/P2 grouping
+- [x] Real-time polling (10s sessions, 60s issues)
+- [x] 5-stage workflow visualization
+- [x] Blocked session detection panel
+- [x] SESSION_STATE schema and directory structure
+
+### v0.7.1 - CI/CD Fixes
+
+**Theme**: Build Infrastructure
+
+**Status**: Complete (2026-01-31)
+
+**Deliverables**:
+
+- [x] Fixed dbt-test workflow (added dbt deps step) (PR #106)
+- [x] All CI checks passing on PRs
+
 ---
 
 ## Current Phase
 
-### v0.7.0 - Workflow Hub Enhancements (In Progress)
+### Epic E19: Workflow Hub v0.7 (Multi-Phase)
 
-**Theme**: Multi-Session Orchestration
+**Theme**: Multi-Session Orchestration Command Center
 
-**Goals**:
+**Status**: Phase 1-2 Complete, Phase 3 In Progress
 
-- Session state management and persistence
-- Resume capability across sessions
-- Token usage tracking and visualization
-- Workflow health monitoring
+**PRD**: [PRD-019](../specs/PRD-019-WORKFLOW-HUB-V07.md) | **Epic**: [#85](https://github.com/cmbays/dbt-playground/issues/85)
 
-**Deliverables**:
+Transform the Workflow Hub from a single-session resume tool to a multi-session orchestration command center enabling management of 2-6 parallel Claude Code sessions.
 
-- [ ] PRD-019: Workflow Hub v0.7 specification
-- [ ] Technical design document (TDD-019)
-- [ ] Enhanced Workflow Hub with session management
-- [ ] Integration with Claude Code CLI
+#### Phase Tracking
 
-**Related Issues**: #85 (Epic), #86 (Research)
+| Phase | Version | Status | Target | Focus |
+|-------|---------|--------|--------|-------|
+| Phase 1: MVP | v0.7.0 | ✅ Complete | 2026-01-31 | Token tracking, polling, blocked detection |
+| Phase 1b: Fixes | v0.7.1 | ✅ Complete | 2026-01-31 | CI/CD improvements, dbt deps fix |
+| Phase 2: Kanban | v0.7.2 | 🔜 In Progress | 2026-02-14 | 7-lane board, card details, visualization |
+| Phase 3: Chat | v0.7.3 | 📋 Planned | 2026-02-28 | Async feedback interface |
+| Phase 4: Architecture | v0.8.0 | 📋 Planned | 2026-03-15 | Multi-team state, conflict prevention |
+
+#### v0.7.0 - MVP (Complete)
+
+**Merged**: 2026-01-31 via [PR #103](https://github.com/cmbays/dbt-playground/pull/103)
+
+- [x] Token budget display with color-coded thresholds
+- [x] GitHub issues backlog with P0/P1/P2 grouping
+- [x] 10-second polling for workflow state
+- [x] 5-stage workflow visualization (UNDERSTAND → DEPLOY)
+- [x] Blocked session detection with dedicated panel
+- [x] Hub UI cleanup (deprecated features removed)
+- [x] 'Return to Hub' navigation in other playgrounds
+- [x] SESSION_STATE file schema and directory created
+- [x] Playground server endpoints for session data
+
+#### v0.7.1 - Fixes (Complete)
+
+**Merged**: 2026-01-31 via [PR #106](https://github.com/cmbays/dbt-playground/pull/106)
+
+- [x] CI workflow fixed (added `dbt deps` step)
+- [x] dbt-test workflow now passes on PRs
+
+#### v0.7.2 - Kanban Board (In Progress)
+
+**Target**: 2026-02-14 | **Issues**: [#86](https://github.com/cmbays/dbt-playground/issues/86), [#110](https://github.com/cmbays/dbt-playground/issues/110)
+
+- [ ] Research: Evaluate GitHub Projects, Plane, Linear, Jira (Issue #86)
+- [ ] ADR: Build vs. Integrate decision
+- [ ] Kanban board with 7 lanes (Backlog → Grooming → Ready → In Progress → Blocked → Review → Done)
+- [ ] Card component showing title, issue #, session, stage, context health
+- [ ] Click-to-expand for blocking reasons and dependency visualization
+- [ ] Drag-and-drop between lanes (if custom build)
+
+#### v0.7.3 - Session Chat (Planned)
+
+**Target**: 2026-02-28 | **Issue**: [#111](https://github.com/cmbays/dbt-playground/issues/111)
+
+- [ ] Click card to open chat interface for the session
+- [ ] Async feedback mechanism (human to agent)
+- [ ] Message queue for session communication
+- [ ] Feedback visible when session checks state
+
+#### v0.8.0 - Architecture Refinement (Planned)
+
+**Target**: 2026-03-15 | **Issue**: [#112](https://github.com/cmbays/dbt-playground/issues/112)
+
+- [ ] ADR: Multi-Team State Architecture
+- [ ] Conflict detection warns about overlapping work
+- [ ] State schema optimized for 5-6 concurrent sessions
+- [ ] File format decisions (YAML vs JSON vs frontmatter)
+- [ ] Event sourcing evaluation
 
 ---
 
