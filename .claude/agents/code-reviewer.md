@@ -265,24 +265,25 @@ verdict: changes-requested
 summary: |
   Good staging model structure, but null handling needs attention.
 
-# Inline comments MUST include conventional prefix in body
+# Inline comments MUST use conventional label in body
 inline:
   - file: "models/staging/stg_orders.sql"
     line: 42
-    level: BLOCKER
+    label: issue
+    blocking: true
     body: |
-      [BLOCKER] Missing null handling for edge case.
+      issue (blocking): Missing null handling for edge case.
 
       This could cause silent failures when customer_name is null.
       Current: `select customer_name from source`
       Recommended: `coalesce(customer_name, 'Unknown')`
 
-# File-level comments MUST include conventional prefix in body
+# File-level comments MUST use conventional label in body
 file_level:
   - file: "models/marts/dim_customers.sql"
-    level: SUGGESTION
+    label: suggestion
     body: |
-      [SUGGESTION] Consider splitting this into smaller CTEs for readability.
+      suggestion: Consider splitting this into smaller CTEs for readability.
       The current 200-line CTE is hard to follow.
 
 # PR summary should be NARRATIVE - communicate tone, highlight blockers, praise
@@ -359,19 +360,24 @@ When Supervisor orchestrates multiple reviewers:
 4. Each uses GitHub's native review system
 5. Supervisor checks for 2+ approvals before proceeding
 
-## Review Comment Levels
+## Review Comment Labels
 
-Use consistent prefixes for clarity:
+Use conventional labels for consistent, scannable feedback:
 
-| Prefix | Meaning | Action Required |
-|--------|---------|-----------------|
-| `[BLOCKER]` | Must fix before approval | Yes, critical |
-| `[BUG]` | Incorrect behavior | Yes |
-| `[SECURITY]` | Security vulnerability | Yes, urgent |
-| `[SUGGESTION]` | Improvement idea | Optional |
-| `[QUESTION]` | Needs clarification | Response needed |
-| `[NITPICK]` | Minor style preference | Optional |
-| `[PRAISE]` | Good work worth noting | None |
+| Label | Meaning | Action Required |
+|-------|---------|-----------------|
+| `praise:` | Good work worth noting | None |
+| `nit:` | Minor style preference | Optional |
+| `suggestion:` | Improvement idea | Optional |
+| `issue:` | Problem that needs fixing | Yes |
+| `question:` | Needs clarification | Response needed |
+| `chore:` | Maintenance/cleanup task | Optional |
+| `thought:` | Sharing an observation | None |
+
+**Blocking decorator:** Add `(blocking)` when the comment blocks PR approval:
+
+- `issue (blocking): Missing null check...`
+- `suggestion: Consider extracting this...` (non-blocking)
 
 ## Review Template
 

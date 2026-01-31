@@ -694,32 +694,33 @@ reviewer: code-reviewer
 verdict: approved  # approved | changes-requested | comment-only
 summary: "Clean implementation with minor suggestions"
 
-# Inline comments (line-specific) - MUST use conventional prefix
+# Inline comments (line-specific) - MUST use conventional label
 inline:
   - file: ".claude/commands/repo-research.md"
     line: 105
-    level: SUGGESTION
+    label: suggestion
     body: |
-      [SUGGESTION] Consider using full focus flag names for consistency.
+      suggestion: Consider using full focus flag names for consistency.
 
       Current: `--focus=arch`
       Recommended: `--focus=architecture`
 
   - file: ".claude/skills/repo-research.md"
     line: 217
-    level: BLOCKER
+    label: issue
+    blocking: true
     body: |
-      [BLOCKER] Missing null check could cause runtime failures.
+      issue (blocking): Missing null check could cause runtime failures.
 
       This will throw if `focus_areas` is undefined.
       Add: `const areas = focus_areas ?? []`
 
-# File-level comments (overall file feedback) - MUST use conventional prefix
+# File-level comments (overall file feedback) - MUST use conventional label
 file_level:
   - file: ".claude/templates/specialist-focus-template.md"
-    level: SUGGESTION
+    label: suggestion
     body: |
-      [SUGGESTION] Overall the template is comprehensive. Consider adding
+      suggestion: Overall the template is comprehensive. Consider adding
       YAML frontmatter for consistency with other templates in this directory.
 
 # PR summary (narrative/conversational - highlight blockers, include praise)
@@ -741,22 +742,29 @@ praise:
 
 ### Comment Formatting Rules
 
-**Inline and file-level comments MUST use conventional prefixes.** This ensures consistent, scannable feedback across all reviewers.
+**Inline and file-level comments MUST use conventional labels.** This ensures consistent, scannable feedback across all reviewers.
 
-| Prefix | Meaning | Action Required |
-|--------|---------|-----------------|
-| `[BLOCKER]` | Must fix before approval | Yes, critical |
-| `[BUG]` | Incorrect behavior | Yes |
-| `[SECURITY]` | Security vulnerability | Yes, urgent |
-| `[SUGGESTION]` | Improvement idea | Optional |
-| `[QUESTION]` | Needs clarification | Response needed |
-| `[NITPICK]` | Minor style preference | Optional |
-| `[PRAISE]` | Good work worth noting | None |
+| Label | Meaning | Action Required |
+|-------|---------|-----------------|
+| `praise:` | Good work worth noting | None |
+| `nit:` | Minor style preference | Optional |
+| `suggestion:` | Improvement idea | Optional |
+| `issue:` | Problem that needs fixing | Yes |
+| `question:` | Needs clarification | Response needed |
+| `chore:` | Maintenance/cleanup task | Optional |
+| `thought:` | Sharing an observation | None |
+
+**Blocking decorator:** Add `(blocking)` when the comment blocks PR approval:
+
+```text
+issue (blocking): Missing null check could cause runtime failures.
+suggestion: Consider extracting this to a shared macro.
+```
 
 **Format for inline/file-level comments:**
 
 ```text
-[PREFIX] Brief issue description.
+label: Brief issue description.
 
 Details if needed.
 Current: `problematic code`
