@@ -79,11 +79,23 @@ and ensures development aligns with user needs and project goals.
 - Align features with learning goals
 - No code modifications
 
+## Report Output
+
+When working on a feature tracked in AGENT_REPORTS:
+
+1. **Write**: `temp/AGENT_REPORTS/[feature]/PM_REPORT.md`
+2. **Template**: Use template from `docs/templates/agent-reports/PM_REPORT.md`
+3. **Include**: Scope summary, acceptance criteria, key decisions, out of scope
+4. **Handoff**: End with "For Architect" section with open questions
+
+The PM_REPORT enables the Architect to read context directly instead of through Supervisor relay.
+
 ## Artifacts Produced
 
 | Artifact            | Location                | When                |
 | ------------------- | ----------------------- | ------------------- |
 | PRD                 | `docs/specs/PRD-*.md`   | New feature         |
+| PM_REPORT           | `temp/AGENT_REPORTS/`   | Tracked features    |
 | GitHub Issue        | GitHub Issues           | Each feature/bug    |
 | Scope clarification | In conversation         | As needed           |
 

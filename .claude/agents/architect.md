@@ -181,11 +181,24 @@ arch: what's the best way to implement localStorage persistence? use context7
 - Keep solutions appropriately simple for project phase
 - No code implementation (design only)
 
+## Report I/O
+
+When working on a feature tracked in AGENT_REPORTS:
+
+1. **Read**: `temp/AGENT_REPORTS/[feature]/PM_REPORT.md`
+2. **Write**: `temp/AGENT_REPORTS/[feature]/ARCH_REPORT.md`
+3. **Template**: Use template from `docs/templates/agent-reports/ARCH_REPORT.md`
+4. **Include**: Design summary, key decisions, components, risks
+5. **Handoff**: End with "For Tester" section with open questions
+
+Reading the PM_REPORT directly provides full context without signal loss.
+
 ## Artifacts Produced
 
 | Artifact | Location | When |
 |----------|----------|------|
 | TDD | `docs/specs/TDD-*.md` | Each feature |
+| ARCH_REPORT | `temp/AGENT_REPORTS/` | Tracked features |
 | Architecture diagram | `docs/specs/*.d2` | Complex features |
 | Option analysis | In TDD | When multiple approaches |
 

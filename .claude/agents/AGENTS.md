@@ -2,7 +2,7 @@
 
 **Purpose**: This guide ensures smooth agent orchestration and handoff across sessions by documenting best practices, common pitfalls, and when to use which approach.
 
-**Last Updated**: 2026-01-25
+**Last Updated**: 2026-01-30
 **Status**: Living Document
 
 ---
@@ -302,6 +302,58 @@ Task({
   allowed_tools: ["Write", "Read", "Bash"]
 })
 ```
+
+---
+
+## Inter-Agent Reports (v0.6+)
+
+For multi-agent workflows, agents communicate via shared artifact folders instead of relying on orchestrator relay.
+
+### Report Structure
+
+```
+temp/AGENT_REPORTS/[feature-name]/
+├── PM_REPORT.md          # Product Manager scope and decisions
+├── ARCH_REPORT.md        # Architect design and trade-offs
+├── TEST_SPEC.md          # Tester coverage and test plan
+├── DEV_REPORT.md         # Developer implementation notes
+├── CODE_REVIEW.md        # Code reviewer findings
+└── SECURITY_REVIEW.md    # Security reviewer assessment
+```
+
+### Workflow
+
+1. **Supervisor creates folder** for new feature
+2. **Each agent reads upstream** reports before starting
+3. **Each agent writes** their report to the folder
+4. **Supervisor verifies** reports exist before phase transitions
+
+### Delegation Pattern
+
+```text
+# Instead of passing content through Supervisor:
+pm: Create PRD for customer analytics.
+    - Write PM_REPORT.md to: temp/AGENT_REPORTS/customer-analytics/
+    - PRD location: docs/specs/PRD-XXX-CUSTOMER-ANALYTICS.md
+
+# Downstream agent reads directly:
+arch: Design feature per PRD-XXX.
+    - Read: temp/AGENT_REPORTS/customer-analytics/PM_REPORT.md
+    - Write: temp/AGENT_REPORTS/customer-analytics/ARCH_REPORT.md
+```
+
+### Benefits
+
+- **Preserved signal fidelity**: No context loss from orchestrator summarization
+- **Reduced orchestrator overhead**: Supervisor passes paths, not content
+- **Audit trail**: Full record of agent decisions
+- **Session continuity**: Reports enable quick resume
+
+### Templates
+
+See `docs/templates/agent-reports/` for all report templates.
+
+**Related**: [[docs/specs/PRD-016-AGENT-CONTEXT-MANAGEMENT.md]] for full design.
 
 ---
 
@@ -1624,11 +1676,14 @@ Before committing documentation changes:
 |---------------|----------|------------|
 | PRDs | `docs/specs/PRD-*.md` | PM persona |
 | TDDs | `docs/specs/TDD-*.md` | Architect persona |
+| Agent Reports | `temp/AGENT_REPORTS/[feature]/` | All agents |
+| Session Summaries | `temp/SESSION_SUMMARY_*.md` | Supervisor |
 | Test specs | `temp/v*_TESTING.md` | Tester persona |
 | Build plans | `temp/v*_PLAN.md` | Any persona |
 | Work in progress | `temp/` | Developer persona |
 | Reviews | `docs/reviews/` | Reviewer personas |
 | Educational docs | `docs/for_chris/` | Sage persona |
+| Report Templates | `docs/templates/agent-reports/` | Documenter |
 
 ---
 

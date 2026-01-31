@@ -88,6 +88,18 @@ The dbt Developer implements SQL models, macros, and transformations according t
 - Receives from: Data Modeler (design), dbt-tester (test spec)
 - Hands off to: dbt-tester (verification), Code Reviewer (quality check)
 
+## Report I/O
+
+When working on a feature tracked in AGENT_REPORTS:
+
+1. **Read**: All upstream reports (PM_REPORT, ARCH_REPORT, TEST_SPEC)
+2. **Write**: `temp/AGENT_REPORTS/[feature]/DEV_REPORT.md`
+3. **Template**: Use template from `docs/templates/agent-reports/DEV_REPORT.md`
+4. **Include**: Implementation summary, files changed, deviations from TDD, test results
+5. **Handoff**: End with "For Reviewer" section with open issues
+
+Reading upstream reports provides full context without orchestrator relay losses.
+
 ## Constraints
 
 - Follow model design exactly

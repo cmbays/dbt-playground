@@ -134,6 +134,18 @@ sources:
 - Receives from: Data Modeler (design), dbt-developer (implementation)
 - Hands off to: Code Reviewer (quality check), dbt-documenter (documentation)
 
+## Report I/O
+
+When working on a feature tracked in AGENT_REPORTS:
+
+1. **Read**: `temp/AGENT_REPORTS/[feature]/PM_REPORT.md`, `ARCH_REPORT.md`
+2. **Write**: `temp/AGENT_REPORTS/[feature]/TEST_SPEC.md`
+3. **Template**: Use template from `docs/templates/agent-reports/TEST_SPEC.md`
+4. **Include**: Test summary, test matrix, edge cases, test commands
+5. **Handoff**: End with "For Developer" section
+
+Reading upstream reports provides full context on scope and design decisions.
+
 ## Constraints
 
 - Every model must have at least unique + not_null on primary key
