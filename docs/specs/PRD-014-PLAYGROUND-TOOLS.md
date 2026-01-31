@@ -6,14 +6,14 @@ version: 0.6.0
 status: draft
 author: pm
 created: 2026-01-29
-last_updated: 2026-01-29
+last_updated: 2026-01-30
 ---
 
 ## Overview
 
 ### Executive Summary
 
-This PRD defines five interactive playground tools designed to enhance learning, development visibility, and workflow efficiency in the dbt-playground project. These tools transform implicit system knowledge into explorable, visual interfaces that accelerate onboarding, debugging, and feature development.
+This PRD defines seven interactive playground tools designed to enhance learning, development visibility, and workflow efficiency in the dbt-playground project. These tools transform implicit system knowledge into explorable, visual interfaces that accelerate onboarding, debugging, and feature development.
 
 ### Tool Overview
 
@@ -25,6 +25,7 @@ This PRD defines five interactive playground tools designed to enhance learning,
 | 4 | Healthcare Data Schema Explorer | Browse Synthea data structure interactively | v0.6.1 |
 | 5 | Mermaid Diagram Designer | Create/edit/export architecture & workflow diagrams | v0.6.0 |
 | 6 | Dashboard Mockup Builder | Design analytics dashboards visually | v0.6.3 |
+| 7 | Workflow Hub | Central command center for session continuity and agent visibility | v0.6.0 |
 
 ### Success Metrics (Global)
 
@@ -32,6 +33,7 @@ This PRD defines five interactive playground tools designed to enhance learning,
 - New contributors productive within 1 session
 - Zero cross-worktree conflicts after Coordinator adoption
 - Agent workflow failures diagnosed in <2 minutes
+- Session resume in <60 seconds via Workflow Hub
 
 ---
 
@@ -52,6 +54,7 @@ Visual tools for learning and development. Launch via commands or explore in the
 
 | Playground | Command | Purpose |
 |------------|---------|---------|
+| Workflow Hub | `/playground:hub` | Central command center, session resume |
 | Agent Visualizer | `/playground:agents` | View agent workflows and handoffs |
 | Worktree Coordinator | `/playground:worktrees` | Manage parallel sessions |
 | Lineage Explorer | `/playground:lineage` | Trace dbt data flow |
@@ -59,7 +62,7 @@ Visual tools for learning and development. Launch via commands or explore in the
 | Mermaid Diagram Designer | `/playground:mermaid` | Create architecture diagrams visually |
 | Dashboard Builder | `/playground:dashboards` | Mock analytics layouts |
 
-Quick start: Run `/playground` to see available tools.
+Quick start: Run `/playground` to open the Workflow Hub (default entry point).
 ```
 
 #### 2. Agent Suggestions
@@ -68,6 +71,7 @@ Agents should suggest relevant playgrounds contextually:
 
 | Agent | Suggests | When |
 |-------|----------|------|
+| Supervisor | Workflow Hub | Starting or resuming a session |
 | Supervisor | Worktree Coordinator | Creating parallel work tracks |
 | Supervisor | Agent Visualizer | Explaining workflow phases |
 | Data Modeler | Schema Explorer | Designing new models |
@@ -79,7 +83,8 @@ Agents should suggest relevant playgrounds contextually:
 New slash commands for playground access:
 
 ```text
-/playground                    # List all playgrounds
+/playground                    # Open Workflow Hub (default entry point)
+/playground:hub                # Open Workflow Hub explicitly
 /playground:agents [workflow]  # Launch Agent Visualizer
 /playground:worktrees          # Launch Worktree Coordinator
 /playground:lineage [model]    # Launch Lineage Explorer
@@ -107,6 +112,7 @@ playgrounds/
 │   ├── ui-framework.js       # Shared UI components
 │   ├── state-manager.js      # Reactive state management
 │   └── api-bridge.js         # CLI/Web communication
+├── workflow-hub.html         # Entry point, command center
 ├── agent-visualizer/
 ├── worktree-coordinator/
 ├── lineage-explorer/
@@ -1174,12 +1180,260 @@ Share mockups in multiple formats.
 
 ---
 
+## Playground 7: Workflow Hub
+
+### Value Proposition
+
+Working across multiple sessions, features, and git worktrees creates fragmented context:
+
+- What was I working on when the session ended?
+- What phase is each feature in?
+- What have agents been doing?
+- How do I resume quickly after days away?
+
+The Workflow Hub provides a **central command center** that answers: "Where was I, and what should I do next?"
+
+### User Personas
+
+| Persona | Use Case | Frequency |
+|---------|----------|-----------|
+| Returning User | Resume work after days away | Per session start |
+| Multi-Session User | Track parallel features across worktrees | Daily |
+| Learner | Understand what agents have been doing | Weekly |
+| Supervisor | Get session context for handoff | Per session |
+
+### Core Features
+
+#### F7.1: Quick Resume Panel
+
+Display the most recent session summary for instant context recovery.
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│  QUICK RESUME                                                          │
+│  ═══════════                                                           │
+│                                                                        │
+│  Last Session: 2026-01-30                                              │
+│  Active Track: feat/agent-context-management                           │
+│  Last Action: PRD + TDD complete, 8 tasks ready                        │
+│  Next Action: Begin Phase 1 - AGENT_REPORTS structure                  │
+│                                                                        │
+│  Decisions Made:                                                       │
+│  - Adopted inter-agent report pattern from Claudie blog                │
+│  - Deferred vector search to v1.0+                                     │
+│                                                                        │
+│  Open Questions:                                                       │
+│  - None blocking                                                       │
+│                                                                        │
+│                                                              [Resume →] │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+**Acceptance Criteria**:
+
+- [ ] Parses most recent `temp/SESSION_SUMMARY_*.md` file
+- [ ] Displays Active Track, Last Action, Next Action
+- [ ] Shows key decisions made
+- [ ] Lists open questions/blockers
+- [ ] "Resume" button copies supervisor resume context
+
+#### F7.2: Active Tracks View
+
+Display all workflow tracks from `temp/WORKFLOW_STATE.md`.
+
+```text
+┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────┐
+│ feat/agent-context   │  │ feat/playground-tools│  │ main             │
+│ ───────────────────  │  │ ────────────────────  │  │ ────             │
+│ Phase: READY         │  │ Phase: QUEUED        │  │ v0.5.0 RELEASED  │
+│ PRD: ✓  TDD: ✓       │  │ PRD: ✓  TDD: -       │  │ Clean            │
+│ 8 tasks pending      │  │ Waiting for v0.6     │  │                  │
+│                      │  │                      │  │                  │
+│ [Open] [Details]     │  │ [Open] [Details]     │  │ [Open]           │
+└──────────────────────┘  └──────────────────────┘  └──────────────────┘
+```
+
+**Acceptance Criteria**:
+
+- [ ] Parses `temp/WORKFLOW_STATE.md` YAML and markdown
+- [ ] Shows phase status per track (ACTIVE, QUEUED, COMPLETE)
+- [ ] Displays artifact checklist status (PRD, TDD, Tests, etc.)
+- [ ] Expands to show full track details
+- [ ] Distinguishes blocked vs. ready tracks
+
+#### F7.3: Agent Activity Timeline
+
+Show recent agent reports from `temp/AGENT_REPORTS/`.
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│  RECENT AGENT ACTIVITY                             [→ Agent Visualizer] │
+│  ═════════════════════                                                  │
+│                                                                        │
+│  2026-01-30 23:45  Supervisor    v0.5.0 release complete               │
+│  2026-01-30 23:30  Code Reviewer PR #54 approved (Grade A)             │
+│  2026-01-30 23:25  Security      PR #54 approved (Low Risk)            │
+│  2026-01-30 20:00  PM            PRD-016 created                       │
+│  2026-01-30 19:45  Architect     TDD-016 created                       │
+│                                                                        │
+│                                                        [Show More ↓]   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+**Acceptance Criteria**:
+
+- [ ] Scans `temp/AGENT_REPORTS/[feature]/` directories
+- [ ] Extracts timestamp and summary from report YAML frontmatter
+- [ ] Displays chronologically (most recent first)
+- [ ] Limits to 10 entries with "Show More" expansion
+- [ ] Links to Agent Visualizer for full workflow view
+
+#### F7.4: Git Worktree Summary
+
+Display worktree status at a glance.
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│  GIT WORKTREES                                   [→ Worktree Coord.]   │
+│  ═════════════                                                          │
+│                                                                        │
+│  ● main: /Users/cmbays/Documents/claude/dbt-playground                 │
+│    Status: ✓ Clean | ✓ Up to date with origin                         │
+│                                                                        │
+│  ○ No active worktrees                                                 │
+│    (5 stale branches detected)                                         │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+**Acceptance Criteria**:
+
+- [ ] Parses `git worktree list` output
+- [ ] Shows clean/dirty status per worktree
+- [ ] Indicates ahead/behind main
+- [ ] Links to Worktree Coordinator for full management
+- [ ] Flags stale branches
+
+#### F7.5: Playground Navigation
+
+Quick access to all other playgrounds.
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│  PLAYGROUNDS                                                           │
+│  ═══════════                                                           │
+│                                                                        │
+│  [Agents] [Worktrees] [Schema] [Lineage] [Dashboards] [Mermaid]       │
+│                                                                        │
+│  ○ Schema Explorer: Not yet built                                      │
+│  ○ Lineage Explorer: Not yet built                                     │
+│                                                                        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+**Acceptance Criteria**:
+
+- [ ] Shows buttons for all available playgrounds
+- [ ] Indicates which playgrounds are built vs. planned
+- [ ] Opens playground in new tab on click
+
+### Data Sources
+
+| Section | Source | Format |
+|---------|--------|--------|
+| Quick Resume | `temp/SESSION_SUMMARY_*.md` | Markdown with YAML frontmatter |
+| Active Tracks | `temp/WORKFLOW_STATE.md` | YAML frontmatter + markdown |
+| Agent Activity | `temp/AGENT_REPORTS/[feature]/*.md` | Directory scan + YAML frontmatter |
+| Worktrees | `git worktree list` | CLI output (or JSON export) |
+
+### Data Loading Strategy
+
+Since playgrounds are static HTML (no server):
+
+1. **Primary (MVP)**: Drag-drop or paste file contents
+2. **Secondary**: Export script generates `temp/hub-data.json`
+3. **Tertiary**: LocalStorage cache for instant display on return
+
+```bash
+# Power user: Export state to JSON
+uv run python scripts/export-hub-data.py
+# Creates temp/hub-data.json for Hub to load
+```
+
+### Integration Points
+
+| System | Integration |
+|--------|-------------|
+| temp/WORKFLOW_STATE.md | Track status display |
+| temp/SESSION_SUMMARY_*.md | Quick resume content |
+| temp/AGENT_REPORTS/ | Agent activity timeline |
+| PRD-016 (Agent Context Management) | Creates the artifacts Hub visualizes |
+| Other playgrounds | Deep links for detailed views |
+
+### Success Criteria
+
+- Session resume in <60 seconds (vs. 5+ minutes reading files)
+- All active tracks visible at a glance
+- Agent activity provides audit trail
+- Entry point to all other playgrounds
+
+### Technical Notes
+
+**Implementation**: Single HTML file (`playgrounds/workflow-hub.html`).
+
+**Parsing**: JavaScript parsers for YAML frontmatter and markdown sections.
+
+**Storage**: LocalStorage for caching parsed state between visits.
+
+**Relationship to Other Playgrounds**:
+
+- Hub = aggregate dashboard (where am I?)
+- Agent Visualizer = workflow detail (what's the process?)
+- Worktree Coordinator = git detail (what branches exist?)
+
+### Wireframe
+
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  WORKFLOW HUB                                        [Refresh] [Settings]    │
+│  dbt-playground | v0.5.0                             Last: 2h ago            │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  QUICK RESUME                                                                │
+│  ┌────────────────────────────────────────────────────────────────────────┐  │
+│  │  Last Session: 2026-01-30                                              │  │
+│  │  Active Track: feat/agent-context-management                           │  │
+│  │  Last Action: PRD + TDD complete                                       │  │
+│  │  Next Action: Begin Phase 1                                [Resume →]  │  │
+│  └────────────────────────────────────────────────────────────────────────┘  │
+│                                                                              │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  ACTIVE TRACKS                                                               │
+│  ┌────────────┐  ┌────────────┐  ┌────────────┐                             │
+│  │ feat/...   │  │ feat/...   │  │ main       │                             │
+│  │ READY      │  │ QUEUED     │  │ v0.5.0     │                             │
+│  └────────────┘  └────────────┘  └────────────┘                             │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  WORKTREES                                             [→ Coordinator]       │
+│  main: Clean | No active worktrees                                          │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  AGENT ACTIVITY                                        [→ Visualizer]        │
+│  23:45 Supervisor: v0.5.0 release | 23:30 Code Reviewer: Grade A            │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  PLAYGROUNDS                                                                 │
+│  [Agents] [Worktrees] [Schema] [Lineage] [Dashboards] [Mermaid]             │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Priority and Dependencies
 
 ### Build Order
 
 ```text
 Phase 1 (v0.6.0) - Foundation
+├── 7. Workflow Hub (entry point, command center, session continuity)
 ├── 2. Git Worktree Coordinator (unblocks parallel development)
 ├── 5. Mermaid Diagram Designer (simplest, improves documentation immediately)
 
@@ -1198,6 +1452,7 @@ Phase 4 (v0.6.3) - Design
 
 | Playground | Depends On | Enables |
 |------------|------------|---------|
+| Workflow Hub | PRD-016 artifacts, WORKFLOW_STATE.md | Entry point, session continuity |
 | Worktree Coordinator | git, gh CLI | Parallel development |
 | Agent Visualizer | WORKFLOW_STATE.md | Workflow debugging |
 | Mermaid Designer | mermaid.js library | Architecture documentation |
@@ -1209,12 +1464,18 @@ Phase 4 (v0.6.3) - Design
 
 | Playground | Complexity | Estimated Hours | Risk |
 |------------|------------|-----------------|------|
+| Workflow Hub | Low-Medium | 8-24 | Low |
 | Worktree Coordinator | Medium | 16-24 | Low |
 | Mermaid Designer | Low | 8-12 | Low |
 | Agent Visualizer | Low-Medium | 12-16 | Low |
 | Schema Explorer | Medium | 20-28 | Low |
 | Lineage Explorer | Medium-High | 24-32 | Medium |
 | Dashboard Builder | High | 40-60 | Medium |
+
+**Workflow Hub Effort Breakdown**:
+
+- MVP (8 hrs): Quick Resume + Active Tracks + Playground navigation
+- Full (24 hrs): + Agent reports browser + worktree status + export script
 
 ---
 
@@ -1272,6 +1533,12 @@ Phase 4 (v0.6.3) - Design
 4. **BI Tool Export**: Should Dashboard Builder export to specific BI tools?
    - Recommendation: Defer, focus on mockups and dbt YAML
 
+5. **Hub Entry Point Behavior**: Should `/playground` default to Hub or show a menu?
+   - Recommendation: Default to Hub with navigation to other playgrounds
+
+6. **Hub Data Loading (MVP)**: Accept manual paste or require export script?
+   - Recommendation: Manual paste + LocalStorage for MVP, export script for power users
+
 ---
 
 ## References
@@ -1280,6 +1547,8 @@ Phase 4 (v0.6.3) - Design
 - [AGENTS.md](/Users/cmbays/Documents/claude/dbt-playground/.claude/agents/AGENTS.md) - Agent orchestration
 - [GIT-WORKTREE-WORKFLOW.md](/Users/cmbays/Documents/claude/dbt-playground/docs/for_chris/GIT-WORKTREE-WORKFLOW.md) - Worktree documentation
 - [PRD-004-DIMENSIONAL-MODELS.md](/Users/cmbays/Documents/claude/dbt-playground/docs/specs/PRD-004-DIMENSIONAL-MODELS.md) - Model structure
+- [PRD-016-AGENT-CONTEXT-MANAGEMENT.md](/Users/cmbays/Documents/claude/dbt-playground/docs/specs/PRD-016-AGENT-CONTEXT-MANAGEMENT.md) - Agent context artifacts (Workflow Hub data source)
+- [TEAM_CONSULTATION_REPORT.md](/Users/cmbays/Documents/claude/dbt-playground/temp/AGENT_REPORTS/workflow-hub/TEAM_CONSULTATION_REPORT.md) - Team consultation for Workflow Hub
 - [dbt docs](https://docs.getdbt.com/) - dbt reference
 
 ---
