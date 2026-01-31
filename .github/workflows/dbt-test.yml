@@ -47,6 +47,9 @@ jobs:
                 threads: 4
           EOF
 
+      - name: Install dbt packages
+        run: uv run dbt deps
+
       - name: Load source data
         run: uv run dbt run-operation load_synthea_sources
 
