@@ -169,16 +169,18 @@ def check_all_metrics() -> list[tuple[str, bool, str, float, float]]:
         elif name == "model_count_minimum":
             current = get_current_model_count()
         elif name == "staging_model_count":
-            # Count staging models specifically
+            # Count staging models specifically (project models only, not packages)
             dbt_project_dir = Path.cwd() / "dbt_project"
             if dbt_project_dir.exists():
                 result = subprocess.run(
-                    ["uv", "run", "dbt", "ls", "--select", "staging.*"],
+                    ["uv", "run", "dbt", "ls", "--resource-type", "model", "--select", "healthcare_analytics.staging.*"],
                     capture_output=True,
                     text=True,
                     cwd=dbt_project_dir,
                 )
-                current = len([l for l in result.stdout.split("\n") if l.strip()])
+                # Filter to only include lines that are actual model references
+                lines = [l for l in result.stdout.split("\n") if l.strip() and l.startswith("healthcare_analytics.")]
+                current = len(lines)
             else:
                 current = 0
         elif name == "test_coverage_ratio":

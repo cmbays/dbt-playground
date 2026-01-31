@@ -31,6 +31,146 @@ from rich.text import Text
 console = Console()
 
 
+# ---------------------------------------------------------------------------
+# Quick Health Computation (subset of compute-health-pulse.py for speed)
+# ---------------------------------------------------------------------------
+
+def get_quick_commit_velocity_score() -> tuple[int, str]:
+    """Score based on recent commit activity (fast git-only check)."""
+    result = subprocess.run(
+        ["git", "log", "--since=7 days ago", "--format=%H"],
+        capture_output=True,
+        text=True,
+    )
+    commits = [c for c in result.stdout.split("\n") if c.strip()]
+    total = len(commits)
+    daily_avg = total / 7
+
+    if daily_avg >= 3:
+        score = min(100, int(50 + (daily_avg - 3) * 10))
+    elif daily_avg >= 1:
+        score = int(30 + daily_avg * 20)
+    else:
+        score = int(daily_avg * 30)
+
+    return max(0, min(100, score)), f"{daily_avg:.1f}/day"
+
+
+def get_quick_phase_duration_score() -> tuple[int, str]:
+    """Score based on time in current phase (fast git-only check)."""
+    result = subprocess.run(
+        ["git", "branch", "--show-current"],
+        capture_output=True,
+        text=True,
+    )
+    branch = result.stdout.strip() or "main"
+
+    if branch in ("main", "master"):
+        return 100, "mainline"
+
+    # Get branch creation time
+    first_commit = subprocess.run(
+        ["git", "log", branch, "--not", "main", "--format=%aI", "--reverse", "-1"],
+        capture_output=True,
+        text=True,
+    )
+
+    if first_commit.returncode != 0 or not first_commit.stdout.strip():
+        return 80, "new branch"
+
+    try:
+        start = datetime.fromisoformat(first_commit.stdout.strip())
+        now = datetime.now(start.tzinfo)
+        days = (now - start).days
+
+        if branch.startswith("feat/"):
+            expected_days = 5
+        elif branch.startswith("fix/"):
+            expected_days = 2
+        else:
+            expected_days = 3
+
+        if days <= expected_days:
+            score = 100
+        elif days <= expected_days * 2:
+            score = 70
+        else:
+            score = max(20, 100 - (days - expected_days) * 10)
+
+        return score, f"{days}d"
+
+    except ValueError:
+        return 50, "unknown"
+
+
+def get_quick_agent_collaboration_score() -> tuple[int, str]:
+    """Score based on agent-assisted commit ratio (fast git-only check)."""
+    result = subprocess.run(
+        ["git", "log", "--since=7 days ago", "--format=%B%x00"],
+        capture_output=True,
+        text=True,
+    )
+    commits = [c for c in result.stdout.split("\x00") if c.strip()]
+    total = len(commits)
+
+    if total == 0:
+        return 50, "no commits"
+
+    agent_commits = sum(1 for c in commits if "Co-Authored-By:" in c)
+    ratio = agent_commits / total
+
+    # 40-80% agent collaboration is optimal
+    if 0.4 <= ratio <= 0.8:
+        score = 100
+    elif 0.2 <= ratio < 0.4 or 0.8 < ratio <= 0.95:
+        score = 70
+    else:
+        score = 40
+
+    return score, f"{ratio*100:.0f}%"
+
+
+def compute_quick_health() -> tuple[int, str]:
+    """
+    Compute a quick health score using only fast git operations.
+
+    Skips the dbt test component to stay under 3 seconds.
+    Uses 3 components with adjusted weights (total = 1.0).
+
+    Returns:
+        Tuple of (score, rating)
+    """
+    try:
+        velocity_score, _ = get_quick_commit_velocity_score()
+        phase_score, _ = get_quick_phase_duration_score()
+        agent_score, _ = get_quick_agent_collaboration_score()
+
+        # Adjusted weights (original 4 components at 0.25 each, now 3 at ~0.33)
+        # Velocity: 0.35, Phase: 0.30, Agent: 0.35
+        total_score = (
+            velocity_score * 0.35 +
+            phase_score * 0.30 +
+            agent_score * 0.35
+        )
+        score = int(total_score)
+
+        # Rating
+        if score >= 85:
+            rating = "EXCELLENT"
+        elif score >= 70:
+            rating = "GOOD"
+        elif score >= 50:
+            rating = "FAIR"
+        else:
+            rating = "POOR"
+
+        return score, rating
+
+    except Exception:
+        # Graceful fallback on any error
+        return None, None
+
+
 @dataclass
 class WorkflowState:
     """Current workflow state summary."""
@@ -44,6 +184,7 @@ class WorkflowState:
     last_commit_time: str
     time_since_last: str
     health: int | None
+    health_rating: str | None
     next_action: str
 
 
@@ -225,6 +366,9 @@ def get_workflow_state() -> WorkflowState:
     message, time_str, time_since = get_last_commit_info()
     next_action = infer_next_action(branch, message)
 
+    # Compute quick health score (fast git-only check)
+    health_score, health_rating = compute_quick_health()
+
     return WorkflowState(
         branch=branch,
         phase=phase,
@@ -235,7 +379,8 @@ def get_workflow_state() -> WorkflowState:
         last_commit_message=message,
         last_commit_time=time_str,
         time_since_last=time_since,
-        health=None,  # Health computation deferred to Week 4
+        health=health_score,
+        health_rating=health_rating,
         next_action=next_action,
     )
 
@@ -258,8 +403,19 @@ def format_glance(state: WorkflowState) -> None:
     table.add_column("Label2", style="dim", width=10)
     table.add_column("Value2", style="bold")
 
-    # Health display (placeholder until Week 4)
-    health_str = "--/100" if state.health is None else f"{state.health}/100"
+    # Health display with score and rating
+    if state.health is None:
+        health_str = "--/100"
+    else:
+        # Color based on rating
+        color_map = {
+            "EXCELLENT": "green",
+            "GOOD": "blue",
+            "FAIR": "yellow",
+            "POOR": "red",
+        }
+        color = color_map.get(state.health_rating, "white")
+        health_str = f"[{color}]{state.health} {state.health_rating}[/{color}]"
 
     table.add_row(
         "Branch:",
@@ -271,7 +427,7 @@ def format_glance(state: WorkflowState) -> None:
         "Phase:",
         state.phase,
         "Health:",
-        health_str,
+        Text.from_markup(health_str) if state.health else health_str,
     )
 
     console.print(table)
@@ -335,7 +491,10 @@ def main() -> int:
                 "time": state.last_commit_time,
                 "time_since": state.time_since_last,
             },
-            "health": state.health,
+            "health": {
+                "score": state.health,
+                "rating": state.health_rating,
+            },
             "next_action": state.next_action,
         }
         print(json.dumps(output, indent=2))

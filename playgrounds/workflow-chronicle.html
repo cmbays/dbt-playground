@@ -404,6 +404,129 @@
       text-align: center;
     }
 
+    /* Decision Layer */
+    .decision-layer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .decision-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      transition: all 0.15s ease;
+    }
+
+    .decision-card:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .decision-card.answer-no {
+      border-left: 4px solid var(--accent-danger);
+    }
+
+    .decision-card.answer-not-yet {
+      border-left: 4px solid var(--accent-warning);
+    }
+
+    .decision-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .decision-id {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .decision-answer {
+      padding: 0.125rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .decision-answer.no {
+      background: rgba(220, 38, 38, 0.1);
+      color: var(--accent-danger);
+    }
+
+    .decision-answer.not-yet {
+      background: rgba(202, 138, 4, 0.1);
+      color: var(--accent-warning);
+    }
+
+    .decision-question {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .decision-rationale {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      white-space: pre-line;
+      line-height: 1.6;
+    }
+
+    .decision-trigger {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 0.5rem;
+      background: var(--bg-secondary);
+      border-radius: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .decision-trigger strong {
+      color: var(--text-secondary);
+    }
+
+    .decision-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .decision-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .confidence-badge {
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.625rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .confidence-high {
+      background: rgba(22, 163, 74, 0.1);
+      color: var(--accent-success);
+    }
+
+    .confidence-medium {
+      background: rgba(202, 138, 4, 0.1);
+      color: var(--accent-warning);
+    }
+
+    .confidence-low {
+      background: rgba(220, 38, 38, 0.1);
+      color: var(--accent-danger);
+    }
+
     /* Footer */
     .footer {
       background: var(--bg-secondary);
@@ -529,7 +652,10 @@
         },
         decisions: {
           name: "Decisions",
-          data: []
+          data: [
+            { id: "NS-001", question: "Should we use Snowflake instead of DuckDB?", answer: "NO", date: "2026-01-15", rationale: "Learning project where cost matters. DuckDB is free and local.", reconsidering_trigger: "Data exceeds 10GB OR cloud deployment required", raised_by: "human", confidence: "HIGH", related_feature: null },
+            { id: "NS-002", question: "Should we add dbt Cloud?", answer: "NOT_YET", date: "2026-01-20", rationale: "Core workflow is CLI-based with Claude Code.", reconsidering_trigger: "Team grows beyond 3 OR scheduling/orchestration becomes critical", raised_by: "architect", confidence: "MEDIUM", related_feature: null }
+          ]
         },
         bedrock: {
           name: "Foundation",
@@ -728,14 +854,58 @@
       container.innerHTML = html;
     }
 
-    // Render decisions layer (placeholder)
+    // Render decisions layer
     function renderDecisionsLayer(container) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <h3>Decisions Layer</h3>
-          <p>Decision tracking will be populated from NEGATIVE_SPACE.yaml in Week 4.</p>
-          <p>This layer captures key decisions, rejected approaches, and their rationale.</p>
-        </div>`;
+      const decisions = chronicleData.layers.decisions.data;
+
+      if (!decisions || decisions.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>Decisions Layer</h3>
+            <p>No decisions recorded yet. Run generate-chronicle-data.py to populate from NEGATIVE_SPACE.yaml.</p>
+            <p>This layer captures rejected approaches and deferred questions.</p>
+          </div>`;
+        return;
+      }
+
+      let html = '<div class="decision-layer">';
+
+      decisions.forEach(decision => {
+        const answerClass = decision.answer === 'NO' ? 'no' : 'not-yet';
+        const cardClass = decision.answer === 'NO' ? 'answer-no' : 'answer-not-yet';
+        const confidenceClass = `confidence-${decision.confidence.toLowerCase()}`;
+
+        html += `
+          <div class="decision-card ${cardClass}">
+            <div class="decision-header">
+              <span class="decision-id">${escapeHtml(decision.id)}</span>
+              <span class="decision-answer ${answerClass}">${escapeHtml(decision.answer.replace('_', ' '))}</span>
+            </div>
+            <div class="decision-question">${escapeHtml(decision.question)}</div>
+            <div class="decision-rationale">${escapeHtml(decision.rationale)}</div>
+            <div class="decision-trigger">
+              <strong>Reconsider when:</strong> ${escapeHtml(decision.reconsidering_trigger)}
+            </div>
+            <div class="decision-meta">
+              <span class="decision-meta-item">
+                <span>Date:</span> ${escapeHtml(decision.date)}
+              </span>
+              <span class="decision-meta-item">
+                <span>Raised by:</span> ${escapeHtml(decision.raised_by)}
+              </span>
+              <span class="decision-meta-item">
+                <span class="confidence-badge ${confidenceClass}">${escapeHtml(decision.confidence)}</span>
+              </span>
+              ${decision.related_feature ? `
+              <span class="decision-meta-item">
+                <span>Feature:</span> ${escapeHtml(decision.related_feature)}
+              </span>` : ''}
+            </div>
+          </div>`;
+      });
+
+      html += '</div>';
+      container.innerHTML = html;
     }
 
     // Render bedrock layer

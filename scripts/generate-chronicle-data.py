@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["rich"]
+# dependencies = ["rich", "pyyaml"]
 # ///
 """
 Generate Chronicle Data - Prepare data for timeline playground.
@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import yaml
 from rich.console import Console
 
 console = Console()
@@ -33,6 +34,7 @@ console = Console()
 WORKFLOW_HISTORY_DIR = Path("temp/WORKFLOW_HISTORY")
 EVENTS_FILE = WORKFLOW_HISTORY_DIR / "events.jsonl"
 OUTPUT_FILE = WORKFLOW_HISTORY_DIR / "chronicle-data.json"
+NEGATIVE_SPACE_FILE = Path("temp/NEGATIVE_SPACE.yaml")
 
 
 @dataclass
@@ -60,6 +62,20 @@ class BranchSpan:
     end_time: str | None
     commit_count: int
     status: str  # active, merged, stale
+
+
+@dataclass
+class DecisionData:
+    """Rejected decision from Negative Space registry."""
+    id: str
+    question: str
+    answer: str  # NO or NOT_YET
+    date: str
+    rationale: str
+    reconsidering_trigger: str
+    raised_by: str
+    confidence: str
+    related_feature: str | None
 
 
 @dataclass
@@ -260,6 +276,40 @@ def load_events() -> list[dict[str, Any]]:
     return events
 
 
+def load_negative_space() -> list[DecisionData]:
+    """Load rejected decisions from NEGATIVE_SPACE.yaml."""
+    if not NEGATIVE_SPACE_FILE.exists():
+        return []
+
+    try:
+        with open(NEGATIVE_SPACE_FILE) as f:
+            data = yaml.safe_load(f)
+    except yaml.YAMLError:
+        return []
+
+    if not data or "decisions_not_made" not in data:
+        return []
+
+    decisions = []
+    for entry in data["decisions_not_made"]:
+        decisions.append(DecisionData(
+            id=entry.get("id", ""),
+            question=entry.get("question", ""),
+            answer=entry.get("answer", ""),
+            date=entry.get("date", ""),
+            rationale=entry.get("rationale", "").strip(),
+            reconsidering_trigger=entry.get("reconsidering_trigger", ""),
+            raised_by=entry.get("raised_by", ""),
+            confidence=entry.get("confidence", ""),
+            related_feature=entry.get("related_feature"),
+        ))
+
+    # Sort by date (newest first)
+    decisions.sort(key=lambda d: d.date, reverse=True)
+
+    return decisions
+
+
 def compute_insights(commits: list[CommitData]) -> dict[str, Any]:
     """Compute insights from commits."""
     if not commits:
@@ -306,6 +356,7 @@ def generate_chronicle_data(since: str) -> ChronicleData:
     commits = get_commits(since)
     branches = get_branches()
     events = load_events()
+    decisions = load_negative_space()
     insights = compute_insights(commits)
 
     now = datetime.now(timezone.utc)
@@ -329,8 +380,8 @@ def generate_chronicle_data(since: str) -> ChronicleData:
         },
         "decisions": {
             "name": "Decisions",
-            "description": "Key decisions and trade-offs (placeholder)",
-            "data": [],  # Populated in Week 4 from NEGATIVE_SPACE.yaml
+            "description": "Rejected decisions and deferred questions from Negative Space",
+            "data": [asdict(d) for d in decisions],
         },
         "bedrock": {
             "name": "Foundation",
@@ -387,6 +438,7 @@ def main() -> int:
             json.dump(output, f, indent=2)
         console.print(f"[green]Chronicle data generated: {OUTPUT_FILE}[/green]")
         console.print(f"  Commits: {data.insights['total_commits']}")
+        console.print(f"  Decisions: {len(data.layers['decisions']['data'])}")
         console.print(f"  Events: {len(data.events)}")
 
     return 0
