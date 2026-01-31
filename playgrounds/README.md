@@ -6,6 +6,7 @@ Visual tools for learning, development, and debugging in dbt-playground.
 
 | Playground | File | Purpose | Status |
 |------------|------|---------|--------|
+| Workflow Hub | `workflow-hub.html` | Central command center, session resume | **v0.6.0** |
 | Worktree Coordinator | `worktree-coordinator.html` | Manage parallel git worktrees | **v0.6.0** |
 | Mermaid Designer | `mermaid-designer.html` | Create and export Mermaid diagrams | **v0.6.0** |
 | Agent Visualizer | `agent-visualizer.html` | View agent workflows and state | Planned (v0.6.1) |
@@ -17,6 +18,22 @@ Visual tools for learning, development, and debugging in dbt-playground.
 
 1. Open any `.html` file in a browser
 2. No build step, no dependencies, no server required
+
+### Workflow Hub
+
+The central command center for dbt-playground:
+
+1. Open `workflow-hub.html` in a browser
+2. Paste data from `temp/WORKFLOW_STATE.md` or `temp/SESSION_SUMMARY_*.md`
+3. See Quick Resume, Active Tracks, and Agent Activity
+
+**Features**:
+
+- Quick Resume panel for session continuity
+- Active Tracks view from WORKFLOW_STATE.md
+- Agent Activity timeline
+- Git Worktree summary
+- Navigation to all other playgrounds
 
 ### Worktree Coordinator
 
@@ -54,7 +71,8 @@ Create diagrams with live preview and multiple export options:
 Access playgrounds via slash commands:
 
 ```text
-/playground              # List all playgrounds
+/playground              # Open Workflow Hub (default entry point)
+/playground:hub          # Workflow Hub explicitly
 /playground:worktrees    # Git Worktree Coordinator
 /playground:mermaid      # Mermaid Diagram Designer
 /playground:agents       # Agent Visualizer (planned)
@@ -85,7 +103,7 @@ All playgrounds share these shortcuts:
 ## Build Order
 
 ```text
-Phase 1 (v0.6.0): Worktree Coordinator, Mermaid Designer  <-- Current
+Phase 1 (v0.6.0): Workflow Hub, Worktree Coordinator, Mermaid Designer  <-- Complete
 Phase 2 (v0.6.1): Agent Visualizer, Schema Explorer
 Phase 3 (v0.6.2): Lineage Explorer
 Phase 4 (v0.6.3): Dashboard Builder

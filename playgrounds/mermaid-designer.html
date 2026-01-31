@@ -173,6 +173,9 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
+      /* Containment to prevent orphaned elements from rendering outside */
+      position: relative;
+      contain: layout;
     }
 
     #preview-container {
@@ -458,6 +461,42 @@
       font-family: var(--font-mono);
       font-size: 0.75rem;
     }
+
+    /* Zoom Controls */
+    .zoom-controls {
+      display: flex;
+      gap: 0.25rem;
+      align-items: center;
+    }
+
+    .zoom-controls .btn {
+      padding: 0.25rem 0.5rem;
+      min-width: 32px;
+      justify-content: center;
+    }
+
+    .zoom-controls .zoom-level {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 45px;
+      text-align: center;
+    }
+
+    /* Preview container for panzoom */
+    #preview-container {
+      max-width: 100%;
+      cursor: grab;
+    }
+
+    #preview-container:active {
+      cursor: grabbing;
+    }
+
+    #preview-container svg {
+      max-width: none; /* Allow zoom beyond container */
+      height: auto;
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -537,6 +576,13 @@ flowchart TD
     <div class="preview-panel">
       <div class="panel-header">
         <span>Live Preview</span>
+        <div class="zoom-controls">
+          <button class="btn" onclick="zoomOut()" title="Zoom Out">-</button>
+          <span class="zoom-level" id="zoom-level">100%</span>
+          <button class="btn" onclick="zoomIn()" title="Zoom In">+</button>
+          <button class="btn" onclick="fitToView()" title="Fit to View">Fit</button>
+          <button class="btn" onclick="resetZoom()" title="Reset to 100%">1:1</button>
+        </div>
       </div>
       <div class="preview-wrapper">
         <div id="preview-container"></div>
@@ -637,12 +683,22 @@ flowchart TD
           <li><code>?</code> - Show this help</li>
         </ul>
 
+        <h3>Zoom & Pan Controls</h3>
+        <ul>
+          <li><strong>Scroll wheel</strong> - Zoom in/out on preview</li>
+          <li><strong>Click and drag</strong> - Pan the diagram</li>
+          <li><strong>+/-</strong> buttons - Zoom in/out</li>
+          <li><strong>Fit</strong> button - Fit diagram to view</li>
+          <li><strong>1:1</strong> button - Reset to 100% zoom</li>
+        </ul>
+
         <h3>Tips</h3>
         <ul>
           <li>The preview updates automatically as you type</li>
           <li>Use Templates for common diagram patterns</li>
           <li>Save diagrams to your Library for later use</li>
           <li>Export as Markdown to embed in documentation</li>
+          <li>Zoom and pan to navigate large diagrams</li>
         </ul>
 
         <h3>More Information</h3>
@@ -651,9 +707,10 @@ flowchart TD
     </div>
   </div>
 
-  <!-- Load Mermaid from CDN -->
+  <!-- Load Mermaid and Panzoom from CDN -->
   <script type="module">
     import mermaid from 'https://esm.sh/mermaid@10.6.1';
+    import panzoom from 'https://esm.sh/panzoom@9.4.3';
 
     // Initialize Mermaid
     mermaid.initialize({
@@ -663,8 +720,9 @@ flowchart TD
       flowchart: { htmlLabels: true, curve: 'basis' }
     });
 
-    // Make mermaid available globally
+    // Make libraries available globally
     window.mermaidLib = mermaid;
+    window.panzoomLib = panzoom;
 
     // Initial render
     setTimeout(() => {
@@ -784,6 +842,10 @@ flowchart TD
       code: ''
     };
 
+    // Panzoom instance
+    let panzoomInstance = null;
+    let currentZoom = 1;
+
     // DOM Elements
     const codeEditor = document.getElementById('code-editor');
     const previewContainer = document.getElementById('preview-container');
@@ -802,8 +864,121 @@ flowchart TD
       };
     }
 
+    // Initialize panzoom on the preview SVG
+    function initPanzoom() {
+      const svgElement = previewContainer.querySelector('svg');
+      if (!svgElement || !window.panzoomLib) return;
+
+      // Dispose previous instance
+      if (panzoomInstance) {
+        panzoomInstance.dispose();
+      }
+
+      // Initialize new panzoom instance
+      panzoomInstance = window.panzoomLib(svgElement, {
+        maxZoom: 5,
+        minZoom: 0.1,
+        bounds: true,
+        boundsPadding: 0.1,
+        zoomDoubleClickSpeed: 1
+      });
+
+      // Listen for zoom changes to update the zoom level display
+      panzoomInstance.on('zoom', (e) => {
+        currentZoom = e.getTransform().scale;
+        updateZoomDisplay();
+      });
+
+      // Reset zoom display
+      currentZoom = 1;
+      updateZoomDisplay();
+    }
+
+    // Update zoom level display
+    function updateZoomDisplay() {
+      const zoomLevelEl = document.getElementById('zoom-level');
+      if (zoomLevelEl) {
+        zoomLevelEl.textContent = Math.round(currentZoom * 100) + '%';
+      }
+    }
+
+    // Zoom control functions
+    window.zoomIn = function() {
+      if (panzoomInstance) {
+        const rect = previewContainer.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        panzoomInstance.smoothZoom(centerX, centerY, 1.5);
+      }
+    };
+
+    window.zoomOut = function() {
+      if (panzoomInstance) {
+        const rect = previewContainer.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        panzoomInstance.smoothZoom(centerX, centerY, 0.67);
+      }
+    };
+
+    window.resetZoom = function() {
+      if (panzoomInstance) {
+        panzoomInstance.moveTo(0, 0);
+        panzoomInstance.zoomAbs(0, 0, 1);
+        currentZoom = 1;
+        updateZoomDisplay();
+      }
+    };
+
+    window.fitToView = function() {
+      const svg = previewContainer.querySelector('svg');
+      const wrapper = document.querySelector('.preview-wrapper');
+      if (!svg || !wrapper || !panzoomInstance) return;
+
+      // Get the SVG's natural dimensions
+      const svgBBox = svg.getBBox();
+      const wrapperRect = wrapper.getBoundingClientRect();
+
+      // Calculate scale to fit with padding
+      const padding = 40;
+      const scaleX = (wrapperRect.width - padding) / svgBBox.width;
+      const scaleY = (wrapperRect.height - padding) / svgBBox.height;
+      const scale = Math.min(scaleX, scaleY, 2); // Cap at 200%
+
+      // Reset position and apply new zoom
+      panzoomInstance.moveTo(0, 0);
+      panzoomInstance.zoomAbs(0, 0, scale);
+      currentZoom = scale;
+      updateZoomDisplay();
+    };
+
+    // Cleanup orphaned Mermaid elements (fixes MD-005 bug)
+    function cleanupOrphanedMermaidElements() {
+      // Remove any Mermaid-created elements outside the preview container
+      document.querySelectorAll('[id^="mermaid-"], [id^="dmermaid-"], [id^="d"]').forEach(el => {
+        if (!previewContainer.contains(el) && el.tagName === 'SVG') {
+          el.remove();
+        }
+      });
+      // Remove Mermaid error containers that escaped
+      document.querySelectorAll('svg[id^="mermaid"]').forEach(el => {
+        if (!previewContainer.contains(el)) {
+          el.remove();
+        }
+      });
+      // Remove any stray elements with aria-roledescription="error"
+      document.querySelectorAll('[aria-roledescription="error"]').forEach(el => {
+        if (!previewContainer.contains(el)) {
+          el.remove();
+        }
+      });
+    }
+
     // Render diagram
     window.renderDiagram = async function() {
+      // CLEANUP: Remove any orphaned elements from previous renders
+      cleanupOrphanedMermaidElements();
+
       const code = codeEditor.value.trim();
       if (!code) {
         previewContainer.innerHTML = '<p style="color: var(--text-muted);">Enter diagram code to see preview</p>';
@@ -831,8 +1006,17 @@ flowchart TD
         const { svg } = await window.mermaidLib.render(id, code);
         previewContainer.innerHTML = svg;
 
+        // Cleanup any orphaned elements created during render
+        cleanupOrphanedMermaidElements();
+
+        // Initialize panzoom on the SVG
+        initPanzoom();
+
         setStatus('Diagram valid', 'success');
       } catch (error) {
+        // Cleanup orphaned elements from failed render
+        cleanupOrphanedMermaidElements();
+
         previewContainer.innerHTML = `<div class="preview-error">${escapeHtml(error.message)}</div>`;
         setStatus('Syntax error', 'error');
       }

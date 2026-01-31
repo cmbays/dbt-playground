@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workflow Hub - dbt-playground</title>
+  <style>
+    /* CSS Variables */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-tertiary: #e8e8e8;
+      --bg-card: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --accent-primary: #2563eb;
+      --accent-success: #16a34a;
+      --accent-warning: #ca8a04;
+      --accent-danger: #dc2626;
+      --accent-purple: #7c3aed;
+      --border-color: #e5e5e5;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #262626;
+        --bg-tertiary: #333333;
+        --bg-card: #262626;
+        --text-primary: #f5f5f5;
+        --text-secondary: #a3a3a3;
+        --text-muted: #737373;
+        --border-color: #404040;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .version-badge {
+      background: var(--accent-primary);
+      color: white;
+      padding: 0.125rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      transition: all 150ms ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-success {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      opacity: 0.9;
+    }
+
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.75rem;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    /* Card Styles */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-secondary);
+    }
+
+    .card-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .card-footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+    }
+
+    /* Quick Resume Card */
+    .resume-highlight {
+      border-left: 4px solid var(--accent-success);
+    }
+
+    .resume-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .resume-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .resume-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .resume-value {
+      font-size: 0.9375rem;
+      font-weight: 500;
+    }
+
+    .resume-value.branch {
+      font-family: var(--font-mono);
+      color: var(--accent-primary);
+    }
+
+    /* Track Cards */
+    .tracks-container {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .track-card {
+      min-width: 200px;
+      padding: 1rem;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .track-card.active {
+      border-color: var(--accent-success);
+      border-width: 2px;
+    }
+
+    .track-card.queued {
+      border-color: var(--accent-warning);
+      opacity: 0.8;
+    }
+
+    .track-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      word-break: break-all;
+    }
+
+    .track-phase {
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .track-artifacts {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .artifact-badge {
+      font-size: 0.625rem;
+      padding: 0.125rem 0.375rem;
+      border-radius: 3px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .artifact-badge.complete {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #166534;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .artifact-badge.complete {
+        background: #166534;
+        color: #dcfce7;
+      }
+    }
+
+    /* Agent Activity */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8125rem;
+    }
+
+    .activity-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .activity-time {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      min-width: 80px;
+    }
+
+    .activity-agent {
+      font-weight: 500;
+      min-width: 100px;
+    }
+
+    .activity-message {
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    /* Worktree Summary */
+    .worktree-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .worktree-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8125rem;
+    }
+
+    .worktree-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .worktree-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .worktree-dot.main {
+      background: var(--accent-primary);
+    }
+
+    .worktree-dot.clean {
+      background: var(--accent-success);
+    }
+
+    .worktree-dot.dirty {
+      background: var(--accent-warning);
+    }
+
+    .worktree-path {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Playground Navigation */
+    .playground-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .playground-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      border-radius: 8px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-color);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all 150ms ease;
+    }
+
+    .playground-link:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+    }
+
+    .playground-link.current {
+      border-color: var(--accent-primary);
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .playground-link.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .playground-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .playground-name {
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .playground-status {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Input Panel */
+    .input-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-panel h2 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .input-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    .input-tab {
+      padding: 0.5rem 1rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      border-radius: 4px;
+    }
+
+    .input-tab:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .input-tab.active {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .input-area {
+      display: none;
+    }
+
+    .input-area.active {
+      display: block;
+    }
+
+    .input-area textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      resize: vertical;
+      margin-bottom: 0.75rem;
+    }
+
+    .input-area textarea:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    .input-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .input-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* Status Badges */
+    .status-badge {
+      padding: 0.25rem 0.625rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .status-active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-queued {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-complete {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .status-active {
+        background: #166534;
+        color: #dcfce7;
+      }
+      .status-queued {
+        background: #92400e;
+        color: #fef3c7;
+      }
+      .status-complete {
+        background: #1e40af;
+        color: #dbeafe;
+      }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .footer-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-status.success {
+      color: var(--accent-success);
+    }
+
+    .footer-status.error {
+      color: var(--accent-danger);
+    }
+
+    .keyboard-hints {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .keyboard-hints kbd {
+      background: var(--bg-tertiary);
+      padding: 0.125rem 0.375rem;
+      border-radius: 3px;
+      margin-right: 0.25rem;
+    }
+
+    /* Help Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.125rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-body h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-body h3:first-child {
+      margin-top: 0;
+    }
+
+    .modal-body p, .modal-body ul {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .modal-body ul {
+      padding-left: 1.25rem;
+    }
+
+    .modal-body li {
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-body code {
+      background: var(--bg-tertiary);
+      padding: 0.125rem 0.375rem;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .resume-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <h1>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+          <line x1="9" y1="21" x2="9" y2="9"></line>
+        </svg>
+        Workflow Hub
+      </h1>
+      <span class="version-badge" id="version-badge">v0.6.0</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn" onclick="refreshDisplay()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6"></path>
+          <path d="M1 20v-6h6"></path>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        Refresh
+      </button>
+      <button class="btn" onclick="showHelp()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Help
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Data Input Panel -->
+    <section class="input-panel">
+      <h2>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        Load Context Data
+      </h2>
+
+      <div class="input-tabs">
+        <button class="input-tab active" onclick="switchTab('workflow')">WORKFLOW_STATE.md</button>
+        <button class="input-tab" onclick="switchTab('session')">SESSION_SUMMARY.md</button>
+        <button class="input-tab" onclick="switchTab('worktree')">git worktree</button>
+      </div>
+
+      <div id="workflow-input" class="input-area active">
+        <textarea id="workflow-data" placeholder="Paste contents of temp/WORKFLOW_STATE.md here..."></textarea>
+        <div class="input-actions">
+          <button class="btn btn-primary" onclick="parseWorkflowState()">Parse State</button>
+          <button class="btn btn-success" onclick="loadFromServer()" id="server-btn" title="Requires: uv run scripts/playground-server.py">Load from Server</button>
+          <button class="btn" onclick="loadSampleWorkflow()">Load Sample</button>
+        </div>
+        <p class="input-hint">Copy from: <code>temp/WORKFLOW_STATE.md</code> or run server: <code>uv run scripts/playground-server.py</code></p>
+      </div>
+
+      <div id="session-input" class="input-area">
+        <textarea id="session-data" placeholder="Paste contents of SESSION_SUMMARY.md here..."></textarea>
+        <div class="input-actions">
+          <button class="btn btn-primary" onclick="parseSessionSummary()">Parse Summary</button>
+          <button class="btn" onclick="loadSampleSession()">Load Sample</button>
+        </div>
+        <p class="input-hint">Copy from: <code>temp/SESSION_SUMMARY_YYYY-MM-DD.md</code></p>
+      </div>
+
+      <div id="worktree-input" class="input-area">
+        <textarea id="worktree-data" placeholder="Paste output of: git worktree list"></textarea>
+        <div class="input-actions">
+          <button class="btn btn-primary" onclick="parseWorktree()">Parse Worktrees</button>
+          <button class="btn" onclick="loadSampleWorktree()">Load Sample</button>
+        </div>
+        <p class="input-hint">Run: <code>git worktree list</code></p>
+      </div>
+    </section>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Quick Resume Panel -->
+      <div class="card resume-highlight">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Quick Resume
+          </span>
+          <button class="btn btn-sm btn-success" onclick="copyResume()">Copy Context</button>
+        </div>
+        <div class="card-body" id="quick-resume">
+          <div class="empty-state">
+            <h3>No session data</h3>
+            <p>Load WORKFLOW_STATE or SESSION_SUMMARY</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Tracks -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Active Tracks
+          </span>
+        </div>
+        <div class="card-body" id="active-tracks">
+          <div class="empty-state">
+            <h3>No tracks loaded</h3>
+            <p>Parse WORKFLOW_STATE.md to see tracks</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Activity -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Recent Agent Activity
+          </span>
+          <a href="agent-visualizer.html" class="btn btn-sm" style="opacity: 0.5">Visualizer</a>
+        </div>
+        <div class="card-body" id="agent-activity">
+          <div class="empty-state">
+            <h3>No activity data</h3>
+            <p>Activity shows from WORKFLOW_STATE</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Git Worktrees -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 3v12"></path>
+              <circle cx="18" cy="6" r="3"></circle>
+              <circle cx="6" cy="18" r="3"></circle>
+              <path d="M18 9a9 9 0 0 1-9 9"></path>
+            </svg>
+            Git Worktrees
+          </span>
+          <a href="worktree-coordinator.html" class="btn btn-sm">Coordinator</a>
+        </div>
+        <div class="card-body" id="worktree-summary">
+          <div class="empty-state">
+            <h3>No worktree data</h3>
+            <p>Paste git worktree list output</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Playgrounds Navigation -->
+      <div class="card full-width">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Playgrounds
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="playground-grid">
+            <a href="workflow-hub.html" class="playground-link current">
+              <span class="playground-icon">🏠</span>
+              <span class="playground-name">Workflow Hub</span>
+              <span class="playground-status">Current</span>
+            </a>
+            <a href="worktree-coordinator.html" class="playground-link">
+              <span class="playground-icon">🌳</span>
+              <span class="playground-name">Worktrees</span>
+              <span class="playground-status">v0.6.0</span>
+            </a>
+            <a href="mermaid-designer.html" class="playground-link">
+              <span class="playground-icon">📊</span>
+              <span class="playground-name">Mermaid</span>
+              <span class="playground-status">v0.6.0</span>
+            </a>
+            <a href="agent-visualizer.html" class="playground-link disabled">
+              <span class="playground-icon">🤖</span>
+              <span class="playground-name">Agents</span>
+              <span class="playground-status">v0.6.1</span>
+            </a>
+            <a href="schema-explorer.html" class="playground-link disabled">
+              <span class="playground-icon">🗃️</span>
+              <span class="playground-name">Schema</span>
+              <span class="playground-status">v0.6.1</span>
+            </a>
+            <a href="lineage-explorer.html" class="playground-link disabled">
+              <span class="playground-icon">🔗</span>
+              <span class="playground-name">Lineage</span>
+              <span class="playground-status">v0.6.2</span>
+            </a>
+            <a href="dashboard-builder.html" class="playground-link disabled">
+              <span class="playground-icon">📈</span>
+              <span class="playground-name">Dashboards</span>
+              <span class="playground-status">v0.6.3</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-status" id="status">
+      Ready - Paste data to begin
+    </div>
+    <div class="keyboard-hints">
+      <kbd>R</kbd> Refresh
+      <kbd>?</kbd> Help
+      <kbd>1-3</kbd> Switch tabs
+      <kbd>Esc</kbd> Close
+    </div>
+  </footer>
+
+  <!-- Help Modal -->
+  <div class="modal-overlay" id="help-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Workflow Hub Help</h2>
+        <button class="modal-close" onclick="hideHelp()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>What is this?</h3>
+        <p>The Workflow Hub is your central command center for dbt-playground. It answers: "Where was I, and what should I do next?"</p>
+
+        <h3>How to Use</h3>
+        <ul>
+          <li><strong>Automatic:</strong> Run <code>uv run scripts/playground-server.py</code> and data loads automatically</li>
+          <li><strong>Manual:</strong> Paste <code>temp/WORKFLOW_STATE.md</code> to see active tracks</li>
+          <li>Paste <code>temp/SESSION_SUMMARY_*.md</code> for quick resume context</li>
+          <li>Paste <code>git worktree list</code> output to see parallel work</li>
+          <li>Click "Copy Context" to get resume text for Claude</li>
+        </ul>
+
+        <h3>Understanding the Display</h3>
+        <ul>
+          <li><strong>Quick Resume</strong> - Key context for continuing work</li>
+          <li><strong>Active Tracks</strong> - Features in progress with phase status</li>
+          <li><strong>Agent Activity</strong> - Recent completions from the assembly line</li>
+          <li><strong>Worktrees</strong> - Parallel development sessions</li>
+          <li><strong>Playgrounds</strong> - Links to other visual tools</li>
+        </ul>
+
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+          <li><code>R</code> - Refresh / re-parse all data</li>
+          <li><code>1</code> - Switch to WORKFLOW_STATE tab</li>
+          <li><code>2</code> - Switch to SESSION_SUMMARY tab</li>
+          <li><code>3</code> - Switch to git worktree tab</li>
+          <li><code>?</code> - Show this help</li>
+          <li><code>Esc</code> - Close modals</li>
+        </ul>
+
+        <h3>Data Sources</h3>
+        <ul>
+          <li><code>temp/WORKFLOW_STATE.md</code> - Track status, metrics</li>
+          <li><code>temp/SESSION_SUMMARY_*.md</code> - Session checkpoint</li>
+          <li><code>temp/AGENT_REPORTS/</code> - Per-feature agent artifacts</li>
+          <li><code>git worktree list</code> - Parallel development</li>
+        </ul>
+
+        <h3>Related Tools</h3>
+        <ul>
+          <li><strong>Worktree Coordinator</strong> - Full worktree management</li>
+          <li><strong>Agent Visualizer</strong> - Workflow diagrams (planned)</li>
+          <li><strong>Mermaid Designer</strong> - Create architecture diagrams</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let workflowState = null;
+    let sessionData = null;
+    let worktreeData = null;
+
+    // Server configuration
+    const API_BASE = 'http://localhost:5050/api';
+    let serverAvailable = false;
+
+    // DOM Elements
+    const statusEl = document.getElementById('status');
+    const helpModal = document.getElementById('help-modal');
+
+    // Check if server is available and auto-load data
+    async function checkServerAndLoad() {
+      try {
+        const response = await fetch(`${API_BASE}/health`, { method: 'GET', mode: 'cors' });
+        if (response.ok) {
+          serverAvailable = true;
+          document.getElementById('server-btn').style.display = 'inline-flex';
+          setStatus('Server detected - click "Load from Server" or loading...', 'success');
+          // Auto-load data
+          await loadFromServer();
+          return true;
+        }
+      } catch (e) {
+        serverAvailable = false;
+        console.log('Server not available, using paste mode');
+      }
+      setStatus('Ready - Paste data or run: uv run scripts/playground-server.py');
+      return false;
+    }
+
+    // Load all data from server
+    async function loadFromServer() {
+      try {
+        setStatus('Loading from server...', '');
+        const response = await fetch(`${API_BASE}/all`, { method: 'GET', mode: 'cors' });
+        if (!response.ok) throw new Error('Server request failed');
+
+        const data = await response.json();
+
+        // Load workflow state
+        if (data.workflowState) {
+          document.getElementById('workflow-data').value = data.workflowState;
+          parseWorkflowState();
+        }
+
+        // Load session summary
+        if (data.sessionSummary) {
+          document.getElementById('session-data').value = data.sessionSummary;
+          parseSessionSummary();
+        }
+
+        // Load worktree data (combine with git status)
+        if (data.worktrees) {
+          const combined = data.worktrees + '---STATUS---\n' + (data.gitStatus || '');
+          document.getElementById('worktree-data').value = data.worktrees;
+          parseWorktree();
+        }
+
+        serverAvailable = true;
+        setStatus('Loaded from server', 'success');
+        return true;
+      } catch (e) {
+        console.error('Server load failed:', e);
+        setStatus('Server not available - paste data manually', 'error');
+        return false;
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      checkServerAndLoad();
+    });
+
+    // Tab switching
+    function switchTab(tab) {
+      document.querySelectorAll('.input-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.input-area').forEach(a => a.classList.remove('active'));
+
+      document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+      document.getElementById(`${tab}-input`).classList.add('active');
+    }
+
+    // Parse WORKFLOW_STATE.md
+    function parseWorkflowState() {
+      const input = document.getElementById('workflow-data').value.trim();
+      if (!input) {
+        setStatus('No data provided', 'error');
+        return;
+      }
+
+      try {
+        workflowState = parseWorkflowMarkdown(input);
+        renderQuickResume();
+        renderActiveTracks();
+        renderAgentActivity();
+        setStatus('Parsed WORKFLOW_STATE successfully', 'success');
+      } catch (error) {
+        setStatus(`Parse error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    }
+
+    // Parse WORKFLOW_STATE markdown
+    function parseWorkflowMarkdown(input) {
+      const state = {
+        lastUpdated: null,
+        activeTrack: null,
+        lastReleased: null,
+        recentCompletion: null,
+        completedTracks: [],
+        queuedTracks: [],
+        openIssues: [],
+        metrics: {}
+      };
+
+      // Extract YAML frontmatter
+      const yamlMatch = input.match(/^---\n([\s\S]*?)\n---/);
+      if (yamlMatch) {
+        const yaml = yamlMatch[1];
+        const lastUpdatedMatch = yaml.match(/last_updated:\s*(.+)/);
+        const activeTrackMatch = yaml.match(/active_track:\s*(.+)/);
+        const lastReleasedMatch = yaml.match(/last_released:\s*(.+)/);
+
+        if (lastUpdatedMatch) state.lastUpdated = lastUpdatedMatch[1].trim();
+        if (activeTrackMatch) state.activeTrack = activeTrackMatch[1].trim();
+        if (lastReleasedMatch) state.lastReleased = lastReleasedMatch[1].trim();
+      }
+
+      // Extract recent completion
+      const recentMatch = input.match(/### Recent Completion[^\n]*\n\n([^\n]+)/);
+      if (recentMatch) {
+        state.recentCompletion = recentMatch[1].trim();
+      }
+
+      // Extract completed tracks
+      const completedSection = input.match(/## Completed Tracks\n\n([\s\S]*?)(?=\n## |$)/);
+      if (completedSection) {
+        const trackMatches = completedSection[1].matchAll(/### (v[\d.]+)[^\n]*\(([^)]+)\)\n\n([\s\S]*?)(?=\n### |$)/g);
+        for (const match of trackMatches) {
+          state.completedTracks.push({
+            version: match[1],
+            date: match[2],
+            content: match[3].trim()
+          });
+        }
+      }
+
+      // Extract metrics
+      const metricsSection = input.match(/## Session Metrics[\s\S]*?\| Metric \| Count \|\n\|[-|]+\|\n([\s\S]*?)(?=\n## |$)/);
+      if (metricsSection) {
+        const rows = metricsSection[1].trim().split('\n');
+        for (const row of rows) {
+          const cols = row.split('|').map(c => c.trim()).filter(c => c);
+          if (cols.length >= 2) {
+            state.metrics[cols[0]] = cols[1];
+          }
+        }
+      }
+
+      // Extract open issues
+      const issuesSection = input.match(/### Open Issues[\s\S]*?\| # \| Title[^\n]*\n\|[-|]+\|\n([\s\S]*?)(?=\n---|\n## |$)/);
+      if (issuesSection) {
+        const rows = issuesSection[1].trim().split('\n');
+        for (const row of rows) {
+          const cols = row.split('|').map(c => c.trim()).filter(c => c);
+          if (cols.length >= 3) {
+            state.openIssues.push({
+              number: cols[0],
+              title: cols[1],
+              priority: cols[2]
+            });
+          }
+        }
+      }
+
+      return state;
+    }
+
+    // Render Quick Resume
+    function renderQuickResume() {
+      const container = document.getElementById('quick-resume');
+
+      if (!workflowState && !sessionData) {
+        container.innerHTML = `<div class="empty-state"><h3>No session data</h3><p>Load WORKFLOW_STATE or SESSION_SUMMARY</p></div>`;
+        return;
+      }
+
+      const state = workflowState || {};
+      const session = sessionData || {};
+
+      const activeTrack = session.activeTrack || state.activeTrack || 'None';
+      const lastAction = session.lastAction || state.recentCompletion || 'N/A';
+      const nextAction = session.nextAction || (state.openIssues[0] ? `Issue #${state.openIssues[0].number}: ${state.openIssues[0].title}` : 'Check backlog');
+      const lastRelease = state.lastReleased || 'N/A';
+
+      container.innerHTML = `
+        <div class="resume-grid">
+          <div class="resume-item">
+            <span class="resume-label">Active Track</span>
+            <span class="resume-value branch">${activeTrack === 'null' ? 'None' : activeTrack}</span>
+          </div>
+          <div class="resume-item">
+            <span class="resume-label">Last Release</span>
+            <span class="resume-value">${lastRelease}</span>
+          </div>
+          <div class="resume-item">
+            <span class="resume-label">Last Action</span>
+            <span class="resume-value">${lastAction.substring(0, 60)}${lastAction.length > 60 ? '...' : ''}</span>
+          </div>
+          <div class="resume-item">
+            <span class="resume-label">Next Action</span>
+            <span class="resume-value">${nextAction.substring(0, 60)}${nextAction.length > 60 ? '...' : ''}</span>
+          </div>
+        </div>
+      `;
+
+      // Update version badge
+      if (state.lastReleased) {
+        document.getElementById('version-badge').textContent = state.lastReleased;
+      }
+    }
+
+    // Render Active Tracks
+    function renderActiveTracks() {
+      const container = document.getElementById('active-tracks');
+
+      if (!workflowState) {
+        container.innerHTML = `<div class="empty-state"><h3>No tracks loaded</h3><p>Parse WORKFLOW_STATE.md to see tracks</p></div>`;
+        return;
+      }
+
+      const tracks = [];
+
+      // Main track
+      if (workflowState.activeTrack && workflowState.activeTrack !== 'null') {
+        tracks.push({
+          name: workflowState.activeTrack,
+          status: 'active',
+          phase: 'In Progress'
+        });
+      }
+
+      // Recent completions as completed tracks
+      for (const track of workflowState.completedTracks.slice(0, 3)) {
+        tracks.push({
+          name: track.version,
+          status: 'complete',
+          phase: track.date,
+          artifacts: ['PRD', 'TDD', 'Code', 'Tests']
+        });
+      }
+
+      if (tracks.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No active tracks</h3>
+            <p>Ready to start new work</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="tracks-container">
+          ${tracks.map(track => `
+            <div class="track-card ${track.status}">
+              <div class="track-name">${track.name}</div>
+              <div class="track-phase">
+                <span class="status-badge status-${track.status}">${track.phase}</span>
+              </div>
+              ${track.artifacts ? `
+                <div class="track-artifacts">
+                  ${track.artifacts.map(a => `<span class="artifact-badge complete">${a}</span>`).join('')}
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Render Agent Activity
+    function renderAgentActivity() {
+      const container = document.getElementById('agent-activity');
+
+      if (!workflowState || workflowState.completedTracks.length === 0) {
+        container.innerHTML = `<div class="empty-state"><h3>No activity data</h3><p>Activity shows from WORKFLOW_STATE</p></div>`;
+        return;
+      }
+
+      // Generate activity from completed tracks
+      const activities = [];
+      for (const track of workflowState.completedTracks.slice(0, 3)) {
+        const features = track.content.match(/\*\*Features\*\*:([^\n]*(?:\n  -[^\n]*)*)/);
+        if (features) {
+          activities.push({
+            time: track.date,
+            agent: 'Supervisor',
+            message: `${track.version} released`
+          });
+        }
+
+        const prMatch = track.content.match(/\*\*PR\*\*:\s*#(\d+)/);
+        if (prMatch) {
+          activities.push({
+            time: track.date,
+            agent: 'Code Reviewer',
+            message: `PR #${prMatch[1]} merged`
+          });
+        }
+      }
+
+      if (activities.length === 0) {
+        container.innerHTML = `<div class="empty-state"><h3>No activity data</h3><p>Activity shows from WORKFLOW_STATE</p></div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="activity-list">
+          ${activities.slice(0, 6).map(a => `
+            <div class="activity-item">
+              <span class="activity-time">${a.time}</span>
+              <span class="activity-agent">${a.agent}</span>
+              <span class="activity-message">${a.message}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Parse SESSION_SUMMARY.md
+    function parseSessionSummary() {
+      const input = document.getElementById('session-data').value.trim();
+      if (!input) {
+        setStatus('No data provided', 'error');
+        return;
+      }
+
+      try {
+        sessionData = parseSessionMarkdown(input);
+        renderQuickResume();
+        setStatus('Parsed SESSION_SUMMARY successfully', 'success');
+      } catch (error) {
+        setStatus(`Parse error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    }
+
+    // Parse session markdown
+    function parseSessionMarkdown(input) {
+      const data = {
+        date: null,
+        activeTrack: null,
+        lastAction: null,
+        nextAction: null,
+        blocking: null,
+        decisions: [],
+        openQuestions: []
+      };
+
+      // Extract date from title
+      const dateMatch = input.match(/# Session Summary:\s*(\d{4}-\d{2}-\d{2})/);
+      if (dateMatch) data.date = dateMatch[1];
+
+      // Extract Quick Resume section
+      const activeMatch = input.match(/\*\*Active Track\*\*:\s*(.+)/);
+      const lastMatch = input.match(/\*\*Last Action\*\*:\s*(.+)/);
+      const nextMatch = input.match(/\*\*Next Action\*\*:\s*(.+)/);
+      const blockMatch = input.match(/\*\*Blocking Issues\*\*:\s*(.+)/);
+
+      if (activeMatch) data.activeTrack = activeMatch[1].trim();
+      if (lastMatch) data.lastAction = lastMatch[1].trim();
+      if (nextMatch) data.nextAction = nextMatch[1].trim();
+      if (blockMatch) data.blocking = blockMatch[1].trim();
+
+      // Extract decisions
+      const decisionsMatch = input.match(/## Decisions Made\n\n[\s\S]*?\| Decision \| Rationale \|\n\|[-|]+\|\n([\s\S]*?)(?=\n## |$)/);
+      if (decisionsMatch) {
+        const rows = decisionsMatch[1].trim().split('\n');
+        for (const row of rows) {
+          const cols = row.split('|').map(c => c.trim()).filter(c => c);
+          if (cols.length >= 2) {
+            data.decisions.push({ decision: cols[0], rationale: cols[1] });
+          }
+        }
+      }
+
+      // Extract open questions
+      const questionsSection = input.match(/## Open Questions\n\n([\s\S]*?)(?=\n## |$)/);
+      if (questionsSection) {
+        const questions = questionsSection[1].match(/- \[?[^\]]*\]?\s*(.+)/g);
+        if (questions) {
+          data.openQuestions = questions.map(q => q.replace(/^- \[?[^\]]*\]?\s*/, '').trim());
+        }
+      }
+
+      return data;
+    }
+
+    // Parse git worktree output
+    function parseWorktree() {
+      const input = document.getElementById('worktree-data').value.trim();
+      if (!input) {
+        setStatus('No data provided', 'error');
+        return;
+      }
+
+      try {
+        worktreeData = parseWorktreeOutput(input);
+        renderWorktreeSummary();
+        setStatus('Parsed worktree data successfully', 'success');
+      } catch (error) {
+        setStatus(`Parse error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    }
+
+    // Parse worktree output
+    function parseWorktreeOutput(input) {
+      const worktrees = [];
+      const lines = input.trim().split('\n');
+
+      for (const line of lines) {
+        const parts = line.trim().split(/\s+/);
+        if (parts.length >= 2) {
+          const path = parts[0];
+          const name = path.split('/').pop();
+          const isMain = !name.includes('--');
+
+          worktrees.push({
+            path,
+            name,
+            isMain,
+            branch: parts.length > 2 ? parts[2].replace(/[\[\]]/g, '') : parts[1]
+          });
+        }
+      }
+
+      return worktrees;
+    }
+
+    // Render worktree summary
+    function renderWorktreeSummary() {
+      const container = document.getElementById('worktree-summary');
+
+      if (!worktreeData || worktreeData.length === 0) {
+        container.innerHTML = `<div class="empty-state"><h3>No worktree data</h3><p>Paste git worktree list output</p></div>`;
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="worktree-summary">
+          ${worktreeData.map(wt => `
+            <div class="worktree-item">
+              <span class="worktree-dot ${wt.isMain ? 'main' : 'clean'}"></span>
+              <span>${wt.name}</span>
+              <span class="worktree-path">${wt.branch}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Copy resume context
+    async function copyResume() {
+      const state = workflowState || {};
+      const session = sessionData || {};
+
+      const activeTrack = session.activeTrack || state.activeTrack || 'None';
+      const lastAction = session.lastAction || state.recentCompletion || 'N/A';
+      const nextAction = session.nextAction || 'Check backlog';
+      const lastRelease = state.lastReleased || 'N/A';
+
+      const resumeText = `## Session Resume
+
+**Active Track**: ${activeTrack}
+**Last Release**: ${lastRelease}
+**Last Action**: ${lastAction}
+**Next Action**: ${nextAction}
+
+Please continue from where we left off.`;
+
+      try {
+        await navigator.clipboard.writeText(resumeText);
+        setStatus('Resume context copied to clipboard', 'success');
+      } catch (err) {
+        const textarea = document.createElement('textarea');
+        textarea.value = resumeText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        setStatus('Resume context copied to clipboard', 'success');
+      }
+    }
+
+    // Load sample data
+    function loadSampleWorkflow() {
+      document.getElementById('workflow-data').value = `---
+last_updated: 2026-01-30T15:00:00
+active_track: null
+last_released: v0.6.0
+---
+
+# Workflow State
+
+This file is maintained by the Supervisor agent.
+
+---
+
+## Current Status
+
+**No active track** - Ready to start new work.
+
+### Recent Completion: v0.6.0 Agent Context Management (PRD-016)
+
+All 10 implementation tasks completed.
+
+### Open Issues (Backlog)
+
+| # | Title | Priority | Labels |
+|---|-------|----------|--------|
+| 35 | Add dbt_expectations data quality tests | high | quality, testing |
+| 36 | Create singular tests for business rules | medium | quality, testing |
+
+---
+
+## Completed Tracks
+
+### v0.6.0 - Agent Context Management (PRD-016) (2026-01-30)
+
+- **PR**: #61 (Merged)
+- **Tag**: v0.6.0
+- **Features**:
+  - Inter-Agent Reports structure
+  - Session Summary templates
+
+### v0.5.0 - Analytics Layer (2026-01-30)
+
+- **PR**: #54 (Merged)
+- **Tag**: v0.5.0
+- **Features**: 7 analytics models, 91 tests
+
+---
+
+## Session Metrics (Cumulative)
+
+| Metric | Count |
+|--------|-------|
+| Releases | 4 (v0.3-v0.6) |
+| Models | 28 total |
+| Tests | 171+ passing |
+| PRs Merged | 4 |
+`;
+      parseWorkflowState();
+    }
+
+    function loadSampleSession() {
+      document.getElementById('session-data').value = `# Session Summary: 2026-01-30
+
+## Quick Resume
+
+- **Active Track**: feat/workflow-hub
+- **Last Action**: Built Workflow Hub playground
+- **Next Action**: Update README and CLAUDE.md
+- **Blocking Issues**: None
+
+## Context Snapshot
+
+**Where We Are**:
+Just completed implementing the Workflow Hub as the central command center.
+
+**What Just Happened**:
+Created playgrounds/workflow-hub.html with Quick Resume, Active Tracks, Agent Activity, and Playground Navigation.
+
+**What's Next**:
+Update documentation and verify all playground commands work.
+
+## Decisions Made
+
+| Decision | Rationale |
+|----------|-----------|
+| Single-file HTML | Consistent with other playgrounds |
+| Manual paste input | MVP approach, no server needed |
+
+## Open Questions
+
+- Should we add auto-refresh capability?
+- Consider LocalStorage caching for persistence?
+`;
+      parseSessionSummary();
+    }
+
+    function loadSampleWorktree() {
+      document.getElementById('worktree-data').value = `/Users/chris/dbt-playground                         abc1234 [main]
+/Users/chris/dbt-playground--customer-analytics   def5678 [feat/customer-analytics]
+/Users/chris/dbt-playground--tuva                 789abcd [feat/tuva-integration]`;
+      parseWorktree();
+    }
+
+    // Refresh all displays
+    function refreshDisplay() {
+      if (document.getElementById('workflow-data').value.trim()) {
+        parseWorkflowState();
+      }
+      if (document.getElementById('session-data').value.trim()) {
+        parseSessionSummary();
+      }
+      if (document.getElementById('worktree-data').value.trim()) {
+        parseWorktree();
+      }
+      setStatus('Refreshed', 'success');
+    }
+
+    // Set status message
+    function setStatus(message, type = '') {
+      statusEl.textContent = message;
+      statusEl.className = 'footer-status ' + type;
+    }
+
+    // Help modal
+    function showHelp() {
+      helpModal.classList.add('active');
+    }
+
+    function hideHelp() {
+      helpModal.classList.remove('active');
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ignore if typing in textarea
+      if (e.target.tagName === 'TEXTAREA') return;
+
+      switch (e.key.toLowerCase()) {
+        case 'r':
+          refreshDisplay();
+          break;
+        case '?':
+          showHelp();
+          break;
+        case '1':
+          switchTab('workflow');
+          break;
+        case '2':
+          switchTab('session');
+          break;
+        case '3':
+          switchTab('worktree');
+          break;
+        case 'escape':
+          hideHelp();
+          break;
+      }
+    });
+
+    // Click outside modal to close
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) {
+        hideHelp();
+      }
+    });
+  </script>
+</body>
+</html>
