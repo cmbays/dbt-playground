@@ -8,15 +8,16 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: Staging Models Complete (v0.3)
+**Status**: Analytics Layer Complete (v0.6.0)
 
 - dbt 1.11.2 + duckdb-adapter 1.10.0 working
-- 16 Synthea source tables defined + data loading macro
-- 9 staging models with comprehensive tests (80 data tests)
-- dbt-mcp configured (restart Claude Code for MCP tools)
+- 28 models total (staging, intermediate, dimensional, analytics)
+- 171+ data tests passing
+- Interactive playgrounds: Workflow Hub, Worktree Coordinator, Mermaid Designer
+- Agent context management with inter-agent reports
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
 
-**Next**: v0.4 - Build intermediate models with business logic.
+**Next**: v0.7 - Data quality enhancements (dbt_expectations).
 
 ## Project Structure
 
@@ -202,13 +203,15 @@ Visual tools for learning and development. Launch via commands or explore the HT
 
 | Playground | Command | Purpose |
 |------------|---------|---------|
+| Workflow Hub | `/playground:hub` | Central command center, session resume |
 | Worktree Coordinator | `/playground:worktrees` | Manage parallel git worktree sessions |
+| Mermaid Designer | `/playground:mermaid` | Create architecture diagrams visually |
 | Agent Visualizer | `/playground:agents` | View agent workflows and handoffs |
 | Schema Explorer | `/playground:schema` | Browse Synthea healthcare data |
 | Lineage Explorer | `/playground:lineage` | Trace dbt data flow |
 | Dashboard Builder | `/playground:dashboards` | Mock analytics layouts |
 
-**Quick Start**: Run `/playground` to see all available tools and their status.
+**Quick Start**: Run `/playground` to open the Workflow Hub (default entry point).
 
 **Location**: `playgrounds/` directory contains single-file HTML implementations.
 
