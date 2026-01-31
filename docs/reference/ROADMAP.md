@@ -163,6 +163,46 @@ Build a dbt analytics project while learning data transformation best practices 
 
 **Related Issues**: #35, #36, #37
 
+### Epic E13: Decision Management (ADR Adoption)
+
+**Theme**: Formalized Decision Tracking
+
+**Status**: Phase 1 Complete (2026-01-31)
+
+**Problem**: Technical decisions are made but not systematically findable. We spend time re-discovering rationale and re-debating settled questions.
+
+**Goal**: Reduce decision archaeology time by 80% (decisions findable in <2 minutes).
+
+**Phases**:
+
+| Phase | Version | Status | Deliverables |
+|-------|---------|--------|--------------|
+| Phase 1: Foundation | v0.7 | Complete | TDD-TEMPLATE ADR section, ADR_INDEX.md with 5 ADRs |
+| Phase 2: Integration | v0.8 | Planned | ADR-to-LEARNINGS promotion, Sage integration, historical backfill |
+| Phase 3: Maturity | v0.9+ | Planned | Metrics, FOR_CHRIS doc, template refinement |
+
+**Phase 1 Deliverables** (Complete):
+
+- [x] PRD-021: ADR Adoption Initiative
+- [x] TDD-TEMPLATE.md updated with ADR section and examples
+- [x] ADR_INDEX.md created with TDD-001 entries (ADR-1 through ADR-5)
+- [x] Significance criteria and approval chain documented
+
+**Phase 2 Deliverables** (Planned):
+
+- [ ] ADR-to-LEARNINGS promotion workflow
+- [ ] Sage persona update for promotion reviews
+- [ ] Session resume checklist with ADR review
+- [ ] 3-5 historical ADRs backfilled from v0.3-v0.6
+
+**Phase 3 Deliverables** (Quarterly):
+
+- [ ] ADR adoption metrics (count, promotion rate)
+- [ ] FOR_CHRIS: Understanding Decision-Making Patterns
+- [ ] Template refinements based on usage
+
+**Related**: [PRD-021](../specs/PRD-021-ADR-ADOPTION.md), [ADR_INDEX](./ADR_INDEX.md)
+
 ---
 
 ## Future Considerations
