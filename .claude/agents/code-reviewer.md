@@ -269,15 +269,23 @@ Overall: **Changes Requested** - 1 blocker must be addressed"
 **Alternative Method** (GitHub API for true line-anchored comments):
 
 ```bash
-# Note: Requires specific diff position, not file line number
+# Line-anchored comment on specific file line
 gh api repos/{owner}/{repo}/pulls/{pr}/comments \
   -f body="[BLOCKER] Missing null handling for edge case" \
   -f path="models/staging/stg_orders.sql" \
-  -F position=42 \
-  -f commit_id="$(gh pr view N --json headRefOid -q .headRefOid)"
+  -f commit_id="$(gh pr view N --json headRefOid -q .headRefOid)" \
+  -F line=42 \
+  -f side="RIGHT"
 ```
 
-The `position` parameter refers to the line number in the unified diff, not the file. Use the preferred method for reliability.
+**Key syntax notes**:
+
+- Use `-F line=42` (raw integer), NOT `-f line=42` (string)
+- `side="RIGHT"` refers to the new version of the file
+- Line must be within the diff range (changed or context lines)
+- If line is not in diff, the API returns "could not be resolved"
+
+**Limitation**: Line-anchored comments can only be placed on lines that appear in the diff (changed lines or context lines). For comments on unchanged code, use the structured markdown method above.
 
 ### Summary Review Format
 
