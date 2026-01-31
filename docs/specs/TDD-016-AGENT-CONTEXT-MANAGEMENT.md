@@ -1,6 +1,6 @@
 ---
 audience: [architect, developer, supervisor]
-status: draft
+status: implemented
 epic: Agent Context Management Enhancements
 version: 1.0
 last_updated: 2026-01-30
@@ -848,4 +848,4 @@ The agent reports folder integrates with existing workflow state:
 
 **Document Version**: 1.0
 **Last Updated**: 2026-01-30
-**Status**: Draft - Ready for review
+**Status**: Implemented in v0.6.0
