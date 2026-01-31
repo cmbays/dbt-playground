@@ -855,31 +855,140 @@
       font-size: 0.8125rem;
     }
 
-    /* Token Update Modal */
-    .token-input-modal {
-      max-width: 350px;
+    /* Session Details Modal */
+    .details-modal {
+      max-width: 600px;
     }
 
-    .token-input-modal input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid var(--border-color);
+    .details-modal pre {
+      background: var(--bg-tertiary);
+      padding: 1rem;
       border-radius: 6px;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-size: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .details-section {
       margin-bottom: 1rem;
     }
 
-    .token-input-modal input:focus {
-      outline: none;
-      border-color: var(--accent-primary);
+    .details-section h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
     }
 
-    .token-modal-actions {
+    .details-blocking-reason {
+      background: #fee2e2;
+      border: 1px solid var(--accent-danger);
+      border-radius: 6px;
+      padding: 1rem;
+      color: #b91c1c;
+      font-weight: 500;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .details-blocking-reason {
+        background: #450a0a;
+        color: #fca5a5;
+      }
+    }
+
+    .details-actions {
       display: flex;
-      justify-content: flex-end;
       gap: 0.5rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Quick Resume Card */
+    .resume-card {
+      border-left: 4px solid var(--accent-success);
+    }
+
+    .resume-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .resume-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .resume-label {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .resume-value {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .resume-value.branch {
+      font-family: var(--font-mono);
+      color: var(--accent-primary);
+    }
+
+    /* Worktree Legend */
+    .worktree-legend {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .worktree-parent {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .worktree-parent.warning {
+      color: var(--accent-warning);
+    }
+
+    /* Handoff Button */
+    .handoff-btn {
+      font-size: 0.625rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--accent-warning);
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      color: white;
+      font-weight: 500;
+    }
+
+    .handoff-btn:hover {
+      opacity: 0.9;
     }
 
     /* Responsive */
@@ -904,7 +1013,7 @@
         </svg>
         Workflow Hub
       </h1>
-      <span class="version-badge" id="version-badge">v0.7.0</span>
+      <span class="version-badge" id="version-badge">v0.7.1</span>
     </div>
     <div class="header-actions">
       <div class="polling-controls">
@@ -970,6 +1079,25 @@
 
     <!-- Dashboard Grid -->
     <div class="dashboard-grid">
+      <!-- Quick Resume Panel -->
+      <div class="card resume-card" id="resume-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            Quick Resume
+          </span>
+          <button class="btn btn-sm btn-success" onclick="copyResumeContext()">Copy Context</button>
+        </div>
+        <div class="card-body" id="resume-container">
+          <div class="empty-state">
+            <h3>No session data</h3>
+            <p>Sessions will populate this panel</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Active Sessions -->
       <div class="card full-width">
         <div class="card-header">
@@ -1048,7 +1176,7 @@
             <a href="workflow-hub.html" class="playground-link current">
               <span class="playground-icon">&#127968;</span>
               <span class="playground-name">Workflow Hub</span>
-              <span class="playground-status">v0.7.0</span>
+              <span class="playground-status">v0.7.1</span>
             </a>
             <a href="worktree-coordinator.html" class="playground-link">
               <span class="playground-icon">&#127795;</span>
@@ -1101,19 +1229,21 @@
   <div class="modal-overlay" id="help-modal">
     <div class="modal">
       <div class="modal-header">
-        <h2>Workflow Hub v0.7 Help</h2>
+        <h2>Workflow Hub v0.7.1 Help</h2>
         <button class="modal-close" onclick="hideHelp()">&times;</button>
       </div>
       <div class="modal-body">
         <h3>What is this?</h3>
         <p>The Workflow Hub is your central command center for managing multiple Claude Code sessions. It answers: "Where are my teams?" "Who is blocked?" "How healthy is the system?"</p>
 
-        <h3>Key Features (v0.7)</h3>
+        <h3>Key Features (v0.7.1)</h3>
         <ul>
-          <li><strong>Session Polling</strong> - Auto-refreshes every 10 seconds</li>
+          <li><strong>Quick Resume</strong> - Copy context for continuing work in new sessions</li>
+          <li><strong>Session Details</strong> - Click "View Details" on blocked sessions for full context</li>
+          <li><strong>Handoff Preparation</strong> - Click "Handoff" to prepare a session for team transition</li>
+          <li><strong>Worktree Legend</strong> - Color-coded with parent branch visibility</li>
           <li><strong>Blocked Detection</strong> - Blocked sessions appear at the top</li>
           <li><strong>Workflow Stages</strong> - UNDERSTAND/PLAN/BUILD/VERIFY/DEPLOY visualization</li>
-          <li><strong>Token Budget</strong> - Context usage with color thresholds</li>
           <li><strong>GitHub Backlog</strong> - Issues grouped by priority (P0/P1/P2)</li>
         </ul>
 
@@ -1152,22 +1282,15 @@
     </div>
   </div>
 
-  <!-- Token Update Modal -->
-  <div class="modal-overlay" id="token-modal">
-    <div class="modal token-input-modal">
+  <!-- Session Details Modal -->
+  <div class="modal-overlay" id="details-modal">
+    <div class="modal details-modal">
       <div class="modal-header">
-        <h2>Update Token Budget</h2>
-        <button class="modal-close" onclick="hideTokenModal()">&times;</button>
+        <h2 id="details-title">Session Details</h2>
+        <button class="modal-close" onclick="hideDetailsModal()">&times;</button>
       </div>
-      <div class="modal-body">
-        <p style="font-size: 0.875rem; margin-bottom: 1rem; color: var(--text-secondary);">
-          Enter context usage percentage (0-100):
-        </p>
-        <input type="number" id="token-input" min="0" max="100" placeholder="e.g., 72">
-        <div class="token-modal-actions">
-          <button class="btn" onclick="hideTokenModal()">Cancel</button>
-          <button class="btn btn-primary" onclick="saveTokenBudget()">Save</button>
-        </div>
+      <div class="modal-body" id="details-body">
+        <!-- Populated dynamically -->
       </div>
     </div>
   </div>
@@ -1190,7 +1313,6 @@
     let sessionInterval = null;
     let issueInterval = null;
     let updateTimerInterval = null;
-    let currentTokenSessionId = null;
 
     // Token budgets stored in localStorage
     const TOKEN_STORAGE_KEY = 'hub_token_budgets';
@@ -1209,7 +1331,8 @@
     const worktreesContainer = document.getElementById('worktrees-container');
     const fallbackPanel = document.getElementById('fallback-panel');
     const helpModal = document.getElementById('help-modal');
-    const tokenModal = document.getElementById('token-modal');
+    const detailsModal = document.getElementById('details-modal');
+    const resumeContainer = document.getElementById('resume-container');
 
     // ==================== Initialization ====================
     document.addEventListener('DOMContentLoaded', () => {
@@ -1432,6 +1555,9 @@
       const activeSessions = sessions.filter(s => !s.blocked);
       sessionCountEl.textContent = `${sessions.length} session${sessions.length !== 1 ? 's' : ''}`;
 
+      // Render Quick Resume
+      renderQuickResume();
+
       if (sessions.length === 0) {
         sessionsContainer.innerHTML = `
           <div class="empty-state">
@@ -1445,6 +1571,46 @@
       sessionsContainer.innerHTML = `
         <div class="sessions-grid">
           ${sessions.map(session => renderSessionCard(session)).join('')}
+        </div>
+      `;
+    }
+
+    function renderQuickResume() {
+      if (sessions.length === 0) {
+        resumeContainer.innerHTML = `
+          <div class="empty-state">
+            <h3>No session data</h3>
+            <p>Sessions will populate this panel</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Find most recently updated non-blocked session, or first blocked one
+      const sortedSessions = [...sessions].sort((a, b) => (b.modified || 0) - (a.modified || 0));
+      const activeSession = sortedSessions.find(s => !s.blocked) || sortedSessions[0];
+
+      const blockedCount = sessions.filter(s => s.blocked).length;
+      const blockedText = blockedCount > 0 ? `${blockedCount} session${blockedCount > 1 ? 's' : ''} blocked` : 'None blocked';
+
+      resumeContainer.innerHTML = `
+        <div class="resume-grid">
+          <div class="resume-item">
+            <span class="resume-label">Active Session</span>
+            <span class="resume-value branch">${escapeHtml(activeSession.branch || activeSession.id)}</span>
+          </div>
+          <div class="resume-item">
+            <span class="resume-label">Current Stage</span>
+            <span class="resume-value">${escapeHtml(activeSession.stage || 'UNDERSTAND')}</span>
+          </div>
+          <div class="resume-item">
+            <span class="resume-label">Progress</span>
+            <span class="resume-value">${escapeHtml(activeSession.stage_progress || 'No progress info')}</span>
+          </div>
+          <div class="resume-item">
+            <span class="resume-label">Blocked Status</span>
+            <span class="resume-value" style="color: ${blockedCount > 0 ? 'var(--accent-danger)' : 'var(--accent-success)'}">${blockedText}</span>
+          </div>
         </div>
       `;
     }
@@ -1492,7 +1658,7 @@
             </div>
             <div class="budget-text">
               <span>${tokenPercent > 0 ? tokenPercent + '% context used' : 'Context unknown'}</span>
-              <button class="budget-update-btn" onclick="showTokenModal('${escapeHtml(session.id)}')">Update</button>
+              <button class="handoff-btn" onclick="prepareHandoff('${escapeHtml(session.id)}', '${escapeHtml(session.branch || session.id)}')" title="Copy handoff prompt to prepare for team transition">Handoff</button>
             </div>
           </div>
 
@@ -1526,7 +1692,7 @@
             <div class="blocking-reason">
               ${escapeHtml(session.blocking_reason || 'No reason provided')}
             </div>
-            <button class="btn btn-sm" onclick="scrollToSession('${escapeHtml(session.id)}')">View Details</button>
+            <button class="btn btn-sm btn-primary" onclick="showDetailsModal('${escapeHtml(session.id)}')">View Details</button>
           </div>
         `;
       }).join('');
@@ -1631,18 +1797,45 @@
         return;
       }
 
-      const html = worktrees.map(wt => `
-        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0; font-size: 0.8125rem;">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: ${wt.isMain ? 'var(--accent-primary)' : 'var(--accent-success)'}"></span>
-          <span style="font-weight: 500;">${escapeHtml(wt.name)}</span>
-          <span style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.75rem;">${escapeHtml(wt.branch || '')}</span>
+      // Legend
+      const legend = `
+        <div class="worktree-legend">
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--accent-primary)"></span>
+            <span>Main repo</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--accent-success)"></span>
+            <span>Worktree (from main)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background: var(--accent-warning)"></span>
+            <span>Non-main parent</span>
+          </div>
         </div>
-      `).join('');
+      `;
 
-      worktreesContainer.innerHTML = html;
+      const worktreeItems = worktrees.map(wt => {
+        // Determine if this worktree might be from a non-main branch (stacked PR scenario)
+        // For now, we assume all are from main unless the branch name suggests otherwise
+        const isFromMain = wt.isMain || !wt.branch || wt.branch === 'main' || !wt.branch.includes('/');
+        const parentWarning = !wt.isMain && !isFromMain;
+        const dotColor = wt.isMain ? 'var(--accent-primary)' : (parentWarning ? 'var(--accent-warning)' : 'var(--accent-success)');
+
+        return `
+          <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0; font-size: 0.8125rem;">
+            <span class="legend-dot" style="background: ${dotColor}"></span>
+            <span style="font-weight: 500; flex: 1;">${escapeHtml(wt.name)}</span>
+            <span style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.6875rem;">${escapeHtml(wt.branch || '')}</span>
+            ${wt.parentBranch && wt.parentBranch !== 'main' ? `<span class="worktree-parent warning">← ${escapeHtml(wt.parentBranch)}</span>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      worktreesContainer.innerHTML = legend + worktreeItems;
     }
 
-    // ==================== Token Budget ====================
+    // ==================== Token Budget (from localStorage) ====================
     function getTokenBudget(sessionId) {
       try {
         const budgets = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEY) || '{}');
@@ -1652,52 +1845,164 @@
       }
     }
 
-    function setTokenBudget(sessionId, percent) {
-      try {
-        const budgets = JSON.parse(localStorage.getItem(TOKEN_STORAGE_KEY) || '{}');
-        budgets[sessionId] = {
-          percent: percent,
-          updatedAt: new Date().toISOString()
-        };
-        localStorage.setItem(TOKEN_STORAGE_KEY, JSON.stringify(budgets));
-      } catch (e) {
-        console.error('Failed to save token budget:', e);
-      }
+    // ==================== Session Details Modal ====================
+    function showDetailsModal(sessionId) {
+      const session = sessions.find(s => s.id === sessionId);
+      if (!session) return;
+
+      document.getElementById('details-title').textContent = session.branch || session.id;
+
+      const blockedSection = session.blocked ? `
+        <div class="details-section">
+          <h4>Blocking Reason</h4>
+          <div class="details-blocking-reason">
+            ${escapeHtml(session.blocking_reason || 'No reason provided')}
+          </div>
+        </div>
+      ` : '';
+
+      const duration = session.blocked_since
+        ? formatDuration(new Date() - new Date(session.blocked_since))
+        : null;
+
+      document.getElementById('details-body').innerHTML = `
+        ${blockedSection}
+
+        <div class="details-section">
+          <h4>What You Need To Do</h4>
+          <p style="font-size: 0.875rem; color: var(--text-primary);">
+            ${session.blocked
+              ? 'Review the blocking reason above and provide the requested input or approval to unblock this session.'
+              : 'This session is not blocked. Check the current focus below for context.'}
+          </p>
+          ${duration ? `<p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Waiting for: ${duration}</p>` : ''}
+        </div>
+
+        <div class="details-section">
+          <h4>Session State</h4>
+          <pre>${escapeHtml(session.raw || 'No raw content available')}</pre>
+        </div>
+
+        <div class="details-actions">
+          <button class="btn" onclick="hideDetailsModal()">Close</button>
+          <button class="btn btn-primary" onclick="copySessionContext('${escapeHtml(sessionId)}')">Copy Context</button>
+        </div>
+      `;
+
+      detailsModal.classList.add('active');
     }
 
-    function showTokenModal(sessionId) {
-      currentTokenSessionId = sessionId;
-      const budget = getTokenBudget(sessionId);
-      document.getElementById('token-input').value = budget.percent ?? '';
-      tokenModal.classList.add('active');
-      document.getElementById('token-input').focus();
+    function hideDetailsModal() {
+      detailsModal.classList.remove('active');
     }
 
-    function hideTokenModal() {
-      tokenModal.classList.remove('active');
-      currentTokenSessionId = null;
+    function copySessionContext(sessionId) {
+      const session = sessions.find(s => s.id === sessionId);
+      if (!session) return;
+
+      const contextText = `## Session Context: ${session.branch || session.id}
+
+**Stage**: ${session.stage || 'UNDERSTAND'}
+**Progress**: ${session.stage_progress || 'No progress info'}
+**Blocked**: ${session.blocked ? 'Yes - ' + (session.blocking_reason || 'No reason') : 'No'}
+
+### SESSION_STATE Content:
+\`\`\`yaml
+${session.raw || 'No content available'}
+\`\`\`
+
+Please review and provide guidance to unblock this session.`;
+
+      copyToClipboard(contextText);
+      setStatus('Session context copied to clipboard', 'success');
+      hideDetailsModal();
     }
 
-    function saveTokenBudget() {
-      const input = document.getElementById('token-input');
-      const percent = parseInt(input.value);
-
-      if (isNaN(percent) || percent < 0 || percent > 100) {
-        alert('Please enter a valid percentage (0-100)');
+    // ==================== Quick Resume ====================
+    function copyResumeContext() {
+      if (sessions.length === 0) {
+        setStatus('No sessions to copy', 'error');
         return;
       }
 
-      setTokenBudget(currentTokenSessionId, percent);
+      const sortedSessions = [...sessions].sort((a, b) => (b.modified || 0) - (a.modified || 0));
+      const blockedSessions = sessions.filter(s => s.blocked);
 
-      // Update the session in memory
-      const session = sessions.find(s => s.id === currentTokenSessionId);
-      if (session) {
-        session.context_usage = percent;
+      let resumeText = `## Session Resume - ${new Date().toISOString().split('T')[0]}
+
+**Active Sessions**: ${sessions.length}
+**Blocked**: ${blockedSessions.length}
+
+`;
+
+      // Add each session summary
+      for (const session of sortedSessions) {
+        resumeText += `### ${session.branch || session.id}
+- **Stage**: ${session.stage || 'UNDERSTAND'}
+- **Progress**: ${session.stage_progress || 'No progress info'}
+- **Status**: ${session.blocked ? 'BLOCKED - ' + (session.blocking_reason || 'No reason') : 'Active'}
+- **Context**: ${session.context_usage ? session.context_usage + '%' : 'Unknown'}
+
+`;
       }
 
-      hideTokenModal();
-      renderSessions();
-      setStatus('Token budget updated', 'success');
+      resumeText += `Please continue where we left off. Check blocked sessions first.`;
+
+      copyToClipboard(resumeText);
+      setStatus('Resume context copied to clipboard', 'success');
+    }
+
+    // ==================== Handoff Preparation ====================
+    function prepareHandoff(sessionId, branchName) {
+      const handoffPrompt = `## Prepare for Team Handoff
+
+**Session**: ${branchName}
+**Action Required**: Stop current work and prepare context for team transition.
+
+Please complete the following handoff checklist:
+
+1. **Update SESSION_STATE**: Write current status to \`temp/SESSION_STATE/${sessionId}.md\`
+   - Set accurate workflow stage
+   - Update stage_progress with specifics
+   - Note any blocking issues
+   - Record context_usage percentage
+
+2. **Save All Artifacts**: Ensure these are up to date:
+   - \`temp/AGENT_REPORTS/*/DEV_REPORT.md\` - Implementation notes
+   - \`temp/AGENT_REPORTS/*/ARCH_REPORT.md\` - Design decisions
+   - Any uncommitted code changes
+
+3. **Document Current Focus**:
+   - What were you working on?
+   - What's the next step?
+   - Any gotchas or context the next team needs?
+
+4. **Write Decisions Pending**:
+   - List any questions awaiting human input
+   - Note any architectural decisions needed
+
+After completing this checklist, the next team can pick up where you left off.
+
+---
+*Copy this prompt to the session that needs to hand off.*`;
+
+      copyToClipboard(handoffPrompt);
+      setStatus('Handoff prompt copied - paste in target session', 'success');
+    }
+
+    // ==================== Clipboard Helper ====================
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (err) {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
     }
 
     // ==================== Manual Input (Fallback) ====================
@@ -1842,7 +2147,7 @@ Building customer analytics models. Currently implementing dim_customer.
           break;
         case 'escape':
           hideHelp();
-          hideTokenModal();
+          hideDetailsModal();
           break;
       }
     });
@@ -1852,16 +2157,8 @@ Building customer analytics models. Currently implementing dim_customer.
       if (e.target === helpModal) hideHelp();
     });
 
-    tokenModal.addEventListener('click', (e) => {
-      if (e.target === tokenModal) hideTokenModal();
-    });
-
-    // Handle Enter key in token input
-    document.getElementById('token-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        saveTokenBudget();
-      }
+    detailsModal.addEventListener('click', (e) => {
+      if (e.target === detailsModal) hideDetailsModal();
     });
   </script>
 </body>
