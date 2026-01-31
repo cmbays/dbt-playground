@@ -29,6 +29,7 @@ and ensures development aligns with user needs and project goals.
 | Tool         | Purpose                                              |
 | ------------ | ---------------------------------------------------- |
 | `gh` CLI     | Create/manage GitHub issues and labels               |
+| `github-ops` | Batch issue creation, milestone tracking (Phase 3)   |
 | `pm-toolkit` | Prioritization, issue templates, Definition of Done  |
 
 ## Command Integration
@@ -107,3 +108,79 @@ pm: what's the priority for the order metrics improvements?
 pm: create an issue for the schema test failure I found
 pm: scope out what v0.4 should include
 ```
+
+## GitHub Operations (Phase 3)
+
+The PM can now manage GitHub issues and milestones programmatically via `github-ops.py` CLI tool.
+
+### Issue Creation
+
+**Single Issue**:
+```bash
+gh issue create --title "feat(github): new feature" \
+  --body "Description here" \
+  --label "enhancement" \
+  --milestone "v0.8"
+```
+
+**Batch Creation from Template**:
+```bash
+uv run scripts/github-ops.py issue batch docs/templates/issues/phase-3.yaml
+```
+
+**Validate Template**:
+```bash
+uv run scripts/github-ops.py issue validate docs/templates/issues/phase-3.yaml
+```
+
+### YAML Template Format
+
+```yaml
+version: 1
+
+defaults:
+  milestone: v0.8
+  labels: [workflow, phase-3]
+  assignee: cmbays
+
+issues:
+  - title: "feat: feature title"
+    description: |
+      ## Description
+      Clear description here
+
+      ## Acceptance Criteria
+      - [ ] AC-1: Done
+
+      ## Related
+      Closes #92
+    labels: [enhancement]
+    priority: high
+```
+
+See `docs/schemas/issue-template.schema.json` for complete schema.
+
+### Milestone Management
+
+**Create Milestone**:
+```bash
+uv run scripts/github-ops.py milestone create "v0.8" \
+  --due "2026-02-28" \
+  --description "GitHub Project Management"
+```
+
+**List Milestones**:
+```bash
+uv run scripts/github-ops.py milestone list
+```
+
+**Show Status**:
+```bash
+uv run scripts/github-ops.py milestone status "v0.8"
+```
+
+### Template Location
+
+Issue templates for batch creation: `docs/templates/issues/`
+
+Example: `docs/templates/issues/phase-3.yaml` - Phase 3 features template
