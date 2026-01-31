@@ -12,6 +12,8 @@ Usage:
 
 Then open http://localhost:5050 in your browser.
 Playgrounds will auto-detect the server and load data automatically.
+
+v0.7.0 - Added session-states and github-issues endpoints for Workflow Hub
 """
 
 import json
@@ -205,6 +207,64 @@ def get_agent_reports():
     return jsonify({"reports": reports, "error": None})
 
 
+# --- Session State API Routes (v0.7) ---
+
+
+@app.route("/api/session-states")
+def get_session_states():
+    """Return all SESSION_STATE files for Workflow Hub v0.7."""
+    states_dir = TEMP_DIR / "SESSION_STATE"
+    if not states_dir.exists():
+        return jsonify({"sessions": [], "error": None})
+
+    sessions = []
+    for f in states_dir.glob("*.md"):
+        if f.name == ".gitkeep":
+            continue
+        try:
+            content = f.read_text()
+            sessions.append({
+                "id": f.stem,
+                "content": content,
+                "modified": f.stat().st_mtime,
+            })
+        except Exception as e:
+            # Skip files that can't be read
+            continue
+
+    # Sort by modification time, most recent first
+    sessions.sort(key=lambda x: x["modified"], reverse=True)
+    return jsonify({"sessions": sessions, "error": None})
+
+
+@app.route("/api/github-issues")
+def get_github_issues():
+    """Return GitHub issues via gh CLI for Workflow Hub v0.7."""
+    try:
+        result = subprocess.run(
+            [
+                "gh", "issue", "list",
+                "--json", "number,title,labels,state,createdAt",
+                "--state", "open",
+                "-L", "50"
+            ],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,  # Timeout after 30 seconds
+        )
+        if result.returncode == 0:
+            issues = json.loads(result.stdout) if result.stdout else []
+            return jsonify({"issues": issues, "error": None})
+        return jsonify({"issues": [], "error": result.stderr or "gh command failed"})
+    except subprocess.TimeoutExpired:
+        return jsonify({"issues": [], "error": "GitHub CLI timeout"})
+    except FileNotFoundError:
+        return jsonify({"issues": [], "error": "gh CLI not installed"})
+    except Exception as e:
+        return jsonify({"issues": [], "error": str(e)})
+
+
 # --- Combined Data Endpoint ---
 
 
@@ -243,6 +303,21 @@ def get_all_data():
     )
     session_content = summaries[0].read_text() if summaries else None
 
+    # Session states (v0.7)
+    states_dir = TEMP_DIR / "SESSION_STATE"
+    session_states = []
+    if states_dir.exists():
+        for f in states_dir.glob("*.md"):
+            if f.name != ".gitkeep":
+                try:
+                    session_states.append({
+                        "id": f.stem,
+                        "content": f.read_text(),
+                        "modified": f.stat().st_mtime,
+                    })
+                except Exception:
+                    continue
+
     return jsonify(
         {
             "worktrees": worktrees.stdout,
@@ -250,6 +325,7 @@ def get_all_data():
             "gitLog": log.stdout,
             "workflowState": workflow_content,
             "sessionSummary": session_content,
+            "sessionStates": session_states,
         }
     )
 
@@ -275,14 +351,16 @@ if __name__ == "__main__":
     print(f"    Worktrees:  http://localhost:5050/playgrounds/worktree-coordinator.html")
     print(f"    Mermaid:    http://localhost:5050/playgrounds/mermaid-designer.html")
     print(f"\n  API Endpoints:")
-    print(f"    GET /api/health          - Health check")
-    print(f"    GET /api/all             - All data (combined)")
-    print(f"    GET /api/worktrees       - Git worktree list")
-    print(f"    GET /api/git-status      - Git status")
-    print(f"    GET /api/git-log         - Recent commits")
-    print(f"    GET /api/workflow-state  - WORKFLOW_STATE.md")
+    print(f"    GET /api/health            - Health check")
+    print(f"    GET /api/all               - All data (combined)")
+    print(f"    GET /api/worktrees         - Git worktree list")
+    print(f"    GET /api/git-status        - Git status")
+    print(f"    GET /api/git-log           - Recent commits")
+    print(f"    GET /api/workflow-state    - WORKFLOW_STATE.md")
     print(f"    GET /api/session-summaries - Session summaries")
-    print(f"    GET /api/agent-reports   - Agent reports")
+    print(f"    GET /api/session-states    - Session state files (v0.7)")
+    print(f"    GET /api/github-issues     - GitHub issues via gh (v0.7)")
+    print(f"    GET /api/agent-reports     - Agent reports")
     print(f"\n  Press Ctrl+C to stop\n")
     print("=" * 50 + "\n")
 
