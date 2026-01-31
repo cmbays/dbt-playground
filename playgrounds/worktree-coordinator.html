@@ -864,19 +864,29 @@
       }
     }
 
-    // Refresh display
-    function refreshDisplay() {
+    // Refresh display - try server first, then fall back to re-parsing pasted data
+    async function refreshDisplay() {
       const refreshBtn = document.getElementById('refresh-btn');
 
       // Add visual feedback - spinner animation
       refreshBtn.classList.add('refreshing');
-      setTimeout(() => refreshBtn.classList.remove('refreshing'), 500);
 
+      // Try server first
+      const serverLoaded = await loadFromServer();
+
+      // Remove spinner after operation completes
+      setTimeout(() => refreshBtn.classList.remove('refreshing'), 300);
+
+      if (serverLoaded) {
+        return; // Server data loaded successfully
+      }
+
+      // Fall back to re-parsing existing data
       if (gitOutput.value.trim()) {
         parseAndDisplay();
-        setStatus('Data re-parsed successfully', 'success');
+        setStatus('Data re-parsed (server unavailable)', 'success');
       } else {
-        setStatus('No data to re-parse - paste git output first', 'error');
+        setStatus('No data - paste git output or start server', 'error');
       }
     }
 

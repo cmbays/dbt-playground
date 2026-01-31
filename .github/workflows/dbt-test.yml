@@ -1,0 +1,110 @@
+name: dbt Tests
+
+on:
+  pull_request:
+    paths:
+      - 'dbt_project/**'
+      - 'pyproject.toml'
+  push:
+    branches: [main]
+    paths:
+      - 'dbt_project/**'
+
+jobs:
+  dbt-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dbt_project
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: |
+          cd ..
+          uv sync
+
+      - name: Setup dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          healthcare_analytics:
+            target: ci
+            outputs:
+              ci:
+                type: duckdb
+                path: ':memory:'
+                threads: 4
+          EOF
+
+      - name: Load source data
+        run: uv run dbt run-operation load_synthea_sources
+
+      - name: Run dbt build
+        id: dbt_build
+        run: |
+          uv run dbt build --full-refresh 2>&1 | tee dbt_output.log
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Parse test results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('dbt_project/dbt_output.log', 'utf8');
+
+            // Parse dbt output for test results
+            const passMatch = output.match(/(\d+) of (\d+) PASS/);
+            const failMatch = output.match(/(\d+) of (\d+) FAIL/);
+            const warnMatch = output.match(/(\d+) of (\d+) WARN/);
+
+            let comment = '## dbt Test Results\n\n';
+
+            if (passMatch) {
+              comment += `- **Passed**: ${passMatch[1]} tests\n`;
+            }
+            if (failMatch && parseInt(failMatch[1]) > 0) {
+              comment += `- **Failed**: ${failMatch[1]} tests\n`;
+            }
+            if (warnMatch && parseInt(warnMatch[1]) > 0) {
+              comment += `- **Warnings**: ${warnMatch[1]} tests\n`;
+            }
+
+            // Add failure details if present
+            const failures = output.match(/FAIL \d+ .+/g);
+            if (failures) {
+              comment += '\n### Failed Tests\n\n';
+              comment += '```\n' + failures.join('\n') + '\n```\n';
+            }
+
+            // Comment on PR
+            if (context.eventName === 'pull_request') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: comment
+              });
+            }
+
+      - name: Upload dbt artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-artifacts
+          path: |
+            dbt_project/target/manifest.json
+            dbt_project/target/run_results.json
+            dbt_project/dbt_output.log
+          retention-days: 7

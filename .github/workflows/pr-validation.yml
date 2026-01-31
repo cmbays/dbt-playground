@@ -1,0 +1,39 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+
+            // Conventional commit format: type(scope): description
+            // type: feat, fix, docs, style, refactor, test, chore, build, ci
+            // scope: optional
+            // Breaking changes: type!: description
+            const pattern = /^(feat|fix|docs|style|refactor|test|chore|build|ci)(\(.+\))?!?:\s*.+/;
+
+            if (!pattern.test(title)) {
+              core.setFailed(
+                'PR title must follow Conventional Commits format:\n' +
+                '  type(scope): description\n\n' +
+                'Valid types: feat, fix, docs, style, refactor, test, chore, build, ci\n' +
+                'Scope: optional (lowercase with hyphens/underscores)\n' +
+                'Breaking changes: add ! before colon (e.g., feat!: description)\n\n' +
+                'Examples:\n' +
+                '  feat(staging): add stg_stripe__payments model\n' +
+                '  fix(marts): correct null handling in dim_customers\n' +
+                '  docs: update README\n' +
+                '  feat!: remove deprecated API'
+              );
+              return;
+            }
+
+            console.log(`PR title valid: "${title}"`);
