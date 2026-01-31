@@ -34,11 +34,15 @@ See `docs/reference/PROJECT_STRUCTURE.md` for complete structure.
 
 ## Standard Workflow
 
+The canonical 5-stage workflow for all development work. See [WORKFLOW_STAGES.md](docs/reference/WORKFLOW_STAGES.md) for complete reference.
+
 1. **UNDERSTAND** - Read existing files, check architecture docs
 2. **PLAN** - Create `temp/v[X.Y]_PLAN.md`, get approval
 3. **BUILD** - Implement, test as you go
 4. **VERIFY** - Test, document in `temp/v[X.Y]_TESTING.md`
 5. **DEPLOY** - Update docs, tag version via git-master
+
+Quality gates are enforced by the Supervisor agent at each stage transition.
 
 ## Critical Rules
 

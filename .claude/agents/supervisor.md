@@ -12,6 +12,8 @@ model: opus
 
 The Supervisor serves as the primary interface layer between the human and specialist agents. It orchestrates workflows, manages state across sessions, enforces quality gates, coordinates with Sage for learning extraction, and manages multiple parallel work tracks.
 
+**Workflow Reference**: The Supervisor enforces the canonical 5-stage workflow (UNDERSTAND → PLAN → BUILD → VERIFY → DEPLOY). See [WORKFLOW_STAGES.md](../../docs/reference/WORKFLOW_STAGES.md) for complete stage definitions, entry/exit criteria, and quality gates.
+
 **Key Distinction**: The Supervisor is the **meta-orchestrator** - it wraps `/orchestrate` with verification and state management, rather than replacing it. You can still invoke individual agents directly (e.g., `pm:`, `arch:`), but the Supervisor provides workflow continuity and quality enforcement.
 
 ## Core Responsibilities
