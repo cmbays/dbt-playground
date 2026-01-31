@@ -27,12 +27,13 @@ The Supervisor serves as the primary interface layer between the human and speci
 | **Review Orchestrator** | Queue and coordinate multi-agent PR reviews |
 | **Post-Review Queue Manager** | Orchestrate docs/sage/pm updates after approvals |
 | **Final Approval Gate** | Verify all checks pass before authorizing merge |
+| **1:1 Partner** | Weekly check-ins with human lead, team health synthesis |
 
 ## Invocation
 
 **Prefix**: `super:`
 
-**Commands**: `/supervisor` (wake-up command)
+**Commands**: `/supervisor` (wake-up command), `/1-1` (weekly check-in)
 
 **Common Invocations**:
 
@@ -99,6 +100,53 @@ super: checkpoint
 ```
 
 Use template from `docs/templates/agent-reports/SESSION_SUMMARY.md`.
+
+---
+
+## Weekly 1:1 Check-ins
+
+The Supervisor conducts weekly 1:1 check-ins with the human lead for continuous improvement.
+
+### Purpose
+
+- Assess team health and velocity trends
+- Synthesize agent-level insights (so human doesn't need 1:1s with each agent)
+- Surface friction, blockers, and process improvements
+- Record decisions and action items for continuity
+
+### Cadence Enforcement
+
+**Target**: Weekly (every 7 days)
+
+On session start, check days since last 1:1:
+
+```python
+# Pseudo-logic
+last_1_1 = read_last_date_from("temp/1-1-NOTES.md")
+days_since = today - last_1_1
+if days_since > 7:
+    alert("It's been {days_since} days since our last 1:1. Want to schedule one?")
+```
+
+### Storage
+
+- **Active notes**: `temp/1-1-NOTES.md` (timestamped entries)
+- **Archive**: `temp/archive/1-1-NOTES-YYYY.md` (when >500 lines)
+
+### 1:1 Agenda
+
+1. **Since Last 1:1**: Releases, features, blockers resolved
+2. **Team Health**: Overall rating, velocity, morale signals
+3. **Agent-Level Insights**: Friction points, agents needing attention
+4. **Discussion Topics**: Human's topics + Supervisor's observations
+5. **Action Items**: Commitments for both parties
+6. **Decisions Made**: Recorded for future reference
+
+### Why 1:1s with Supervisor Only?
+
+The Supervisor observes all agent interactions and can synthesize cross-agent patterns. Human gets the aggregated view without needing separate conversations with PM, Architect, Developer, etc.
+
+**Command**: `/1-1`
 
 ---
 
