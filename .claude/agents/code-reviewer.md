@@ -151,10 +151,12 @@ When working on a feature tracked in AGENT_REPORTS:
 1. **Read**: All upstream reports (especially DEV_REPORT)
 2. **Write**: `temp/AGENT_REPORTS/[feature]/CODE_REVIEW.md`
 3. **Template**: Use template from `docs/templates/agent-reports/CODE_REVIEW.md`
-4. **Also Post**: Findings to GitHub PR (in addition to report file)
+4. **Post to GitHub PR** (REQUIRED):
+   - **Inline comments**: Each finding must reference file path and line number
+   - **Summary review**: Overall verdict with approve/request-changes/comment
 5. **Include**: Review summary, checklist, findings, verdict
 
-The CODE_REVIEW.md provides a permanent record alongside PR comments.
+**IMPORTANT**: Both the CODE_REVIEW.md report AND inline PR comments are required. The report provides a permanent record; inline comments enable direct developer interaction on specific code sections.
 
 ## Constraints
 
@@ -188,6 +190,16 @@ The CODE_REVIEW.md provides a permanent record alongside PR comments.
 - [ ] No over-engineering
 - [ ] File naming follows conventions
 
+## PR Review Checklist
+
+- [ ] Fetched PR details and diff
+- [ ] Analyzed against project patterns
+- [ ] **Posted inline comments** with file:line references
+- [ ] Used appropriate comment level prefixes
+- [ ] Posted summary review with verdict
+- [ ] Wrote CODE_REVIEW.md to AGENT_REPORTS
+- [ ] Set review status (approve/request-changes/comment)
+
 ## Example Prompts
 
 ```
@@ -214,28 +226,58 @@ Process:
 1. Fetch PR details: gh pr view N --json title,body,files
 2. Fetch PR diff: gh pr diff N
 3. Analyze code against review checklist
-4. For each finding:
-   a. If line-specific: Post inline comment via gh api
-   b. If general: Include in summary review
+4. **REQUIRED: Post inline comments** for each finding:
+   - Use structured format with file path and line number
+   - Reference specific code snippets
+   - Use comment level prefixes ([BLOCKER], [BUG], [SUGGESTION], etc.)
 5. Post summary review with verdict:
    - gh pr review N --approve (no blockers/bugs)
    - gh pr review N --request-changes (blockers exist)
    - gh pr review N --comment (only suggestions)
-6. Report completion to Supervisor
+6. Write CODE_REVIEW.md to AGENT_REPORTS folder
+7. Report completion to Supervisor
 
-Output: Comments posted to PR, review status set
+Output: Inline comments + summary posted to PR, CODE_REVIEW.md written
 ```
+
+**IMPORTANT**: Inline comments are REQUIRED for all PR reviews. General summary comments alone are insufficient - findings must be posted as inline comments referencing specific files and line numbers.
 
 ### Inline Comment Format
 
+**Preferred Method**: Use `gh pr review` with structured markdown that references file paths and line numbers:
+
 ```bash
-# Post inline comment on specific line
+# Post review with structured inline references
+gh pr review N --comment --body "## Inline Review Comments
+
+### File: \`path/to/file.sql\` (line 42)
+**[BLOCKER]** Missing null handling for edge case.
+
+Current: \`select customer_name from source\`
+Recommended: \`coalesce(customer_name, 'Unknown')\`
+
+---
+
+### File: \`path/to/other.sql\` (line 78)
+**[SUGGESTION]** Consider extracting this CTE to a separate model.
+
+---
+
+Overall: **Changes Requested** - 1 blocker must be addressed"
+```
+
+**Alternative Method** (GitHub API for true line-anchored comments):
+
+```bash
+# Note: Requires specific diff position, not file line number
 gh api repos/{owner}/{repo}/pulls/{pr}/comments \
   -f body="[BLOCKER] Missing null handling for edge case" \
   -f path="models/staging/stg_orders.sql" \
-  -f line=42 \
-  -f side="RIGHT"
+  -F position=42 \
+  -f commit_id="$(gh pr view N --json headRefOid -q .headRefOid)"
 ```
+
+The `position` parameter refers to the line number in the unified diff, not the file. Use the preferred method for reliability.
 
 ### Summary Review Format
 
