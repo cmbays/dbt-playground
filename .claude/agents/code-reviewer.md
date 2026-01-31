@@ -226,66 +226,84 @@ Process:
 1. Fetch PR details: gh pr view N --json title,body,files
 2. Fetch PR diff: gh pr diff N
 3. Analyze code against review checklist
-4. **REQUIRED: Post inline comments** for each finding:
-   - Use structured format with file path and line number
-   - Reference specific code snippets
-   - Use comment level prefixes ([BLOCKER], [BUG], [SUGGESTION], etc.)
-5. Post summary review with verdict:
-   - gh pr review N --approve (no blockers/bugs)
-   - gh pr review N --request-changes (blockers exist)
-   - gh pr review N --comment (only suggestions)
-6. Write CODE_REVIEW.md to AGENT_REPORTS folder
+4. Write findings to standardized YAML file:
+   - Path: temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
+   - Use template: .claude/templates/pr-review-findings-template.yaml
+   - Categorize findings by type:
+     * inline: Line-specific feedback (requires file + line)
+     * file_level: Overall file feedback (requires file, no line)
+     * pr_summary: Holistic feedback (conceptual, multi-file)
+5. Invoke git-master to post comments:
+   git: pr-comment N --findings temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
+6. Write CODE_REVIEW.md to AGENT_REPORTS folder (permanent record)
 7. Report completion to Supervisor
 
-Output: Inline comments + summary posted to PR, CODE_REVIEW.md written
+Output: Findings file + inline comments + summary posted to PR + CODE_REVIEW.md
 ```
 
-**IMPORTANT**: Inline comments are REQUIRED for all PR reviews. General summary comments alone are insufficient - findings must be posted as inline comments referencing specific files and line numbers.
+**IMPORTANT**: Use the correct comment level for each type of feedback:
+
+| Feedback Type | Where to Put It | Example |
+|---------------|----------------|---------|
+| Line-specific issue | `inline:` with file + line | "Line 42 has a typo" |
+| Overall file feedback | `file_level:` with file only | "This file needs better organization" |
+| Holistic/conceptual | `pr_summary:` | "Architecture concern across multiple files" |
+
+Supervisor will verify that inline comments were posted for line-specific feedback before approving the PR.
 
 ### Inline Comment Format
 
-**Preferred Method**: Use `gh pr review` with structured markdown that references file paths and line numbers:
+**Standard Method**: Write findings to YAML file, then invoke git-master to handle all PR commenting:
 
-```bash
-# Post review with structured inline references
-gh pr review N --comment --body "## Inline Review Comments
+```yaml
+# Write to: temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
+# Use template: .claude/templates/pr-review-findings-template.yaml
 
-### File: \`path/to/file.sql\` (line 42)
-**[BLOCKER]** Missing null handling for edge case.
+pr: 66
+reviewer: code-reviewer
+verdict: changes-requested
+summary: |
+  2 blockers found requiring fixes before approval.
 
-Current: \`select customer_name from source\`
-Recommended: \`coalesce(customer_name, 'Unknown')\`
+inline:
+  - file: "models/staging/stg_orders.sql"
+    line: 42
+    level: BLOCKER
+    body: |
+      Missing null handling for edge case.
 
----
+      Current: `select customer_name from source`
+      Recommended: `coalesce(customer_name, 'Unknown')`
 
-### File: \`path/to/other.sql\` (line 78)
-**[SUGGESTION]** Consider extracting this CTE to a separate model.
+file_level:
+  - file: "models/marts/dim_customers.sql"
+    level: SUGGESTION
+    body: |
+      Consider splitting this into smaller CTEs for readability.
 
----
+pr_summary: |
+  ## Code Review Summary
 
-Overall: **Changes Requested** - 1 blocker must be addressed"
+  **Verdict**: Changes Requested - 2 blockers must be addressed
+
+  ### Blockers
+  - [ ] `stg_orders.sql:42` - Missing null handling
 ```
 
-**Alternative Method** (GitHub API for true line-anchored comments):
+**Invoke git-master to post comments**:
 
-```bash
-# Line-anchored comment on specific file line
-gh api repos/{owner}/{repo}/pulls/{pr}/comments \
-  -f body="[BLOCKER] Missing null handling for edge case" \
-  -f path="models/staging/stg_orders.sql" \
-  -f commit_id="$(gh pr view N --json headRefOid -q .headRefOid)" \
-  -F line=42 \
-  -f side="RIGHT"
+```text
+git: pr-comment 66 --findings temp/AGENT_REPORTS/[feature]/CODE_REVIEWER_FINDINGS.yaml
 ```
 
-**Key syntax notes**:
+Git-master handles:
 
-- Use `-F line=42` (raw integer), NOT `-f line=42` (string)
-- `side="RIGHT"` refers to the new version of the file
-- Line must be within the diff range (changed or context lines)
-- If line is not in diff, the API returns "could not be resolved"
+- Posting true line-anchored comments via GitHub API
+- Posting file-level comments for overall file feedback
+- Posting PR summary review with verdict
+- Handling "line not in diff" gracefully (converts to file-level)
 
-**Limitation**: Line-anchored comments can only be placed on lines that appear in the diff (changed lines or context lines). For comments on unchanged code, use the structured markdown method above.
+**Cross-reference**: See `.claude/agents/git-master.md` for complete PR commenting workflow.
 
 ### Summary Review Format
 

@@ -526,6 +526,7 @@ Before authorizing merge, Supervisor performs final checklist validation.
     │   □ No unresolved [BLOCKER] comments
     │   □ CHANGELOG updated (for feat/fix PRs)
     │   □ All CI checks passing (if configured)
+    │   □ PR comments posted correctly (NEW - see below)
     │
     │   RECOMMENDED CHECKS (warn if missing):
     │   □ Docs/Sage/PM updates committed
@@ -541,6 +542,80 @@ Before authorizing merge, Supervisor performs final checklist validation.
             "super: BLOCKED - [reason]"
             └─ Reports specific failures
 ```
+
+### PR Comment Verification (NEW)
+
+Before approving a PR for merge, Supervisor MUST verify that reviewers posted comments at the appropriate level.
+
+#### Comment Level Requirements
+
+| Feedback Type | Required Comment Level | Verification |
+|---------------|----------------------|--------------|
+| Line-specific issue | Inline comment | Check `gh api .../pulls/N/comments` for line-anchored comments |
+| Overall file feedback | File-level comment | Check for comments with `path` but general scope |
+| Holistic/conceptual feedback | PR summary | Check `gh pr view N --json reviews` |
+
+#### Verification Process
+
+```
+[Before Final Approval]
+    │
+    ├─ 1. Check for review findings files:
+    │      ls temp/AGENT_REPORTS/[feature]/*_FINDINGS.yaml
+    │
+    ├─ 2. For each findings file, verify comments were posted:
+    │      │
+    │      ├─ Count inline findings in YAML
+    │      ├─ Count actual inline comments on PR:
+    │      │    gh api repos/{owner}/{repo}/pulls/N/comments --jq 'length'
+    │      │
+    │      ├─ If inline count mismatch:
+    │      │    WARN: "X inline findings not posted as comments"
+    │      │    Check: Were they moved to file-level due to diff limitations?
+    │      │
+    │      └─ Verify PR summary review exists:
+    │           gh pr view N --json reviews --jq '.reviews | length'
+    │
+    ├─ 3. Quality check - verify appropriate comment types:
+    │      │
+    │      ├─ Line-specific issues SHOULD have inline comments
+    │      │    (not just mentioned in summary)
+    │      │
+    │      ├─ File-wide issues SHOULD have file-level comments
+    │      │    (not just mentioned in summary)
+    │      │
+    │      └─ Holistic feedback SHOULD be in PR summary
+    │           (not scattered as inline comments)
+    │
+    └─ 4. If verification fails:
+         BLOCK: "PR comments incomplete - reviewers must post inline comments for line-specific feedback"
+         Action: Re-invoke reviewer with: git: pr-comment N --findings [file]
+```
+
+#### Verification Commands
+
+```bash
+# Count inline comments on PR
+gh api repos/{owner}/{repo}/pulls/N/comments --jq 'length'
+
+# List inline comments with file/line info
+gh api repos/{owner}/{repo}/pulls/N/comments --jq '.[] | {path, line, body}'
+
+# Count reviews (summaries)
+gh pr view N --json reviews --jq '.reviews | length'
+
+# Check for specific reviewer's comments
+gh api repos/{owner}/{repo}/pulls/N/comments --jq '.[] | select(.user.login=="cmbays") | {path, line}'
+```
+
+#### Failure Scenarios
+
+| Scenario | Detection | Action |
+|----------|-----------|--------|
+| No inline comments but findings file has inline items | Comment count = 0 | Re-invoke: `git: pr-comment N --findings [file]` |
+| Comments only in summary, not inline | Summary exists but no line-anchored comments | WARN, request inline comments for specific issues |
+| Findings file missing | No `*_FINDINGS.yaml` in AGENT_REPORTS | BLOCK, reviewer must write findings file |
+| Verdict mismatch | Findings says `approved` but PR has `changes-requested` | WARN, clarify with reviewer |
 
 ### Checklist Verification Commands
 

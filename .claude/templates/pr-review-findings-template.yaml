@@ -1,0 +1,94 @@
+# PR Review Findings Template
+#
+# Use this template for all PR reviews. Write to:
+#   temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml
+#
+# Then invoke git-master:
+#   git: pr-comment N --findings [path-to-this-file]
+#
+# Git-master will post:
+#   - Inline comments (line-specific)
+#   - File-level comments (overall file feedback)
+#   - PR summary review with verdict
+
+# Required metadata
+pr: 0                          # PR number (integer)
+reviewer: code-reviewer        # Agent name: code-reviewer, security-reviewer, design-reviewer, etc.
+verdict: approved              # approved | changes-requested | comment-only
+
+# Brief summary for PR review body
+summary: |
+  Brief overall assessment (1-2 sentences).
+
+# Inline comments - for SPECIFIC LINE feedback
+# Use when you have a concrete suggestion/issue on a specific line
+# Requires: file, line, level, body
+inline:
+  - file: "path/to/file.md"    # Relative path from repo root
+    line: 42                    # Line number in the file (integer)
+    level: SUGGESTION           # BLOCKER | BUG | SECURITY | SUGGESTION | QUESTION | NITPICK | PRAISE
+    body: |
+      Comment text here.
+      Can be multiline.
+
+      Use markdown formatting:
+      - Current: `problematic code`
+      - Recommended: `better code`
+
+# File-level comments - for OVERALL FILE feedback
+# Use when you have feedback about a file but no specific line
+# Requires: file, level, body
+file_level:
+  - file: "path/to/file.md"
+    level: SUGGESTION
+    body: |
+      Overall feedback about this file.
+      Not tied to a specific line.
+
+# PR summary - for HOLISTIC feedback
+# Use for feedback that spans multiple files or is conceptual
+# This becomes the main body of the PR review comment
+pr_summary: |
+  ## Review Summary
+
+  **Verdict**: [APPROVED | CHANGES REQUESTED | COMMENT ONLY]
+
+  ### What's Working Well
+  - Positive observation 1
+  - Positive observation 2
+
+  ### Blockers (Must Fix)
+  - [ ] `file.md:42` - [BLOCKER] Issue description
+
+  ### Bugs
+  - [ ] `file.md:78` - [BUG] Issue description
+
+  ### Suggestions (Non-blocking)
+  - [SUGGESTION] Suggestion 1
+  - [SUGGESTION] Suggestion 2
+
+  ### Questions
+  - [QUESTION] Question needing clarification
+
+# Praise items - rolled into summary automatically
+praise:
+  - "Good pattern usage"
+  - "Clear documentation"
+
+# ---
+# COMMENT LEVEL REFERENCE
+# ---
+# [BLOCKER]   - Must fix before approval (Yes, critical)
+# [BUG]       - Incorrect behavior (Yes)
+# [SECURITY]  - Security vulnerability (Yes, urgent)
+# [SUGGESTION]- Improvement idea (Optional)
+# [QUESTION]  - Needs clarification (Response needed)
+# [NITPICK]   - Minor style preference (Optional)
+# [PRAISE]    - Good work worth noting (None)
+#
+# ---
+# WHEN TO USE EACH COMMENT TYPE
+# ---
+# INLINE:     "Line 42 has a typo" → inline with line=42
+# FILE-LEVEL: "This file needs better organization" → file_level
+# PR SUMMARY: "Overall architecture concern across files" → pr_summary

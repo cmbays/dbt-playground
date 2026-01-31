@@ -655,6 +655,185 @@ git: show audit log of today's operations
 - Conflict resolution assistance
 - Stale branch detection and cleanup
 
+## Workflow I: PR Review Comments
+
+Git-master centralizes all PR commenting for consistency across reviewer agents.
+
+### Comment Levels
+
+| Level | When to Use | GitHub Mechanism |
+|-------|-------------|------------------|
+| **Inline** | Specific line feedback | `gh api` with `line` param |
+| **File-level** | Overall file feedback (no specific line) | `gh api` with `path` only |
+| **PR summary** | Holistic feedback (not file-specific) | `gh pr review --comment` |
+
+### Invocation
+
+```bash
+# From findings file (standard method)
+git: pr-comment 66 --findings temp/AGENT_REPORTS/[feature]/review-findings.yaml
+
+# Single inline comment
+git: pr-comment 66 --file "path/to/file.md" --line 105 --level SUGGESTION --body "Comment text"
+
+# File-level comment (no line number)
+git: pr-comment 66 --file "path/to/file.md" --level SUGGESTION --body "Overall file feedback"
+
+# PR summary comment
+git: pr-comment 66 --summary --body "Holistic review summary"
+```
+
+### Findings File Format
+
+Reviewers write findings to `temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml`:
+
+```yaml
+# CODE_REVIEWER_FINDINGS.yaml
+pr: 66
+reviewer: code-reviewer
+verdict: approved  # approved | changes-requested | comment-only
+summary: "Clean implementation with minor suggestions"
+
+# Inline comments (line-specific)
+inline:
+  - file: ".claude/commands/repo-research.md"
+    line: 105
+    level: SUGGESTION
+    body: |
+      Consider using full focus flag names for consistency.
+      Current: `--focus=arch`
+      Recommended: `--focus=architecture`
+
+  - file: ".claude/skills/repo-research.md"
+    line: 217
+    level: NITPICK
+    body: "Add note that council.md is planned"
+
+# File-level comments (overall file feedback, no specific line)
+file_level:
+  - file: ".claude/templates/specialist-focus-template.md"
+    level: SUGGESTION
+    body: |
+      Overall the template is comprehensive.
+      Consider adding YAML frontmatter for consistency with other templates.
+
+# PR summary (holistic feedback)
+pr_summary: |
+  ## Review Summary
+
+  **Verdict**: APPROVED with suggestions
+
+  ### What's Working Well
+  - Excellent workflow diagrams
+  - Well-designed depth matrix
+
+  ### Suggestions (non-blocking)
+  - Focus flag naming consistency
+  - Template frontmatter standardization
+
+# Praise items (included in summary)
+praise:
+  - "Excellent workflow diagrams"
+  - "Well-designed depth matrix"
+```
+
+### Comment Level Prefixes
+
+| Prefix | Meaning | Action Required |
+|--------|---------|-----------------|
+| `[BLOCKER]` | Must fix before approval | Yes, critical |
+| `[BUG]` | Incorrect behavior | Yes |
+| `[SECURITY]` | Security vulnerability | Yes, urgent |
+| `[SUGGESTION]` | Improvement idea | Optional |
+| `[QUESTION]` | Needs clarification | Response needed |
+| `[NITPICK]` | Minor style preference | Optional |
+| `[PRAISE]` | Good work worth noting | None |
+
+### Process Flow
+
+```
+[Reviewer completes analysis]
+    │
+    ├─ 1. Write findings to YAML file:
+    │      temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml
+    │
+    ├─ 2. Invoke git-master:
+    │      git: pr-comment N --findings [path-to-findings.yaml]
+    │
+    └─ 3. Git-master processes findings:
+           │
+           ├─ Get commit SHA: gh pr view N --json headRefOid
+           │
+           ├─ For each inline comment:
+           │   gh api repos/{owner}/{repo}/pulls/N/comments \
+           │     -f body="[LEVEL] Comment" \
+           │     -f path="file/path" \
+           │     -f commit_id="SHA" \
+           │     -F line=N \
+           │     -f side="RIGHT"
+           │
+           │   If line not in diff → move to file_level
+           │
+           ├─ For each file-level comment:
+           │   gh api repos/{owner}/{repo}/pulls/N/comments \
+           │     -f body="[LEVEL] Comment" \
+           │     -f path="file/path" \
+           │     -f commit_id="SHA" \
+           │     -F position=1 \
+           │     -f side="RIGHT"
+           │
+           ├─ Post PR summary review:
+           │   gh pr review N --comment --body "[summary content]"
+           │
+           └─ Set review status:
+               gh pr review N --approve (if verdict=approved)
+               gh pr review N --request-changes (if verdict=changes-requested)
+```
+
+### Error Handling
+
+| Error | Cause | Recovery |
+|-------|-------|----------|
+| "line could not be resolved" | Line not in diff | Move to file-level comment |
+| "path not found" | File not in PR | Include in PR summary instead |
+| API rate limit | Too many requests | Batch comments, retry with delay |
+
+### GitHub API Syntax Reference
+
+```bash
+# Inline comment (line-specific) - NOTE: -F for integer
+gh api repos/{owner}/{repo}/pulls/{pr}/comments \
+  -f body="**[LEVEL]** Comment text" \
+  -f path="relative/file/path.md" \
+  -f commit_id="full-sha-here" \
+  -F line=105 \
+  -f side="RIGHT"
+
+# File-level comment (first line of file in diff)
+gh api repos/{owner}/{repo}/pulls/{pr}/comments \
+  -f body="**[LEVEL]** Overall file feedback" \
+  -f path="relative/file/path.md" \
+  -f commit_id="full-sha-here" \
+  -F position=1 \
+  -f side="RIGHT"
+
+# PR summary review
+gh pr review {pr} --comment --body "Summary markdown here"
+
+# Set verdict
+gh pr review {pr} --approve --body "LGTM"
+gh pr review {pr} --request-changes --body "Blockers listed above"
+```
+
+**Key Syntax Notes**:
+
+- Use `-F line=N` (raw integer), NOT `-f line=N` (string)
+- `side="RIGHT"` refers to the new version of the file
+- Line must be within diff range for inline comments
+- `position=1` for file-level comments (first line of diff)
+
+---
+
 ## Future Enhancements
 
 **v0.4+:**
@@ -677,3 +856,4 @@ git: show audit log of today's operations
 - Semantic Versioning: <https://semver.org/>
 - PR template: See `.claude/rules/git-workflow.md#pull-requests`
 - Branch naming: See `.claude/rules/git-workflow.md#branch-naming`
+- PR Review Findings: See `.claude/templates/pr-review-findings-template.yaml`
