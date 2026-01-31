@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workflow Chronicle - dbt-playground</title>
+  <style>
+    /* CSS Variables */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-tertiary: #e8e8e8;
+      --bg-card: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --accent-primary: #2563eb;
+      --accent-success: #16a34a;
+      --accent-warning: #ca8a04;
+      --accent-danger: #dc2626;
+      --accent-purple: #7c3aed;
+      --accent-feat: #16a34a;
+      --accent-fix: #dc2626;
+      --accent-docs: #2563eb;
+      --accent-chore: #737373;
+      --accent-test: #7c3aed;
+      --accent-refactor: #ca8a04;
+      --border-color: #e5e5e5;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #262626;
+        --bg-tertiary: #333333;
+        --bg-card: #262626;
+        --text-primary: #f5f5f5;
+        --text-secondary: #a3a3a3;
+        --text-muted: #737373;
+        --border-color: #404040;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .version-badge {
+      background: var(--accent-primary);
+      color: white;
+      padding: 0.125rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 0.375rem;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* Glance Panel */
+    .glance-panel {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .glance-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .glance-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .glance-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .glance-value.health {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .health-bar {
+      width: 100px;
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .health-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .health-good { background: var(--accent-success); }
+    .health-fair { background: var(--accent-warning); }
+    .health-poor { background: var(--accent-danger); }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Layer Tabs */
+    .layer-tabs {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .layer-tab {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid transparent;
+      border-radius: 0.375rem;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .layer-tab:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .layer-tab.active {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    /* Timeline Container */
+    .timeline-container {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .timeline {
+      min-width: 100%;
+      position: relative;
+    }
+
+    /* Time Axis */
+    .time-axis {
+      display: flex;
+      gap: 1px;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .time-marker {
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Commit Layer */
+    .commit-layer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .commit-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      transition: all 0.15s ease;
+    }
+
+    .commit-row:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--accent-primary);
+    }
+
+    .commit-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 50px;
+      font-family: var(--font-mono);
+    }
+
+    .commit-type {
+      padding: 0.125rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .type-feat { background: rgba(22, 163, 74, 0.1); color: var(--accent-feat); }
+    .type-fix { background: rgba(220, 38, 38, 0.1); color: var(--accent-fix); }
+    .type-docs { background: rgba(37, 99, 235, 0.1); color: var(--accent-docs); }
+    .type-chore { background: rgba(115, 115, 115, 0.1); color: var(--accent-chore); }
+    .type-test { background: rgba(124, 58, 237, 0.1); color: var(--accent-test); }
+    .type-refactor { background: rgba(202, 138, 4, 0.1); color: var(--accent-refactor); }
+    .type-other { background: var(--bg-tertiary); color: var(--text-secondary); }
+
+    .commit-message {
+      flex: 1;
+      font-size: 0.875rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .commit-sha {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .commit-agent {
+      font-size: 0.75rem;
+      color: var(--accent-purple);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .commit-stats {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .stat-add { color: var(--accent-success); }
+    .stat-del { color: var(--accent-danger); }
+
+    /* Branch Layer */
+    .branch-layer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .branch-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+    }
+
+    .branch-name {
+      font-weight: 500;
+      min-width: 200px;
+    }
+
+    .branch-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--accent-primary);
+      border-radius: 4px;
+      opacity: 0.6;
+    }
+
+    .branch-stats {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Insights Panel */
+    .insights-panel {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+
+    .insight-item {
+      text-align: center;
+    }
+
+    .insight-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+
+    .insight-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Loading State */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-muted);
+      gap: 1rem;
+    }
+
+    .empty-state p {
+      max-width: 400px;
+      text-align: center;
+    }
+
+    /* Decision Layer */
+    .decision-layer {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .decision-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      transition: all 0.15s ease;
+    }
+
+    .decision-card:hover {
+      box-shadow: var(--shadow);
+    }
+
+    .decision-card.answer-no {
+      border-left: 4px solid var(--accent-danger);
+    }
+
+    .decision-card.answer-not-yet {
+      border-left: 4px solid var(--accent-warning);
+    }
+
+    .decision-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .decision-id {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .decision-answer {
+      padding: 0.125rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .decision-answer.no {
+      background: rgba(220, 38, 38, 0.1);
+      color: var(--accent-danger);
+    }
+
+    .decision-answer.not-yet {
+      background: rgba(202, 138, 4, 0.1);
+      color: var(--accent-warning);
+    }
+
+    .decision-question {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .decision-rationale {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      white-space: pre-line;
+      line-height: 1.6;
+    }
+
+    .decision-trigger {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 0.5rem;
+      background: var(--bg-secondary);
+      border-radius: 0.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .decision-trigger strong {
+      color: var(--text-secondary);
+    }
+
+    .decision-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .decision-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .confidence-badge {
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-size: 0.625rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .confidence-high {
+      background: rgba(22, 163, 74, 0.1);
+      color: var(--accent-success);
+    }
+
+    .confidence-medium {
+      background: rgba(202, 138, 4, 0.1);
+      color: var(--accent-warning);
+    }
+
+    .confidence-low {
+      background: rgba(220, 38, 38, 0.1);
+      color: var(--accent-danger);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 0.5rem 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>
+      Workflow Chronicle
+      <span class="version-badge">v1.0</span>
+    </h1>
+    <div class="header-actions">
+      <button class="btn" onclick="loadData()">Refresh</button>
+      <button class="btn btn-primary" onclick="exportJSON()">Export JSON</button>
+    </div>
+  </header>
+
+  <section class="glance-panel" id="glance-panel">
+    <div class="glance-item">
+      <span class="glance-label">Branch</span>
+      <span class="glance-value" id="glance-branch">--</span>
+    </div>
+    <div class="glance-item">
+      <span class="glance-label">Phase</span>
+      <span class="glance-value" id="glance-phase">--</span>
+    </div>
+    <div class="glance-item">
+      <span class="glance-label">Health</span>
+      <div class="glance-value health">
+        <span id="glance-health">--</span>
+        <div class="health-bar">
+          <div class="health-fill health-good" id="health-fill" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="glance-item">
+      <span class="glance-label">Commits</span>
+      <span class="glance-value" id="glance-commits">--</span>
+    </div>
+    <div class="glance-item">
+      <span class="glance-label">Agent-Assisted</span>
+      <span class="glance-value" id="glance-agent">--</span>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <nav class="layer-tabs">
+      <button class="layer-tab active" data-layer="surface">Surface (Commits)</button>
+      <button class="layer-tab" data-layer="features">Features (Branches)</button>
+      <button class="layer-tab" data-layer="decisions">Decisions</button>
+      <button class="layer-tab" data-layer="bedrock">Bedrock</button>
+    </nav>
+
+    <div class="timeline-container" id="timeline-container">
+      <div class="loading" id="loading">Loading chronicle data...</div>
+    </div>
+  </main>
+
+  <section class="insights-panel" id="insights-panel">
+    <div class="insights-grid">
+      <div class="insight-item">
+        <div class="insight-value" id="insight-total">0</div>
+        <div class="insight-label">Total Commits</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-value" id="insight-files">0</div>
+        <div class="insight-label">Files Changed</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-value" id="insight-insertions">0</div>
+        <div class="insight-label">Insertions</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-value" id="insight-deletions">0</div>
+        <div class="insight-label">Deletions</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-value" id="insight-duration">0h</div>
+        <div class="insight-label">Duration</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span id="generated-at">--</span>
+    <span>Workflow Chronicle | dbt-playground</span>
+  </footer>
+
+  <script>
+    // Global data store
+    let chronicleData = null;
+    let currentLayer = 'surface';
+
+    // Sample data for when no external data is available
+    const sampleData = {
+      metadata: {
+        generated_at: new Date().toISOString(),
+        since: "7 days ago",
+        version: "1.0.0"
+      },
+      layers: {
+        surface: {
+          name: "Commits",
+          data: [
+            { short_sha: "abc123", timestamp: new Date().toISOString(), message: "feat(staging): add stg_customers model", commit_type: "feat", co_authored_by: ["Claude"], files_changed: 3, insertions: 45, deletions: 0 },
+            { short_sha: "def456", timestamp: new Date(Date.now() - 3600000).toISOString(), message: "docs: update README", commit_type: "docs", co_authored_by: [], files_changed: 1, insertions: 10, deletions: 2 },
+            { short_sha: "ghi789", timestamp: new Date(Date.now() - 7200000).toISOString(), message: "fix: correct null handling", commit_type: "fix", co_authored_by: ["Claude Opus 4.5"], files_changed: 2, insertions: 5, deletions: 3 },
+          ]
+        },
+        features: {
+          name: "Branches",
+          data: [
+            { name: "main", commit_count: 50, status: "mainline" },
+            { name: "feat/customer-analytics", commit_count: 8, status: "active" }
+          ]
+        },
+        decisions: {
+          name: "Decisions",
+          data: [
+            { id: "NS-001", question: "Should we use Snowflake instead of DuckDB?", answer: "NO", date: "2026-01-15", rationale: "Learning project where cost matters. DuckDB is free and local.", reconsidering_trigger: "Data exceeds 10GB OR cloud deployment required", raised_by: "human", confidence: "HIGH", related_feature: null },
+            { id: "NS-002", question: "Should we add dbt Cloud?", answer: "NOT_YET", date: "2026-01-20", rationale: "Core workflow is CLI-based with Claude Code.", reconsidering_trigger: "Team grows beyond 3 OR scheduling/orchestration becomes critical", raised_by: "architect", confidence: "MEDIUM", related_feature: null }
+          ]
+        },
+        bedrock: {
+          name: "Foundation",
+          data: {
+            project: "dbt-playground",
+            dbt_version: "1.11.2",
+            adapter: "duckdb",
+            current_milestone: "v0.6.0"
+          }
+        }
+      },
+      insights: {
+        total_commits: 3,
+        total_files_changed: 6,
+        total_insertions: 60,
+        total_deletions: 5,
+        duration_hours: 2,
+        agent_contribution_pct: 67,
+        commit_types: { feat: 1, docs: 1, fix: 1 }
+      },
+      events: []
+    };
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check for format=json parameter
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('format') === 'json') {
+        loadData().then(() => {
+          document.body.innerHTML = '<pre>' + JSON.stringify(chronicleData || sampleData, null, 2) + '</pre>';
+        });
+        return;
+      }
+
+      // Set up tab switching
+      document.querySelectorAll('.layer-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.layer-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentLayer = tab.dataset.layer;
+          renderLayer();
+        });
+      });
+
+      loadData();
+    });
+
+    // Load data from file or use sample
+    async function loadData() {
+      const loading = document.getElementById('loading');
+      if (loading) loading.style.display = 'flex';
+
+      try {
+        const response = await fetch('../temp/WORKFLOW_HISTORY/chronicle-data.json');
+        if (response.ok) {
+          chronicleData = await response.json();
+        } else {
+          chronicleData = sampleData;
+        }
+      } catch (e) {
+        chronicleData = sampleData;
+      }
+
+      updateGlance();
+      updateInsights();
+      renderLayer();
+
+      if (loading) loading.style.display = 'none';
+      document.getElementById('generated-at').textContent =
+        `Generated: ${new Date(chronicleData.metadata.generated_at).toLocaleString()}`;
+    }
+
+    // Update glance panel
+    function updateGlance() {
+      const data = chronicleData.layers.surface.data;
+      const insights = chronicleData.insights;
+
+      // Derive branch from most recent commit
+      const branch = data.length > 0 ? (data[0].branch || 'main') : 'main';
+      document.getElementById('glance-branch').textContent = branch;
+
+      // Derive phase from branch
+      let phase = 'MAINLINE';
+      if (branch.startsWith('feat/')) phase = 'DEVELOPMENT';
+      else if (branch.startsWith('fix/')) phase = 'BUGFIX';
+      else if (branch.startsWith('docs/')) phase = 'DOCUMENTATION';
+      document.getElementById('glance-phase').textContent = phase;
+
+      // Health placeholder (not computed yet)
+      document.getElementById('glance-health').textContent = '--/100';
+      document.getElementById('health-fill').style.width = '0%';
+
+      // Commit count
+      document.getElementById('glance-commits').textContent = insights.total_commits || 0;
+
+      // Agent percentage
+      document.getElementById('glance-agent').textContent =
+        `${insights.agent_contribution_pct || 0}%`;
+    }
+
+    // Update insights panel
+    function updateInsights() {
+      const insights = chronicleData.insights;
+      document.getElementById('insight-total').textContent = insights.total_commits || 0;
+      document.getElementById('insight-files').textContent = insights.total_files_changed || 0;
+      document.getElementById('insight-insertions').textContent = `+${insights.total_insertions || 0}`;
+      document.getElementById('insight-deletions').textContent = `-${insights.total_deletions || 0}`;
+      document.getElementById('insight-duration').textContent = `${insights.duration_hours || 0}h`;
+    }
+
+    // Render current layer
+    function renderLayer() {
+      const container = document.getElementById('timeline-container');
+
+      switch (currentLayer) {
+        case 'surface':
+          renderCommitLayer(container);
+          break;
+        case 'features':
+          renderBranchLayer(container);
+          break;
+        case 'decisions':
+          renderDecisionsLayer(container);
+          break;
+        case 'bedrock':
+          renderBedrockLayer(container);
+          break;
+      }
+    }
+
+    // Render commit layer
+    function renderCommitLayer(container) {
+      const commits = chronicleData.layers.surface.data;
+
+      if (commits.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No commits found. Run generate-chronicle-data.py to populate data.</p>
+          </div>`;
+        return;
+      }
+
+      let html = '<div class="commit-layer">';
+
+      commits.forEach(commit => {
+        const time = new Date(commit.timestamp).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+        const typeClass = `type-${commit.commit_type || 'other'}`;
+        const hasAgent = commit.co_authored_by && commit.co_authored_by.length > 0;
+
+        html += `
+          <div class="commit-row">
+            <span class="commit-time">${time}</span>
+            <span class="commit-type ${typeClass}">${commit.commit_type || 'other'}</span>
+            <span class="commit-message">${escapeHtml(commit.message)}</span>
+            <span class="commit-sha">${commit.short_sha}</span>
+            ${hasAgent ? `<span class="commit-agent">🤖 ${commit.co_authored_by.join(', ')}</span>` : ''}
+            <span class="commit-stats">
+              <span class="stat-add">+${commit.insertions || 0}</span>
+              <span class="stat-del">-${commit.deletions || 0}</span>
+            </span>
+          </div>`;
+      });
+
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // Render branch layer
+    function renderBranchLayer(container) {
+      const branches = chronicleData.layers.features.data;
+
+      if (branches.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p>No branch data available.</p>
+          </div>`;
+        return;
+      }
+
+      let html = '<div class="branch-layer">';
+
+      branches.forEach(branch => {
+        html += `
+          <div class="branch-row">
+            <span class="branch-name">${escapeHtml(branch.name)}</span>
+            <div class="branch-bar" style="max-width: ${Math.min(branch.commit_count * 10, 300)}px"></div>
+            <span class="branch-stats">${branch.commit_count} commits</span>
+          </div>`;
+      });
+
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // Render decisions layer
+    function renderDecisionsLayer(container) {
+      const decisions = chronicleData.layers.decisions.data;
+
+      if (!decisions || decisions.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>Decisions Layer</h3>
+            <p>No decisions recorded yet. Run generate-chronicle-data.py to populate from NEGATIVE_SPACE.yaml.</p>
+            <p>This layer captures rejected approaches and deferred questions.</p>
+          </div>`;
+        return;
+      }
+
+      let html = '<div class="decision-layer">';
+
+      decisions.forEach(decision => {
+        const answerClass = decision.answer === 'NO' ? 'no' : 'not-yet';
+        const cardClass = decision.answer === 'NO' ? 'answer-no' : 'answer-not-yet';
+        const confidenceClass = `confidence-${decision.confidence.toLowerCase()}`;
+
+        html += `
+          <div class="decision-card ${cardClass}">
+            <div class="decision-header">
+              <span class="decision-id">${escapeHtml(decision.id)}</span>
+              <span class="decision-answer ${answerClass}">${escapeHtml(decision.answer.replace('_', ' '))}</span>
+            </div>
+            <div class="decision-question">${escapeHtml(decision.question)}</div>
+            <div class="decision-rationale">${escapeHtml(decision.rationale)}</div>
+            <div class="decision-trigger">
+              <strong>Reconsider when:</strong> ${escapeHtml(decision.reconsidering_trigger)}
+            </div>
+            <div class="decision-meta">
+              <span class="decision-meta-item">
+                <span>Date:</span> ${escapeHtml(decision.date)}
+              </span>
+              <span class="decision-meta-item">
+                <span>Raised by:</span> ${escapeHtml(decision.raised_by)}
+              </span>
+              <span class="decision-meta-item">
+                <span class="confidence-badge ${confidenceClass}">${escapeHtml(decision.confidence)}</span>
+              </span>
+              ${decision.related_feature ? `
+              <span class="decision-meta-item">
+                <span>Feature:</span> ${escapeHtml(decision.related_feature)}
+              </span>` : ''}
+            </div>
+          </div>`;
+      });
+
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // Render bedrock layer
+    function renderBedrockLayer(container) {
+      const bedrock = chronicleData.layers.bedrock.data;
+
+      let html = '<div class="branch-layer">';
+
+      Object.entries(bedrock).forEach(([key, value]) => {
+        html += `
+          <div class="branch-row">
+            <span class="branch-name" style="text-transform: capitalize">${key.replace(/_/g, ' ')}</span>
+            <span style="flex: 1; font-family: var(--font-mono)">${escapeHtml(String(value))}</span>
+          </div>`;
+      });
+
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // Export JSON
+    function exportJSON() {
+      const dataStr = JSON.stringify(chronicleData || sampleData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'chronicle-data.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

@@ -105,6 +105,16 @@
       opacity: 0.9;
     }
 
+    .btn-success {
+      background: var(--accent-success);
+      border-color: var(--accent-success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      opacity: 0.9;
+    }
+
     /* Main Content */
     .main {
       flex: 1;
@@ -354,6 +364,16 @@
       margin-right: 0.25rem;
     }
 
+    /* Refresh button animation */
+    .btn.refreshing svg {
+      animation: spin 0.5s ease-out;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
     /* Help Modal */
     .modal-overlay {
       display: none;
@@ -461,13 +481,13 @@
       Git Worktree Coordinator
     </h1>
     <div class="header-actions">
-      <button class="btn" id="refresh-btn" onclick="refreshDisplay()">
+      <button class="btn" id="refresh-btn" onclick="refreshDisplay()" title="Re-parse the pasted data">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M23 4v6h-6"></path>
           <path d="M1 20v-6h6"></path>
           <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
         </svg>
-        Refresh
+        Re-Parse
       </button>
       <button class="btn" onclick="showHelp()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -497,10 +517,11 @@
       <textarea id="git-output" placeholder="Paste the output of the command above here..."></textarea>
       <div class="input-actions">
         <button class="btn btn-primary" onclick="parseAndDisplay()">Parse & Display</button>
+        <button class="btn btn-success" onclick="loadFromServer()" id="server-btn" title="Requires: uv run scripts/playground-server.py">Load from Server</button>
         <button class="btn" onclick="loadSampleData()">Load Sample Data</button>
         <button class="btn" onclick="clearData()">Clear</button>
       </div>
-      <p class="sample-data-note">Use "Load Sample Data" to see the interface with example worktrees.</p>
+      <p class="sample-data-note">Run <code>uv run scripts/playground-server.py</code> for auto-loading, or paste data manually.</p>
     </section>
 
     <!-- Worktree Display -->
@@ -517,7 +538,7 @@
       Ready
     </div>
     <div class="keyboard-hints">
-      <kbd>R</kbd> Refresh
+      <kbd>R</kbd> Re-Parse
       <kbd>?</kbd> Help
       <kbd>Esc</kbd> Close
     </div>
@@ -578,11 +599,77 @@
     // State
     let worktreeData = null;
 
+    // Server configuration
+    const API_BASE = 'http://localhost:5050/api';
+    let serverAvailable = false;
+
     // DOM Elements
     const gitOutput = document.getElementById('git-output');
     const worktreeDisplay = document.getElementById('worktree-display');
     const statusEl = document.getElementById('status');
     const helpModal = document.getElementById('help-modal');
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return '';
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
+    }
+
+    // Check if server is available and auto-load
+    async function checkServerAndLoad() {
+      try {
+        const response = await fetch(`${API_BASE}/health`, { method: 'GET', mode: 'cors' });
+        if (response.ok) {
+          serverAvailable = true;
+          setStatus('Server detected - loading data...', 'success');
+          await loadFromServer();
+          return true;
+        }
+      } catch (e) {
+        serverAvailable = false;
+        console.log('Server not available, using paste mode');
+      }
+      setStatus('Ready - Paste git output or run: uv run scripts/playground-server.py');
+      return false;
+    }
+
+    // Load data from server
+    async function loadFromServer() {
+      try {
+        setStatus('Loading from server...', '');
+
+        // Fetch worktrees and status
+        const [worktreesRes, statusRes] = await Promise.all([
+          fetch(`${API_BASE}/worktrees`, { mode: 'cors' }),
+          fetch(`${API_BASE}/git-status`, { mode: 'cors' })
+        ]);
+
+        if (!worktreesRes.ok) throw new Error('Failed to fetch worktrees');
+
+        const worktreesData = await worktreesRes.json();
+        const statusData = statusRes.ok ? await statusRes.json() : { output: '' };
+
+        // Combine into expected format
+        const combined = worktreesData.output + '---STATUS---\n' + statusData.output;
+        gitOutput.value = combined;
+        parseAndDisplay();
+
+        serverAvailable = true;
+        setStatus('Loaded from server', 'success');
+        return true;
+      } catch (e) {
+        console.error('Server load failed:', e);
+        setStatus('Server not available - paste data manually', 'error');
+        return false;
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      checkServerAndLoad();
+    });
 
     // Parse git worktree list --porcelain output
     function parseWorktreeList(output) {
@@ -685,31 +772,36 @@
 
       const mainClass = worktree.isMain ? 'main-repo' : '';
 
-      let detailsHtml = `<span><strong>Branch:</strong> ${worktree.branch || worktree.head?.substring(0,7) || 'detached'}</span>`;
+      // Escape user-provided data for XSS prevention
+      const safeBranch = escapeHtml(worktree.branch || worktree.head?.substring(0,7) || 'detached');
+      const safeName = escapeHtml(worktree.name);
+      const safePath = escapeHtml(worktree.path);
+
+      let detailsHtml = `<span><strong>Branch:</strong> ${safeBranch}</span>`;
 
       if (worktree.status?.ahead > 0) {
-        detailsHtml += `<span><strong>Ahead:</strong> ${worktree.status.ahead}</span>`;
+        detailsHtml += `<span><strong>Ahead:</strong> ${escapeHtml(worktree.status.ahead)}</span>`;
       }
       if (worktree.status?.behind > 0) {
-        detailsHtml += `<span><strong>Behind:</strong> ${worktree.status.behind}</span>`;
+        detailsHtml += `<span><strong>Behind:</strong> ${escapeHtml(worktree.status.behind)}</span>`;
       }
 
       const commands = worktree.isMain ? `
-        <button class="btn" onclick="copyText('git worktree add ../${worktree.name}--feature -b feat/feature-name')">New Worktree</button>
+        <button class="btn" onclick="copyText('git worktree add ../${safeName}--feature -b feat/feature-name')">New Worktree</button>
         <button class="btn" onclick="copyText('git worktree list')">List All</button>
       ` : `
-        <button class="btn" onclick="copyText('cd ${worktree.path}')">Go to Directory</button>
-        <button class="btn" onclick="copyText('git worktree remove ${worktree.path}')">Remove</button>
+        <button class="btn" onclick="copyText('cd ${safePath}')">Go to Directory</button>
+        <button class="btn" onclick="copyText('git worktree remove ${safePath}')">Remove</button>
       `;
 
       return `
         <div class="worktree-card ${mainClass}">
           <div class="worktree-header">
             <div>
-              <div class="worktree-name">${worktree.name}</div>
-              <div class="worktree-path">${worktree.path}</div>
+              <div class="worktree-name">${safeName}</div>
+              <div class="worktree-path">${safePath}</div>
             </div>
-            <span class="status-badge ${statusClass}">${statusText}</span>
+            <span class="status-badge ${statusClass}">${escapeHtml(statusText)}</span>
           </div>
           <div class="worktree-details">
             ${detailsHtml}
@@ -774,10 +866,17 @@
 
     // Refresh display
     function refreshDisplay() {
+      const refreshBtn = document.getElementById('refresh-btn');
+
+      // Add visual feedback - spinner animation
+      refreshBtn.classList.add('refreshing');
+      setTimeout(() => refreshBtn.classList.remove('refreshing'), 500);
+
       if (gitOutput.value.trim()) {
         parseAndDisplay();
+        setStatus('Data re-parsed successfully', 'success');
       } else {
-        setStatus('Paste git output first', 'error');
+        setStatus('No data to re-parse - paste git output first', 'error');
       }
     }
 
