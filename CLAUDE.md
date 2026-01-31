@@ -53,6 +53,7 @@ See `docs/reference/PROJECT_STRUCTURE.md` for complete structure.
 - Use feature branches (`feat/`, `fix/`, etc.)
 - Use `uv` for Python packages (never `pip`)
 - Update CHANGELOG for feat/fix PRs
+- Write agent reports to `temp/AGENT_REPORTS/[feature]/` for tracked features
 
 ## Development Environment
 
@@ -114,6 +115,22 @@ python scripts/extract_content.py <args>
 ## Agent System
 
 See `.claude/agents/AGENTS.md` for orchestration details.
+
+### Inter-Agent Reports
+
+For multi-agent workflows, agents write to shared artifact folders:
+
+```text
+temp/AGENT_REPORTS/[feature-name]/
+├── PM_REPORT.md          # Product Manager scope and decisions
+├── ARCH_REPORT.md        # Architect design and trade-offs
+├── TEST_SPEC.md          # Tester coverage and test plan
+├── DEV_REPORT.md         # Developer implementation notes
+├── CODE_REVIEW.md        # Code reviewer findings
+└── SECURITY_REVIEW.md    # Security reviewer assessment
+```
+
+**Workflow**: Orchestrators pass file paths, not content summaries. Downstream agents read upstream reports directly. See `docs/templates/agent-reports/` for templates.
 
 ### Key Personas
 

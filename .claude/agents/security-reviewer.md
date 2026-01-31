@@ -73,6 +73,18 @@ Watch for these security anti-patterns:
 - May return to: Developer (if security issues found)
 - Hands off to: Documenter (after security approval)
 
+## Report I/O
+
+When working on a feature tracked in AGENT_REPORTS:
+
+1. **Read**: `temp/AGENT_REPORTS/[feature]/DEV_REPORT.md` (minimum), all upstream if time permits
+2. **Write**: `temp/AGENT_REPORTS/[feature]/SECURITY_REVIEW.md`
+3. **Template**: Use template from `docs/templates/agent-reports/SECURITY_REVIEW.md`
+4. **Also Post**: Findings to GitHub PR (in addition to report file)
+5. **Include**: Risk level, security checklist, findings, verdict
+
+The SECURITY_REVIEW.md provides a permanent record alongside PR comments.
+
 ## Constraints
 
 - Focus on realistic threats for web application

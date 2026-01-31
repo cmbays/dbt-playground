@@ -21,6 +21,7 @@
     - [Explicit Agent File Operations](#pattern-explicit-agent-file-operations)
     - [Agent Context Preparation](#pattern-agent-context-preparation)
     - [Agent vs Manual Decision Framework](#pattern-agent-vs-manual-decision-framework)
+    - [Context Window Discipline](#pattern-context-window-discipline-for-multi-agent-workflows)
   - [File Operations](#file-operations)
     - [Temp-First File Creation](#pattern-temp-first-file-creation)
   - [Documentation Workflows](#documentation-workflows)
@@ -307,6 +308,82 @@ Task({
 
 - `.claude/agents/AGENTS.md#when-to-use-agents` - Full agent selection guide
 - `.claude/agents/AGENTS.md#agent-selection-guide` - Agent type selection
+
+---
+
+#### Pattern: Context Window Discipline for Multi-Agent Workflows
+
+**When to apply**: Any multi-agent orchestration where agents hand off work
+
+**Proven in**: v0.6 PRD-016 Agent Context Management, Claudie blog post (external validation)
+
+**Description**: Orchestrators should pass file pointers, not content summaries. Sub-agents write to shared folders; downstream agents read directly. This preserves signal fidelity and reduces context window overhead in the orchestrator.
+
+**Problem**: When orchestrators (like Supervisor) relay summarized content between agents:
+
+1. Context window overflow in orchestrator
+2. Signal degradation - nuances lost in summarization
+3. Information bottleneck - downstream agents get filtered view
+4. Repeated context loading across agent invocations
+
+**Solution**: Shared artifact folder pattern
+
+```
+temp/AGENT_REPORTS/[feature]/
+├── PM_REPORT.md          ← PM writes scope, decisions
+├── ARCH_REPORT.md        ← Architect reads PM, writes design
+├── TEST_SPEC.md          ← Tester reads ARCH, writes tests
+├── DEV_REPORT.md         ← Developer reads all, writes implementation
+├── CODE_REVIEW.md        ← Reviewer reads DEV, writes findings
+└── SECURITY_REVIEW.md    ← Security reads DEV, writes assessment
+```
+
+**Delegation pattern**:
+
+```text
+# Instead of:
+pm: Create PRD for customer analytics. [includes all context in message]
+
+# Use:
+pm: Create PRD for customer analytics.
+    - Write PM_REPORT.md to: temp/AGENT_REPORTS/customer-analytics/
+    - PRD location: docs/specs/PRD-XXX-CUSTOMER-ANALYTICS.md
+```
+
+**Downstream agent pattern**:
+
+```text
+arch: Design feature per PRD-XXX.
+    - Read: temp/AGENT_REPORTS/customer-analytics/PM_REPORT.md
+    - Write: temp/AGENT_REPORTS/customer-analytics/ARCH_REPORT.md
+```
+
+**Key principles**:
+
+1. **Orchestrator passes paths, not content**: "Read PM_REPORT.md at [path]"
+2. **Each agent writes to shared folder**: Creates permanent artifact
+3. **Downstream reads upstream directly**: Full context, no relay loss
+4. **Supervisor verifies reports exist**: Phase transition requires artifact
+
+**Benefits**:
+
+- Preserves signal fidelity across handoffs
+- Reduces orchestrator context window usage
+- Creates audit trail of agent decisions
+- Enables session resume via report reading
+
+**When NOT to use**:
+
+- Simple tasks that don't need orchestration
+- Single-agent work with no handoffs
+- Ad-hoc questions (no workflow state needed)
+
+**See also**:
+
+- PRD: `docs/specs/PRD-016-AGENT-CONTEXT-MANAGEMENT.md`
+- TDD: `docs/specs/TDD-016-AGENT-CONTEXT-MANAGEMENT.md`
+- Templates: `docs/templates/agent-reports/`
+- Pitfall: "Context Loss in Agent Handoffs" (below)
 
 ---
 
@@ -1852,9 +1929,9 @@ uv sync --upgrade         # Updates uv.lock to latest compatible
 
 ## Metrics
 
-**Total Patterns**: 33 (as of 2026-01-30)
+**Total Patterns**: 34 (as of 2026-01-30)
 
-- Proven Patterns: 7
+- Proven Patterns: 8
 - Decision Frameworks: 2
 - Common Pitfalls: 2
 - Best Practices: 3
@@ -1863,7 +1940,7 @@ uv sync --upgrade         # Updates uv.lock to latest compatible
 - Workflow Enforcement Patterns: 2 (Defense-in-depth, Phase gate design)
 - dbt + uv Patterns: 4 (pyproject.toml, PEP 723, version constraints, lock files)
 
-**Last Updated**: 2026-01-30 (Added workflow enforcement patterns: PR-centric defense-in-depth enforcement, phase gate artifacts + state verification)
+**Last Updated**: 2026-01-30 (Added Context Window Discipline pattern for multi-agent workflows)
 
 **Related Skills**:
 

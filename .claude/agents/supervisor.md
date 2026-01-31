@@ -45,6 +45,63 @@ super: Queue an urgent fix: [description]
 
 ---
 
+## Inter-Agent Reports Management
+
+When orchestrating feature workflows, use shared artifacts for direct agent-to-agent communication instead of relaying summarized content.
+
+### Folder Creation
+
+On receiving new feature request:
+
+```bash
+mkdir -p temp/AGENT_REPORTS/[feature-name]
+```
+
+Feature folder name uses kebab-case matching branch name (e.g., `feat/customer-analytics` → `customer-analytics`).
+
+### Delegation Pattern
+
+Instead of including all context in messages, pass file paths:
+
+```text
+# Instead of:
+pm: Create PRD for customer analytics. [includes all context in message]
+
+# Use:
+pm: Create PRD for customer analytics.
+    - Write PM_REPORT.md to: temp/AGENT_REPORTS/customer-analytics/
+    - PRD location: docs/specs/PRD-XXX-CUSTOMER-ANALYTICS.md
+```
+
+### Phase Transition Verification (Updated)
+
+Before allowing phase transitions, verify the upstream report exists:
+
+| Transition | Required Report |
+|------------|-----------------|
+| PM → Architect | `PM_REPORT.md` exists in feature folder |
+| Architect → Tester | `ARCH_REPORT.md` exists in feature folder |
+| Tester → Developer | `TEST_SPEC.md` exists in feature folder |
+| Developer → Reviewer | `DEV_REPORT.md` exists in feature folder |
+
+### Report Templates
+
+Templates for each report type are in `docs/templates/agent-reports/`.
+
+### Session Summaries
+
+At session end (explicit trigger), create `temp/SESSION_SUMMARY_YYYY-MM-DD.md`:
+
+```text
+super: end session
+super: save session summary
+super: checkpoint
+```
+
+Use template from `docs/templates/agent-reports/SESSION_SUMMARY.md`.
+
+---
+
 ## Workflow State Management
 
 ### State File

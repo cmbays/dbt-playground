@@ -144,6 +144,18 @@ function process(data) {
 - May return to: Developer (if changes needed)
 - Hands off to: Design Reviewer (parallel), Documenter (after approval)
 
+## Report I/O
+
+When working on a feature tracked in AGENT_REPORTS:
+
+1. **Read**: All upstream reports (especially DEV_REPORT)
+2. **Write**: `temp/AGENT_REPORTS/[feature]/CODE_REVIEW.md`
+3. **Template**: Use template from `docs/templates/agent-reports/CODE_REVIEW.md`
+4. **Also Post**: Findings to GitHub PR (in addition to report file)
+5. **Include**: Review summary, checklist, findings, verdict
+
+The CODE_REVIEW.md provides a permanent record alongside PR comments.
+
 ## Constraints
 
 - Review, don't rewrite (provide guidance)
