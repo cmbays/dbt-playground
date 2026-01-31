@@ -21,60 +21,62 @@ summary: |
   Brief overall assessment (1-2 sentences).
 
 # Inline comments - for SPECIFIC LINE feedback
-# Use when you have a concrete suggestion/issue on a specific line
+# MUST include conventional prefix in body: [BLOCKER], [BUG], [SECURITY], etc.
 # Requires: file, line, level, body
 inline:
   - file: "path/to/file.md"    # Relative path from repo root
     line: 42                    # Line number in the file (integer)
     level: SUGGESTION           # BLOCKER | BUG | SECURITY | SUGGESTION | QUESTION | NITPICK | PRAISE
     body: |
-      Comment text here.
-      Can be multiline.
+      [SUGGESTION] Brief issue description.
 
-      Use markdown formatting:
-      - Current: `problematic code`
-      - Recommended: `better code`
+      Details if needed.
+      Current: `problematic code`
+      Recommended: `better code`
+
+  - file: "path/to/other.sql"
+    line: 78
+    level: BLOCKER
+    body: |
+      [BLOCKER] Missing null check could cause runtime failures.
+
+      Add: `coalesce(column_name, 'default')`
 
 # File-level comments - for OVERALL FILE feedback
-# Use when you have feedback about a file but no specific line
+# MUST include conventional prefix in body
 # Requires: file, level, body
 file_level:
   - file: "path/to/file.md"
     level: SUGGESTION
     body: |
-      Overall feedback about this file.
-      Not tied to a specific line.
+      [SUGGESTION] Overall feedback about this file. This applies to
+      the file structure as a whole, not a specific line.
 
-# PR summary - for HOLISTIC feedback
-# Use for feedback that spans multiple files or is conceptual
+# PR summary - NARRATIVE/CONVERSATIONAL (not a mechanical list)
+# Communicate tone, highlight blockers clearly, include praise
 # This becomes the main body of the PR review comment
 pr_summary: |
-  ## Review Summary
+  This is solid work that improves [feature/area]. The implementation
+  is clean and follows our conventions well.
 
-  **Verdict**: [APPROVED | CHANGES REQUESTED | COMMENT ONLY]
+  **One blocker needs attention:** The null handling issue in file.sql:78
+  could cause silent failures in production.
 
-  ### What's Working Well
-  - Positive observation 1
-  - Positive observation 2
+  Minor suggestion on line 42 for code clarity, but non-blocking.
 
-  ### Blockers (Must Fix)
-  - [ ] `file.md:42` - [BLOCKER] Issue description
+  After addressing the blocker, this is ready to merge. Nice work!
 
-  ### Bugs
-  - [ ] `file.md:78` - [BUG] Issue description
-
-  ### Suggestions (Non-blocking)
-  - [SUGGESTION] Suggestion 1
-  - [SUGGESTION] Suggestion 2
-
-  ### Questions
-  - [QUESTION] Question needing clarification
-
-# Praise items - rolled into summary automatically
+# Praise items - weave these into the pr_summary narrative
 praise:
+  - "Clean implementation"
   - "Good pattern usage"
-  - "Clear documentation"
 
+# ---
+# FORMATTING RULES
+# ---
+# INLINE/FILE-LEVEL: MUST start with conventional prefix [BLOCKER], [BUG], etc.
+# PR SUMMARY: Should be conversational - highlight blockers, include praise
+#
 # ---
 # COMMENT LEVEL REFERENCE
 # ---
@@ -89,6 +91,6 @@ praise:
 # ---
 # WHEN TO USE EACH COMMENT TYPE
 # ---
-# INLINE:     "Line 42 has a typo" → inline with line=42
-# FILE-LEVEL: "This file needs better organization" → file_level
-# PR SUMMARY: "Overall architecture concern across files" → pr_summary
+# INLINE:     "Line 42 has a typo" → inline with line=42, prefix in body
+# FILE-LEVEL: "This file needs better organization" → file_level, prefix in body
+# PR SUMMARY: "Overall narrative with tone" → pr_summary (conversational)

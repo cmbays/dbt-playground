@@ -263,31 +263,37 @@ pr: 66
 reviewer: code-reviewer
 verdict: changes-requested
 summary: |
-  2 blockers found requiring fixes before approval.
+  Good staging model structure, but null handling needs attention.
 
+# Inline comments MUST include conventional prefix in body
 inline:
   - file: "models/staging/stg_orders.sql"
     line: 42
     level: BLOCKER
     body: |
-      Missing null handling for edge case.
+      [BLOCKER] Missing null handling for edge case.
 
+      This could cause silent failures when customer_name is null.
       Current: `select customer_name from source`
       Recommended: `coalesce(customer_name, 'Unknown')`
 
+# File-level comments MUST include conventional prefix in body
 file_level:
   - file: "models/marts/dim_customers.sql"
     level: SUGGESTION
     body: |
-      Consider splitting this into smaller CTEs for readability.
+      [SUGGESTION] Consider splitting this into smaller CTEs for readability.
+      The current 200-line CTE is hard to follow.
 
+# PR summary should be NARRATIVE - communicate tone, highlight blockers, praise
 pr_summary: |
-  ## Code Review Summary
+  Good work on the staging model structure - the CTE pattern is clean and
+  the naming follows our conventions.
 
-  **Verdict**: Changes Requested - 2 blockers must be addressed
+  **One blocker needs attention:** The null handling in stg_orders.sql:42
+  could cause silent failures when customer_name is null from the source.
 
-  ### Blockers
-  - [ ] `stg_orders.sql:42` - Missing null handling
+  After that fix, this is ready to merge!
 ```
 
 **Invoke git-master to post comments**:

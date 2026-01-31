@@ -694,50 +694,54 @@ reviewer: code-reviewer
 verdict: approved  # approved | changes-requested | comment-only
 summary: "Clean implementation with minor suggestions"
 
-# Inline comments (line-specific)
+# Inline comments (line-specific) - MUST use conventional prefix
 inline:
   - file: ".claude/commands/repo-research.md"
     line: 105
     level: SUGGESTION
     body: |
-      Consider using full focus flag names for consistency.
+      [SUGGESTION] Consider using full focus flag names for consistency.
+
       Current: `--focus=arch`
       Recommended: `--focus=architecture`
 
   - file: ".claude/skills/repo-research.md"
     line: 217
-    level: NITPICK
-    body: "Add note that council.md is planned"
+    level: BLOCKER
+    body: |
+      [BLOCKER] Missing null check could cause runtime failures.
 
-# File-level comments (overall file feedback, no specific line)
+      This will throw if `focus_areas` is undefined.
+      Add: `const areas = focus_areas ?? []`
+
+# File-level comments (overall file feedback) - MUST use conventional prefix
 file_level:
   - file: ".claude/templates/specialist-focus-template.md"
     level: SUGGESTION
     body: |
-      Overall the template is comprehensive.
-      Consider adding YAML frontmatter for consistency with other templates.
+      [SUGGESTION] Overall the template is comprehensive. Consider adding
+      YAML frontmatter for consistency with other templates in this directory.
 
-# PR summary (holistic feedback)
+# PR summary (narrative/conversational - highlight blockers, include praise)
 pr_summary: |
-  ## Review Summary
+  This is solid work that improves our repo-research workflow significantly.
+  The depth matrix design is particularly elegant and the workflow diagrams
+  make the process easy to understand.
 
-  **Verdict**: APPROVED with suggestions
+  **One blocker needs attention:** The null check issue in repo-research.md:217
+  could cause runtime failures when `focus_areas` is undefined.
 
-  ### What's Working Well
-  - Excellent workflow diagrams
-  - Well-designed depth matrix
+  After that fix, this is ready to merge. Nice work on the documentation!
 
-  ### Suggestions (non-blocking)
-  - Focus flag naming consistency
-  - Template frontmatter standardization
-
-# Praise items (included in summary)
+# Praise items (woven into pr_summary narrative)
 praise:
-  - "Excellent workflow diagrams"
-  - "Well-designed depth matrix"
+  - "Depth matrix design is elegant"
+  - "Workflow diagrams are clear"
 ```
 
-### Comment Level Prefixes
+### Comment Formatting Rules
+
+**Inline and file-level comments MUST use conventional prefixes.** This ensures consistent, scannable feedback across all reviewers.
 
 | Prefix | Meaning | Action Required |
 |--------|---------|-----------------|
@@ -748,6 +752,29 @@ praise:
 | `[QUESTION]` | Needs clarification | Response needed |
 | `[NITPICK]` | Minor style preference | Optional |
 | `[PRAISE]` | Good work worth noting | None |
+
+**Format for inline/file-level comments:**
+
+```text
+[PREFIX] Brief issue description.
+
+Details if needed.
+Current: `problematic code`
+Recommended: `better code`
+```
+
+**PR summary should be narrative/conversational** - communicate tone, highlight blockers clearly, and include praise. Not a mechanical list.
+
+```text
+Overall this is solid work that moves us closer to [goal]. The CTE structure
+is clean and the naming follows conventions.
+
+Two blockers need attention before merge:
+1. stg_orders.sql:42 - Null handling could cause silent failures
+2. dim_customers.sql:78 - Missing unique test on primary key
+
+Looking forward to seeing this merged after those fixes!
+```
 
 ### Process Flow
 
