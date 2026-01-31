@@ -3,7 +3,7 @@ audience: [pm, architect]
 priority: medium
 size: medium
 dependencies: []
-last_updated: 2026-01-29
+last_updated: 2026-01-31
 status: active
 tags: [reference, roadmap, planning]
 ---
@@ -58,47 +58,110 @@ Build a dbt analytics project while learning data transformation best practices 
 - [x] load_synthea_sources macro
 - [x] Surrogate key patterns
 
+### v0.4.0 - Dimensional Models
+
+**Theme**: Kimball Dimensional Modeling
+
+**Status**: Complete (2026-01-30)
+
+**Deliverables**:
+
+- [x] 5 dimension tables (patients, providers, organizations, payers, date)
+- [x] 4 fact tables (encounters, clinical_events, monthly/yearly aggregates)
+- [x] 2 intermediate models (enriched encounters, patients with conditions)
+- [x] 1 SCD Type 2 snapshot (patient demographics)
+- [x] Comprehensive testing and documentation
+
+### v0.5.0 - Analytics Layer
+
+**Theme**: Healthcare Analytics & BI Integration
+
+**Status**: Complete (2026-01-30)
+
+**Deliverables**:
+
+- [x] 7 analytics models (conditions, patient summary, provider metrics, cohorts, cost analysis)
+- [x] 2 analytical views (current conditions, active patients)
+- [x] 91 data quality tests (dbt_expectations patterns)
+- [x] BI integration guide (Tableau, Looker, Power BI, Metabase, Superset)
+
+### v0.6.0 - Playgrounds & Agent Context
+
+**Theme**: Developer Tools & Workflow Management
+
+**Status**: Complete (2026-01-31)
+
+**Deliverables**:
+
+- [x] Interactive playgrounds (Workflow Hub, Worktree Coordinator, Mermaid Designer)
+- [x] Inter-agent report templates and workflow
+- [x] Session summary templates
+- [x] Agent job descriptions and orchestration docs
+
 ---
 
 ## Current Phase
 
-### v0.4.0 - Intermediate Layer (Next)
+### v0.7.0 - Workflow Hub Enhancements (In Progress)
 
-**Theme**: Business Logic & Transformations
+**Theme**: Multi-Session Orchestration
 
 **Goals**:
 
-- Build intermediate models with business logic
-- Implement date spine for time series
-- Create reusable macros
-- Add data quality assertions
+- Session state management and persistence
+- Resume capability across sessions
+- Token usage tracking and visualization
+- Workflow health monitoring
 
 **Deliverables**:
 
-- 5-10 intermediate models
-- Custom macro library
-- Advanced testing patterns
+- [ ] PRD-019: Workflow Hub v0.7 specification
+- [ ] Technical design document (TDD-019)
+- [ ] Enhanced Workflow Hub with session management
+- [ ] Integration with Claude Code CLI
+
+**Related Issues**: #85 (Epic), #86 (Research)
 
 ---
 
 ## Upcoming Phases
 
-### v0.5.0 - Marts Layer
+### GitHub Actions Enforcement (Phased)
 
-**Theme**: Analytics-Ready Models
+**Theme**: Automated Quality Gates
+
+**Status**: Phase 1 Complete (2026-01-31)
+
+**Completed** (Phase 1 - MVP):
+
+- [x] PR validation (conventional commits)
+- [x] Issue linking enforcement
+- [x] Auto-labeling (type, size, layer)
+- [x] dbt CI tests
+
+**Planned** (Phases 2-4):
+
+- [ ] Phase 1b: Branch protection rules
+- [ ] Phase 2: CHANGELOG enforcement, agent tracker, stale PR notifier
+- [ ] Phase 3: Secrets scanner, WIP detector, lint checks, dbt docs generator
+- [ ] Phase 4: Merge audit, release notes, admin compliance reports
+
+**Related**: See `docs/plans/GITHUB_ACTIONS_PLAN.md` for full 4-phase roadmap
+
+### Data Quality Enhancements
+
+**Theme**: Advanced Testing & Monitoring
+
+**Status**: Planned
 
 **Goals**:
 
-- Build fact and dimension tables
-- Implement Kimball dimensional modeling
-- Create aggregated metrics
-- Documentation generation
+- Expand dbt_expectations usage
+- Create singular tests for complex business rules
+- Generate and deploy dbt documentation site
+- Implement data freshness monitoring
 
-**Deliverables**:
-
-- Complete dimensional model
-- Generated dbt docs
-- BI-ready tables
+**Related Issues**: #35, #36, #37
 
 ---
 
@@ -139,4 +202,4 @@ Build a dbt analytics project while learning data transformation best practices 
 
 ---
 
-*Last Updated: 2026-01-29*
+*Last Updated: 2026-01-31*
