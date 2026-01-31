@@ -14,6 +14,9 @@
 
 ## Table of Contents
 
+- [Pattern Promotion from ADRs](#pattern-promotion-from-adrs)
+  - [Promotion Process](#promotion-process)
+  - [Promoted Patterns](#promoted-patterns)
 - [Proven Patterns](#proven-patterns)
   - [Agent Orchestration](#agent-orchestration)
     - [Assembly Line Workflow](#pattern-assembly-line-workflow)
@@ -66,11 +69,33 @@
 - [Workflow Enforcement Patterns](#workflow-enforcement-patterns)
   - [PR-Centric Development with Defense-in-Depth Enforcement](#pattern-pr-centric-development-with-defense-in-depth-enforcement)
   - [Phase Gate Design: Artifacts and State Verification](#pattern-phase-gate-design-artifacts-and-state-verification)
+- [dbt Architecture Patterns](#dbt-architecture-patterns)
+  - [Three-Layer Model Architecture](#pattern-three-layer-model-architecture)
 - [dbt + uv Patterns](#dbt--uv-patterns)
   - [pyproject.toml for dbt Projects](#pattern-pyprojecttoml-for-dbt-projects)
   - [PEP 723 Script Headers](#pattern-pep-723-script-headers)
   - [Version Constraint Selection](#pattern-version-constraint-selection)
   - [Lock File Strategy](#pattern-lock-file-strategy)
+
+---
+
+## Pattern Promotion from ADRs
+
+Patterns in this document may originate from Architecture Decision Records (ADRs). When an ADR pattern is validated in 2+ implementations, it becomes a candidate for promotion here.
+
+### Promotion Process
+
+1. **Identification**: Sage reviews completed features for ADR patterns with 2+ implementations
+2. **Validation**: Pattern confirmed as reusable (not context-specific)
+3. **Promotion**: Pattern added to appropriate LEARNINGS.md section
+4. **Cross-Reference**: LEARNINGS entry includes "Validated by: ADR-N" reference
+5. **Index Update**: ADR_INDEX.md marks ADR as "Promoted to LEARNINGS.md"
+
+### Promoted Patterns
+
+| Pattern | Source ADR | Validated In | Promoted |
+|---------|------------|--------------|----------|
+| Three-Layer Model Architecture | [ADR-2](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-2-three-layer-model-architecture) | v0.3 (9 staging), v0.4 (11 models), v0.5 (7 analytics) | 2026-01-31 |
 
 ---
 
@@ -1760,6 +1785,64 @@ If precondition fails:
 - Pattern: "PR-Centric Development with Defense-in-Depth Enforcement" (above)
 - `.claude/agents/supervisor.md` - Artifact Requirements Matrix
 - Skill: `.claude/skills/learned-workflow-enforcement.md`
+
+---
+
+## dbt Architecture Patterns
+
+_Patterns for dbt project structure and model organization._
+
+### Pattern: Three-Layer Model Architecture
+
+**When to apply**: Any dbt project with multiple data transformations
+
+**Validated by**: [ADR-2](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-2-three-layer-model-architecture)
+
+**Proven in**: v0.3 (9 staging models), v0.4 (11 dimensional models), v0.5 (7 analytics models)
+
+**Description**: Organize dbt models into three distinct layers: Staging, Intermediate/Dimensional, and Marts/Analytics. Each layer has a specific purpose and naming convention.
+
+**Layer Structure**:
+
+| Layer | Prefix | Purpose | Example |
+|-------|--------|---------|---------|
+| Staging | `stg_` | 1:1 with source, light transformations | `stg_synthea__patients` |
+| Intermediate | `int_` | Business logic, joins, enrichment | `int_encounters__enriched` |
+| Dimensional | `dim_`, `fct_` | Kimball-style facts and dimensions | `dim_patients`, `fct_encounters` |
+| Analytics | `fct_`, `v_` | Domain-specific analytics and views | `fct_patient_summary`, `v_active_patients` |
+
+**Key Principles**:
+
+1. **Source isolation**: Only staging models use `source()` macro
+2. **Layer dependencies**: Models depend only on same or earlier layers
+3. **Naming consistency**: Prefix indicates layer and purpose
+4. **Single responsibility**: Each model does one thing well
+
+**Trade-offs**:
+
+| Choice | Benefit | Cost |
+|--------|---------|------|
+| More files | Clear separation | Navigation overhead |
+| Naming conventions | Self-documenting | Learning curve |
+| Layer restrictions | Predictable dependencies | Less flexibility |
+
+**Benefits**:
+
+- Easy to understand data flow
+- Reusable intermediate models
+- Clear testing boundaries
+- Consistent onboarding experience
+
+**When NOT to use**:
+
+- Very simple projects (<5 models)
+- Ad-hoc analysis work
+- Prototype/exploratory work
+
+**See also**:
+
+- TDD-001: Original architecture decision
+- ADR_INDEX.md: Full ADR registry
 
 ---
 

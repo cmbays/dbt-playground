@@ -27,22 +27,26 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 
 | Metric | Count |
 |--------|-------|
-| Total ADRs | 5 |
-| Approved | 5 |
+| Total ADRs | 8 |
+| Approved | 8 |
+| Approved (Historical) | 3 |
 | Superseded | 0 |
-| Promoted to LEARNINGS.md | 0 |
+| Promoted to LEARNINGS.md | 1 |
 
 ---
 
 ## ADR Registry
 
-| ADR | Title | Status | Location | Approved By | Date | Tags |
-|-----|-------|--------|----------|-------------|------|------|
-| ADR-1 | Database Selection (DuckDB) | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-1-database-selection-duckdb) | Architect | 2026-01-28 | infrastructure, database |
-| ADR-2 | Three-Layer Model Architecture | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-2-three-layer-model-architecture) | Architect | 2026-01-28 | architecture, dbt |
-| ADR-3 | MCP Integration Strategy | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-3-mcp-integration-strategy) | Architect | 2026-01-28 | integration, mcp |
-| ADR-4 | Synthea as Data Source | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-4-synthea-as-data-source) | Architect | 2026-01-28 | data-source |
-| ADR-5 | Package Selection | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-5-package-selection) | Architect | 2026-01-28 | packages, dbt |
+| ADR | Title | Status | Location | Approved By | Date | Tags | Promoted |
+|-----|-------|--------|----------|-------------|------|------|----------|
+| ADR-1 | Database Selection (DuckDB) | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-1-database-selection-duckdb) | Architect | 2026-01-28 | infrastructure, database | - |
+| ADR-2 | Three-Layer Model Architecture | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-2-three-layer-model-architecture) | Architect | 2026-01-28 | architecture, dbt | [LEARNINGS.md](./LEARNINGS.md#pattern-three-layer-model-architecture) |
+| ADR-3 | MCP Integration Strategy | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-3-mcp-integration-strategy) | Architect | 2026-01-28 | integration, mcp | - |
+| ADR-4 | Synthea as Data Source | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-4-synthea-as-data-source) | Architect | 2026-01-28 | data-source | - |
+| ADR-5 | Package Selection | Approved | [TDD-001](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-5-package-selection) | Architect | 2026-01-28 | packages, dbt | - |
+| ADR-6 | PR-Centric Development Workflow | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-6-pr-centric-development-workflow) | Architect + PM | 2026-01-30 | workflow | - |
+| ADR-7 | Single-File Playground Architecture | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-7-single-file-playground-architecture) | Architect | 2026-01-31 | architecture, playgrounds | - |
+| ADR-8 | Inter-Agent Report Pattern | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-8-inter-agent-report-pattern) | Architect + PM | 2026-01-31 | workflow, agents | - |
 
 ---
 
@@ -60,6 +64,7 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 |-----|----------|---------------|
 | ADR-2 | Staging -> Intermediate -> Marts | More files vs clear separation |
 | ADR-3 | dbt-mcp as primary agent interface | Natural language vs abstraction overhead |
+| ADR-7 | Single-file HTML playgrounds | Simplicity vs code reuse |
 
 ### Data & Integration
 
@@ -67,6 +72,13 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 |-----|----------|---------------|
 | ADR-4 | Synthea synthetic healthcare data | Free/realistic vs lacking real-world quality issues |
 | ADR-5 | Incremental package adoption | Minimal complexity vs delayed capabilities |
+
+### Workflow & Agents
+
+| ADR | Decision | Key Trade-off |
+|-----|----------|---------------|
+| ADR-6 | PR-centric development workflow | Visibility vs ceremony overhead |
+| ADR-8 | Inter-agent report pattern | Context fidelity vs directory structure |
 
 ---
 
@@ -113,13 +125,22 @@ Proposed --> Approved --> [Active use] --> Superseded (optional)
 
 ---
 
-## Future: Pattern Promotion
+## Pattern Promotion
 
-When an ADR pattern is validated in 2+ implementations, it becomes a candidate for promotion to LEARNINGS.md. The Sage agent reviews completed features for promotion opportunities.
+When an ADR pattern is validated in 2+ implementations, it becomes a candidate for promotion to LEARNINGS.md. The Sage agent reviews completed features for promotion opportunities (Workflow H).
 
-| ADR | Implementations | Promoted? |
-|-----|-----------------|-----------|
-| ADR-2 (Three-Layer) | All 28 models | Candidate |
+### Promoted Patterns
+
+| ADR | Pattern Name | Implementations | Promoted Date |
+|-----|--------------|-----------------|---------------|
+| ADR-2 | Three-Layer Model Architecture | v0.3, v0.4, v0.5 (28 models) | 2026-01-31 |
+
+### Promotion Candidates
+
+| ADR | Implementations | Status |
+|-----|-----------------|--------|
+| ADR-6 | 10+ PRs | Candidate (workflow pattern) |
+| ADR-8 | 5+ features | Candidate (context pattern) |
 
 ---
 
