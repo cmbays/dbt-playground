@@ -653,13 +653,13 @@ flowchart TD
 
   <!-- Load Mermaid from CDN -->
   <script type="module">
-    import mermaid from 'https://esm.sh/mermaid@10';
+    import mermaid from 'https://esm.sh/mermaid@10.6.1';
 
     // Initialize Mermaid
     mermaid.initialize({
       startOnLoad: false,
       theme: 'default',
-      securityLevel: 'loose',
+      securityLevel: 'strict',
       flowchart: { htmlLabels: true, curve: 'basis' }
     });
 
