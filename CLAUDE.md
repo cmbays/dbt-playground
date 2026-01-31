@@ -263,6 +263,23 @@ gh run rerun <run-id> --failed
 - `docs/reference/GITHUB_ACTIONS.md` - Quick reference
 - `docs/for_chris/GITHUB_ACTIONS_GUIDE.md` - Setup and testing guide
 
+## Milestone Status
+
+Tracking progress toward v0.8, v0.9, and v1.0 releases.
+
+| Milestone | Target | Open | Closed | Progress |
+|-----------|--------|------|--------|----------|
+| v0.8 | Feb 28, 2026 | 0 | 0 | 0% |
+| v0.9 | Mar 31, 2026 | - | - | - |
+| v1.0 | Jun 30, 2026 | - | - | - |
+
+**Update Command**:
+```bash
+uv run scripts/github-ops.py milestone list
+```
+
+See `scripts/github-ops.py` for more milestone commands (create, status).
+
 ## Notes for Claude
 
 - ASK rather than assume
