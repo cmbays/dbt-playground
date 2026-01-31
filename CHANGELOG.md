@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+
+- Incremental refresh patterns for large fact tables (v0.8)
+- Advanced analytics models (clustering, cohort analysis) (v0.8)
+- Real-time monitoring and alerting (v0.8)
+
+---
+
+## [0.7.0] - 2026-01-31
+
 ### Added
 
 - **Phase 3: GitHub Project Management** - Complete (Features 1-4)
@@ -32,12 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added PR-Issue Linking syntax table to git-workflow.md
 - Updated GITHUB_ENFORCEMENT.md with Phase 3 GitHub Actions documentation
-
-### Planned
-
-- Incremental refresh patterns for large fact tables (v0.7)
-- Advanced analytics models (clustering, cohort analysis) (v0.7)
-- Real-time monitoring and alerting (v0.7)
 
 ---
 
@@ -315,6 +319,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.7.0   | 2026-01-31 | v0.7 Phase 3 GitHub Project Management - Issue CLI, Milestones, PR-Issue Linking, Projects Integration |
 | 0.6.0   | 2026-01-31 | v0.6 Playgrounds - Worktree Coordinator, Mermaid Designer |
 | 0.5.0   | 2026-01-30 | v0.5 Analytics - 7 models, 91 tests, BI integration |
 | 0.4.0   | 2026-01-30 | v0.4 Dimensional Models - 12 models, Kimball patterns, SCD2 |

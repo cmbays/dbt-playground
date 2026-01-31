@@ -8,7 +8,7 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: Analytics Layer Complete (v0.6.0) + GitHub Actions MVP
+**Status**: Phase 3 GitHub Project Management Complete (v0.7.0)
 
 - dbt 1.11.2 + duckdb-adapter 1.10.0 working
 - 28 models total (staging, intermediate, dimensional, analytics)
@@ -17,8 +17,13 @@ This is a dbt learning project for data transformation best practices, agent orc
 - Agent context management with inter-agent reports
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
 - GitHub Actions automation: PR validation, issue linking, auto-labeling, dbt CI tests
+- Issue creation CLI with YAML batch templates (`scripts/github-ops.py`)
+- Milestone tracking with CLI commands and CLAUDE.md status section
+- Enhanced PR-Issue linking with extended keyword support
+- GitHub Projects integration using built-in automation
+- ADR Adoption Phase 1: Formalized architecture decision tracking
 
-**Next**: v0.7 - Data quality enhancements (dbt_expectations).
+**Next**: v0.8 - Data quality enhancements (dbt_expectations).
 
 ## Project Structure
 
@@ -269,11 +274,13 @@ Tracking progress toward v0.8, v0.9, and v1.0 releases.
 
 | Milestone | Target | Open | Closed | Progress |
 |-----------|--------|------|--------|----------|
+| v0.7.0 | Jan 31, 2026 | 0 | 4 | 100% (Complete) |
 | v0.8 | Feb 28, 2026 | 0 | 0 | 0% |
 | v0.9 | Mar 31, 2026 | - | - | - |
 | v1.0 | Jun 30, 2026 | - | - | - |
 
 **Update Command**:
+
 ```bash
 uv run scripts/github-ops.py milestone list
 ```
