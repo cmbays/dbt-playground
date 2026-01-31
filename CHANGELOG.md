@@ -31,6 +31,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Auto-manage issues via labels and GitHub Project settings
     - Supports single project for all repo tracking
 
+- **ADR Adoption Phase 2**: ADR-to-LEARNINGS promotion workflow
+  - `docs/reference/LEARNINGS.md` - Pattern Promotion section with first promoted pattern (ADR-2)
+  - `.claude/agents/sage.md` - Workflow H for ADR pattern promotion review
+  - `docs/specs/TDD-HISTORICAL.md` - 3 backfilled ADRs from v0.5-v0.6
+  - `docs/reference/ADR_INDEX.md` - 8 total ADRs with promotion tracking
+  - `docs/templates/agent-reports/SESSION_SUMMARY.md` - ADR review section
+  - Goal: Proven ADR patterns flow to LEARNINGS.md automatically
+
 - **ADR Adoption Phase 1**: Formalized architecture decision tracking (PRD-021)
   - `docs/specs/PRD-021-ADR-ADOPTION.md` - Initiative specification
   - `docs/reference/ADR_INDEX.md` - Centralized ADR discovery (5 ADRs indexed)
@@ -319,7 +327,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
-| 0.7.0   | 2026-01-31 | v0.7 Phase 3 GitHub Project Management - Issue CLI, Milestones, PR-Issue Linking, Projects Integration |
+| 0.7.0   | 2026-01-31 | v0.7 Phase 3 GitHub Project Management + ADR Phase 2 Promotion Workflow |
 | 0.6.0   | 2026-01-31 | v0.6 Playgrounds - Worktree Coordinator, Mermaid Designer |
 | 0.5.0   | 2026-01-30 | v0.5 Analytics - 7 models, 91 tests, BI integration |
 | 0.4.0   | 2026-01-30 | v0.4 Dimensional Models - 12 models, Kimball patterns, SCD2 |
