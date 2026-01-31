@@ -5,12 +5,15 @@ Interactive visual tools for learning and development.
 ## Usage
 
 ```
-/playground              # List all playgrounds with status
+/playground              # List all playgrounds with status (opens Workflow Hub)
+/playground:hub          # Workflow Hub - central command center
+/playground:chronicle    # Workflow Chronicle - timeline visualization
 /playground:worktrees    # Git Worktree Coordinator
-/playground:agents       # Agent Orchestration Visualizer
-/playground:schema       # Healthcare Schema Explorer
-/playground:lineage      # Data Lineage Explorer
-/playground:dashboards   # Dashboard Mockup Builder
+/playground:mermaid      # Mermaid Diagram Designer
+/playground:agents       # Agent Orchestration Visualizer (planned)
+/playground:schema       # Healthcare Schema Explorer (planned)
+/playground:lineage      # Data Lineage Explorer (planned)
+/playground:dashboards   # Dashboard Mockup Builder (planned)
 ```
 
 ## Available Playgrounds
@@ -129,21 +132,27 @@ Interactive visual tools for learning and development.
 
 | Playground | Status | Version |
 |------------|--------|---------|
-| Worktree Coordinator | Planned | v0.6.0 |
-| Agent Visualizer | Planned | v0.6.1 |
-| Schema Explorer | Planned | v0.6.1 |
-| Lineage Explorer | Planned | v0.6.2 |
-| Dashboard Builder | Planned | v0.6.3 |
+| Workflow Hub | ✅ Complete | v0.6.0 |
+| Workflow Chronicle | ✅ Complete | v0.7.0 |
+| Worktree Coordinator | ✅ Complete | v0.6.0 |
+| Mermaid Designer | ✅ Complete | v0.6.0 |
+| Agent Visualizer | Planned | v0.7.1 |
+| Schema Explorer | Planned | v0.7.1 |
+| Lineage Explorer | Planned | v0.7.2 |
+| Dashboard Builder | Planned | v0.7.3 |
 
 ## File Locations
 
 ```text
 playgrounds/
-├── worktree-coordinator.html   # Phase 1
-├── agent-visualizer.html       # Phase 2
-├── schema-explorer.html        # Phase 2
-├── lineage-explorer.html       # Phase 3
-└── dashboard-builder.html      # Phase 4
+├── workflow-hub.html           # ✅ Central command center
+├── workflow-chronicle.html     # ✅ Timeline visualization
+├── worktree-coordinator.html   # ✅ Git worktree management
+├── mermaid-designer.html       # ✅ Diagram creation
+├── agent-visualizer.html       # Planned
+├── schema-explorer.html        # Planned
+├── lineage-explorer.html       # Planned
+└── dashboard-builder.html      # Planned
 ```
 
 ## Agent Suggestions
