@@ -78,6 +78,8 @@ personas/                 # Minimal persona deltas
 
 **Key insight**: The "foundation" layer eliminated the amnesia problem by ensuring core patterns were always available.
 
+**Additional insight for our project**: PM should create project management artifacts (PRDs, milestones, issues, tasks) that enable evaluation of team improvement over time. These artifacts provide the data needed to answer "are we getting better?" and identify patterns in what works vs. what doesn't.
+
 ## Our Current Architecture
 
 We use v2 (fragmented files) with some v3 elements:
