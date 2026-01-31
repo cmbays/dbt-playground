@@ -54,6 +54,7 @@ Use `PRD-TEMPLATE.md` for new PRDs.
 | PRD-005 | Marts Enhancements | Complete | v0.5 |
 | PRD-014 | Playground Tools | Complete | v0.6 |
 | PRD-016 | Agent Context Management | Approved | v0.7 |
+| PRD-019 | Workflow Hub v0.7 | Draft | v0.7 |
 | PRD-007 | Tuva Foundation | Draft | Future |
 | PRD-008 | Clinical Marts | Draft | Future |
 | PRD-009 | Claims Acquisition | Draft | Future |
@@ -73,6 +74,7 @@ Use `PRD-TEMPLATE.md` for new PRDs.
 | TDD-007 | Tuva Foundation | Draft | PRD-007 |
 | TDD-014 | Playground Tools | Complete | PRD-014 |
 | TDD-016 | Agent Context Management | Complete | PRD-016 |
+| TDD-019 | Workflow Hub v0.7 | Draft | PRD-019 |
 
 ## Related
 
