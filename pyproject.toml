@@ -1,6 +1,6 @@
 [project]
 name = "dbt-playground"
-version = "0.2.0"
+version = "0.7.0"
 description = "dbt learning project for data transformation best practices, agent orchestration, and dbt-mcp integration"
 requires-python = ">=3.11"
 dependencies = [
