@@ -261,6 +261,45 @@ Process:
 Output: Learnings extracted and committed to PR branch if applicable
 ```
 
+### Workflow H: ADR Pattern Promotion Review
+
+```
+Trigger: Session end OR explicit invocation with `sage: review ADRs for promotion`
+Input: ADR_INDEX.md, feature implementation history
+
+Process:
+1. Scan ADR_INDEX.md for ADRs with "Approved" status (not already promoted)
+2. For each ADR, check if pattern appears in 2+ implementations:
+   - Search codebase for pattern usage
+   - Review CHANGELOG for feature mentions
+   - Check temp/v*.md plans for pattern references
+3. If 2+ implementations found:
+   - Validate pattern is reusable (not context-specific)
+   - Draft LEARNINGS.md entry with "Validated by: ADR-N" reference
+   - Update ADR_INDEX.md "Promoted to" column
+   - Log promotion in temp/LEARNING_DIGEST_[DATE].md
+4. Report findings to Supervisor
+
+Output: Promoted patterns added to LEARNINGS.md, ADR_INDEX.md updated
+```
+
+**Promotion Criteria**:
+
+| Criterion | Description |
+|-----------|-------------|
+| 2+ implementations | Pattern used in at least 2 real features |
+| Reusable | Pattern applies beyond original context |
+| Not context-specific | Not tied to unique project constraints |
+| Documented | Original ADR has clear rationale |
+
+**Example Invocations**:
+
+```text
+sage: review ADRs for promotion
+sage: check if ADR-3 is ready for promotion
+sage: what ADRs have 2+ implementations?
+```
+
 ### Sage Trigger Conditions (Updated)
 
 Sage extracts learnings when:
