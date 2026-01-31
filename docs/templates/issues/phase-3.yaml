@@ -1,0 +1,129 @@
+# Phase 3: GitHub Project Management - Issue Template
+#
+# This template demonstrates the issue batch creation format.
+# Use with: uv run scripts/github-ops.py issue batch docs/templates/issues/phase-3.yaml
+#
+# Schema: docs/schemas/issue-template.schema.json
+
+version: 1
+
+# Default values applied to all issues unless overridden
+defaults:
+  milestone: v0.8
+  labels:
+    - workflow
+    - phase-3
+  assignee: cmbays
+
+# Issues to create
+issues:
+  # Feature 1: Issue Creation
+  - title: "feat(github): implement issue creation CLI"
+    description: |
+      ## Description
+
+      Enable PM persona to create GitHub issues via CLI commands without
+      navigating the GitHub UI.
+
+      ## Acceptance Criteria
+
+      - [ ] AC-1.1: Create single issue via `gh issue create` with title, body, labels
+      - [ ] AC-1.2: Support YAML template input for batch creation
+      - [ ] AC-1.3: Related issues auto-linked via body syntax
+      - [ ] AC-1.4: No GitHub UI navigation required
+
+      ## Implementation Notes
+
+      - Use `gh` CLI for all operations
+      - Python script for batch processing (`scripts/github-ops.py`)
+      - JSON Schema validation for YAML templates
+
+      ## Related
+
+      Related to #91
+    labels:
+      - enhancement
+    priority: high
+
+  # Feature 2: Milestone Tracking
+  - title: "feat(github): implement milestone tracking CLI"
+    description: |
+      ## Description
+
+      Enable tracking of milestone progress via CLI commands.
+
+      ## Acceptance Criteria
+
+      - [ ] AC-2.1: Create milestones v0.8, v0.9, v1.0 with due dates
+      - [ ] AC-2.2: Assign issues to appropriate milestones
+      - [ ] AC-2.3: Track milestone progress (open/closed counts)
+      - [ ] AC-2.4: Update CLAUDE.md with milestone status section
+
+      ## Implementation Notes
+
+      - Use `gh api` for milestone operations
+      - Calculate progress percentage from issue counts
+      - Manual CLAUDE.md updates (automated in later phase)
+
+      ## Related
+
+      Related to #91
+    labels:
+      - enhancement
+    priority: high
+
+  # Feature 3: PR-Issue Linking
+  - title: "feat(github): enhance PR-issue linking workflow"
+    description: |
+      ## Description
+
+      Ensure bidirectional linking between PRs and issues with proper
+      auto-close behavior on merge.
+
+      ## Acceptance Criteria
+
+      - [ ] AC-3.1: PR with "Closes #N" links and auto-closes on merge
+      - [ ] AC-3.2: PR with "Related to #N" links without closing
+      - [ ] AC-3.3: Bidirectional links visible in GitHub UI
+      - [ ] AC-3.4: pr-validation workflow validates link syntax
+
+      ## Implementation Notes
+
+      - Extend existing issue-linker.yml workflow
+      - Document all supported keywords
+      - Test with draft PRs
+
+      ## Related
+
+      Related to #91
+    labels:
+      - enhancement
+    priority: medium
+
+  # Feature 4: GitHub Projects Integration
+  - title: "feat(github): integrate with GitHub Projects"
+    description: |
+      ## Description
+
+      Create and configure GitHub Project for v0.8 roadmap with
+      automated status tracking.
+
+      ## Acceptance Criteria
+
+      - [ ] AC-4.1: GitHub Project created for v0.8 roadmap
+      - [ ] AC-4.2: Issues auto-added to project on creation
+      - [ ] AC-4.3: Status columns: Backlog, In Progress, In Review, Done
+      - [ ] AC-4.4: Auto-move issues on PR events
+
+      ## Implementation Notes
+
+      - Use GitHub Projects built-in automation
+      - Add PROJECT_TOKEN secret for API access
+      - Create project-automation.yml workflow
+
+      ## Related
+
+      Related to #91
+    labels:
+      - enhancement
+    priority: medium

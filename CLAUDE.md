@@ -223,6 +223,18 @@ Visual tools for learning and development. Launch via commands or explore the HT
 
 See `docs/for_chris/PLAYGROUND-TOOLS.md` for detailed guide.
 
+## Milestone Status
+
+Track project milestones and progress. Update this section when milestones change.
+
+| Milestone | Target | Description | Open | Closed | Progress |
+|-----------|--------|-------------|------|--------|----------|
+| v0.8 | Feb 28 | GitHub Project Management | - | - | - |
+| v0.9 | Mar 31 | Data Quality (dbt_expectations) | - | - | - |
+| v1.0 | Jun 30 | Production Ready | - | - | - |
+
+**Update milestone counts**: `uv run scripts/github-ops.py milestone list`
+
 ## GitHub Actions (CI/CD)
 
 Automated enforcement via GitHub Actions provides server-side checks that cannot be bypassed.

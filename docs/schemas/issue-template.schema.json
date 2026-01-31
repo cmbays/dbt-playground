@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/cmbays/dbt-playground/docs/schemas/issue-template.schema.json",
+  "title": "Issue Template Schema",
+  "description": "Schema for validating GitHub issue batch creation templates",
+  "type": "object",
+  "required": ["version", "issues"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "description": "Schema version number",
+      "minimum": 1
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Default values applied to all issues",
+      "properties": {
+        "labels": {
+          "type": "array",
+          "description": "Default labels to apply to all issues",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "milestone": {
+          "type": "string",
+          "description": "Default milestone to assign"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Default assignee username"
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "description": "List of issues to create",
+      "items": {
+        "$ref": "#/$defs/issue"
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "description": "Single issue definition",
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Issue title",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "description": {
+          "type": "string",
+          "description": "Issue body/description (supports Markdown)"
+        },
+        "labels": {
+          "type": "array",
+          "description": "Additional labels (merged with defaults)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "milestone": {
+          "type": "string",
+          "description": "Override default milestone"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Override default assignee"
+        },
+        "priority": {
+          "type": "string",
+          "description": "Priority level (added as priority:X label)",
+          "enum": ["critical", "high", "medium", "low"]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

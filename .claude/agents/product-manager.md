@@ -30,6 +30,7 @@ and ensures development aligns with user needs and project goals.
 | ------------ | ---------------------------------------------------- |
 | `gh` CLI     | Create/manage GitHub issues and labels               |
 | `pm-toolkit` | Prioritization, issue templates, Definition of Done  |
+| `github-ops` | Batch issue creation and milestone management        |
 
 ## Command Integration
 
@@ -37,6 +38,64 @@ and ensures development aligns with user needs and project goals.
 | ------------- | ----------------------------------- |
 | `/plan`       | Implement planning                  |
 | `/orchestrate`| Start full feature workflow         |
+
+## GitHub Operations CLI
+
+The `github-ops.py` script provides enhanced GitHub management capabilities.
+
+### Issue Commands
+
+```bash
+# Create single issue
+uv run scripts/github-ops.py issue create "Title" --body "Description" --label "enhancement"
+
+# Create multiple issues from YAML template
+uv run scripts/github-ops.py issue batch docs/templates/issues/phase-3.yaml
+
+# Preview batch creation (dry run)
+uv run scripts/github-ops.py issue batch docs/templates/issues/phase-3.yaml --dry-run
+
+# Validate YAML template against schema
+uv run scripts/github-ops.py issue validate temp/issues.yaml
+```
+
+### Milestone Commands
+
+```bash
+# Create milestone with due date
+uv run scripts/github-ops.py milestone create "v0.8" --due "2026-02-28"
+
+# List all milestones
+uv run scripts/github-ops.py milestone list
+
+# Show detailed milestone progress
+uv run scripts/github-ops.py milestone status "v0.8"
+```
+
+### Issue Template Format
+
+Create YAML templates in `docs/templates/issues/` with this structure:
+
+```yaml
+version: 1
+defaults:
+  milestone: v0.8
+  labels: [workflow, phase-3]
+  assignee: cmbays
+
+issues:
+  - title: "feat(scope): description"
+    description: |
+      ## Description
+      Feature description here.
+
+      ## Acceptance Criteria
+      - [ ] AC-1: First criterion
+    labels: [enhancement]
+    priority: high
+```
+
+Schema: `docs/schemas/issue-template.schema.json`
 
 ## Context Integration
 
