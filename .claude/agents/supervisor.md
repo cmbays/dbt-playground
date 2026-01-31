@@ -576,20 +576,33 @@ Before approving a PR for merge, Supervisor MUST verify that reviewers posted co
     │      └─ Verify PR summary review exists:
     │           gh pr view N --json reviews --jq '.reviews | length'
     │
-    ├─ 3. Quality check - verify appropriate comment types:
+    ├─ 3. Label compliance check:
     │      │
-    │      ├─ Line-specific issues SHOULD have inline comments
-    │      │    (not just mentioned in summary)
+    │      ├─ All inline/file-level comments MUST use conventional labels:
+    │      │    praise:, nit:, suggestion:, issue:, question:, chore:, thought:
     │      │
-    │      ├─ File-wide issues SHOULD have file-level comments
-    │      │    (not just mentioned in summary)
+    │      ├─ Blocking comments MUST use (blocking) decorator:
+    │      │    "issue (blocking): ..." not just "issue: ..."
     │      │
-    │      └─ Holistic feedback SHOULD be in PR summary
-    │           (not scattered as inline comments)
+    │      └─ PR summary should be narrative (no label prefixes)
     │
-    └─ 4. If verification fails:
-         BLOCK: "PR comments incomplete - reviewers must post inline comments for line-specific feedback"
-         Action: Re-invoke reviewer with: git: pr-comment N --findings [file]
+    ├─ 4. Comment location compliance:
+    │      │
+    │      ├─ Line references MUST be inline comments:
+    │      │    If findings file has `line: N`, verify inline comment at that line
+    │      │    Check: gh api .../pulls/N/comments --jq '.[] | select(.line==N)'
+    │      │
+    │      ├─ File-level feedback MUST be file-level comments:
+    │      │    Not just mentioned in PR summary
+    │      │
+    │      └─ FAIL if line-specific feedback only in PR summary
+    │
+    └─ 5. If verification fails:
+         BLOCK: "PR comments incomplete or non-compliant"
+         Actions:
+           - Missing inline comments: git: pr-comment N --findings [file]
+           - Wrong labels: Reviewer must repost with correct labels
+           - Wrong location: Reviewer must post at correct level
 ```
 
 #### Verification Commands
@@ -613,8 +626,11 @@ gh api repos/{owner}/{repo}/pulls/N/comments --jq '.[] | select(.user.login=="cm
 | Scenario | Detection | Action |
 |----------|-----------|--------|
 | No inline comments but findings file has inline items | Comment count = 0 | Re-invoke: `git: pr-comment N --findings [file]` |
-| Comments only in summary, not inline | Summary exists but no line-anchored comments | WARN, request inline comments for specific issues |
+| Comments only in summary, not inline | Summary exists but no line-anchored comments | BLOCK, require inline comments for line-specific issues |
 | Findings file missing | No `*_FINDINGS.yaml` in AGENT_REPORTS | BLOCK, reviewer must write findings file |
+| Wrong labels used | Comment body doesn't start with conventional label | BLOCK, reviewer must repost with correct labels |
+| Missing (blocking) decorator | Blocking issue without `(blocking)` | WARN, reviewer should clarify severity |
+| Line-specific in summary only | Findings has `line: N` but no inline comment | BLOCK, must post as inline comment |
 | Verdict mismatch | Findings says `approved` but PR has `changes-requested` | WARN, clarify with reviewer |
 
 ### Checklist Verification Commands

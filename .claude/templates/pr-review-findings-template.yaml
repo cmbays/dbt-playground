@@ -14,6 +14,7 @@
 # Required metadata
 pr: 0                          # PR number (integer)
 reviewer: code-reviewer        # Agent name: code-reviewer, security-reviewer, design-reviewer, etc.
+date: 2026-01-31               # Review date (YYYY-MM-DD) for audit trail
 verdict: approved              # approved | changes-requested | comment-only
 
 # Brief summary for PR review body

@@ -801,7 +801,7 @@ Looking forward to seeing this merged after those fixes!
            │
            ├─ For each inline comment:
            │   gh api repos/{owner}/{repo}/pulls/N/comments \
-           │     -f body="[LEVEL] Comment" \
+           │     -f body="issue (blocking): Comment text" \
            │     -f path="file/path" \
            │     -f commit_id="SHA" \
            │     -F line=N \
@@ -811,7 +811,7 @@ Looking forward to seeing this merged after those fixes!
            │
            ├─ For each file-level comment:
            │   gh api repos/{owner}/{repo}/pulls/N/comments \
-           │     -f body="[LEVEL] Comment" \
+           │     -f body="suggestion: Comment text" \
            │     -f path="file/path" \
            │     -f commit_id="SHA" \
            │     -F position=1 \
@@ -838,7 +838,7 @@ Looking forward to seeing this merged after those fixes!
 ```bash
 # Inline comment (line-specific) - NOTE: -F for integer
 gh api repos/{owner}/{repo}/pulls/{pr}/comments \
-  -f body="**[LEVEL]** Comment text" \
+  -f body="issue (blocking): Missing null check here" \
   -f path="relative/file/path.md" \
   -f commit_id="full-sha-here" \
   -F line=105 \
@@ -846,7 +846,7 @@ gh api repos/{owner}/{repo}/pulls/{pr}/comments \
 
 # File-level comment (first line of file in diff)
 gh api repos/{owner}/{repo}/pulls/{pr}/comments \
-  -f body="**[LEVEL]** Overall file feedback" \
+  -f body="suggestion: Overall file feedback here" \
   -f path="relative/file/path.md" \
   -f commit_id="full-sha-here" \
   -F position=1 \
