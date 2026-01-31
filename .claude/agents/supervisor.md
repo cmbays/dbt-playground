@@ -526,6 +526,7 @@ Before authorizing merge, Supervisor performs final checklist validation.
     │   □ No unresolved [BLOCKER] comments
     │   □ CHANGELOG updated (for feat/fix PRs)
     │   □ All CI checks passing (if configured)
+    │   □ PR comments posted correctly (NEW - see below)
     │
     │   RECOMMENDED CHECKS (warn if missing):
     │   □ Docs/Sage/PM updates committed
@@ -541,6 +542,96 @@ Before authorizing merge, Supervisor performs final checklist validation.
             "super: BLOCKED - [reason]"
             └─ Reports specific failures
 ```
+
+### PR Comment Verification (NEW)
+
+Before approving a PR for merge, Supervisor MUST verify that reviewers posted comments at the appropriate level.
+
+#### Comment Level Requirements
+
+| Feedback Type | Required Comment Level | Verification |
+|---------------|----------------------|--------------|
+| Line-specific issue | Inline comment | Check `gh api .../pulls/N/comments` for line-anchored comments |
+| Overall file feedback | File-level comment | Check for comments with `path` but general scope |
+| Holistic/conceptual feedback | PR summary | Check `gh pr view N --json reviews` |
+
+#### Verification Process
+
+```
+[Before Final Approval]
+    │
+    ├─ 1. Check for review findings files:
+    │      ls temp/AGENT_REPORTS/[feature]/*_FINDINGS.yaml
+    │
+    ├─ 2. For each findings file, verify comments were posted:
+    │      │
+    │      ├─ Count inline findings in YAML
+    │      ├─ Count actual inline comments on PR:
+    │      │    gh api repos/{owner}/{repo}/pulls/N/comments --jq 'length'
+    │      │
+    │      ├─ If inline count mismatch:
+    │      │    WARN: "X inline findings not posted as comments"
+    │      │    Check: Were they moved to file-level due to diff limitations?
+    │      │
+    │      └─ Verify PR summary review exists:
+    │           gh pr view N --json reviews --jq '.reviews | length'
+    │
+    ├─ 3. Label compliance check:
+    │      │
+    │      ├─ All inline/file-level comments MUST use conventional labels:
+    │      │    praise:, nit:, suggestion:, issue:, question:, chore:, thought:
+    │      │
+    │      ├─ Blocking comments MUST use (blocking) decorator:
+    │      │    "issue (blocking): ..." not just "issue: ..."
+    │      │
+    │      └─ PR summary should be narrative (no label prefixes)
+    │
+    ├─ 4. Comment location compliance:
+    │      │
+    │      ├─ Line references MUST be inline comments:
+    │      │    If findings file has `line: N`, verify inline comment at that line
+    │      │    Check: gh api .../pulls/N/comments --jq '.[] | select(.line==N)'
+    │      │
+    │      ├─ File-level feedback MUST be file-level comments:
+    │      │    Not just mentioned in PR summary
+    │      │
+    │      └─ FAIL if line-specific feedback only in PR summary
+    │
+    └─ 5. If verification fails:
+         BLOCK: "PR comments incomplete or non-compliant"
+         Actions:
+           - Missing inline comments: git: pr-comment N --findings [file]
+           - Wrong labels: Reviewer must repost with correct labels
+           - Wrong location: Reviewer must post at correct level
+```
+
+#### Verification Commands
+
+```bash
+# Count inline comments on PR
+gh api repos/{owner}/{repo}/pulls/N/comments --jq 'length'
+
+# List inline comments with file/line info
+gh api repos/{owner}/{repo}/pulls/N/comments --jq '.[] | {path, line, body}'
+
+# Count reviews (summaries)
+gh pr view N --json reviews --jq '.reviews | length'
+
+# Check for specific reviewer's comments
+gh api repos/{owner}/{repo}/pulls/N/comments --jq '.[] | select(.user.login=="cmbays") | {path, line}'
+```
+
+#### Failure Scenarios
+
+| Scenario | Detection | Action |
+|----------|-----------|--------|
+| No inline comments but findings file has inline items | Comment count = 0 | Re-invoke: `git: pr-comment N --findings [file]` |
+| Comments only in summary, not inline | Summary exists but no line-anchored comments | BLOCK, require inline comments for line-specific issues |
+| Findings file missing | No `*_FINDINGS.yaml` in AGENT_REPORTS | BLOCK, reviewer must write findings file |
+| Wrong labels used | Comment body doesn't start with conventional label | BLOCK, reviewer must repost with correct labels |
+| Missing (blocking) decorator | Blocking issue without `(blocking)` | WARN, reviewer should clarify severity |
+| Line-specific in summary only | Findings has `line: N` but no inline comment | BLOCK, must post as inline comment |
+| Verdict mismatch | Findings says `approved` but PR has `changes-requested` | WARN, clarify with reviewer |
 
 ### Checklist Verification Commands
 

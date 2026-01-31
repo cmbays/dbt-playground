@@ -655,6 +655,220 @@ git: show audit log of today's operations
 - Conflict resolution assistance
 - Stale branch detection and cleanup
 
+## Workflow I: PR Review Comments
+
+Git-master centralizes all PR commenting for consistency across reviewer agents.
+
+### Comment Levels
+
+| Level | When to Use | GitHub Mechanism |
+|-------|-------------|------------------|
+| **Inline** | Specific line feedback | `gh api` with `line` param |
+| **File-level** | Overall file feedback (no specific line) | `gh api` with `path` only |
+| **PR summary** | Holistic feedback (not file-specific) | `gh pr review --comment` |
+
+### Invocation
+
+```bash
+# From findings file (standard method)
+git: pr-comment 66 --findings temp/AGENT_REPORTS/[feature]/review-findings.yaml
+
+# Single inline comment
+git: pr-comment 66 --file "path/to/file.md" --line 105 --level SUGGESTION --body "Comment text"
+
+# File-level comment (no line number)
+git: pr-comment 66 --file "path/to/file.md" --level SUGGESTION --body "Overall file feedback"
+
+# PR summary comment
+git: pr-comment 66 --summary --body "Holistic review summary"
+```
+
+### Findings File Format
+
+Reviewers write findings to `temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml`:
+
+```yaml
+# CODE_REVIEWER_FINDINGS.yaml
+pr: 66
+reviewer: code-reviewer
+verdict: approved  # approved | changes-requested | comment-only
+summary: "Clean implementation with minor suggestions"
+
+# Inline comments (line-specific) - MUST use conventional label
+inline:
+  - file: ".claude/commands/repo-research.md"
+    line: 105
+    label: suggestion
+    body: |
+      suggestion: Consider using full focus flag names for consistency.
+
+      Current: `--focus=arch`
+      Recommended: `--focus=architecture`
+
+  - file: ".claude/skills/repo-research.md"
+    line: 217
+    label: issue
+    blocking: true
+    body: |
+      issue (blocking): Missing null check could cause runtime failures.
+
+      This will throw if `focus_areas` is undefined.
+      Add: `const areas = focus_areas ?? []`
+
+# File-level comments (overall file feedback) - MUST use conventional label
+file_level:
+  - file: ".claude/templates/specialist-focus-template.md"
+    label: suggestion
+    body: |
+      suggestion: Overall the template is comprehensive. Consider adding
+      YAML frontmatter for consistency with other templates in this directory.
+
+# PR summary (narrative/conversational - highlight blockers, include praise)
+pr_summary: |
+  This is solid work that improves our repo-research workflow significantly.
+  The depth matrix design is particularly elegant and the workflow diagrams
+  make the process easy to understand.
+
+  **One blocker needs attention:** The null check issue in repo-research.md:217
+  could cause runtime failures when `focus_areas` is undefined.
+
+  After that fix, this is ready to merge. Nice work on the documentation!
+
+# Praise items (woven into pr_summary narrative)
+praise:
+  - "Depth matrix design is elegant"
+  - "Workflow diagrams are clear"
+```
+
+### Comment Formatting Rules
+
+**Inline and file-level comments MUST use conventional labels.** This ensures consistent, scannable feedback across all reviewers.
+
+| Label | Meaning | Action Required |
+|-------|---------|-----------------|
+| `praise:` | Good work worth noting | None |
+| `nit:` | Minor style preference | Optional |
+| `suggestion:` | Improvement idea | Optional |
+| `issue:` | Problem that needs fixing | Yes |
+| `question:` | Needs clarification | Response needed |
+| `chore:` | Maintenance/cleanup task | Optional |
+| `thought:` | Sharing an observation | None |
+
+**Blocking decorator:** Add `(blocking)` when the comment blocks PR approval:
+
+```text
+issue (blocking): Missing null check could cause runtime failures.
+suggestion: Consider extracting this to a shared macro.
+```
+
+**Format for inline/file-level comments:**
+
+```text
+label: Brief issue description.
+
+Details if needed.
+Current: `problematic code`
+Recommended: `better code`
+```
+
+**PR summary should be narrative/conversational** - communicate tone, highlight blockers clearly, and include praise. Not a mechanical list.
+
+```text
+Overall this is solid work that moves us closer to [goal]. The CTE structure
+is clean and the naming follows conventions.
+
+Two blockers need attention before merge:
+1. stg_orders.sql:42 - Null handling could cause silent failures
+2. dim_customers.sql:78 - Missing unique test on primary key
+
+Looking forward to seeing this merged after those fixes!
+```
+
+### Process Flow
+
+```
+[Reviewer completes analysis]
+    │
+    ├─ 1. Write findings to YAML file:
+    │      temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml
+    │
+    ├─ 2. Invoke git-master:
+    │      git: pr-comment N --findings [path-to-findings.yaml]
+    │
+    └─ 3. Git-master processes findings:
+           │
+           ├─ Get commit SHA: gh pr view N --json headRefOid
+           │
+           ├─ For each inline comment:
+           │   gh api repos/{owner}/{repo}/pulls/N/comments \
+           │     -f body="issue (blocking): Comment text" \
+           │     -f path="file/path" \
+           │     -f commit_id="SHA" \
+           │     -F line=N \
+           │     -f side="RIGHT"
+           │
+           │   If line not in diff → move to file_level
+           │
+           ├─ For each file-level comment:
+           │   gh api repos/{owner}/{repo}/pulls/N/comments \
+           │     -f body="suggestion: Comment text" \
+           │     -f path="file/path" \
+           │     -f commit_id="SHA" \
+           │     -F position=1 \
+           │     -f side="RIGHT"
+           │
+           ├─ Post PR summary review:
+           │   gh pr review N --comment --body "[summary content]"
+           │
+           └─ Set review status:
+               gh pr review N --approve (if verdict=approved)
+               gh pr review N --request-changes (if verdict=changes-requested)
+```
+
+### Error Handling
+
+| Error | Cause | Recovery |
+|-------|-------|----------|
+| "line could not be resolved" | Line not in diff | Move to file-level comment |
+| "path not found" | File not in PR | Include in PR summary instead |
+| API rate limit | Too many requests | Batch comments, retry with delay |
+
+### GitHub API Syntax Reference
+
+```bash
+# Inline comment (line-specific) - NOTE: -F for integer
+gh api repos/{owner}/{repo}/pulls/{pr}/comments \
+  -f body="issue (blocking): Missing null check here" \
+  -f path="relative/file/path.md" \
+  -f commit_id="full-sha-here" \
+  -F line=105 \
+  -f side="RIGHT"
+
+# File-level comment (first line of file in diff)
+gh api repos/{owner}/{repo}/pulls/{pr}/comments \
+  -f body="suggestion: Overall file feedback here" \
+  -f path="relative/file/path.md" \
+  -f commit_id="full-sha-here" \
+  -F position=1 \
+  -f side="RIGHT"
+
+# PR summary review
+gh pr review {pr} --comment --body "Summary markdown here"
+
+# Set verdict
+gh pr review {pr} --approve --body "LGTM"
+gh pr review {pr} --request-changes --body "Blockers listed above"
+```
+
+**Key Syntax Notes**:
+
+- Use `-F line=N` (raw integer), NOT `-f line=N` (string)
+- `side="RIGHT"` refers to the new version of the file
+- Line must be within diff range for inline comments
+- `position=1` for file-level comments (first line of diff)
+
+---
+
 ## Future Enhancements
 
 **v0.4+:**
@@ -677,3 +891,4 @@ git: show audit log of today's operations
 - Semantic Versioning: <https://semver.org/>
 - PR template: See `.claude/rules/git-workflow.md#pull-requests`
 - Branch naming: See `.claude/rules/git-workflow.md#branch-naming`
+- PR Review Findings: See `.claude/templates/pr-review-findings-template.yaml`
