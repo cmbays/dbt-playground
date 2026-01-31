@@ -8,7 +8,7 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: Analytics Layer Complete (v0.6.0)
+**Status**: Analytics Layer Complete (v0.6.0) + GitHub Actions MVP
 
 - dbt 1.11.2 + duckdb-adapter 1.10.0 working
 - 28 models total (staging, intermediate, dimensional, analytics)
@@ -16,6 +16,7 @@ This is a dbt learning project for data transformation best practices, agent orc
 - Interactive playgrounds: Workflow Hub, Workflow Chronicle, Worktree Coordinator, Mermaid Designer
 - Agent context management with inter-agent reports
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
+- GitHub Actions automation: PR validation, issue linking, auto-labeling, dbt CI tests
 
 **Next**: v0.7 - Data quality enhancements (dbt_expectations).
 
@@ -217,6 +218,46 @@ Visual tools for learning and development. Launch via commands or explore the HT
 **Location**: `playgrounds/` directory contains single-file HTML implementations.
 
 See `docs/for_chris/PLAYGROUND-TOOLS.md` for detailed guide.
+
+## GitHub Actions (CI/CD)
+
+Automated enforcement via GitHub Actions provides server-side checks that cannot be bypassed.
+
+### Active Workflows
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| PR Validation | PR open/edit | Enforce conventional commit titles |
+| Issue Linker | PR open/edit | Require issue references |
+| PR Labeler | PR open/sync | Auto-apply type/size/layer labels |
+| dbt Tests | PR + push to main | Run dbt build and tests |
+
+### PR Requirements
+
+For a PR to pass all checks:
+
+1. **Title format**: `type(scope): description` (e.g., `feat(staging): add model`)
+2. **Issue reference**: `Closes #N` or `Related to #N` in description
+3. **dbt tests pass**: If dbt files changed
+
+### Quick Commands
+
+```bash
+# View PR check status
+gh pr checks
+
+# View recent workflow runs
+gh run list
+
+# Re-run failed workflow
+gh run rerun <run-id> --failed
+```
+
+**Documentation**:
+
+- `docs/reference/GITHUB_ENFORCEMENT.md` - Workflow details
+- `docs/reference/GITHUB_ACTIONS.md` - Quick reference
+- `docs/for_chris/GITHUB_ACTIONS_GUIDE.md` - Setup and testing guide
 
 ## Notes for Claude
 

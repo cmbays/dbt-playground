@@ -175,16 +175,25 @@ done
 **What it catches**: Pushes to main even if commit hook was bypassed
 **What it misses**: Can also be bypassed, and doesn't help if hook not installed
 
-### Layer 5: GitHub Branch Protection (Hard Remote)
+### Layer 5: GitHub Actions + Branch Protection (Hard Remote)
 
 Server-side enforcement that cannot be bypassed locally:
 
-- Require pull request reviews before merging
-- Block direct pushes to main (even from admins if configured)
-- Require status checks to pass
+- **GitHub Actions** (now implemented):
+  - PR Validation: Conventional commit title format
+  - Issue Linker: Require issue references
+  - PR Labeler: Auto-apply type/size/layer labels
+  - dbt Tests: Run build and test on every PR
+
+- **Branch Protection** (can be enabled):
+  - Require pull request reviews before merging
+  - Block direct pushes to main (even from admins if configured)
+  - Require status checks to pass
 
 **What it catches**: Everything that makes it to the server
 **What it misses**: Nothing - this is the final line of defense
+
+See [GitHub Enforcement Strategy](../reference/GITHUB_ENFORCEMENT.md) for workflow details.
 
 ---
 
@@ -299,6 +308,8 @@ This is defense-in-depth applied to workflow, and it's how mature engineering or
 
 ## Related Reading
 
+- **GitHub Actions**: `docs/reference/GITHUB_ENFORCEMENT.md` (Layer 5 implementation)
+- **GitHub Actions Guide**: `docs/for_chris/GITHUB_ACTIONS_GUIDE.md` (setup and testing)
 - **Technical patterns**: `docs/reference/LEARNINGS.md#workflow-enforcement-patterns`
 - **Executable skill**: `.claude/skills/learned-workflow-enforcement.md`
 - **Supervisor details**: `.claude/agents/supervisor.md` (phase gates)
