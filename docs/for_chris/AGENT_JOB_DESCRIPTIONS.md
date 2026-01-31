@@ -81,6 +81,8 @@ sage: Is there a pattern for handling null values?
 
 **Human Equivalent**: Release Manager / Version Control Guardian
 
+**Agent Type**: **Horizontal** (service agent used by all other agents, not a vertical workflow phase)
+
 **What They Do**:
 
 - Creates branches with proper naming
@@ -88,6 +90,19 @@ sage: Is there a pattern for handling null values?
 - Creates and manages pull requests
 - Enforces branch protection rules
 - Prevents accidental destructive operations
+
+**Core Principle**: *If we don't record what happened properly, we won't remember, and we won't improve.*
+
+**Git-Centric Workflow**:
+
+Git-master enforces a workflow where context lives in git and artifacts, not in session hand-offs:
+
+| Practice | Why It Matters |
+|----------|----------------|
+| Open PRs early | All work visible in GitHub |
+| Reviewers read from git | Not from session summaries |
+| Post comments on PRs | Creates permanent record |
+| Commit artifacts to repo | Enables cross-session learning |
 
 **When to Invoke**:
 

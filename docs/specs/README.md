@@ -2,7 +2,7 @@
 audience: [pm, architect]
 priority: medium
 size: small
-last_updated: 2026-01-28
+last_updated: 2026-01-30
 status: active
 tags: [specs, prd, requirements, index]
 ---
@@ -45,9 +45,34 @@ Use `PRD-TEMPLATE.md` for new PRDs.
 
 ## PRD Index
 
-| PRD | Title | Status | Epic Issue | Phase |
-|-----|-------|--------|------------|-------|
-| - | _No PRDs yet_ | - | - | - |
+| PRD | Title | Status | Version |
+|-----|-------|--------|---------|
+| PRD-001 | Environment Setup | Complete | v0.1 |
+| PRD-002 | Data Acquisition | Complete | v0.2 |
+| PRD-003 | Staging Layer | Complete | v0.3 |
+| PRD-004 | Dimensional Models | Complete | v0.4 |
+| PRD-005 | Marts Enhancements | Complete | v0.5 |
+| PRD-014 | Playground Tools | Complete | v0.6 |
+| PRD-016 | Agent Context Management | Approved | v0.7 |
+| PRD-007 | Tuva Foundation | Draft | Future |
+| PRD-008 | Clinical Marts | Draft | Future |
+| PRD-009 | Claims Acquisition | Draft | Future |
+| PRD-010 | Claims Connector | Draft | Future |
+| PRD-011 | Financial Marts | Draft | Future |
+| PRD-012 | Semantic Layer | Draft | Future |
+| PRD-013 | Git Worktree Workflow | Complete | v0.6 |
+| PRD-015 | Workflow Enhancement | Draft | Future |
+
+## TDD Index
+
+| TDD | Title | Status | PRD |
+|-----|-------|--------|-----|
+| TDD-001 | dbt Project Architecture | Complete | - |
+| TDD-004 | Dimensional Models | Complete | PRD-004 |
+| TDD-005 | Marts Enhancements | Complete | PRD-005 |
+| TDD-007 | Tuva Foundation | Draft | PRD-007 |
+| TDD-014 | Playground Tools | Complete | PRD-014 |
+| TDD-016 | Agent Context Management | Complete | PRD-016 |
 
 ## Related
 
