@@ -18,6 +18,9 @@ description: Research external repositories to extract architecture patterns, im
 - Single repo: `/repo-research <url>`
 - Multi-repo comparison: `/repo-research <url1> <url2> <url3> --compare`
 - Depth control: `--depth=quick|standard|deep`
+- Parallel specialists: `--parallel` (enables multi-agent research)
+- Specialist focus: `--focus=architecture|security|quality` (internal use)
+- Council handoff: `--council` (triggers deliberation after research)
 
 ---
 
@@ -489,6 +492,137 @@ Specify depth: `/repo-research <url> --depth=quick|standard|deep`
 
 ---
 
+## Parallel Specialist Mode
+
+### Overview
+
+Parallel mode enables multiple specialists to simultaneously research different aspects of a repository, providing deeper domain-specific analysis than single-agent research.
+
+### Depth + Parallel Matrix
+
+| Depth | Default Behavior | Parallel Option | Specialist Count |
+|-------|------------------|-----------------|------------------|
+| `quick` | Sage only | Not available | 0 |
+| `standard` | Sage only | `--parallel` adds 1-2 specialists | 0-2 |
+| `deep` | Sage + specialists | `--parallel` (default on) | 3 (full team) |
+
+### Specialist Roles
+
+| Specialist | Focus Flag | Research Emphasis |
+|------------|------------|-------------------|
+| `architect` | `--focus=architecture` | Structure, patterns, data flow, scalability |
+| `security-reviewer` | `--focus=security` | Dependencies, vulnerabilities, auth patterns, data handling |
+| `code-reviewer` | `--focus=quality` | Testing, documentation, maintainability, code standards |
+
+### Enabling Parallel Mode
+
+```bash
+# Standard depth with parallel specialists
+/repo-research <url> --parallel
+
+# Deep research (parallel is default-on)
+/repo-research <url> --depth=deep
+
+# Standard depth with specific specialists only
+/repo-research <url> --parallel --specialists=architect,security-reviewer
+
+# Full workflow with council deliberation
+/repo-research <url> --depth=deep --council
+```
+
+### Focus Flag (Internal Use)
+
+The `--focus` flag is used internally when spawning specialist sub-tasks:
+
+```bash
+# Spawned by master Sage for architecture specialist
+/repo-research <url> --focus=architecture
+
+# Spawned by master Sage for security specialist
+/repo-research <url> --focus=security
+
+# Spawned by master Sage for code quality specialist
+/repo-research <url> --focus=quality
+```
+
+When `--focus` is set, the specialist:
+
+1. Runs all standard research steps
+2. Emphasizes findings relevant to their focus area
+3. Writes to the appropriate specialist report file
+4. Skips master report generation (master Sage handles synthesis)
+
+### Artifact Structure
+
+All parallel research artifacts are stored in `temp/AGENT_REPORTS/[repo-name]/`:
+
+```
+temp/AGENT_REPORTS/[repo-name]/
+├── RESEARCH_MASTER.md          # Sage master report with synthesis
+├── ARCHITECT_FOCUS.md          # Architecture specialist findings
+├── SECURITY_FOCUS.md           # Security specialist findings
+├── QUALITY_FOCUS.md            # Code quality specialist findings
+└── COUNCIL_SYNTHESIS.md        # (Optional) Council deliberation output
+```
+
+**Naming Convention**:
+
+- `[repo-name]` derived from GitHub URL: `owner-repo` format
+- Example: `dbt-labs-dbt-core` for `https://github.com/dbt-labs/dbt-core`
+
+### Parallel Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  MASTER SAGE                                                    │
+│                                                                 │
+│  1. Parse URL and determine repo-name                           │
+│  2. Create artifact folder: temp/AGENT_REPORTS/[repo-name]/     │
+│  3. Spawn specialists (if --parallel or --depth=deep)           │
+│     ┌─────────────────┬─────────────────┬─────────────────┐    │
+│     │   ARCHITECT     │   SECURITY      │   CODE QUALITY   │    │
+│     │   --focus=arch  │   --focus=sec   │   --focus=qual  │    │
+│     │                 │                 │                 │    │
+│     │   Writes:       │   Writes:       │   Writes:       │    │
+│     │   ARCHITECT_    │   SECURITY_     │   QUALITY_      │    │
+│     │   FOCUS.md      │   FOCUS.md      │   FOCUS.md      │    │
+│     └─────────────────┴─────────────────┴─────────────────┘    │
+│  4. Wait for all specialists to complete                        │
+│  5. Read specialist reports and synthesize                      │
+│  6. Generate RESEARCH_MASTER.md with aggregated findings        │
+│  7. If --council: hand off to council skill                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Council Integration
+
+The `--council` flag triggers deliberation after research completes:
+
+```bash
+/repo-research <url> --depth=deep --council
+```
+
+**Council Handoff Protocol**:
+
+1. Master Sage completes research synthesis
+2. Council skill receives paths to all specialist reports:
+   - `temp/AGENT_REPORTS/[repo-name]/RESEARCH_MASTER.md`
+   - `temp/AGENT_REPORTS/[repo-name]/ARCHITECT_FOCUS.md`
+   - `temp/AGENT_REPORTS/[repo-name]/SECURITY_FOCUS.md`
+   - `temp/AGENT_REPORTS/[repo-name]/QUALITY_FOCUS.md`
+3. Council deliberates on diverse perspectives
+4. Council produces `COUNCIL_SYNTHESIS.md` in same artifact folder
+
+**Note**: Council integration requires the council skill to be available. If not available, `--council` flag is ignored with a warning.
+
+### Error Handling
+
+- **Specialist timeout**: If a specialist fails to complete within timeout, master Sage continues with partial results
+- **Specialist error**: Errors are logged, other specialists continue, master report notes incomplete analysis
+- **All specialists fail**: Falls back to standard single-agent research
+
+---
+
 ## Examples
 
 ### Example 1: Single Repo Research (UI Component Library)
@@ -560,7 +694,57 @@ Focus: Spaced repetition implementation and progress tracking
 
 ---
 
-### Example 3: Multi-Repo Comparison (Flashcard Libraries)
+### Example 3: Parallel Specialist Research (dbt Package)
+
+```
+/repo-research https://github.com/dbt-labs/dbt-utils --depth=deep
+```
+
+**Parallel execution** (automatic for deep):
+
+- Master Sage coordinates research
+- Architect specialist focuses on macro patterns, structure
+- Security specialist focuses on dependency chain, SQL injection risks
+- Code reviewer focuses on test coverage, documentation quality
+
+**Artifact structure created**:
+
+```
+temp/AGENT_REPORTS/dbt-labs-dbt-utils/
+├── RESEARCH_MASTER.md      # Synthesized findings
+├── ARCHITECT_FOCUS.md      # Macro architecture, reusability patterns
+├── SECURITY_FOCUS.md       # Dependency audit, SQL safety analysis
+└── QUALITY_FOCUS.md        # Test coverage, docs, maintainability
+```
+
+**Master report synthesis**:
+
+- Convergent findings across specialists
+- Divergent perspectives requiring deliberation
+- Prioritized recommendations by domain
+- Risk matrix aggregated from all specialists
+
+**Handoff to council** (if `--council` used):
+
+```
+sage: → council:
+
+Parallel research complete for dbt-labs-dbt-utils.
+
+**Specialist Reports**:
+- temp/AGENT_REPORTS/dbt-labs-dbt-utils/RESEARCH_MASTER.md
+- temp/AGENT_REPORTS/dbt-labs-dbt-utils/ARCHITECT_FOCUS.md
+- temp/AGENT_REPORTS/dbt-labs-dbt-utils/SECURITY_FOCUS.md
+- temp/AGENT_REPORTS/dbt-labs-dbt-utils/QUALITY_FOCUS.md
+
+**Deliberation Questions**:
+1. Architecture vs. security trade-off on [specific pattern]
+2. Quality concerns about [specific aspect] - severity?
+```
+
+---
+
+### Example 4: Multi-Repo Comparison (Flashcard Libraries)
 
 ```
 /repo-research https://github.com/lib-a/flashcards https://github.com/lib-b/cards https://github.com/lib-c/memorize --compare
@@ -655,12 +839,31 @@ Before completing comparison:
 - [ ] Individual repo reports saved (optional)
 - [ ] Handoff messages prepared
 
+### Parallel Specialist Research
+
+Before completing parallel research:
+
+- [ ] Artifact folder created: `temp/AGENT_REPORTS/[repo-name]/`
+- [ ] All specialists spawned (or subset per `--specialists`)
+- [ ] Specialist reports complete:
+  - [ ] `ARCHITECT_FOCUS.md` (if architect enabled)
+  - [ ] `SECURITY_FOCUS.md` (if security-reviewer enabled)
+  - [ ] `QUALITY_FOCUS.md` (if code-reviewer enabled)
+- [ ] Master report synthesizes specialist findings
+- [ ] Convergent/divergent findings documented
+- [ ] Risk matrix aggregated from all specialists
+- [ ] If `--council`: handoff message prepared with report paths
+- [ ] `RESEARCH_MASTER.md` saved to artifact folder
+
 ---
 
 ## See Also
 
 - `.claude/templates/repo-research-report-template.md` - Report template
+- `.claude/templates/specialist-focus-template.md` - Specialist focus report template
 - `.claude/agents/sage.md` - Sage persona definition
 - `.claude/skills/learning-curation.md` - For post-research pattern extraction
+- `.claude/skills/council.md` - Council skill for deliberation (parallel mode integration)
 - `docs/specs/` - Where PM creates PRDs from findings
 - `docs/specs/` - Where Architect creates TDDs from findings
+- `temp/AGENT_REPORTS/` - Artifact folder for parallel research outputs
