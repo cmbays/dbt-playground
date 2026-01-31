@@ -213,3 +213,5 @@ To be determined.
 ---
 
 **Ready to develop?** Read `CLAUDE.md` for complete context.
+
+<!-- Test commit for Phase 2 GitHub-MCP verification -->
