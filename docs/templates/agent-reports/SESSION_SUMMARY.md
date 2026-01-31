@@ -29,6 +29,27 @@
 - [question 1]
 - [question 2]
 
+## ADR Review
+
+### ADRs Consulted This Session
+
+- [ADR-N: Title] - [reason consulted, e.g., "checked before choosing database"]
+- None
+
+### ADR Candidates Identified
+
+Decisions this session that may warrant an ADR (meets 2+ significance criteria):
+
+- [potential decision] - [criteria met: reversibility, cross-cutting, trade-offs, etc.]
+- None
+
+### Promotion Candidates
+
+ADRs that now have 2+ implementations and may be ready for LEARNINGS.md:
+
+- [ADR-N] - [implementation count and locations]
+- None
+
 ## Agent Reports Generated
 
 | Report | Location |
