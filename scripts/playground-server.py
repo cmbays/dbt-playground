@@ -102,8 +102,19 @@ def get_git_status_porcelain():
 
 @app.route("/api/git-log")
 def get_git_log():
-    """Return last N commits (default 10)."""
-    count = request.args.get("count", "10")
+    """Return last N commits (default 10, max 100)."""
+    count_str = request.args.get("count", "10")
+
+    # Validate count parameter to prevent command injection
+    try:
+        count = int(count_str)
+        if count < 1:
+            count = 1
+        elif count > 100:
+            count = 100
+    except ValueError:
+        count = 10  # Default on invalid input
+
     result = subprocess.run(
         ["git", "log", "--oneline", f"-{count}"],
         cwd=PROJECT_ROOT,

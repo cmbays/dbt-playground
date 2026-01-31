@@ -1190,19 +1190,19 @@
         <div class="resume-grid">
           <div class="resume-item">
             <span class="resume-label">Active Track</span>
-            <span class="resume-value branch">${activeTrack === 'null' ? 'None' : activeTrack}</span>
+            <span class="resume-value branch">${escapeHtml(activeTrack === 'null' ? 'None' : activeTrack)}</span>
           </div>
           <div class="resume-item">
             <span class="resume-label">Last Release</span>
-            <span class="resume-value">${lastRelease}</span>
+            <span class="resume-value">${escapeHtml(lastRelease)}</span>
           </div>
           <div class="resume-item">
             <span class="resume-label">Last Action</span>
-            <span class="resume-value">${lastAction.substring(0, 60)}${lastAction.length > 60 ? '...' : ''}</span>
+            <span class="resume-value">${escapeHtml(lastAction.substring(0, 60))}${lastAction.length > 60 ? '...' : ''}</span>
           </div>
           <div class="resume-item">
             <span class="resume-label">Next Action</span>
-            <span class="resume-value">${nextAction.substring(0, 60)}${nextAction.length > 60 ? '...' : ''}</span>
+            <span class="resume-value">${escapeHtml(nextAction.substring(0, 60))}${nextAction.length > 60 ? '...' : ''}</span>
           </div>
         </div>
       `;
@@ -1256,14 +1256,14 @@
       container.innerHTML = `
         <div class="tracks-container">
           ${tracks.map(track => `
-            <div class="track-card ${track.status}">
-              <div class="track-name">${track.name}</div>
+            <div class="track-card ${escapeHtml(track.status)}">
+              <div class="track-name">${escapeHtml(track.name)}</div>
               <div class="track-phase">
-                <span class="status-badge status-${track.status}">${track.phase}</span>
+                <span class="status-badge status-${escapeHtml(track.status)}">${escapeHtml(track.phase)}</span>
               </div>
               ${track.artifacts ? `
                 <div class="track-artifacts">
-                  ${track.artifacts.map(a => `<span class="artifact-badge complete">${a}</span>`).join('')}
+                  ${track.artifacts.map(a => `<span class="artifact-badge complete">${escapeHtml(a)}</span>`).join('')}
                 </div>
               ` : ''}
             </div>
@@ -1312,9 +1312,9 @@
         <div class="activity-list">
           ${activities.slice(0, 6).map(a => `
             <div class="activity-item">
-              <span class="activity-time">${a.time}</span>
-              <span class="activity-agent">${a.agent}</span>
-              <span class="activity-message">${a.message}</span>
+              <span class="activity-time">${escapeHtml(a.time)}</span>
+              <span class="activity-agent">${escapeHtml(a.agent)}</span>
+              <span class="activity-message">${escapeHtml(a.message)}</span>
             </div>
           `).join('')}
         </div>
@@ -1446,8 +1446,8 @@
           ${worktreeData.map(wt => `
             <div class="worktree-item">
               <span class="worktree-dot ${wt.isMain ? 'main' : 'clean'}"></span>
-              <span>${wt.name}</span>
-              <span class="worktree-path">${wt.branch}</span>
+              <span>${escapeHtml(wt.name)}</span>
+              <span class="worktree-path">${escapeHtml(wt.branch)}</span>
             </div>
           `).join('')}
         </div>
@@ -1603,6 +1603,13 @@ Update documentation and verify all playground commands work.
         parseWorktree();
       }
       setStatus('Refreshed', 'success');
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     // Set status message

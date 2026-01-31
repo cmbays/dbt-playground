@@ -952,22 +952,31 @@ flowchart TD
       updateZoomDisplay();
     };
 
+    // Cleanup panzoom on page unload to prevent memory leaks
+    window.addEventListener('beforeunload', () => {
+      if (panzoomInstance) {
+        panzoomInstance.dispose();
+        panzoomInstance = null;
+      }
+    });
+
     // Cleanup orphaned Mermaid elements (fixes MD-005 bug)
     function cleanupOrphanedMermaidElements() {
-      // Remove any Mermaid-created elements outside the preview container
-      document.querySelectorAll('[id^="mermaid-"], [id^="dmermaid-"], [id^="d"]').forEach(el => {
-        if (!previewContainer.contains(el) && el.tagName === 'SVG') {
-          el.remove();
-        }
-      });
-      // Remove Mermaid error containers that escaped
-      document.querySelectorAll('svg[id^="mermaid"]').forEach(el => {
+      // Remove Mermaid-created SVG elements outside the preview container
+      // Mermaid creates elements with IDs like "mermaid-1234567890" or "dmermaid-1234567890"
+      document.querySelectorAll('svg[id^="mermaid-"], svg[id^="dmermaid-"]').forEach(el => {
         if (!previewContainer.contains(el)) {
           el.remove();
         }
       });
-      // Remove any stray elements with aria-roledescription="error"
+      // Remove Mermaid error containers (they have aria-roledescription="error")
       document.querySelectorAll('[aria-roledescription="error"]').forEach(el => {
+        if (!previewContainer.contains(el)) {
+          el.remove();
+        }
+      });
+      // Remove any orphaned Mermaid container divs
+      document.querySelectorAll('div[id^="dmermaid-"], div[id^="mermaid-"]').forEach(el => {
         if (!previewContainer.contains(el)) {
           el.remove();
         }
