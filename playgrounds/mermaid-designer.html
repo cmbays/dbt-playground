@@ -709,7 +709,9 @@ flowchart TD
 
   <!-- Load Mermaid and Panzoom from CDN -->
   <script type="module">
-    import mermaid from 'https://esm.sh/mermaid@10.6.1';
+    // Use official jsdelivr CDN for Mermaid (esm.sh was causing "nr is not a function" errors)
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    // Keep esm.sh for panzoom (working fine)
     import panzoom from 'https://esm.sh/panzoom@9.4.3';
 
     // Initialize Mermaid
