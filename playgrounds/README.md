@@ -6,16 +6,48 @@ Visual tools for learning, development, and debugging in dbt-playground.
 
 | Playground | File | Purpose | Status |
 |------------|------|---------|--------|
-| Worktree Coordinator | `worktree-coordinator.html` | Manage parallel git worktrees | Planned |
-| Agent Visualizer | `agent-visualizer.html` | View agent workflows and state | Planned |
-| Schema Explorer | `schema-explorer.html` | Browse Synthea healthcare data | Planned |
-| Lineage Explorer | `lineage-explorer.html` | Trace dbt data flow | Planned |
-| Dashboard Builder | `dashboard-builder.html` | Mock analytics layouts | Planned |
+| Worktree Coordinator | `worktree-coordinator.html` | Manage parallel git worktrees | **v0.6.0** |
+| Mermaid Designer | `mermaid-designer.html` | Create and export Mermaid diagrams | **v0.6.0** |
+| Agent Visualizer | `agent-visualizer.html` | View agent workflows and state | Planned (v0.6.1) |
+| Schema Explorer | `schema-explorer.html` | Browse Synthea healthcare data | Planned (v0.6.1) |
+| Lineage Explorer | `lineage-explorer.html` | Trace dbt data flow | Planned (v0.6.2) |
+| Dashboard Builder | `dashboard-builder.html` | Mock analytics layouts | Planned (v0.6.3) |
 
 ## Quick Start
 
 1. Open any `.html` file in a browser
 2. No build step, no dependencies, no server required
+
+### Worktree Coordinator
+
+Visualize and manage git worktrees for parallel development:
+
+1. Open `worktree-coordinator.html` in a browser
+2. Run the provided command in your terminal
+3. Paste the output to see your worktrees displayed
+
+**Features**:
+
+- Worktree dashboard with status cards
+- Branch, PR, and ahead/behind status
+- Copy commands for common operations
+- Keyboard shortcuts (R: refresh, ?: help)
+
+### Mermaid Designer
+
+Create diagrams with live preview and multiple export options:
+
+1. Open `mermaid-designer.html` in a browser
+2. Type Mermaid code in the editor
+3. See live preview as you type
+
+**Features**:
+
+- Live Mermaid rendering with 400ms debounce
+- 6 built-in templates (dbt layers, agent workflow, ER diagram, etc.)
+- Export to Markdown, SVG, PNG, or standalone HTML
+- Save diagrams to browser localStorage
+- Dark mode support
 
 ## Commands
 
@@ -24,23 +56,36 @@ Access playgrounds via slash commands:
 ```text
 /playground              # List all playgrounds
 /playground:worktrees    # Git Worktree Coordinator
-/playground:agents       # Agent Visualizer
-/playground:schema       # Schema Explorer
-/playground:lineage      # Lineage Explorer
-/playground:dashboards   # Dashboard Builder
+/playground:mermaid      # Mermaid Diagram Designer
+/playground:agents       # Agent Visualizer (planned)
+/playground:schema       # Schema Explorer (planned)
+/playground:lineage      # Lineage Explorer (planned)
+/playground:dashboards   # Dashboard Builder (planned)
 ```
 
 ## Design Philosophy
 
 - **Single-file HTML**: Each playground is self-contained
-- **No dependencies**: Works offline, no npm/pip required
+- **No dependencies**: Works offline (Mermaid loads from CDN)
 - **Progressive disclosure**: Simple interface, complexity on demand
-- **Consistent patterns**: Shared layout, keyboard shortcuts
+- **Consistent patterns**: Shared layout, keyboard shortcuts, dark mode
+
+## Keyboard Shortcuts
+
+All playgrounds share these shortcuts:
+
+| Key | Action |
+|-----|--------|
+| `?` | Show help |
+| `Esc` | Close modals |
+| `R` | Refresh (Worktree Coordinator) |
+| `Ctrl+Enter` | Render (Mermaid Designer) |
+| `Ctrl+S` | Save (Mermaid Designer) |
 
 ## Build Order
 
 ```text
-Phase 1 (v0.6.0): Worktree Coordinator
+Phase 1 (v0.6.0): Worktree Coordinator, Mermaid Designer  <-- Current
 Phase 2 (v0.6.1): Agent Visualizer, Schema Explorer
 Phase 3 (v0.6.2): Lineage Explorer
 Phase 4 (v0.6.3): Dashboard Builder
@@ -49,5 +94,6 @@ Phase 4 (v0.6.3): Dashboard Builder
 ## Documentation
 
 - `docs/specs/PRD-014-PLAYGROUND-TOOLS.md` - Full PRD
+- `docs/specs/TDD-014-PLAYGROUND-TOOLS.md` - Technical design
 - `docs/for_chris/PLAYGROUND-TOOLS.md` - Learning guide
 - `.claude/commands/playground.md` - Command reference

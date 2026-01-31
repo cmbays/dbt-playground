@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Worktree Coordinator - dbt-playground</title>
+  <style>
+    /* CSS Variables */
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f5f5;
+      --bg-tertiary: #e8e8e8;
+      --bg-card: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #666666;
+      --text-muted: #999999;
+      --accent-primary: #2563eb;
+      --accent-success: #16a34a;
+      --accent-warning: #ca8a04;
+      --accent-danger: #dc2626;
+      --border-color: #e5e5e5;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1);
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #262626;
+        --bg-tertiary: #333333;
+        --bg-card: #262626;
+        --text-primary: #f5f5f5;
+        --text-secondary: #a3a3a3;
+        --text-muted: #737373;
+        --border-color: #404040;
+        --shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      transition: all 150ms ease;
+    }
+
+    .btn:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .btn-primary {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Input Panel */
+    .input-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .input-panel h2 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .command-box {
+      background: var(--bg-tertiary);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .command-box code {
+      word-break: break-all;
+    }
+
+    .input-panel textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+
+    .input-panel textarea:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    .input-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Worktree List */
+    .worktree-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Worktree Card */
+    .worktree-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .worktree-card.main-repo {
+      border-left: 4px solid var(--accent-primary);
+    }
+
+    .worktree-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .worktree-name {
+      font-weight: 600;
+      font-size: 0.9375rem;
+      word-break: break-all;
+    }
+
+    .worktree-path {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.625rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .status-clean {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-modified {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-ahead {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .status-clean {
+        background: #166534;
+        color: #dcfce7;
+      }
+      .status-modified {
+        background: #92400e;
+        color: #fef3c7;
+      }
+      .status-ahead {
+        background: #1e40af;
+        color: #dbeafe;
+      }
+    }
+
+    .worktree-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+
+    .worktree-details span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .worktree-details strong {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .pr-link {
+      color: var(--accent-primary);
+      text-decoration: none;
+    }
+
+    .pr-link:hover {
+      text-decoration: underline;
+    }
+
+    .worktree-commands {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .worktree-commands .btn {
+      font-size: 0.75rem;
+      padding: 0.375rem 0.75rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+
+    .footer-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-status.success {
+      color: var(--accent-success);
+    }
+
+    .footer-status.error {
+      color: var(--accent-danger);
+    }
+
+    .keyboard-hints {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .keyboard-hints kbd {
+      background: var(--bg-tertiary);
+      padding: 0.125rem 0.375rem;
+      border-radius: 3px;
+      margin-right: 0.25rem;
+    }
+
+    /* Help Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 1.125rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-body h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-body h3:first-child {
+      margin-top: 0;
+    }
+
+    .modal-body p, .modal-body ul {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .modal-body ul {
+      padding-left: 1.25rem;
+    }
+
+    .modal-body li {
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-body code {
+      background: var(--bg-tertiary);
+      padding: 0.125rem 0.375rem;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+    }
+
+    /* Sample Data Button */
+    .sample-data-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 3v12"></path>
+        <circle cx="18" cy="6" r="3"></circle>
+        <circle cx="6" cy="18" r="3"></circle>
+        <path d="M18 9a9 9 0 0 1-9 9"></path>
+      </svg>
+      Git Worktree Coordinator
+    </h1>
+    <div class="header-actions">
+      <button class="btn" id="refresh-btn" onclick="refreshDisplay()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 4v6h-6"></path>
+          <path d="M1 20v-6h6"></path>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        Refresh
+      </button>
+      <button class="btn" onclick="showHelp()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Help
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Input Panel -->
+    <section class="input-panel">
+      <h2>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        Paste Git Output
+      </h2>
+      <div class="command-box">
+        <code id="git-command">git worktree list --porcelain && echo "---STATUS---" && git status -sb</code>
+        <button class="btn" onclick="copyCommand()">Copy</button>
+      </div>
+      <textarea id="git-output" placeholder="Paste the output of the command above here..."></textarea>
+      <div class="input-actions">
+        <button class="btn btn-primary" onclick="parseAndDisplay()">Parse & Display</button>
+        <button class="btn" onclick="loadSampleData()">Load Sample Data</button>
+        <button class="btn" onclick="clearData()">Clear</button>
+      </div>
+      <p class="sample-data-note">Use "Load Sample Data" to see the interface with example worktrees.</p>
+    </section>
+
+    <!-- Worktree Display -->
+    <section id="worktree-display">
+      <div class="empty-state">
+        <h3>No worktree data loaded</h3>
+        <p>Run the command above in your terminal and paste the output, or load sample data to explore.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-status" id="status">
+      Ready
+    </div>
+    <div class="keyboard-hints">
+      <kbd>R</kbd> Refresh
+      <kbd>?</kbd> Help
+      <kbd>Esc</kbd> Close
+    </div>
+  </footer>
+
+  <!-- Help Modal -->
+  <div class="modal-overlay" id="help-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Git Worktree Coordinator Help</h2>
+        <button class="modal-close" onclick="hideHelp()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>What is this?</h3>
+        <p>This tool helps you visualize and manage git worktrees - separate working directories that share the same repository. Perfect for parallel development with multiple Claude Code sessions.</p>
+
+        <h3>How to Use</h3>
+        <ul>
+          <li>Copy the command shown and run it in your terminal</li>
+          <li>Paste the output into the text area</li>
+          <li>Click "Parse & Display" to see your worktrees</li>
+          <li>Or click "Load Sample Data" to see an example</li>
+        </ul>
+
+        <h3>Understanding the Display</h3>
+        <ul>
+          <li><strong>Main Repository</strong> - Your primary working directory (highlighted with blue border)</li>
+          <li><strong>Worktrees</strong> - Additional working directories on different branches</li>
+          <li><strong>Status badges</strong> - Shows if working directory is clean or has changes</li>
+        </ul>
+
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+          <li><code>R</code> - Refresh / re-parse data</li>
+          <li><code>?</code> - Show this help</li>
+          <li><code>Esc</code> - Close modals</li>
+        </ul>
+
+        <h3>Common Worktree Commands</h3>
+        <ul>
+          <li><code>git worktree add ../repo--branch -b branch-name</code> - Create new worktree</li>
+          <li><code>git worktree remove ../repo--branch</code> - Remove worktree</li>
+          <li><code>git worktree prune</code> - Clean up stale worktree entries</li>
+        </ul>
+
+        <h3>Tips</h3>
+        <ul>
+          <li>Use sibling directories: <code>../dbt-playground--feature-name</code></li>
+          <li>Create draft PR immediately when starting a worktree</li>
+          <li>Push commits so other worktrees can fetch changes</li>
+          <li>Remove worktree after merging PR</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let worktreeData = null;
+
+    // DOM Elements
+    const gitOutput = document.getElementById('git-output');
+    const worktreeDisplay = document.getElementById('worktree-display');
+    const statusEl = document.getElementById('status');
+    const helpModal = document.getElementById('help-modal');
+
+    // Parse git worktree list --porcelain output
+    function parseWorktreeList(output) {
+      const worktrees = [];
+      const blocks = output.trim().split('\n\n');
+
+      for (const block of blocks) {
+        if (!block.trim()) continue;
+        const lines = block.split('\n');
+        const worktree = {};
+
+        for (const line of lines) {
+          if (line.startsWith('worktree ')) {
+            worktree.path = line.substring(9);
+          } else if (line.startsWith('HEAD ')) {
+            worktree.head = line.substring(5);
+          } else if (line.startsWith('branch ')) {
+            worktree.branch = line.substring(7).replace('refs/heads/', '');
+          } else if (line === 'bare') {
+            worktree.bare = true;
+          } else if (line === 'detached') {
+            worktree.detached = true;
+          }
+        }
+
+        if (worktree.path) {
+          // Determine if main repo or worktree
+          const pathParts = worktree.path.split('/');
+          const dirName = pathParts[pathParts.length - 1];
+          worktree.isMain = !dirName.includes('--');
+          worktree.name = dirName;
+          worktrees.push(worktree);
+        }
+      }
+
+      return worktrees;
+    }
+
+    // Parse git status -sb output
+    function parseStatus(output) {
+      const lines = output.trim().split('\n');
+      const status = {
+        branch: '',
+        ahead: 0,
+        behind: 0,
+        modified: 0,
+        staged: 0,
+        untracked: 0
+      };
+
+      for (const line of lines) {
+        if (line.startsWith('## ')) {
+          // Parse branch line: ## main...origin/main [ahead 1, behind 2]
+          const branchMatch = line.match(/## ([^\s.]+)/);
+          if (branchMatch) status.branch = branchMatch[1];
+
+          const aheadMatch = line.match(/ahead (\d+)/);
+          if (aheadMatch) status.ahead = parseInt(aheadMatch[1]);
+
+          const behindMatch = line.match(/behind (\d+)/);
+          if (behindMatch) status.behind = parseInt(behindMatch[1]);
+        } else if (line.startsWith(' M ') || line.startsWith('MM ')) {
+          status.modified++;
+        } else if (line.startsWith('M  ') || line.startsWith('A  ')) {
+          status.staged++;
+        } else if (line.startsWith('?? ')) {
+          status.untracked++;
+        }
+      }
+
+      return status;
+    }
+
+    // Parse combined output
+    function parseOutput(output) {
+      const parts = output.split('---STATUS---');
+      const worktreeOutput = parts[0] || '';
+      const statusOutput = parts[1] || '';
+
+      const worktrees = parseWorktreeList(worktreeOutput);
+      const status = parseStatus(statusOutput);
+
+      // Apply status to main worktree
+      if (worktrees.length > 0) {
+        const main = worktrees.find(w => w.isMain) || worktrees[0];
+        main.status = status;
+      }
+
+      return { worktrees, mainStatus: status };
+    }
+
+    // Render worktree card
+    function renderWorktreeCard(worktree) {
+      const isClean = !worktree.status ||
+        (worktree.status.modified === 0 && worktree.status.staged === 0 && worktree.status.untracked === 0);
+
+      const statusClass = isClean ? 'status-clean' : 'status-modified';
+      const statusText = isClean ? 'Clean' :
+        `${worktree.status?.modified || 0} modified`;
+
+      const mainClass = worktree.isMain ? 'main-repo' : '';
+
+      let detailsHtml = `<span><strong>Branch:</strong> ${worktree.branch || worktree.head?.substring(0,7) || 'detached'}</span>`;
+
+      if (worktree.status?.ahead > 0) {
+        detailsHtml += `<span><strong>Ahead:</strong> ${worktree.status.ahead}</span>`;
+      }
+      if (worktree.status?.behind > 0) {
+        detailsHtml += `<span><strong>Behind:</strong> ${worktree.status.behind}</span>`;
+      }
+
+      const commands = worktree.isMain ? `
+        <button class="btn" onclick="copyText('git worktree add ../${worktree.name}--feature -b feat/feature-name')">New Worktree</button>
+        <button class="btn" onclick="copyText('git worktree list')">List All</button>
+      ` : `
+        <button class="btn" onclick="copyText('cd ${worktree.path}')">Go to Directory</button>
+        <button class="btn" onclick="copyText('git worktree remove ${worktree.path}')">Remove</button>
+      `;
+
+      return `
+        <div class="worktree-card ${mainClass}">
+          <div class="worktree-header">
+            <div>
+              <div class="worktree-name">${worktree.name}</div>
+              <div class="worktree-path">${worktree.path}</div>
+            </div>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+          </div>
+          <div class="worktree-details">
+            ${detailsHtml}
+          </div>
+          <div class="worktree-commands">
+            ${commands}
+          </div>
+        </div>
+      `;
+    }
+
+    // Render all worktrees
+    function renderWorktrees(data) {
+      if (!data || data.worktrees.length === 0) {
+        worktreeDisplay.innerHTML = `
+          <div class="empty-state">
+            <h3>No worktrees found</h3>
+            <p>Check that you pasted the correct output.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const mainWorktree = data.worktrees.find(w => w.isMain);
+      const otherWorktrees = data.worktrees.filter(w => !w.isMain);
+
+      let html = '<div class="worktree-list">';
+
+      if (mainWorktree) {
+        html += `<div class="section-title">Main Repository</div>`;
+        html += renderWorktreeCard(mainWorktree);
+      }
+
+      if (otherWorktrees.length > 0) {
+        html += `<div class="section-title" style="margin-top: 1.5rem;">Active Worktrees (${otherWorktrees.length})</div>`;
+        for (const wt of otherWorktrees) {
+          html += renderWorktreeCard(wt);
+        }
+      }
+
+      html += '</div>';
+      worktreeDisplay.innerHTML = html;
+    }
+
+    // Main parse and display function
+    function parseAndDisplay() {
+      const output = gitOutput.value.trim();
+      if (!output) {
+        setStatus('No input provided', 'error');
+        return;
+      }
+
+      try {
+        worktreeData = parseOutput(output);
+        renderWorktrees(worktreeData);
+        setStatus(`Parsed ${worktreeData.worktrees.length} worktree(s)`, 'success');
+      } catch (error) {
+        setStatus(`Parse error: ${error.message}`, 'error');
+        console.error(error);
+      }
+    }
+
+    // Refresh display
+    function refreshDisplay() {
+      if (gitOutput.value.trim()) {
+        parseAndDisplay();
+      } else {
+        setStatus('Paste git output first', 'error');
+      }
+    }
+
+    // Load sample data
+    function loadSampleData() {
+      const sampleOutput = `worktree /Users/chris/dbt-playground
+HEAD abc1234567890
+branch refs/heads/main
+
+worktree /Users/chris/dbt-playground--customer-analytics
+HEAD def5678901234
+branch refs/heads/feat/customer-analytics
+
+worktree /Users/chris/dbt-playground--tuva-integration
+HEAD 789012345abcd
+branch refs/heads/feat/tuva-integration
+
+---STATUS---
+## main...origin/main
+ M models/staging/stg_patients.sql
+ M models/marts/fct_encounters.sql
+?? temp/notes.md`;
+
+      gitOutput.value = sampleOutput;
+      parseAndDisplay();
+      setStatus('Loaded sample data', 'success');
+    }
+
+    // Clear data
+    function clearData() {
+      gitOutput.value = '';
+      worktreeData = null;
+      worktreeDisplay.innerHTML = `
+        <div class="empty-state">
+          <h3>No worktree data loaded</h3>
+          <p>Run the command above in your terminal and paste the output, or load sample data to explore.</p>
+        </div>
+      `;
+      setStatus('Cleared', 'success');
+    }
+
+    // Copy command to clipboard
+    function copyCommand() {
+      const command = document.getElementById('git-command').textContent;
+      copyText(command);
+    }
+
+    // Copy text to clipboard
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus('Copied to clipboard', 'success');
+      } catch (err) {
+        // Fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        setStatus('Copied to clipboard', 'success');
+      }
+    }
+
+    // Set status message
+    function setStatus(message, type = '') {
+      statusEl.textContent = message;
+      statusEl.className = 'footer-status ' + type;
+    }
+
+    // Help modal
+    function showHelp() {
+      helpModal.classList.add('active');
+    }
+
+    function hideHelp() {
+      helpModal.classList.remove('active');
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ignore if typing in textarea
+      if (e.target.tagName === 'TEXTAREA') return;
+
+      switch (e.key.toLowerCase()) {
+        case 'r':
+          refreshDisplay();
+          break;
+        case '?':
+          showHelp();
+          break;
+        case 'escape':
+          hideHelp();
+          break;
+      }
+    });
+
+    // Click outside modal to close
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) {
+        hideHelp();
+      }
+    });
+  </script>
+</body>
+</html>

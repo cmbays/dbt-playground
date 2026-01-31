@@ -9,9 +9,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Incremental refresh patterns for large fact tables (v0.6)
-- Advanced analytics models (clustering, cohort analysis) (v0.6)
-- Real-time monitoring and alerting (v0.6)
+- Incremental refresh patterns for large fact tables (v0.7)
+- Advanced analytics models (clustering, cohort analysis) (v0.7)
+- Real-time monitoring and alerting (v0.7)
+
+---
+
+## [0.6.0] - 2026-01-31
+
+### Added
+
+- **Interactive Playgrounds**: Phase 1 visual tools for development
+  - `worktree-coordinator.html` - Git worktree management dashboard
+    - Manual paste mode for git data input
+    - Worktree cards with branch/status/PR info
+    - Copy-command buttons for common operations
+    - Keyboard shortcuts (R: refresh, ?: help)
+  - `mermaid-designer.html` - Diagram creation with live preview
+    - Live Mermaid rendering (400ms debounce)
+    - 6 built-in templates (dbt layers, agent workflow, ER diagram, etc.)
+    - Export to Markdown, SVG, PNG, standalone HTML
+    - Save/load diagrams to browser localStorage
+    - Dark mode support
+
+- **Technical Documentation**:
+  - TDD-014: Technical design for playground tools
+  - Updated playgrounds/README.md with usage instructions
+
+### Technical Highlights
+
+- Single-file HTML approach (no build step, no server)
+- Shared CSS/JS patterns across playgrounds
+- Mermaid.js loaded from CDN for diagram rendering
+- localStorage for diagram persistence
+- Consistent keyboard shortcuts and dark mode
+
+### Compatibility
+
+- No breaking changes to existing features
+- Playgrounds work in Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
 
 ---
 
@@ -253,6 +289,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.6.0   | 2026-01-31 | v0.6 Playgrounds - Worktree Coordinator, Mermaid Designer |
 | 0.5.0   | 2026-01-30 | v0.5 Analytics - 7 models, 91 tests, BI integration |
 | 0.4.0   | 2026-01-30 | v0.4 Dimensional Models - 12 models, Kimball patterns, SCD2 |
 | 0.3.0   | 2026-01-29 | v0.3 Staging Complete - 9 models, 80 tests, 440k+ rows |
