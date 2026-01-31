@@ -357,6 +357,189 @@ See `docs/templates/agent-reports/` for all report templates.
 
 ---
 
+## Context Management (v0.6+)
+
+Context management ensures agents have the information they need across sessions and handoffs. The Sage agent manages context checkpoints and briefings.
+
+### Context Checkpoint Workflow
+
+When handing off between sessions or before complex agent work:
+
+```
+1. CHECKPOINT: Sage creates CONTEXT_CHECKPOINT_*.md with:
+   - Current phase and active track
+   - Key decisions made
+   - Artifacts completed
+   - Blockers or open questions
+
+2. HANDOFF: Next session or agent reads checkpoint first
+
+3. BRIEFING: Sage can prepare agent-specific briefings:
+   - Filtered context relevant to agent's role
+   - Pointers to key files (not full content)
+   - Open questions requiring attention
+```
+
+### When to Create Checkpoints
+
+| Trigger | Action |
+|---------|--------|
+| End of session | Supervisor requests checkpoint from Sage |
+| Before complex handoff | Checkpoint current state |
+| Context window near limit | Checkpoint to preserve context |
+| Major phase transition | Checkpoint completed phase |
+
+### Context Tiers
+
+| Tier | Content | When Loaded |
+|------|---------|-------------|
+| **Quick** | Branch, phase, health score, last commit | Always (via Workflow Hub) |
+| **Full** | Active artifacts, decisions, blockers | On session resume |
+| **Archived** | Historical decisions, completed tracks | On demand |
+
+### Checkpoint File Format
+
+```markdown
+# Context Checkpoint - [Feature Name]
+Generated: [timestamp]
+
+## Current State
+- Branch: feat/xyz
+- Phase: DEVELOPMENT
+- Health: 93/100
+
+## Key Decisions
+1. [Decision with rationale]
+
+## Completed Artifacts
+- [x] PRD: docs/specs/PRD-XXX.md
+- [x] ARCH_REPORT: temp/AGENT_REPORTS/xyz/
+
+## Open Items
+- [ ] Blocker description
+
+## Pointers (Read These First)
+- PM_REPORT.md for scope
+- ARCH_REPORT.md for design
+```
+
+**See**: [[sage.md]] Section 11.3 for full checkpoint workflow.
+
+---
+
+## Agent Communication Patterns (v0.6+)
+
+Agents communicate via three distinct mechanisms. Choose based on the communication need.
+
+### Communication Method Comparison
+
+| Method | Managed By | Use When | Persistence |
+|--------|------------|----------|-------------|
+| **Inter-Agent Reports** | Agents write, Supervisor verifies | Structured phase outputs | Feature folder |
+| **WORKFLOW_STATE.md** | Supervisor | Track status, phases, queue | Single file |
+| **Context Checkpoints** | Sage | Session handoffs, complex context | Per-checkpoint file |
+
+### Decision Tree: Which Method?
+
+```
+Is this a structured phase deliverable?
+├── YES → Inter-Agent Reports (PM_REPORT, ARCH_REPORT, etc.)
+└── NO → Is this workflow status or phase tracking?
+    ├── YES → WORKFLOW_STATE.md
+    └── NO → Is this context preservation for handoff?
+        ├── YES → Context Checkpoint (via Sage)
+        └── NO → Direct agent-to-agent (future consideration)
+```
+
+### Inter-Agent Reports (Folder-Based)
+
+**Best for**: Structured outputs that downstream agents need to read.
+
+```
+temp/AGENT_REPORTS/[feature]/
+├── PM_REPORT.md      # PM writes, Architect reads
+├── ARCH_REPORT.md    # Architect writes, Dev reads
+├── TEST_SPEC.md      # Tester writes, Dev reads
+└── ...
+```
+
+**Pattern**: Orchestrator passes file path, not content. Agent reads directly.
+
+### WORKFLOW_STATE.md (Supervisor-Managed)
+
+**Best for**: Tracking active work, phases, and multi-track coordination.
+
+```yaml
+active_track: feat/customer-analytics
+phase: DEVELOPMENT
+artifacts:
+  - [x] PRD
+  - [ ] TDD
+queue:
+  - fix/null-handling (urgent)
+```
+
+**Pattern**: Only Supervisor writes. All agents can read for context.
+
+### Context Checkpoints (Sage-Managed)
+
+**Best for**: Preserving rich context across sessions or context window limits.
+
+**Pattern**: Sage creates on demand or at session end. Next session loads for quick resume.
+
+---
+
+## Workflow Visualization (v0.7+)
+
+The Workflow Chronicle provides visual observability into agent workflows.
+
+### Available Tools
+
+| Tool | Purpose | Command |
+|------|---------|---------|
+| Workflow Hub | Central command center | `/playground:hub` |
+| Workflow Chronicle | Timeline visualization | `/playground:chronicle` |
+| Workflow Glance | 3-second terminal check | `uv run scripts/workflow-glance.py` |
+
+### Workflow Chronicle Features
+
+The Chronicle playground (`playgrounds/workflow-chronicle.html`) provides:
+
+1. **Stratified Timeline**: Events, Features, Decisions, Bedrock layers
+2. **Agent Tracking**: Who contributed what (via Co-Authored-By)
+3. **Health Pulse**: Composite 0-100 score based on git metrics
+4. **Negative Space**: Registry of decisions NOT made (NEGATIVE_SPACE.yaml)
+5. **JSON Export**: Structured data for agent consumption
+
+### CLI Companions
+
+```bash
+# Quick health check (3-second terminal view)
+uv run scripts/workflow-glance.py
+
+# Full timeline with agent attribution
+uv run scripts/workflow-timeline.py
+
+# Compute health score
+uv run scripts/compute-health-pulse.py
+
+# Query rejected decisions
+uv run scripts/check-negative-space.py
+```
+
+### Integration with Supervisor
+
+Supervisor can use Chronicle data to:
+
+- Report health score in status updates
+- Identify stalled features (no commits)
+- Verify phase transitions have artifacts
+- Trigger Sage when patterns indicate learning opportunity
+
+**See**: [[playgrounds/README.md]] for full playground documentation.
+
+---
+
 ## Common Pitfalls & Solutions
 
 ### Pitfall 1: Agent Returns Content Instead of Writing Files
@@ -973,13 +1156,15 @@ Healthcare Analyst → Data Modeler → dbt Developer → dbt Tester → Code Re
   Domain Context      Design SQL    Implement      Add tests      Review        Document
 ```
 
-**Commands**:
+**Commands** (see `.claude/commands/dbt-*.md` for details):
 
-- `/dbt-model` - Create new models
-- `/dbt-test` - Add/run tests
-- `/dbt-run` - Execute dbt commands
-- `/dbt-docs` - Generate documentation
-- `/dbt-query` - Natural language queries
+| Command | Purpose | Agent |
+|---------|---------|-------|
+| `/dbt-model` | Create new models | Data Modeler |
+| `/dbt-test` | Add/run tests | dbt Tester |
+| `/dbt-run` | Execute dbt commands | dbt Developer |
+| `/dbt-docs` | Generate documentation | dbt Documenter |
+| `/dbt-query` | Natural language queries | Semantic Analyst |
 
 **Skills**:
 
@@ -1501,9 +1686,9 @@ Start here on every new session to quickly orient yourself:
 ### Essential Reading (Do First)
 
 1. **[[CLAUDE.md]]** - Project context, current phase, critical rules
-   - Current status: Initial dbt Setup (v0.1)
-   - Key workflow: UNDERSTAND -> PLAN -> PROTOTYPE -> BUILD -> VERIFY -> DEPLOY
-   - Critical: Never overwrite content files directly
+   - Current status: Analytics Layer Complete (v0.6.0)
+   - Key workflow: UNDERSTAND -> PLAN -> BUILD -> VERIFY -> DEPLOY
+   - Critical: Use git-master for all git operations
 
 2. **This file (AGENTS.md)** - How to work effectively with the system
    - Agent selection guide

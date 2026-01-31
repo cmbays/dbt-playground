@@ -13,7 +13,7 @@ This is a dbt learning project for data transformation best practices, agent orc
 - dbt 1.11.2 + duckdb-adapter 1.10.0 working
 - 28 models total (staging, intermediate, dimensional, analytics)
 - 171+ data tests passing
-- Interactive playgrounds: Workflow Hub, Worktree Coordinator, Mermaid Designer
+- Interactive playgrounds: Workflow Hub, Workflow Chronicle, Worktree Coordinator, Mermaid Designer
 - Agent context management with inter-agent reports
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
 
@@ -201,15 +201,16 @@ git worktree remove ../dbt-playground--feat-x
 
 Visual tools for learning and development. Launch via commands or explore the HTML files directly.
 
-| Playground | Command | Purpose |
-|------------|---------|---------|
-| Workflow Hub | `/playground:hub` | Central command center, session resume |
-| Worktree Coordinator | `/playground:worktrees` | Manage parallel git worktree sessions |
-| Mermaid Designer | `/playground:mermaid` | Create architecture diagrams visually |
-| Agent Visualizer | `/playground:agents` | View agent workflows and handoffs |
-| Schema Explorer | `/playground:schema` | Browse Synthea healthcare data |
-| Lineage Explorer | `/playground:lineage` | Trace dbt data flow |
-| Dashboard Builder | `/playground:dashboards` | Mock analytics layouts |
+| Playground | Command | Purpose | Status |
+|------------|---------|---------|--------|
+| Workflow Hub | `/playground:hub` | Central command center, session resume | ✅ v0.6.0 |
+| Workflow Chronicle | `/playground:chronicle` | Timeline visualization, health pulse, agent tracking | ✅ v0.7.0 |
+| Worktree Coordinator | `/playground:worktrees` | Manage parallel git worktree sessions | ✅ v0.6.0 |
+| Mermaid Designer | `/playground:mermaid` | Create architecture diagrams visually | ✅ v0.6.0 |
+| Agent Visualizer | `/playground:agents` | View agent workflows and handoffs | Planned v0.7.1 |
+| Schema Explorer | `/playground:schema` | Browse Synthea healthcare data | Planned v0.7.1 |
+| Lineage Explorer | `/playground:lineage` | Trace dbt data flow | Planned v0.7.2 |
+| Dashboard Builder | `/playground:dashboards` | Mock analytics layouts | Planned v0.7.3 |
 
 **Quick Start**: Run `/playground` to open the Workflow Hub (default entry point).
 
