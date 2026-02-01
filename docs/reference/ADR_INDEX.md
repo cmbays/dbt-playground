@@ -27,8 +27,8 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 
 | Metric | Count |
 |--------|-------|
-| Total ADRs | 11 |
-| Approved | 8 |
+| Total ADRs | 13 |
+| Approved | 10 |
 | Approved (Historical) | 3 |
 | Proposed | 3 |
 | Superseded | 0 |
@@ -51,6 +51,8 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-9 | Backlog.md for Task Management | Proposed | [ADR-001](../decisions/ADR-001-backlog-md-adoption.md) | Architect | 2026-01-31 | task-management, pm | - |
 | ADR-10 | SQLite for Cross-Session State | Proposed | [ADR-002](../decisions/ADR-002-sqlite-state-layer.md) | Architect | 2026-01-31 | infrastructure, state | - |
 | ADR-11 | dbt for PM Analytics | Proposed | [ADR-003](../decisions/ADR-003-dbt-pm-analytics.md) | Architect | 2026-01-31 | analytics, dbt | - |
+| ADR-12 | Native HTML5 Drag-and-Drop | Approved | [TDD-023](../specs/TDD-023-HUB-KANBAN.md#adr-12-native-html5-drag-and-drop) | Architect | 2026-01-31 | ui, kanban | - |
+| ADR-13 | localStorage Board State Schema | Approved | [TDD-023](../specs/TDD-023-HUB-KANBAN.md#adr-13-localstorage-board-state-schema) | Architect | 2026-01-31 | storage, kanban | - |
 
 ---
 
@@ -62,6 +64,7 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 |-----|----------|---------------|
 | ADR-1 | DuckDB over PostgreSQL | Zero setup vs production similarity |
 | ADR-10 | SQLite for cross-session state | Zero infrastructure vs multi-machine |
+| ADR-13 | localStorage for board state | Instant/offline vs cross-device sync |
 
 ### Architecture & Patterns
 
@@ -70,6 +73,7 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-2 | Staging -> Intermediate -> Marts | More files vs clear separation |
 | ADR-3 | dbt-mcp as primary agent interface | Natural language vs abstraction overhead |
 | ADR-7 | Single-file HTML playgrounds | Simplicity vs code reuse |
+| ADR-12 | Native HTML5 drag-and-drop | Zero deps vs limited touch support |
 
 ### Data & Integration
 
