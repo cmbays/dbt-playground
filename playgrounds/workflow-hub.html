@@ -1435,11 +1435,11 @@
   </main>
 
   <!-- Card Modal -->
-  <div class="modal-overlay" id="card-modal">
+  <div class="modal-overlay" id="card-modal" role="dialog" aria-modal="true" aria-labelledby="card-modal-header">
     <div class="modal">
       <div class="modal-header">
         <h2 id="card-modal-header">Issue Details</h2>
-        <button class="modal-close" onclick="kanban.closeModal()">&times;</button>
+        <button class="modal-close" onclick="kanban.closeModal()" aria-label="Close modal">&times;</button>
       </div>
       <div class="modal-body" id="card-modal-body"></div>
     </div>
@@ -2424,7 +2424,16 @@ Building customer analytics models. Currently implementing dim_customer.
       function loadState() {
         try {
           const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
-          if (s?.version === 2) return s;
+          // Schema validation: ensure version and columns structure
+          if (s?.version === 2 && typeof s.columns === 'object') {
+            // Validate each column is an array of numbers
+            for (const [k, v] of Object.entries(s.columns)) {
+              if (!Array.isArray(v) || !v.every(n => typeof n === 'number')) {
+                return { version: 2, columns: {}, lastSync: null };
+              }
+            }
+            return s;
+          }
         } catch {}
         return { version: 2, columns: {}, lastSync: null };
       }
@@ -2459,12 +2468,15 @@ Building customer analytics models. Currently implementing dim_customer.
         return '📌';
       }
 
-      // Sync: place new issues in backlog, keep existing placements
+      // Sync: place new issues in backlog, clean up closed issues
       function sync() {
         document.getElementById('kanban-status').textContent = 'Syncing...';
+        const openIssueNums = new Set(issues.map(i => i.number));
         const assigned = new Set(Object.values(state.columns).flat());
         let newCount = 0;
+        let removedCount = 0;
 
+        // Add new issues to backlog
         issues.forEach(issue => {
           if (!assigned.has(issue.number)) {
             state.columns.backlog = state.columns.backlog || [];
@@ -2473,11 +2485,21 @@ Building customer analytics models. Currently implementing dim_customer.
           }
         });
 
+        // Remove closed issues from all columns (cleanup stale refs)
+        for (const col of Object.keys(state.columns)) {
+          const before = state.columns[col].length;
+          state.columns[col] = state.columns[col].filter(n => openIssueNums.has(n));
+          removedCount += before - state.columns[col].length;
+        }
+
         saveState();
         render();
-        const status = newCount > 0 ? `Synced: +${newCount} new` : `${issues.length} issues`;
+        let status = `${issues.length} issues`;
+        if (newCount > 0) status = `+${newCount} new`;
+        if (removedCount > 0) status += ` (-${removedCount} closed)`;
         document.getElementById('kanban-status').textContent = status;
         if (newCount > 0) toast(`Added ${newCount} new issues to Backlog`);
+        if (removedCount > 0) toast(`Removed ${removedCount} closed issues`);
       }
 
       function move(issueNum, toCol) {
@@ -2513,13 +2535,13 @@ Building customer analytics models. Currently implementing dim_customer.
             : '';
 
           return `
-            <div class="kanban-col" data-col="${col.id}">
-              <div class="kanban-col-header" style="border-top: 3px solid ${col.color}">
+            <div class="kanban-col" data-col="${col.id}" role="region" aria-label="${col.name} column">
+              <div class="kanban-col-header" style="border-top: 3px solid ${col.color}" role="heading" aria-level="3">
                 <span>${col.name}</span>
-                <span class="count">${nums.length}</span>
+                <span class="count" aria-label="${nums.length} issues">${nums.length}</span>
               </div>
-              <div class="kanban-col-body">
-                ${cards || '<div class="kanban-empty">Drop issues here</div>'}
+              <div class="kanban-col-body" role="list" aria-dropeffect="move">
+                ${cards || '<div class="kanban-empty" role="listitem">Drop issues here</div>'}
                 ${showMore}
               </div>
             </div>
@@ -2534,9 +2556,18 @@ Building customer analytics models. Currently implementing dim_customer.
         const type = getType(issue);
         const isBlocked = col === 'blocked';
         const labels = (issue.labels || []).map(l => l.name || l).filter(l => !['P0','P1','P2','P3','bug','enhancement','docs','documentation'].includes(l)).slice(0, 2);
+        const colName = COLS.find(c => c.id === col)?.name || col;
 
         return `
-          <div class="kanban-card ${isBlocked ? 'blocked' : ''}" draggable="true" data-issue="${issue.number}" onclick="kanban.openModal(${issue.number})">
+          <div class="kanban-card ${isBlocked ? 'blocked' : ''}"
+               draggable="true"
+               data-issue="${issue.number}"
+               tabindex="0"
+               role="button"
+               aria-label="${escapeHtml(issue.title)} - ${priority} - ${colName}"
+               aria-grabbed="false"
+               onclick="kanban.openModal(${issue.number})"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();kanban.openModal(${issue.number})}">
             <div class="kanban-card-header">
               <span>${type} #${issue.number}</span>
               <span class="tag priority ${priority}">${priority}</span>
@@ -2552,10 +2583,12 @@ Building customer analytics models. Currently implementing dim_customer.
           card.addEventListener('dragstart', e => {
             draggedIssue = parseInt(e.target.dataset.issue);
             e.target.classList.add('dragging');
+            e.target.setAttribute('aria-grabbed', 'true');
             e.dataTransfer.effectAllowed = 'move';
           });
           card.addEventListener('dragend', e => {
             e.target.classList.remove('dragging');
+            e.target.setAttribute('aria-grabbed', 'false');
             draggedIssue = null;
             document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
           });
@@ -2592,24 +2625,34 @@ Building customer analytics models. Currently implementing dim_customer.
           <div class="card-modal-row"><label>Priority:</label><span>${priority}</span></div>
           ${issue.labels?.length ? `<div class="card-modal-row"><label>Labels:</label><span>${issue.labels.map(l => l.name || l).join(', ')}</span></div>` : ''}
           <div class="card-modal-actions">
-            <button class="primary" onclick="kanban.startSession(${issue.number})">▶ Start Session</button>
-            <a class="secondary" href="${issue.html_url}" target="_blank">View on GitHub ↗</a>
-            <select onchange="if(this.value) { kanban.move(${issue.number}, this.value); kanban.closeModal(); }">
+            <button class="primary" id="modal-start-btn" onclick="kanban.startSession(${issue.number})">▶ Start Session</button>
+            <a class="secondary" href="${issue.html_url}" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+            <select aria-label="Move to column" onchange="if(this.value) { kanban.move(${issue.number}, this.value); kanban.closeModal(); }">
               <option value="">Move to...</option>
               ${COLS.filter(c => c.id !== col).map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
             </select>
           </div>
         `;
-        document.getElementById('card-modal').classList.add('active');
+        const modal = document.getElementById('card-modal');
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Lock body scroll
+        // Focus first actionable element
+        setTimeout(() => document.getElementById('modal-start-btn')?.focus(), 50);
       }
 
       function closeModal() {
         document.getElementById('card-modal').classList.remove('active');
+        document.body.style.overflow = ''; // Restore body scroll
       }
 
       function startSession(issueNum) {
         const cmd = `claude --from-issue ${issueNum}`;
-        navigator.clipboard.writeText(cmd).then(() => toast(`Copied: ${cmd}`));
+        navigator.clipboard.writeText(cmd)
+          .then(() => toast(`Copied: ${cmd}`))
+          .catch(() => {
+            // Fallback: show command in prompt for manual copy
+            prompt('Copy this command:', cmd);
+          });
         closeModal();
       }
 
