@@ -3,7 +3,7 @@ audience: [multi-agent, architect, pm]
 priority: high
 size: small
 dependencies: []
-last_updated: 2026-01-31
+last_updated: 2026-02-01
 status: active
 tags: [reference, decisions, adr, architecture]
 ---
@@ -27,11 +27,11 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 
 | Metric | Count |
 |--------|-------|
-| Total ADRs | 13 |
-| Approved | 10 |
+| Total ADRs | 14 |
+| Approved | 12 |
 | Approved (Historical) | 3 |
-| Proposed | 3 |
-| Superseded | 0 |
+| Proposed | 0 |
+| Superseded | 2 |
 | Promoted to LEARNINGS.md | 1 |
 
 ---
@@ -48,11 +48,12 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-6 | PR-Centric Development Workflow | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-6-pr-centric-development-workflow) | Architect + PM | 2026-01-30 | workflow | - |
 | ADR-7 | Single-File Playground Architecture | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-7-single-file-playground-architecture) | Architect | 2026-01-31 | architecture, playgrounds | - |
 | ADR-8 | Inter-Agent Report Pattern | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-8-inter-agent-report-pattern) | Architect + PM | 2026-01-31 | workflow, agents | - |
-| ADR-9 | Backlog.md for Task Management | Proposed | [ADR-001](../decisions/ADR-001-backlog-md-adoption.md) | Architect | 2026-01-31 | task-management, pm | - |
-| ADR-10 | SQLite for Cross-Session State | Proposed | [ADR-002](../decisions/ADR-002-sqlite-state-layer.md) | Architect | 2026-01-31 | infrastructure, state | - |
-| ADR-11 | dbt for PM Analytics | Proposed | [ADR-003](../decisions/ADR-003-dbt-pm-analytics.md) | Architect | 2026-01-31 | analytics, dbt | - |
+| ADR-9 | Backlog.md for Task Management | Approved | [ADR-001](../decisions/ADR-001-backlog-md-adoption.md) | Architect | 2026-01-31 | task-management, pm | - |
+| ADR-10 | SQLite for Cross-Session State | Superseded (Hybrid Lite) | [ADR-002](../decisions/ADR-002-sqlite-state-layer.md) | Architect | 2026-01-31 | infrastructure, state | See #140 |
+| ADR-11 | dbt for PM Analytics | Superseded (Hybrid Lite) | [ADR-003](../decisions/ADR-003-dbt-pm-analytics.md) | Architect | 2026-01-31 | analytics, dbt | See #141 |
 | ADR-12 | Native HTML5 Drag-and-Drop | Approved | [TDD-023](../specs/TDD-023-HUB-KANBAN.md#adr-12-native-html5-drag-and-drop) | Architect | 2026-01-31 | ui, kanban | - |
 | ADR-13 | localStorage Board State Schema | Approved | [TDD-023](../specs/TDD-023-HUB-KANBAN.md#adr-13-localstorage-board-state-schema) | Architect | 2026-01-31 | storage, kanban | - |
+| ADR-14 | Data Quality Quarantine with Macros | Approved | [ADR-004](../decisions/ADR-004-data-quality-quarantine.md) | Architect, Code Reviewer, Developer | 2026-02-01 | data-quality, testing, macros | - |
 
 ---
 
@@ -81,6 +82,7 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 |-----|----------|---------------|
 | ADR-4 | Synthea synthetic healthcare data | Free/realistic vs lacking real-world quality issues |
 | ADR-5 | Incremental package adoption | Minimal complexity vs delayed capabilities |
+| ADR-14 | Macro-based data quality quarantine | Individual validation flags vs build performance |
 
 ### Workflow & Agents
 

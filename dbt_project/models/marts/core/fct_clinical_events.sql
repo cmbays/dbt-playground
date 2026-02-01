@@ -5,12 +5,18 @@
     )
 }}
 
-with conditions as (
+with valid_encounters as (
+    select encounter_id
+    from {{ ref('stg_synthea__encounters') }}
+    {{ quarantine_filter() }}
+),
+
+conditions as (
     select
         condition_id as event_id
         , 'CONDITION' as event_type
         , patient_id
-        , encounter_id
+        , cond.encounter_id
         , condition_start_date as event_start_date
         , condition_end_date as event_end_date
         , condition_code as code
@@ -19,7 +25,8 @@ with conditions as (
         , cast(null as varchar) as reason_code
         , cast(null as varchar) as reason_description
         , cast(null as decimal(18, 2)) as event_cost
-    from {{ ref('stg_synthea__conditions') }}
+    from {{ ref('stg_synthea__conditions') }} as cond
+    where cond.encounter_id in (select encounter_id from valid_encounters)
 ),
 
 medications as (
@@ -27,7 +34,7 @@ medications as (
         medication_id as event_id
         , 'MEDICATION' as event_type
         , patient_id
-        , encounter_id
+        , med.encounter_id
         , cast(medication_start_at as date) as event_start_date
         , cast(medication_end_at as date) as event_end_date
         , medication_code as code
@@ -36,7 +43,9 @@ medications as (
         , reason_code
         , reason_description
         , total_cost as event_cost
-    from {{ ref('stg_synthea__medications') }}
+    from {{ ref('stg_synthea__medications') }} as med
+    {{ quarantine_filter() }}
+    and med.encounter_id in (select encounter_id from valid_encounters)
 ),
 
 procedures as (
@@ -44,7 +53,7 @@ procedures as (
         procedure_id as event_id
         , 'PROCEDURE' as event_type
         , patient_id
-        , encounter_id
+        , proc.encounter_id
         , cast(procedure_at as date) as event_start_date
         , cast(null as date) as event_end_date
         , procedure_code as code
@@ -53,7 +62,8 @@ procedures as (
         , reason_code
         , reason_description
         , base_cost as event_cost
-    from {{ ref('stg_synthea__procedures') }}
+    from {{ ref('stg_synthea__procedures') }} as proc
+    where proc.encounter_id in (select encounter_id from valid_encounters)
 ),
 
 all_events as (
@@ -121,10 +131,10 @@ final as (
         -- metadata
         , current_timestamp as _loaded_at
 
-    from all_events e
-    left join patients p on e.patient_id = p.patient_id
-    left join encounters enc on e.encounter_id = enc.encounter_id
-    left join dim_date d on e.event_start_date = d.date_actual
+    from all_events as e
+    left join patients as p on e.patient_id = p.patient_id
+    left join encounters as enc on e.encounter_id = enc.encounter_id
+    left join dim_date as d on e.event_start_date = d.date_actual
 )
 
 select * from final
