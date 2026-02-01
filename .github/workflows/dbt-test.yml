@@ -50,9 +50,6 @@ jobs:
       - name: Install dbt packages
         run: uv run dbt deps
 
-      - name: Load source data
-        run: uv run dbt run-operation load_synthea_sources
-
       - name: Run dbt build
         id: dbt_build
         run: |
