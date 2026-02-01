@@ -5,8 +5,18 @@
       "Bash(gh issue:*)",
       "Bash(gh *)",
       "Bash(git:*)",
+      "Bash(GIT_MASTER_AUTHORIZED=true git:*)",
+      "Bash(GIT_MASTER_AUTHORIZED=true gh:*)",
       "Bash(ls:*)",
-      "Bash(z:*)"
+      "Bash(z:*)",
+      "Bash(dbt:*)",
+      "Bash(uv:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(echo:*)"
     ]
   }
 }
