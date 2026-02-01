@@ -8,11 +8,18 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: Phase 3 GitHub Project Management Complete (v0.7.0)
+**Status**: v0.8.0 - Data Quality Quarantine Complete (2026-02-01)
 
 - dbt 1.11.2 + duckdb-adapter 1.10.0 working
-- 28 models total (staging, intermediate, dimensional, analytics)
-- 171+ data tests passing
+- 31 models total (staging, intermediate, dimensional, analytics, quarantine)
+- 425 tests passing (0 errors) - improved from 405 PASS, 2 ERROR
+- **Data Quality Quarantine System** (v0.8 Phase 5):
+  - 3 reusable macros: `add_dq_flags()`, `quarantine_filter()`, `generate_quarantine_model()`
+  - 2 quarantine tables: encounters (1 record), medications (5 records)
+  - DQ monitoring mart: `mart_dq_summary` with entity-level metrics
+  - Individual validation flags for precise debugging
+  - 6 records quarantined (0.006% rate)
+  - Documentation: ADR-004, reference guide, macro README
 - Interactive playgrounds: Workflow Hub, Workflow Chronicle, Worktree Coordinator, Mermaid Designer
 - Agent context management with inter-agent reports
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
@@ -21,9 +28,9 @@ This is a dbt learning project for data transformation best practices, agent orc
 - Milestone tracking with CLI commands and CLAUDE.md status section
 - Enhanced PR-Issue linking with extended keyword support
 - GitHub Projects integration using built-in automation
-- ADR Adoption Phase 1: Formalized architecture decision tracking
+- ADR tracking: 14 ADRs indexed (ADR-004: quarantine pattern)
 
-**Next**: v0.8 - Data quality enhancements (dbt_expectations).
+**Next**: v0.9 - TBD (incremental models, advanced analytics, or monitoring)
 
 ## Project Structure
 
@@ -276,7 +283,7 @@ Tracking progress toward v0.8, v0.10, and v1.0 releases.
 | Milestone | Target | Open | Closed | Progress |
 |-----------|--------|------|--------|----------|
 | v0.7.0 | Jan 31, 2026 | 0 | 4 | 100% (Complete) |
-| v0.8 | Feb 28, 2026 | 5 | 0 | In Progress |
+| v0.8.0 | Feb 1, 2026 | 0 | 5 | 100% (Complete) |
 | v0.9 | Mar 31, 2026 | 0 | 15 | 100% (Complete) |
 | v0.10 | Apr 30, 2026 | 20 | 0 | Planned |
 | v1.0 | Jun 30, 2026 | 2 | 0 | Planned |
