@@ -9,6 +9,12 @@ models:
     description: >
       Staging model for patient demographics and identifiers.
       One row per patient with personal information, location, and financial data.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 900
+          config:
+            severity: warn
     columns:
       - name: patient_id
         description: Unique patient identifier (UUID)
@@ -41,6 +47,11 @@ models:
           - not_null
           - accepted_values:
               values: ['M', 'F']
+          # String pattern validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^[MF]$"
+              config:
+                severity: warn
 
       - name: race
         description: Patient race
@@ -55,9 +66,24 @@ models:
         description: Patient date of birth
         data_tests:
           - not_null
+          # Date range validation (v0.8 - dbt_expectations)
+          # Note: Uses year extraction to avoid date type casting issues with DuckDB
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::date"
+              max_value: "current_date"
+              config:
+                severity: warn
 
       - name: death_date
         description: Patient date of death (null if alive)
+        data_tests:
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::date"
+              max_value: "current_date"
+              row_condition: "death_date is not null"
+              config:
+                severity: warn
 
       - name: ssn_hash
         description: MD5 hash of Social Security Number (masked for privacy)
@@ -78,13 +104,21 @@ models:
         description: City of residence
 
       - name: state
-        description: State of residence
+        description: State of residence (full state name, e.g., Massachusetts)
 
       - name: county
         description: County of residence
 
       - name: zip_code
         description: ZIP code
+        data_tests:
+          # String pattern validation (v0.8 - dbt_expectations)
+          # ZIP code format: 5 digits or 5+4 format
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d{5}(-\\d{4})?$"
+              row_condition: "zip_code is not null"
+              config:
+                severity: warn
 
       - name: latitude
         description: Latitude coordinate of residence
@@ -94,9 +128,23 @@ models:
 
       - name: healthcare_expenses
         description: Total healthcare expenses incurred
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "healthcare_expenses is not null"
+              config:
+                severity: warn
 
       - name: healthcare_coverage
         description: Total healthcare coverage received
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "healthcare_coverage is not null"
+              config:
+                severity: warn
 
       - name: _loaded_at
         description: Timestamp when record was loaded into staging
@@ -105,6 +153,12 @@ models:
     description: >
       Staging model for insurance payers.
       One row per payer with contact information and aggregate metrics.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 5
+          config:
+            severity: warn
     columns:
       - name: payer_id
         description: Unique payer identifier (UUID)
@@ -127,19 +181,33 @@ models:
         description: State where headquartered
 
       - name: zip_code
-        description: ZIP code
+        description: ZIP code (stored as numeric, 5 digits)
 
       - name: phone
         description: Phone number
 
       - name: amount_covered
         description: Total amount covered by payer
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "amount_covered is not null"
+              config:
+                severity: warn
 
       - name: amount_uncovered
         description: Total amount not covered by payer
 
       - name: revenue
         description: Total revenue collected
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "revenue is not null"
+              config:
+                severity: warn
 
       - name: covered_encounters
         description: Number of encounters covered
@@ -181,6 +249,12 @@ models:
     description: >
       Staging model for healthcare organizations/facilities.
       One row per organization with location and performance metrics.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 800
+          config:
+            severity: warn
     columns:
       - name: organization_id
         description: Unique organization identifier (UUID)
@@ -200,10 +274,17 @@ models:
         description: City
 
       - name: state
-        description: State
+        description: State (full state name)
 
       - name: zip_code
         description: ZIP code
+        data_tests:
+          # String pattern validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d{5}(-\\d{4})?$"
+              row_condition: "zip_code is not null"
+              config:
+                severity: warn
 
       - name: phone
         description: Phone number
@@ -216,9 +297,23 @@ models:
 
       - name: revenue
         description: Total revenue
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "revenue is not null"
+              config:
+                severity: warn
 
       - name: utilization
         description: Total utilization count
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "utilization is not null"
+              config:
+                severity: warn
 
       - name: _loaded_at
         description: Timestamp when record was loaded into staging
@@ -227,6 +322,12 @@ models:
     description: >
       Staging model for healthcare providers (doctors, nurses, etc.).
       One row per provider with specialization and affiliated organization.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 4000
+          config:
+            severity: warn
     columns:
       - name: provider_id
         description: Unique provider identifier (UUID)
@@ -253,6 +354,11 @@ models:
           - not_null
           - accepted_values:
               values: ['M', 'F']
+          # String pattern validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^[MF]$"
+              config:
+                severity: warn
 
       - name: specialty
         description: Medical specialty
@@ -264,10 +370,17 @@ models:
         description: City
 
       - name: state
-        description: State
+        description: State (full state name)
 
       - name: zip_code
         description: ZIP code
+        data_tests:
+          # String pattern validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d{5}(-\\d{4})?$"
+              row_condition: "zip_code is not null"
+              config:
+                severity: warn
 
       - name: latitude
         description: Latitude coordinate
@@ -277,6 +390,13 @@ models:
 
       - name: utilization
         description: Total utilization count
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "utilization is not null"
+              config:
+                severity: warn
 
       - name: _loaded_at
         description: Timestamp when record was loaded into staging
@@ -289,6 +409,12 @@ models:
     description: >
       Staging model for healthcare encounters/visits.
       One row per encounter with patient, provider, organization, and payer relationships.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 40000
+          config:
+            severity: warn
     columns:
       - name: encounter_id
         description: Unique encounter identifier (UUID)
@@ -332,9 +458,23 @@ models:
         description: Start timestamp of the encounter
         data_tests:
           - not_null
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::timestamp"
+              max_value: "current_timestamp"
+              config:
+                severity: warn
 
       - name: encounter_end_at
         description: End timestamp of the encounter
+        data_tests:
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::timestamp"
+              max_value: "current_timestamp"
+              row_condition: "encounter_end_at is not null"
+              config:
+                severity: warn
 
       - name: encounter_class
         description: Type of encounter (ambulatory, wellness, emergency, etc.)
@@ -351,12 +491,33 @@ models:
 
       - name: base_encounter_cost
         description: Base cost of the encounter
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "base_encounter_cost is not null"
+              config:
+                severity: warn
 
       - name: total_claim_cost
         description: Total claim cost
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "total_claim_cost is not null"
+              config:
+                severity: warn
 
       - name: payer_coverage
         description: Amount covered by payer
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "payer_coverage is not null"
+              config:
+                severity: warn
 
       - name: reason_code
         description: SNOMED CT code for the reason of visit
@@ -371,6 +532,12 @@ models:
     description: >
       Staging model for patient conditions/diagnoses.
       One row per condition instance with surrogate key.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 6000
+          config:
+            severity: warn
     columns:
       - name: condition_id
         description: Surrogate key for the condition record
@@ -398,9 +565,23 @@ models:
         description: Date when condition was diagnosed
         data_tests:
           - not_null
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::date"
+              max_value: "current_date"
+              config:
+                severity: warn
 
       - name: condition_end_date
         description: Date when condition resolved (null if ongoing)
+        data_tests:
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::date"
+              max_value: "current_date"
+              row_condition: "condition_end_date is not null"
+              config:
+                severity: warn
 
       - name: condition_code
         description: SNOMED CT code for the condition
@@ -419,6 +600,12 @@ models:
     description: >
       Staging model for medical procedures performed.
       One row per procedure instance with surrogate key.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 25000
+          config:
+            severity: warn
     columns:
       - name: procedure_id
         description: Surrogate key for the procedure record
@@ -446,6 +633,12 @@ models:
         description: Timestamp when the procedure was performed
         data_tests:
           - not_null
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::timestamp"
+              max_value: "current_timestamp"
+              config:
+                severity: warn
 
       - name: procedure_code
         description: SNOMED CT code for the procedure
@@ -459,6 +652,13 @@ models:
 
       - name: base_cost
         description: Base cost of the procedure
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "base_cost is not null"
+              config:
+                severity: warn
 
       - name: reason_code
         description: SNOMED CT code for the reason of the procedure
@@ -473,6 +673,12 @@ models:
     description: >
       Staging model for prescribed medications.
       One row per medication prescription with surrogate key.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 30000
+          config:
+            severity: warn
     columns:
       - name: medication_id
         description: Surrogate key for the medication record
@@ -508,9 +714,23 @@ models:
         description: Timestamp when medication was prescribed
         data_tests:
           - not_null
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::timestamp"
+              max_value: "current_timestamp"
+              config:
+                severity: warn
 
       - name: medication_end_at
         description: Timestamp when medication ended (null if ongoing)
+        data_tests:
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::timestamp"
+              max_value: "current_timestamp"
+              row_condition: "medication_end_at is not null"
+              config:
+                severity: warn
 
       - name: medication_code
         description: RxNorm code for the medication
@@ -524,15 +744,43 @@ models:
 
       - name: base_cost
         description: Base cost per dispense
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "base_cost is not null"
+              config:
+                severity: warn
 
       - name: payer_coverage
         description: Amount covered by payer
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "payer_coverage is not null"
+              config:
+                severity: warn
 
       - name: dispenses
         description: Number of times medication was dispensed
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              row_condition: "dispenses is not null"
+              config:
+                severity: warn
 
       - name: total_cost
         description: Total cost of all dispenses
+        data_tests:
+          # Value range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              row_condition: "total_cost is not null"
+              config:
+                severity: warn
 
       - name: reason_code
         description: SNOMED CT code for the reason of medication
@@ -547,6 +795,12 @@ models:
     description: >
       Staging model for clinical observations (vital signs, lab results).
       One row per observation with surrogate key.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 200000
+          config:
+            severity: warn
     columns:
       - name: observation_id
         description: Surrogate key for the observation record
@@ -577,6 +831,12 @@ models:
         description: Timestamp when observation was recorded
         data_tests:
           - not_null
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::timestamp"
+              max_value: "current_timestamp"
+              config:
+                severity: warn
 
       - name: observation_code
         description: LOINC code for the observation
