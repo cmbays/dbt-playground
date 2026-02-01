@@ -4,7 +4,7 @@
 
 This plan synthesizes feedback from a council of 5 specialists (Strategic Planner, Risk Analyst, Integration Architect, Metrics Designer, Research Scientist) to create a 9-version roadmap from v0.10 to v1.7 that iteratively builds toward the Grand Plan vision: **self-improving AI teams with competitive benchmarking and evolutionary capabilities**.
 
-**Prerequisite Complete**: v0.8 (Data Quality Excellence) has been merged.
+**Current Status**: v0.7.0 Complete, v0.8 In Progress (Data Quality Excellence)
 
 **Critical Constraint**: Grand Plan implementation CANNOT begin until v0.10 features are complete.
 
@@ -24,13 +24,10 @@ All council reviews and source documents are in:
 | `PM_REVIEW.md` | User stories, MVP definition, prioritization |
 | `SAGE_REVIEW.md` | Epistemology, memory architecture, anti-patterns |
 | `TESTER_REVIEW.md` | Hypothesis validation, statistical rigor |
-| `COUNCIL_STRATEGIC_PLAN.md` | 10-version roadmap details |
-| `COUNCIL_RISK_ASSESSMENT.md` | 47 risks with mitigations |
-| `COUNCIL_INTEGRATION_ARCHITECTURE.md` | Feature-to-version mapping |
-| `COUNCIL_METRICS_FRAMEWORK.md` | Metrics by phase |
-| `COUNCIL_RESEARCH_PROTOCOL.md` | Scientific methodology |
 | `HOLISTIC_REVIEW.md` | Feature set integration analysis |
 | `*_report.md`, `*_plan.md`, `*_PRD.md`, `*_TDD.md` | Individual feature specs |
+
+> **Note**: This roadmap synthesizes the specialist reviews above. The council personas (Strategic Planner, Risk Analyst, Integration Architect, Metrics Designer, Research Scientist) provided inputs that are integrated into this consolidated plan rather than separate documents.
 
 ---
 
