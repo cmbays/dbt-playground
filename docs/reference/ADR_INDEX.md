@@ -27,9 +27,10 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 
 | Metric | Count |
 |--------|-------|
-| Total ADRs | 8 |
+| Total ADRs | 11 |
 | Approved | 8 |
 | Approved (Historical) | 3 |
+| Proposed | 3 |
 | Superseded | 0 |
 | Promoted to LEARNINGS.md | 1 |
 
@@ -47,6 +48,9 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-6 | PR-Centric Development Workflow | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-6-pr-centric-development-workflow) | Architect + PM | 2026-01-30 | workflow | - |
 | ADR-7 | Single-File Playground Architecture | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-7-single-file-playground-architecture) | Architect | 2026-01-31 | architecture, playgrounds | - |
 | ADR-8 | Inter-Agent Report Pattern | Approved (Historical) | [TDD-HISTORICAL](../specs/TDD-HISTORICAL.md#adr-8-inter-agent-report-pattern) | Architect + PM | 2026-01-31 | workflow, agents | - |
+| ADR-9 | Backlog.md for Task Management | Proposed | [ADR-001](../decisions/ADR-001-backlog-md-adoption.md) | Architect | 2026-01-31 | task-management, pm | - |
+| ADR-10 | SQLite for Cross-Session State | Proposed | [ADR-002](../decisions/ADR-002-sqlite-state-layer.md) | Architect | 2026-01-31 | infrastructure, state | - |
+| ADR-11 | dbt for PM Analytics | Proposed | [ADR-003](../decisions/ADR-003-dbt-pm-analytics.md) | Architect | 2026-01-31 | analytics, dbt | - |
 
 ---
 
@@ -57,6 +61,7 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR | Decision | Key Trade-off |
 |-----|----------|---------------|
 | ADR-1 | DuckDB over PostgreSQL | Zero setup vs production similarity |
+| ADR-10 | SQLite for cross-session state | Zero infrastructure vs multi-machine |
 
 ### Architecture & Patterns
 
@@ -79,6 +84,8 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 |-----|----------|---------------|
 | ADR-6 | PR-centric development workflow | Visibility vs ceremony overhead |
 | ADR-8 | Inter-agent report pattern | Context fidelity vs directory structure |
+| ADR-9 | Backlog.md for task management | Git-tracked vs real-time sync complexity |
+| ADR-11 | dbt for PM analytics | Unified tooling vs model maintenance |
 
 ---
 
