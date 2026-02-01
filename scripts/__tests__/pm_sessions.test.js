@@ -198,9 +198,11 @@ describe('PM Sessions - Unit Tests', () => {
       await pmSessions.writeSessions(data);
 
       // Now update heartbeat
-      await pmSessions.updateHeartbeat(staleSession.session_id);
+      const result = await pmSessions.updateHeartbeat(staleSessionId);
+      assert.strictEqual(result, true);
 
-      const updated = pmSessions.getSession(staleSession.session_id);
+      // Verify status changed back to active
+      const updated = pmSessions.getSession(staleSessionId);
       assert.strictEqual(updated.status, 'active');
     });
   });
@@ -239,15 +241,15 @@ describe('PM Sessions - Unit Tests', () => {
 
   describe('detectStaleSessions()', () => {
     it('should mark sessions older than 5 minutes as stale', async () => {
-      const staleSession = await createStaleSession(6); // 6 minutes ago
+      const staleSessionId = await createStaleSession(6); // 6 minutes ago
 
       const staleSessions = await pmSessions.detectStaleSessions();
 
       assert.strictEqual(staleSessions.length, 1);
-      assert.strictEqual(staleSessions[0].session_id, staleSession.session_id);
+      assert.strictEqual(staleSessions[0].session_id, staleSessionId);
 
       // Verify it was persisted
-      const persisted = pmSessions.getSession(staleSession.session_id);
+      const persisted = pmSessions.getSession(staleSessionId);
       assert.strictEqual(persisted.status, 'stale');
     });
 
@@ -266,13 +268,13 @@ describe('PM Sessions - Unit Tests', () => {
     });
 
     it('should not process already stale sessions', async () => {
-      const staleSession = await createStaleSession(10);
+      const staleSessionId = await createStaleSession(10);
 
       // First detection
       await pmSessions.detectStaleSessions();
 
       // Manually check status
-      const afterFirst = pmSessions.getSession(staleSession.session_id);
+      const afterFirst = pmSessions.getSession(staleSessionId);
       assert.strictEqual(afterFirst.status, 'stale');
 
       // Second detection should not re-process
