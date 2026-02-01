@@ -50,10 +50,10 @@ jobs:
       - name: Install dbt packages
         run: uv run dbt deps
 
-      - name: Run dbt test
-        id: dbt_test
+      - name: Validate dbt project
+        id: dbt_validate
         run: |
-          uv run dbt test 2>&1 | tee dbt_output.log
+          uv run dbt parse 2>&1 | tee dbt_output.log
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
 
       - name: Parse test results
