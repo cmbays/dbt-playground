@@ -1220,6 +1220,257 @@
       to { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
 
+    /* PM Overview Widget Styles (TASK-7) */
+    #pm-overview-container .pm-status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+    }
+    #pm-overview-container .pm-status-box {
+      padding: 8px;
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+      text-align: center;
+      border-left: 3px solid var(--border-color);
+    }
+    #pm-overview-container .pm-status-count {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    #pm-overview-container .pm-status-label {
+      font-size: 0.5625rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 2px;
+      letter-spacing: 0.02em;
+    }
+    #pm-overview-container .pm-active-work,
+    #pm-overview-container .pm-blocked-tasks {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+    }
+    #pm-overview-container .pm-active-work h4,
+    #pm-overview-container .pm-blocked-tasks h4 {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+    #pm-overview-container .pm-task-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #pm-overview-container .pm-task-list li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0;
+      font-size: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+    #pm-overview-container .pm-task-list li:last-child {
+      border-bottom: none;
+    }
+    #pm-overview-container .pm-task-id {
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      color: var(--accent-primary);
+      font-weight: 500;
+      min-width: 50px;
+    }
+    #pm-overview-container .pm-task-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-secondary);
+    }
+    #pm-overview-container .pm-task-status {
+      font-size: 0.5rem;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    #pm-overview-container .pm-task-status.BUILD {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    #pm-overview-container .pm-task-status.VERIFY {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    #pm-overview-container .pm-task-status.BLOCKED {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    @media (prefers-color-scheme: dark) {
+      #pm-overview-container .pm-task-status.BUILD {
+        background: #78350f;
+        color: #fcd34d;
+      }
+      #pm-overview-container .pm-task-status.VERIFY {
+        background: #065f46;
+        color: #6ee7b7;
+      }
+      #pm-overview-container .pm-task-status.BLOCKED {
+        background: #7f1d1d;
+        color: #fca5a5;
+      }
+    }
+    #pm-overview-container .pm-blocked-tasks {
+      background: rgba(239, 68, 68, 0.05);
+      border-radius: 6px;
+      padding: 8px;
+      margin-top: 12px;
+      border-top: none;
+    }
+    #pm-overview-container .pm-widget-footer {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+    }
+    #pm-overview-container .pm-btn-link {
+      display: inline-block;
+      padding: 5px 10px;
+      background: var(--accent-primary);
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      transition: opacity 150ms ease;
+    }
+    #pm-overview-container .pm-btn-link:hover {
+      opacity: 0.9;
+    }
+    #pm-overview-container .pm-widget-error {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-muted);
+    }
+    #pm-overview-container .pm-widget-error p {
+      margin: 4px 0;
+      font-size: 0.75rem;
+    }
+    #pm-overview-container .pm-widget-error code {
+      background: var(--bg-tertiary);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+    }
+    #pm-overview-container .pm-widget-error button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: var(--accent-primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      cursor: pointer;
+    }
+
+    /* PM Sessions Widget Styles (TASK-9) */
+    #pm-sessions-container .pm-session-grid {
+      display: grid;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    #pm-sessions-container .pm-session-card {
+      padding: 8px;
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-success);
+      background: var(--bg-tertiary);
+    }
+    #pm-sessions-container .pm-session-card.warning {
+      border-left-color: var(--accent-warning);
+    }
+    #pm-sessions-container .pm-session-card.stale {
+      border-left-color: var(--accent-danger);
+      opacity: 0.7;
+    }
+    #pm-sessions-container .pm-session-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    #pm-sessions-container .pm-session-status {
+      font-size: 0.6875rem;
+    }
+    #pm-sessions-container .pm-session-status.healthy { color: var(--accent-success); }
+    #pm-sessions-container .pm-session-status.warning { color: var(--accent-warning); }
+    #pm-sessions-container .pm-session-status.stale { color: var(--accent-danger); }
+    #pm-sessions-container .pm-session-branch {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+    }
+    #pm-sessions-container .pm-pr-link {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: var(--bg-secondary);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+    #pm-sessions-container .pm-pr-link:hover {
+      color: var(--accent-primary);
+    }
+    #pm-sessions-container .pm-session-details {
+      font-size: 0.6875rem;
+      color: var(--text-secondary);
+    }
+    #pm-sessions-container .pm-session-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+    #pm-sessions-container .pm-heartbeat-time {
+      font-size: 0.5625rem;
+      color: var(--text-muted);
+    }
+    #pm-sessions-container .pm-claimed-tasks {
+      font-size: 0.625rem;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px solid var(--border-color);
+    }
+    #pm-sessions-container .pm-claimed-tasks strong {
+      color: var(--text-muted);
+    }
+    #pm-sessions-container .pm-stale-sessions {
+      margin-top: 10px;
+      padding: 8px;
+      background: rgba(239, 68, 68, 0.05);
+      border-radius: 6px;
+    }
+    #pm-sessions-container .pm-stale-sessions h4 {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--accent-danger);
+      margin-bottom: 4px;
+    }
+    #pm-sessions-container .pm-stale-sessions ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.6875rem;
+      color: var(--text-secondary);
+    }
+    #pm-sessions-container .pm-stale-sessions li {
+      padding: 2px 0;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .kanban-col { flex: 0 0 85vw; scroll-snap-align: start; }
@@ -1331,6 +1582,50 @@
 
     <!-- Dashboard Grid -->
     <div class="dashboard-grid">
+      <!-- PM Overview Widget (TASK-7) -->
+      <div class="card" id="pm-overview-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"></path>
+              <path d="M18 17V9"></path>
+              <path d="M13 17V5"></path>
+              <path d="M8 17v-3"></path>
+            </svg>
+            PM Overview
+          </span>
+          <span id="pm-task-count" style="font-size: 0.75rem; color: var(--text-muted);">Loading...</span>
+        </div>
+        <div class="card-body" id="pm-overview-container">
+          <div class="empty-state">
+            <h3>Connecting to Backlog.md...</h3>
+            <p>Fetching task statistics</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PM Sessions Widget (TASK-9) -->
+      <div class="card" id="pm-sessions-card">
+        <div class="card-header">
+          <span class="card-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            PM Sessions
+          </span>
+          <span id="pm-session-count" style="font-size: 0.75rem; color: var(--text-muted);">0 active</span>
+        </div>
+        <div class="card-body" id="pm-sessions-container">
+          <div class="empty-state">
+            <h3>Loading sessions...</h3>
+            <p>Reading PM_SESSIONS.json</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Quick Resume Panel -->
       <div class="card resume-card" id="resume-card">
         <div class="card-header">
@@ -1581,20 +1876,27 @@
   <script>
     // ==================== Configuration ====================
     const API_BASE = 'http://localhost:5050/api';
+    const BACKLOG_API_BASE = 'http://localhost:6420/api';  // Backlog.md API (TASK-7, TASK-8)
     const SESSION_POLL_INTERVAL = 10000;  // 10 seconds
     const ISSUE_POLL_INTERVAL = 60000;    // 60 seconds
+    const PM_POLL_INTERVAL = 15000;       // 15 seconds for PM widgets
     const STALE_THRESHOLD = 5 * 60 * 1000; // 5 minutes
 
     // ==================== State ====================
     let sessions = [];
     let issues = [];
     let worktrees = [];
+    let pmTasks = [];           // Backlog.md tasks (TASK-7)
+    let pmSessions = [];        // PM_SESSIONS.json data (TASK-9)
     let serverConnected = false;
+    let backlogConnected = false;  // Backlog.md connection state
     let pollingPaused = false;
     let lastSessionPoll = null;
     let lastIssuePoll = null;
+    let lastPmPoll = null;
     let sessionInterval = null;
     let issueInterval = null;
+    let pmInterval = null;      // PM widgets poll interval
     let updateTimerInterval = null;
 
     // Token budgets stored in localStorage
@@ -1616,11 +1918,17 @@
     const helpModal = document.getElementById('help-modal');
     const detailsModal = document.getElementById('details-modal');
     const resumeContainer = document.getElementById('resume-container');
+    // PM Widget DOM Elements (TASK-7, TASK-9)
+    const pmOverviewContainer = document.getElementById('pm-overview-container');
+    const pmTaskCountEl = document.getElementById('pm-task-count');
+    const pmSessionsContainer = document.getElementById('pm-sessions-container');
+    const pmSessionCountEl = document.getElementById('pm-session-count');
 
     // ==================== Initialization ====================
     document.addEventListener('DOMContentLoaded', () => {
       checkServerAndStart();
       startUpdateTimer();
+      initPmWidgets();  // Initialize PM widgets (TASK-7, TASK-9)
     });
 
     async function checkServerAndStart() {
@@ -1658,6 +1966,7 @@
     function stopPolling() {
       if (sessionInterval) clearInterval(sessionInterval);
       if (issueInterval) clearInterval(issueInterval);
+      if (pmInterval) clearInterval(pmInterval);
     }
 
     function togglePolling() {
@@ -1670,6 +1979,13 @@
         setStatus('Polling paused', '');
       } else {
         startPolling();
+        // Restart PM polling
+        pmInterval = setInterval(() => {
+          if (!pollingPaused) {
+            pollPmTasks();
+            pollPmSessions();
+          }
+        }, PM_POLL_INTERVAL);
         setStatus('Polling resumed', 'success');
       }
     }
@@ -1736,6 +2052,9 @@
       pollSessions();
       pollIssues();
       pollWorktrees();
+      // Also refresh PM widgets
+      pollPmTasks();
+      pollPmSessions();
       setStatus('Refreshed', 'success');
     }
 
@@ -2725,6 +3044,374 @@ Building customer analytics models. Currently implementing dim_customer.
       await origPollIssues();
       if (currentView === 'kanban') kanban.sync();
     };
+
+    // ==================== PM Widgets (TASK-7, TASK-9) ====================
+
+    // Initialize PM widgets
+    async function initPmWidgets() {
+      // Check Backlog.md connection and load initial data
+      await checkBacklogConnection();
+
+      // Poll PM_SESSIONS.json (TASK-9)
+      pollPmSessions();
+
+      // Start PM polling interval
+      if (!pollingPaused) {
+        pmInterval = setInterval(() => {
+          if (!pollingPaused) {
+            pollPmTasks();
+            pollPmSessions();
+          }
+        }, PM_POLL_INTERVAL);
+      }
+    }
+
+    // Check Backlog.md API connection
+    async function checkBacklogConnection() {
+      try {
+        const response = await fetch(`${BACKLOG_API_BASE}/config`, {
+          method: 'GET',
+          mode: 'cors'
+        });
+        if (response.ok) {
+          backlogConnected = true;
+          await pollPmTasks();
+        } else {
+          throw new Error('Backlog.md not responding');
+        }
+      } catch (e) {
+        backlogConnected = false;
+        renderPmOverviewError();
+      }
+    }
+
+    // Poll Backlog.md tasks (TASK-7)
+    async function pollPmTasks() {
+      if (pollingPaused || !backlogConnected) return;
+
+      try {
+        const response = await fetch(`${BACKLOG_API_BASE}/tasks`, { mode: 'cors' });
+        if (!response.ok) throw new Error('Failed to fetch tasks');
+
+        pmTasks = await response.json();
+        lastPmPoll = new Date();
+        renderPmOverview();
+      } catch (e) {
+        console.error('PM task poll failed:', e);
+        backlogConnected = false;
+        renderPmOverviewError();
+      }
+    }
+
+    // Poll PM_SESSIONS.json (TASK-9)
+    async function pollPmSessions() {
+      try {
+        // Try to fetch via playground server API first
+        const response = await fetch(`${API_BASE}/pm-sessions`, { mode: 'cors' });
+        if (response.ok) {
+          const data = await response.json();
+          pmSessions = data.sessions ?? [];
+          renderPmSessions();
+          return;
+        }
+      } catch (e) {
+        // Fall through to local file attempt
+      }
+
+      // Fallback: Try direct file read (won't work in browser, but shows intent)
+      try {
+        const response = await fetch('/temp/PM_SESSIONS.json');
+        if (response.ok) {
+          const data = await response.json();
+          pmSessions = data.sessions ?? [];
+          renderPmSessions();
+          return;
+        }
+      } catch (e) {
+        // File doesn't exist or can't be read
+      }
+
+      // No sessions available
+      pmSessions = [];
+      renderPmSessions();
+    }
+
+    // Get status color for Backlog.md statuses
+    function getPmStatusColor(status) {
+      const colors = {
+        'UNDERSTAND': '#6366f1',  // indigo
+        'PLAN': '#8b5cf6',        // purple
+        'BUILD': '#f59e0b',       // amber
+        'VERIFY': '#10b981',      // green
+        'DEPLOY': '#059669',      // emerald
+        'BLOCKED': '#ef4444',     // red
+        'DONE': '#6b7280'         // gray
+      };
+      return colors[status] ?? '#6b7280';
+    }
+
+    // Truncate text helper
+    function truncatePmText(text, maxLength) {
+      if (!text) return '';
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength - 3) + '...';
+    }
+
+    // Render PM Overview widget (TASK-7)
+    function renderPmOverview() {
+      if (!pmOverviewContainer) return;
+
+      if (pmTasks.length === 0) {
+        pmTaskCountEl.textContent = '0 tasks';
+        pmOverviewContainer.innerHTML = `
+          <div class="empty-state">
+            <h3>No tasks in backlog</h3>
+            <p>Create tasks with <code>backlog</code> CLI</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Count by status
+      const statuses = ['UNDERSTAND', 'PLAN', 'BUILD', 'VERIFY', 'DEPLOY', 'BLOCKED', 'DONE'];
+      const statusCounts = statuses.map(status => ({
+        status,
+        count: pmTasks.filter(t => t.status === status).length,
+        color: getPmStatusColor(status)
+      })).filter(s => s.count > 0 || ['UNDERSTAND', 'BUILD', 'VERIFY'].includes(s.status));
+
+      // Active tasks (BUILD + VERIFY)
+      const activeTasks = pmTasks.filter(t =>
+        ['BUILD', 'VERIFY'].includes(t.status)
+      ).slice(0, 4);
+
+      // Blocked tasks
+      const blockedTasks = pmTasks.filter(t => t.status === 'BLOCKED').slice(0, 3);
+
+      // High priority tasks
+      const highPriorityTasks = pmTasks.filter(t =>
+        t.priority === 'high' && !['DONE', 'BLOCKED'].includes(t.status)
+      ).slice(0, 3);
+
+      pmTaskCountEl.textContent = `${pmTasks.length} task${pmTasks.length !== 1 ? 's' : ''}`;
+
+      let html = `
+        <div class="pm-status-grid">
+          ${statusCounts.map(({status, count, color}) => `
+            <div class="pm-status-box" style="border-left-color: ${color}">
+              <div class="pm-status-count">${count}</div>
+              <div class="pm-status-label">${status}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      // Active work section
+      if (activeTasks.length > 0) {
+        html += `
+          <div class="pm-active-work">
+            <h4>Active Work</h4>
+            <ul class="pm-task-list">
+              ${activeTasks.map(task => `
+                <li>
+                  <span class="pm-task-id">${escapeHtml(task.id)}</span>
+                  <span class="pm-task-title" title="${escapeHtml(task.title)}">${escapeHtml(truncatePmText(task.title, 30))}</span>
+                  <span class="pm-task-status ${task.status}">${task.status}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      // Blocked tasks section
+      if (blockedTasks.length > 0) {
+        html += `
+          <div class="pm-blocked-tasks">
+            <h4>Blocked (${blockedTasks.length})</h4>
+            <ul class="pm-task-list">
+              ${blockedTasks.map(task => `
+                <li>
+                  <span class="pm-task-id">${escapeHtml(task.id)}</span>
+                  <span class="pm-task-title" title="${escapeHtml(task.title)}">${escapeHtml(truncatePmText(task.title, 30))}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      // High priority section (if no active work)
+      if (activeTasks.length === 0 && highPriorityTasks.length > 0) {
+        html += `
+          <div class="pm-active-work">
+            <h4>High Priority</h4>
+            <ul class="pm-task-list">
+              ${highPriorityTasks.map(task => `
+                <li>
+                  <span class="pm-task-id">${escapeHtml(task.id)}</span>
+                  <span class="pm-task-title" title="${escapeHtml(task.title)}">${escapeHtml(truncatePmText(task.title, 30))}</span>
+                  <span class="pm-task-status ${task.status}">${task.status}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      // Footer with link
+      html += `
+        <div class="pm-widget-footer">
+          <a href="http://localhost:6420" target="_blank" class="pm-btn-link">
+            Open Full Board
+          </a>
+        </div>
+      `;
+
+      pmOverviewContainer.innerHTML = html;
+    }
+
+    // Render PM Overview error state
+    function renderPmOverviewError() {
+      if (!pmOverviewContainer) return;
+      pmTaskCountEl.textContent = 'Offline';
+      pmOverviewContainer.innerHTML = `
+        <div class="pm-widget-error">
+          <p>Could not connect to Backlog.md</p>
+          <p>Is <code>backlog browser</code> running?</p>
+          <button onclick="retryBacklogConnection()">Retry</button>
+        </div>
+      `;
+    }
+
+    // Retry Backlog.md connection
+    async function retryBacklogConnection() {
+      if (!pmOverviewContainer) return;
+      pmOverviewContainer.innerHTML = `
+        <div class="empty-state">
+          <h3>Reconnecting...</h3>
+        </div>
+      `;
+      await checkBacklogConnection();
+    }
+
+    // Format time ago for PM sessions
+    function formatPmTimeAgo(date) {
+      const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+
+      if (seconds < 60) return 'just now';
+      if (seconds < 120) return '1 min ago';
+      if (seconds < 3600) return `${Math.floor(seconds / 60)} mins ago`;
+      if (seconds < 7200) return '1 hour ago';
+      if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+      return `${Math.floor(seconds / 86400)} days ago`;
+    }
+
+    // Get worktree name from path
+    function getPmWorktreeName(path) {
+      if (!path) return 'unknown';
+      const parts = path.split('/');
+      return parts[parts.length - 1] ?? path;
+    }
+
+    // Render PM Sessions widget (TASK-9)
+    function renderPmSessions() {
+      if (!pmSessionsContainer) return;
+
+      const now = Date.now();
+      const STALE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+      const WARNING_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes
+
+      // Separate sessions by status
+      const activeSessions = pmSessions.filter(s => s.status === 'active');
+      const staleSessions = pmSessions.filter(s => s.status === 'stale');
+
+      // Also check heartbeat freshness for active sessions
+      const processedSessions = activeSessions.map(session => {
+        const lastHeartbeat = new Date(session.last_heartbeat).getTime();
+        const timeSince = now - lastHeartbeat;
+
+        let healthStatus = 'healthy';
+        if (timeSince > STALE_THRESHOLD_MS) {
+          healthStatus = 'stale';
+        } else if (timeSince > WARNING_THRESHOLD_MS) {
+          healthStatus = 'warning';
+        }
+
+        return { ...session, healthStatus, timeSince };
+      });
+
+      const activeCount = processedSessions.filter(s => s.healthStatus !== 'stale').length;
+      pmSessionCountEl.textContent = `${activeCount} active`;
+
+      if (pmSessions.length === 0) {
+        pmSessionsContainer.innerHTML = `
+          <div class="empty-state">
+            <p>No active sessions</p>
+            <p style="font-size: 0.6875rem; color: var(--text-muted); margin-top: 6px;">
+              Sessions register when Supervisor starts
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+
+      // Session grid
+      if (processedSessions.length > 0) {
+        html += `<div class="pm-session-grid">`;
+
+        for (const session of processedSessions) {
+          const cardClass = session.healthStatus === 'stale' ? 'stale' :
+                           session.healthStatus === 'warning' ? 'warning' : '';
+
+          html += `
+            <div class="pm-session-card ${cardClass}">
+              <div class="pm-session-header">
+                <span class="pm-session-status ${session.healthStatus}">&#9679;</span>
+                <span class="pm-session-branch">${escapeHtml(session.branch ?? 'unknown')}</span>
+                ${session.pr_number ? `
+                  <a href="https://github.com/cmbays/dbt-playground/pull/${session.pr_number}"
+                     target="_blank" class="pm-pr-link" title="PR #${session.pr_number}">
+                    #${session.pr_number}
+                  </a>
+                ` : ''}
+              </div>
+              <div class="pm-session-details">
+                <div class="pm-session-meta">
+                  <span title="${escapeHtml(session.worktree ?? '')}">${escapeHtml(getPmWorktreeName(session.worktree))}</span>
+                  <span class="pm-heartbeat-time">${formatPmTimeAgo(session.last_heartbeat)}</span>
+                </div>
+                ${session.claimed_tasks && session.claimed_tasks.length > 0 ? `
+                  <div class="pm-claimed-tasks">
+                    <strong>Tasks:</strong> ${session.claimed_tasks.map(t => escapeHtml(t)).join(', ')}
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }
+
+        html += `</div>`;
+      }
+
+      // Stale sessions warning
+      if (staleSessions.length > 0) {
+        html += `
+          <div class="pm-stale-sessions">
+            <h4>Stale Sessions (${staleSessions.length})</h4>
+            <ul>
+              ${staleSessions.map(s => `
+                <li>${escapeHtml(s.branch ?? 'unknown')} - Last seen ${formatPmTimeAgo(s.last_heartbeat)}</li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      pmSessionsContainer.innerHTML = html;
+    }
   </script>
 </body>
 </html>
