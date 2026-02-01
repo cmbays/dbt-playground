@@ -59,11 +59,23 @@ with_surrogate_key as (
     from with_row_number
 ),
 
+with_dq_flags as (
+    {{ add_dq_flags(
+        source_cte='with_surrogate_key',
+        validations={
+            'valid_medication_dates': 'medication_end_at is null or medication_end_at >= medication_start_at',
+            'no_future_medication_dates': 'cast(medication_start_at as date) <= current_date',
+            'start_after_1900': 'medication_start_at >= timestamp \'1900-01-01\'',
+            'end_after_1900_if_present': 'medication_end_at is null or medication_end_at >= timestamp \'1900-01-01\''
+        }
+    ) }}
+),
+
 final as (
     select
         *
         , current_timestamp as _loaded_at
-    from with_surrogate_key
+    from with_dq_flags
 )
 
 select * from final

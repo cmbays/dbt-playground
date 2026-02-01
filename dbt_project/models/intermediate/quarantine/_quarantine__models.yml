@@ -1,0 +1,88 @@
+version: 2
+
+models:
+  - name: int_dq_quarantine__encounters
+    description: |
+      Encounters that failed data quality validations and are excluded from downstream marts.
+
+      Records are quarantined when any of the following validations fail:
+      - valid_encounter_timestamps: encounter_end_at >= encounter_start_at
+      - no_future_encounter_dates: encounter_start_at <= current_timestamp
+      - end_after_1900: encounter_end_at >= timestamp '1900-01-01'
+      - start_after_1900: encounter_start_at >= timestamp '1900-01-01'
+
+      This table preserves data quality violations for investigation without polluting fact tables.
+
+    columns:
+      - name: encounter_id
+        description: "Natural key for the encounter (from source system)"
+        tests:
+          - unique
+          - not_null
+
+      - name: is_dq_valid
+        description: "Data quality validity flag - should always be false in quarantine"
+        tests:
+          - accepted_values:
+              values: [false]
+          - not_null
+
+      - name: failed_dq_tests
+        description: "Array of failed validation test names"
+        tests:
+          - not_null
+
+      - name: valid_encounter_timestamps
+        description: "Flag: encounter_end_at >= encounter_start_at"
+
+      - name: no_future_encounter_dates
+        description: "Flag: encounter_start_at <= current_timestamp"
+
+      - name: end_after_1900
+        description: "Flag: encounter_end_at >= timestamp '1900-01-01'"
+
+      - name: start_after_1900
+        description: "Flag: encounter_start_at >= timestamp '1900-01-01'"
+
+  - name: int_dq_quarantine__medications
+    description: |
+      Medications that failed data quality validations and are excluded from downstream marts.
+
+      Records are quarantined when any of the following validations fail:
+      - valid_medication_dates: medication_end_at is null or medication_end_at >= medication_start_at
+      - no_future_medication_dates: cast(medication_start_at as date) <= current_date
+      - start_after_1900: medication_start_at >= timestamp '1900-01-01'
+      - end_after_1900_if_present: medication_end_at is null or medication_end_at >= timestamp '1900-01-01'
+
+      This table preserves data quality violations for investigation without polluting fact tables.
+
+    columns:
+      - name: medication_id
+        description: "Surrogate key for the medication record"
+        tests:
+          - unique
+          - not_null
+
+      - name: is_dq_valid
+        description: "Data quality validity flag - should always be false in quarantine"
+        tests:
+          - accepted_values:
+              values: [false]
+          - not_null
+
+      - name: failed_dq_tests
+        description: "Array of failed validation test names"
+        tests:
+          - not_null
+
+      - name: valid_medication_dates
+        description: "Flag: medication_end_at is null or medication_end_at >= medication_start_at"
+
+      - name: no_future_medication_dates
+        description: "Flag: cast(medication_start_at as date) <= current_date"
+
+      - name: start_after_1900
+        description: "Flag: medication_start_at >= timestamp '1900-01-01'"
+
+      - name: end_after_1900_if_present
+        description: "Flag: medication_end_at is null or medication_end_at >= timestamp '1900-01-01'"

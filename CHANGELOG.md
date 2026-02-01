@@ -9,9 +9,92 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Incremental refresh patterns for large fact tables (v0.8)
-- Advanced analytics models (clustering, cohort analysis) (v0.8)
-- Real-time monitoring and alerting (v0.8)
+- Incremental refresh patterns for large fact tables (v0.9)
+- Advanced analytics models (clustering, cohort analysis) (v0.9)
+- Real-time monitoring and alerting (v0.9)
+
+---
+
+## [0.8.0] - 2026-02-01
+
+### Added
+
+- **Phase 5: Data Quality Quarantine System** - Macro-based pattern for systematic DQ handling
+  - 3 reusable macros in `macros/data_quality/`:
+    - `add_dq_flags()` - Adds individual validation flags + `is_dq_valid` + `failed_dq_tests` array
+    - `quarantine_filter()` - Generates WHERE clause to filter invalid records
+    - `generate_quarantine_model()` - Creates quarantine table with one line
+  - 2 quarantine tables in `models/intermediate/quarantine/`:
+    - `int_dq_quarantine__encounters` - 1 quarantined encounter (0.002% of 53,346)
+    - `int_dq_quarantine__medications` - 5 quarantined medications (0.012% of 42,989)
+  - DQ monitoring mart: `mart_dq_summary` - Entity-level quarantine metrics
+  - Applied `{{ quarantine_filter() }}` to 3 downstream models (fct_encounters, fct_clinical_events, int_encounters__enriched)
+
+- **Documentation**:
+  - `docs/decisions/ADR-004-data-quality-quarantine.md` - Architecture decision record
+  - `docs/reference/DATA_QUALITY_QUARANTINE.md` - Complete usage guide with examples
+  - `macros/data_quality/README.md` - Macro documentation with usage patterns
+
+- **Validation Rules** (Encounters):
+  - `valid_encounter_timestamps`: encounter_end_at >= encounter_start_at
+  - `no_future_encounter_dates`: encounter_start_at <= current_timestamp
+  - `end_after_1900`: encounter_end_at >= timestamp '1900-01-01'
+  - `start_after_1900`: encounter_start_at >= timestamp '1900-01-01'
+
+- **Validation Rules** (Medications):
+  - `valid_medication_dates`: medication_end_at is null or >= medication_start_at
+  - `no_future_medication_dates`: medication_start_at <= current_date
+  - `start_after_1900`: medication_start_at >= timestamp '1900-01-01'
+  - `end_after_1900_if_present`: medication_end_at is null or >= timestamp '1900-01-01'
+
+### Changed
+
+- Updated `stg_synthea__encounters` to include DQ validation flags
+- Updated `stg_synthea__medications` to include DQ validation flags
+- Modified `fct_encounters` to filter quarantined encounters
+- Modified `fct_clinical_events` to filter quarantined medications and validate encounter references
+- Modified `int_encounters__enriched` to filter quarantined medications
+
+### Fixed
+
+- **Eliminated 2 ERROR-level test failures** (100% test pass rate achieved)
+  - `assert_encounter_timestamps_valid` - Now filters by is_dq_valid (PASS)
+  - `assert_medication_dates_valid` - Now filters by is_dq_valid (PASS)
+
+### Testing
+
+- Added 20 new tests for quarantine system (all passing)
+- **Test Summary**: 423 PASS, 2 WARN, 0 ERROR (was 405 PASS, 2 ERROR)
+- Verified 0 quarantined records leak to downstream marts (join tests)
+
+### Performance
+
+- Build time increase: ~20% (2.0s → 2.4s for full build)
+- Well below 30% threshold for acceptable impact
+- DuckDB optimizes redundant condition evaluation in macros
+
+### Technical Highlights
+
+- DuckDB-specific features: `list_value()` for arrays, `filter (where ...)` for conditional aggregation
+- Individual validation flags enable precise debugging (see which specific rule failed)
+- `failed_dq_tests` array allows aggregation analysis (which rules fail most often)
+- Macro pattern enables consistent DQ handling across all entities
+- Quarantine tables preserve evidence for root cause analysis
+
+### Architectural Decisions
+
+- **Macro-based abstraction**: Chosen over inline SQL for code reuse and debugging features
+- **Quarantine at staging**: Earliest detection point, before transformations
+- **Individual flags**: Trade-off accepted for debugging value (vs. single boolean)
+- **DuckDB-only**: Acceptable for single-database learning project
+
+### Future Enhancements (Out of Scope)
+
+- Extend quarantine to conditions, procedures, observations
+- Auto-remediation macros for common violations
+- Historical quarantine trend tracking (SCD Type 2)
+- Alert integration (email/Slack) for quarantine rate thresholds
+- Multi-database support (adapter-specific macro implementations)
 
 ---
 

@@ -7,6 +7,7 @@
 
 with encounters as (
     select * from {{ ref('stg_synthea__encounters') }}
+    {{ quarantine_filter() }}
 ),
 
 patients as (
@@ -92,19 +93,18 @@ final as (
         , case
             when p.birth_date is not null
             then date_diff('year', p.birth_date, cast(e.encounter_start_at as date))
-            else null
         end as patient_age_at_encounter
 
         -- metadata
         , current_timestamp as _loaded_at
 
-    from encounters e
-    left join patients p on e.patient_id = p.patient_id
-    left join providers pr on e.provider_id = pr.provider_id
-    left join organizations o on e.organization_id = o.organization_id
-    left join payers py on e.payer_id = py.payer_id
-    left join dim_date ds on cast(e.encounter_start_at as date) = ds.date_actual
-    left join dim_date de on cast(e.encounter_end_at as date) = de.date_actual
+    from encounters as e
+    left join patients as p on e.patient_id = p.patient_id
+    left join providers as pr on e.provider_id = pr.provider_id
+    left join organizations as o on e.organization_id = o.organization_id
+    left join payers as py on e.payer_id = py.payer_id
+    left join dim_date as ds on cast(e.encounter_start_at as date) = ds.date_actual
+    left join dim_date as de on cast(e.encounter_end_at as date) = de.date_actual
 )
 
 select * from final
