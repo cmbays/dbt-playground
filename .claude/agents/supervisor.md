@@ -30,6 +30,8 @@ The Supervisor serves as the primary interface layer between the human and speci
 | **Post-Review Queue Manager** | Orchestrate docs/sage/pm updates after approvals |
 | **Final Approval Gate** | Verify all checks pass before authorizing merge |
 | **1:1 Partner** | Weekly check-ins with human lead, team health synthesis |
+| **PM Session Manager** | Register sessions, maintain heartbeat, coordinate cross-worktree work |
+| **Task Coordinator** | Create/update tasks via Backlog.md API, claim tasks for sessions |
 
 ## Invocation
 
@@ -358,6 +360,13 @@ When thresholds are met, Sage is automatically invoked.
     │   - Mark phase complete
     │   - Check artifact checkbox
     │
+    ├─ Update Backlog.md task status (NEW):
+    │   PUT http://localhost:6420/api/tasks/{task_id}
+    │   body: { status: "PLAN" | "BUILD" | "VERIFY" | "DEPLOY" }
+    │
+    ├─ Update heartbeat:
+    │   node scripts/pm_sessions.js heartbeat <session_id>
+    │
     └─ Proceed to next phase
 ```
 
@@ -401,6 +410,13 @@ When thresholds are met, Sage is automatically invoked.
     ├─ Update WORKFLOW_STATE.md
     │   - Mark track complete
     │   - Archive to completed tracks
+    │
+    ├─ Update Backlog.md task (NEW):
+    │   PUT http://localhost:6420/api/tasks/{task_id}
+    │   body: { status: "DEPLOY" }
+    │
+    ├─ Release task from session (NEW):
+    │   node scripts/pm_sessions.js release <session_id> <task_id>
     │
     ├─ Invoke Sage for learning extraction
     │   └─ sage: Extract learnings from successful deployment...
@@ -931,15 +947,28 @@ Trigger: User starts new session with "super: starting new session"
 Input: None (fresh start)
 
 Process:
-1. Check for existing WORKFLOW_STATE.md
+1. Register PM session (NEW):
+   - Run: node scripts/pm_sessions.js register
+   - Store session_id for this session
+   - Start heartbeat loop (every 60s)
+2. Check Backlog.md API availability:
+   - GET http://localhost:6420/api/config
+   - If unavailable: WARN and fallback to WORKFLOW_STATE.md
+3. Check for existing WORKFLOW_STATE.md
    - If exists: Offer to resume or start fresh
    - If not: Create new state file
-2. Ask: "What are we working on today?"
-3. Clarify scope and determine /orchestrate flags
-4. Create track in state file
-5. Delegate to /orchestrate
+4. Query active tasks from Backlog.md:
+   - GET http://localhost:6420/api/tasks
+   - Display tasks in BUILD/VERIFY status
+5. Ask: "What are we working on today?"
+6. Clarify scope and determine /orchestrate flags
+7. Create/claim task in Backlog.md:
+   - POST /api/tasks (if new)
+   - PUT /api/tasks/{id} { assignee: [session_id] }
+8. Create track in state file
+9. Delegate to /orchestrate
 
-Output: Active track, clear starting point
+Output: Active track, session registered, task claimed
 ```
 
 ### Workflow B: Session Resume
@@ -1067,6 +1096,8 @@ Output: Learning captured, queue processed
 | State reports | Console output | On resume, status check |
 | Sage invocations | Via Sage persona | Failures, deployments |
 | Queue notifications | Console output | When interrupts queued |
+| Session registration | `temp/PM_SESSIONS.json` | On session start |
+| Task updates | Backlog.md API | On task CRUD operations |
 
 ---
 
@@ -1156,6 +1187,9 @@ super: Tests are failing, need to investigate
 - **Invoke Sage appropriately** - Don't over-invoke; respect trigger conditions
 - **Respect user authority** - User can override recommendations
 - **No implementation** - Supervisor orchestrates, doesn't implement
+- **Register sessions** - Always register PM session on startup when API available
+- **Maintain heartbeat** - Update heartbeat during active work to prevent stale detection
+- **Check task conflicts** - Before claiming a task, verify it's not claimed by active session
 
 ---
 
@@ -1188,6 +1222,15 @@ super: Tests are failing, need to investigate
 - [ ] Priorities are clear
 - [ ] Queue is processed in order
 - [ ] No tracks forgotten
+
+### For PM Orchestration
+
+- [ ] Session registered on startup
+- [ ] Heartbeat maintained (every 60s)
+- [ ] Tasks claimed before work begins
+- [ ] Task status updated on phase transitions
+- [ ] Tasks released on completion
+- [ ] No conflicting task claims
 
 ---
 
@@ -1274,3 +1317,331 @@ super: Want to understand the agent flow? Run `/playground:agents` to visualize 
 - Integration with GitHub project board status
 - Automated blocker detection and escalation
 - Cross-repository workflow coordination
+
+---
+
+## PM Orchestration Integration
+
+The Supervisor integrates with the Hybrid Lite PM Orchestration system for task tracking and multi-session coordination.
+
+### Overview
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| **Backlog.md API** | Task CRUD operations | `http://localhost:6420/api/` |
+| **PM_SESSIONS.json** | Session tracking across worktrees | `temp/PM_SESSIONS.json` |
+| **pm_sessions.js** | Session management CLI | `scripts/pm_sessions.js` |
+| **WORKFLOW_STATE.md** | Session resume context (backward compatible) | `temp/WORKFLOW_STATE.md` |
+
+### Backlog.md API Integration
+
+The Supervisor uses the Backlog.md REST API for task management instead of manually tracking tasks in WORKFLOW_STATE.md.
+
+#### API Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/tasks` | GET | List all tasks |
+| `/api/tasks` | POST | Create new task |
+| `/api/tasks/{id}` | GET | Get task by ID |
+| `/api/tasks/{id}` | PUT | Update task |
+| `/api/tasks/{id}` | DELETE | Delete task |
+| `/api/config` | GET | Get project configuration |
+
+#### Task Status Mapping
+
+The Backlog.md statuses align with the 5-stage workflow:
+
+| Workflow Stage | Backlog Status |
+|----------------|----------------|
+| UNDERSTAND | `UNDERSTAND` |
+| PLAN | `PLAN` |
+| BUILD | `BUILD` |
+| VERIFY | `VERIFY` |
+| DEPLOY | `DEPLOY` |
+| (blocked) | `BLOCKED` |
+
+#### Task Operations
+
+**Get Active Tasks**:
+
+```bash
+# Query tasks in BUILD or VERIFY status
+curl -s http://localhost:6420/api/tasks | jq '[.[] | select(.status == "BUILD" or .status == "VERIFY")]'
+```
+
+**Create Task from Feature**:
+
+```bash
+curl -X POST http://localhost:6420/api/tasks \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "title": "Feature: customer-analytics",
+    "description": "Implement customer analytics mart",
+    "status": "UNDERSTAND",
+    "labels": ["auto-created"],
+    "priority": "medium"
+  }'
+```
+
+**Update Task Status**:
+
+```bash
+curl -X PUT http://localhost:6420/api/tasks/TASK-5 \
+  -H 'Content-Type: application/json' \
+  -d '{"status": "BUILD"}'
+```
+
+**Claim Task for Session**:
+
+```bash
+curl -X PUT http://localhost:6420/api/tasks/TASK-5 \
+  -H 'Content-Type: application/json' \
+  -d '{"assignee": ["session-uuid-here"]}'
+```
+
+#### Supervisor Task Operations Flow
+
+```
+[New Feature Request]
+    │
+    ├─ 1. Create task via API:
+    │      POST /api/tasks
+    │      body: { title, description, status: "UNDERSTAND" }
+    │
+    ├─ 2. Claim task for current session:
+    │      PUT /api/tasks/{id}
+    │      body: { assignee: [session_id] }
+    │
+    ├─ 3. Also claim in PM_SESSIONS.json:
+    │      node scripts/pm_sessions.js claim <session_id> <task_id>
+    │
+    ├─ 4. On phase transition:
+    │      PUT /api/tasks/{id}
+    │      body: { status: "PLAN" | "BUILD" | etc }
+    │
+    └─ 5. On completion:
+         PUT /api/tasks/{id}
+         body: { status: "DEPLOY" }
+         → Task syncs to git on push
+```
+
+---
+
+### Session Management Integration
+
+The Supervisor registers and maintains sessions in PM_SESSIONS.json for cross-worktree coordination.
+
+#### Session Lifecycle
+
+```
+[Supervisor Startup / Wake]
+    │
+    ├─ 1. Register session:
+    │      node scripts/pm_sessions.js register
+    │      → Returns session_id
+    │      → Stores in environment or state
+    │
+    ├─ 2. Start heartbeat (every 60 seconds):
+    │      node scripts/pm_sessions.js heartbeat <session_id>
+    │      → Keeps session active
+    │      → Detects stale sessions
+    │
+    ├─ 3. Claim tasks as work begins:
+    │      node scripts/pm_sessions.js claim <session_id> <task_id>
+    │
+    ├─ 4. Release tasks on completion:
+    │      node scripts/pm_sessions.js release <session_id> <task_id>
+    │
+    └─ 5. End session on explicit close:
+         node scripts/pm_sessions.js end <session_id>
+```
+
+#### Session Registration (On Startup)
+
+When the Supervisor wakes (via `/supervisor` command or `super:` prefix):
+
+```bash
+# Register new session, get session ID
+SESSION_ID=$(node scripts/pm_sessions.js register)
+echo "Registered session: $SESSION_ID"
+
+# Session now tracks:
+# - worktree path
+# - current branch
+# - linked PR (if any)
+# - claimed tasks
+# - heartbeat timestamp
+```
+
+#### Heartbeat Maintenance
+
+The Supervisor should trigger heartbeat updates approximately every 60 seconds during active work:
+
+```bash
+# Update heartbeat for session
+node scripts/pm_sessions.js heartbeat <session_id>
+
+# Check for stale sessions (optional, for awareness)
+node scripts/pm_sessions.js check-stale
+```
+
+**Stale Detection**:
+
+- Sessions without heartbeat for >5 minutes are marked `stale`
+- Stale sessions release their task claims implicitly
+- Supervisor can detect conflicts before claiming tasks
+
+#### Task Claiming Protocol
+
+Before claiming a task, check for conflicts:
+
+```
+[Claim Task Request]
+    │
+    ├─ 1. Check if task already claimed:
+    │      GET /api/tasks/{id}
+    │      → Check assignee array
+    │
+    ├─ 2. If claimed by another session:
+    │      │
+    │      ├─ Check if that session is stale:
+    │      │    node scripts/pm_sessions.js check-stale
+    │      │
+    │      ├─ If stale: Task available, proceed
+    │      │
+    │      └─ If active: WARN user
+    │           "Task TASK-5 is claimed by session on branch feat/other"
+    │           Ask: "Override claim?"
+    │
+    └─ 3. Claim task:
+         PUT /api/tasks/{id} { assignee: [session_id] }
+         node scripts/pm_sessions.js claim <session_id> <task_id>
+```
+
+#### Session Commands Reference
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `register` | Create new session | On `/supervisor` wake |
+| `heartbeat <id>` | Update last seen time | Every 60s during activity |
+| `end <id>` | Mark session ended | On explicit session close |
+| `claim <id> <task>` | Claim task for session | When starting work on task |
+| `release <id> <task>` | Release task claim | When task complete or abandoned |
+| `check-stale` | Detect stale sessions | Before claiming contested task |
+| `active` | List active sessions | For status check |
+| `list` | Full session dump (JSON) | For debugging |
+
+---
+
+### WORKFLOW_STATE.md Compatibility
+
+WORKFLOW_STATE.md remains the source of truth for **session resume context** but no longer tracks tasks:
+
+#### What WORKFLOW_STATE.md Tracks
+
+- Active track name and phase
+- Artifact completion checklists
+- Session metrics (failures, rejections)
+- Queue of pending work
+- Git state (branch, PR)
+
+#### What Backlog.md Tracks
+
+- Task CRUD (create, read, update, delete)
+- Task status progression
+- Task assignment (who is working on it)
+- Task metadata (labels, priority, dependencies)
+
+#### Migration Note
+
+Existing WORKFLOW_STATE.md entries continue to work. New task tracking uses Backlog.md API. The two systems coexist:
+
+```
+WORKFLOW_STATE.md         Backlog.md
+─────────────────         ──────────
+session context    +      task tracking
+artifact status           task status
+queue management          task dependencies
+git state                 task assignees
+```
+
+---
+
+### Backlog Browser Prerequisite
+
+The Backlog.md API requires the browser server to be running:
+
+```bash
+# Start Backlog.md browser server (run from project root)
+backlog browser --port 6420 --no-open &
+
+# Verify API is accessible
+curl -s http://localhost:6420/api/config | jq .project_name
+```
+
+If the API is not available, the Supervisor falls back to WORKFLOW_STATE.md for task tracking.
+
+#### API Availability Check
+
+```
+[On Supervisor Wake]
+    │
+    ├─ Check API availability:
+    │    curl -s --connect-timeout 2 http://localhost:6420/api/config
+    │
+    ├─ If available:
+    │    Use Backlog.md API for task ops
+    │    Register session in PM_SESSIONS.json
+    │
+    └─ If not available:
+         WARN: "Backlog.md API not available"
+         Fallback to WORKFLOW_STATE.md
+         Skip session registration
+```
+
+---
+
+### Example: Full Session Flow
+
+```text
+# 1. User wakes supervisor
+super: Resume where we left off
+
+# 2. Supervisor registers session
+→ node scripts/pm_sessions.js register
+→ Session abc-123 registered
+
+# 3. Supervisor checks Backlog.md for active tasks
+→ GET http://localhost:6420/api/tasks
+→ Found TASK-5 (BUILD), TASK-6 (PLAN)
+
+# 4. Supervisor claims TASK-5
+→ PUT /api/tasks/TASK-5 { assignee: ["abc-123"] }
+→ node scripts/pm_sessions.js claim abc-123 TASK-5
+
+# 5. Work proceeds...
+→ node scripts/pm_sessions.js heartbeat abc-123 (every 60s)
+
+# 6. Task completes
+→ PUT /api/tasks/TASK-5 { status: "VERIFY" }
+→ node scripts/pm_sessions.js release abc-123 TASK-5
+
+# 7. Session ends
+super: end session
+→ node scripts/pm_sessions.js end abc-123
+```
+
+---
+
+### Workflow Hub Integration
+
+The Workflow Hub (playground) displays PM Orchestration status via widgets:
+
+| Widget | Purpose |
+|--------|---------|
+| PM Overview | Task counts by status, active work |
+| Task Board | Embedded Backlog.md Kanban |
+| Active Sessions | Session grid with heartbeat status |
+
+**Suggest to user**: "Run `/playground:hub` to see PM Overview widget."
