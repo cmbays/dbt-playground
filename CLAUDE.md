@@ -160,6 +160,7 @@ temp/AGENT_REPORTS/[feature-name]/
 | `/branch` | Branch creation via git-master |
 | `/plan` | Structured planning |
 | `/dbt-run` | Execute dbt commands |
+| `/readiness-check` | Assess capability gaps before new work |
 
 ## Git Worktrees (Parallel Development)
 
