@@ -1,9 +1,16 @@
 # ADR-002: SQLite State Layer for Cross-Session Awareness
 
-**Status**: Proposed
+**Status**: Superseded by Hybrid Lite Architecture (2026-02-01)
 **Date**: 2026-01-31
 **Decision Makers**: Architect
 **Context**: PRD-022, TDD-022 (PM Orchestration System)
+
+> **UPDATE (2026-02-01)**: This decision was **reversed** after discovering Backlog.md's
+> full capabilities. SQLite complexity deemed unnecessary for v0.9. See:
+>
+> - ARCH_DECISION_HYBRID_LITE.md for reversal rationale
+> - Issue #140 for future consideration
+> - PRD-022 (updated) for Hybrid Lite scope
 
 ---
 

@@ -3,7 +3,7 @@ audience: [pm, architect]
 priority: medium
 size: medium
 dependencies: []
-last_updated: 2026-01-31
+last_updated: 2026-02-01
 status: active
 tags: [reference, roadmap, planning]
 ---
@@ -282,14 +282,74 @@ Transform the Workflow Hub from a single-session resume tool to a multi-session 
 
 ---
 
+### v0.9: PM Orchestration (Hybrid Lite)
+
+**Theme**: Multi-Session Coordination
+**Target**: Mar 31, 2026
+**Status**: ✅ Implementation Complete, Ready for Deployment
+
+**Architecture Decision**: After testing Backlog.md capabilities, adopted **Hybrid Lite** architecture instead of original SQLite + dbt analytics plan.
+
+**Completed** (Phase 1-2, PR #131):
+
+- [x] Backlog.md v1.35.4 installed and configured
+- [x] 5-stage workflow status columns (UNDERSTAND → DEPLOY + BLOCKED)
+- [x] PM_SESSIONS.json session tracking (scripts/pm_sessions.js, 625 lines)
+- [x] Session heartbeat with stale detection (5min threshold)
+- [x] Task claiming with conflict detection
+- [x] Workflow Hub widgets (PM Overview, Active Sessions)
+- [x] 40/40 unit tests + 29/29 E2E tests passing (11 widgets + 8 supervisor + 10 multi-worktree)
+
+**Completed** (Phase 3):
+
+- [x] Supervisor session registration workflow (TASK-11: VERIFIED)
+- [x] Backlog.md API integration in Supervisor (TASK-10: VERIFIED)
+- [x] 8/8 E2E tests passing for Supervisor integration
+- [x] PM sessions CLI verified (register, heartbeat, claim, release, active, check-stale)
+- [x] E2E multi-worktree task visibility test (TASK-12: COMPLETE)
+- [x] 10/10 multi-worktree tests passing
+
+**Remaining**:
+
+- [ ] Final deployment and documentation cleanup
+- [ ] Update CHANGELOG for v0.9
+
+**Deferred to Future Enhancements**:
+
+- SQLite state database (#140) - Only if race conditions or SQL analytics needed
+- dbt PM analytics integration (#141) - Only if metrics prove valuable
+- Advanced alerting system (#142) - Only if simple stale detection insufficient
+- Bi-directional sync engine - Eliminated (single source of truth via Backlog.md)
+
+**Why Hybrid Lite**: Backlog.md provides 90% of requirements out of the box (REST API, MCP, browser UI, CLI tools, cross-worktree visibility). SQLite adds complexity without proportional value for v0.9.
+
+**Related**:
+
+- [PRD-022](../specs/PRD-022-PM-ORCHESTRATION.md) (updated to Hybrid Lite scope)
+- [TDD-022-HYBRID-LITE](../specs/TDD-022-PM-ORCHESTRATION-HYBRID-LITE.md)
+- [ARCH_DECISION_HYBRID_LITE](../../temp/AGENT_REPORTS/pm-orchestration-backlog/ARCH_DECISION_HYBRID_LITE.md)
+- [ADR-001](../decisions/ADR-001-backlog-md-adoption.md) (Approved)
+- [ADR-002](../decisions/ADR-002-sqlite-state-layer.md) (Superseded)
+- [ADR-003](../decisions/ADR-003-dbt-pm-analytics.md) (Superseded)
+
+---
+
 ## Future Considerations
 
 ### Potential Extensions
+
+**Data Platform**:
 
 - **Multiple databases**: Test with different data warehouses
 - **dbt Cloud**: Explore cloud deployment options
 - **Semantic layer**: Implement dbt metrics/semantic layer
 - **BI integration**: Connect to visualization tools
+
+**PM Orchestration** (Deferred from v0.9):
+
+- **SQLite state database** (#140): Only if Hybrid Lite shows race conditions or needs SQL analytics
+- **dbt PM analytics** (#141): Task velocity, bottleneck detection, agent productivity metrics
+- **Advanced alerting** (#142): Conflict detection, orphaned tasks, branch drift, PR feedback tracking
 
 ### Learning Objectives
 
@@ -319,4 +379,4 @@ Transform the Workflow Hub from a single-session resume tool to a multi-session 
 
 ---
 
-*Last Updated: 2026-01-31*
+*Last Updated: 2026-02-01*
