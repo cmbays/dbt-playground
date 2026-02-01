@@ -1876,7 +1876,7 @@
   <script>
     // ==================== Configuration ====================
     const API_BASE = 'http://localhost:5050/api';
-    const BACKLOG_API_BASE = 'http://localhost:6420/api';  // Backlog.md API (TASK-7, TASK-8)
+    const BACKLOG_API_BASE = `${API_BASE}/backlog`;  // Backlog.md API via proxy (TASK-7, TASK-8)
     const SESSION_POLL_INTERVAL = 10000;  // 10 seconds
     const ISSUE_POLL_INTERVAL = 60000;    // 60 seconds
     const PM_POLL_INTERVAL = 15000;       // 15 seconds for PM widgets
