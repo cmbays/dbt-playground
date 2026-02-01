@@ -265,6 +265,65 @@ def get_github_issues():
         return jsonify({"issues": [], "error": str(e)})
 
 
+@app.route("/api/pm-sessions")
+def get_pm_sessions():
+    """Return PM_SESSIONS.json for Workflow Hub v0.9."""
+    pm_sessions_file = TEMP_DIR / "PM_SESSIONS.json"
+    if not pm_sessions_file.exists():
+        return jsonify({
+            "version": "1.0.0",
+            "last_cleanup": None,
+            "sessions": [],
+            "error": None
+        })
+
+    try:
+        with open(pm_sessions_file, 'r') as f:
+            data = json.load(f)
+        return jsonify({**data, "error": None})
+    except Exception as e:
+        return jsonify({
+            "version": "1.0.0",
+            "last_cleanup": None,
+            "sessions": [],
+            "error": str(e)
+        })
+
+
+@app.route("/api/backlog/tasks")
+def get_backlog_tasks():
+    """Proxy Backlog.md API for CORS compatibility (v0.9)."""
+    import urllib.request
+    try:
+        with urllib.request.urlopen("http://localhost:6420/api/tasks", timeout=5) as response:
+            data = json.loads(response.read().decode())
+        # Return the array directly, as expected by the widget
+        return jsonify(data)
+    except urllib.error.URLError:
+        return jsonify([]), 503  # Empty array with error status
+    except Exception as e:
+        return jsonify([]), 500  # Empty array with error status
+
+
+@app.route("/api/backlog/config")
+def get_backlog_config():
+    """Proxy Backlog.md config endpoint for connection check (v0.9)."""
+    import urllib.request
+    import urllib.error
+    try:
+        with urllib.request.urlopen("http://localhost:6420/api/config", timeout=5) as response:
+            data = json.loads(response.read().decode())
+        return jsonify(data)
+    except urllib.error.HTTPError as e:
+        # Server responded with error - but it's running, so connection is OK
+        # Return a minimal config to indicate connection is working
+        return jsonify({"status": "connected", "error": e.reason})
+    except (urllib.error.URLError, ConnectionRefusedError):
+        return jsonify({"error": "Backlog.md API not available"}), 503
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # --- Combined Data Endpoint ---
 
 
@@ -360,6 +419,8 @@ if __name__ == "__main__":
     print(f"    GET /api/session-summaries - Session summaries")
     print(f"    GET /api/session-states    - Session state files (v0.7)")
     print(f"    GET /api/github-issues     - GitHub issues via gh (v0.7)")
+    print(f"    GET /api/pm-sessions       - PM sessions tracker (v0.9)")
+    print(f"    GET /api/backlog/tasks     - Backlog.md proxy (v0.9)")
     print(f"    GET /api/agent-reports     - Agent reports")
     print(f"\n  Press Ctrl+C to stop\n")
     print("=" * 50 + "\n")

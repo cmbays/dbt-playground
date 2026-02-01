@@ -1,9 +1,17 @@
 # ADR-003: dbt for PM Analytics
 
-**Status**: Proposed
+**Status**: Superseded by Hybrid Lite Architecture (2026-02-01)
 **Date**: 2026-01-31
 **Decision Makers**: Architect, Data Modeler
 **Context**: PRD-022, TDD-022 (PM Orchestration System)
+
+> **UPDATE (2026-02-01)**: This decision was **deferred** to future enhancements.
+> No SQLite database in Hybrid Lite architecture = no dbt analytics needed for v0.9.
+> See:
+>
+> - ARCH_DECISION_HYBRID_LITE.md for deferral rationale
+> - Issue #141 for future consideration
+> - PRD-022 Future Enhancements section
 
 ---
 
