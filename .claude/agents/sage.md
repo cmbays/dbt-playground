@@ -300,6 +300,80 @@ sage: check if ADR-3 is ready for promotion
 sage: what ADRs have 2+ implementations?
 ```
 
+### Workflow I: Gap Resolution Research
+
+```
+Trigger: Readiness check referral from Supervisor (RESEARCH_NEEDED status)
+Input: temp/READINESS_CHECK_[feature].md, gap descriptions
+
+Process:
+1. Read readiness check output for identified gaps
+2. For each gap, determine research approach:
+   - Missing patterns → Search external repos, extract to LEARNINGS.md
+   - Unknown tools → Research documentation, create skill if warranted
+   - No prior experience → Find reference implementations, document patterns
+3. Coordinate with /repo-research for external sources:
+   - sage: → /repo-research [url] for deep external analysis
+   - Sage focuses on pattern extraction, repo-research on raw data
+4. Update LEARNINGS.md with new patterns (if proven or well-documented externally)
+5. Create skill file if workflow is actionable
+6. Report resolution status to Supervisor
+7. Recommend re-running /readiness-check
+
+Output: Updated LEARNINGS.md, optional skill files, resolution report
+```
+
+**Gap Resolution Decision Tree**:
+
+```
+[Gap Identified]
+    │
+    ├─ Is gap about missing patterns/knowledge?
+    │   ├─ Yes → Search for external references
+    │   │   ├─ Found documented pattern → Add to LEARNINGS.md
+    │   │   ├─ Found repo with examples → /repo-research [url]
+    │   │   └─ No external source → Note as "novel work, proceed with caution"
+    │   └─ No → Continue
+    │
+    ├─ Is gap about missing tools?
+    │   ├─ Yes → Can tool be installed?
+    │   │   ├─ Yes (package) → Recommend: uv add [package]
+    │   │   ├─ Yes (MCP) → Document configuration steps
+    │   │   └─ No → Mark as BLOCKING
+    │   └─ No → Continue
+    │
+    └─ Is gap about missing experience?
+        ├─ Yes → Find reference implementations
+        │   ├─ Internal prior art → Document pattern
+        │   └─ External examples → /repo-research
+        └─ No → Gap resolution complete
+```
+
+**Example Invocations**:
+
+```text
+sage: resolve gaps for tuva-integration
+sage: research gaps from temp/READINESS_CHECK_customer-analytics.md
+sage: what patterns exist for dbt_expectations testing?
+```
+
+**Handoff to Supervisor**:
+
+```
+sage: → super:
+
+Gap resolution complete for [feature].
+
+**Gaps Resolved**:
+1. [Gap] → Added pattern to LEARNINGS.md
+2. [Gap] → Created skill file .claude/skills/learned-pattern-X.md
+
+**Gaps Remaining**:
+- [Gap if any] → Reason unresolved
+
+**Recommendation**: Re-run /readiness-check [request]
+```
+
 ### Sage Trigger Conditions (Updated)
 
 Sage extracts learnings when:
@@ -311,6 +385,7 @@ Sage extracts learnings when:
 | Version tag | Deployment milestone created | Auto-notify |
 | Failure threshold | ≥10 test failures in session | Auto |
 | User rejection | Output rejected by user | Auto |
+| Readiness gap referral | Supervisor refers RESEARCH_NEEDED gaps | Semi-auto |
 
 **NOT triggered automatically on every PR merge** - this prevents noise and ensures Sage focuses on meaningful learnings.
 
