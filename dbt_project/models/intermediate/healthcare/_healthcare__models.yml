@@ -1,0 +1,205 @@
+version: 2
+
+models:
+  # ============================================================================
+  # INTERMEDIATE HEALTHCARE MODELS
+  # ============================================================================
+  # These models enrich and aggregate staging data for use in the core mart layer.
+
+  - name: int_encounters__enriched
+    description: >
+      Enriched encounter model that aggregates clinical event counts and costs per encounter.
+      Joins conditions, medications, and procedures to provide a complete view of each
+      encounter's clinical activity and associated costs.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 40000
+          config:
+            severity: warn
+    columns:
+      - name: encounter_id
+        description: Unique encounter identifier (UUID), sourced from fct_encounters
+        data_tests:
+          - unique
+          - not_null
+
+      - name: condition_count
+        description: Number of conditions diagnosed during this encounter
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: medication_count
+        description: Number of medications prescribed during this encounter
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: procedure_count
+        description: Number of procedures performed during this encounter
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: total_event_count
+        description: Total count of all clinical events (conditions + medications + procedures)
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: total_condition_cost
+        description: Total cost associated with conditions (currently always 0 per model logic)
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: total_medication_cost
+        description: Total cost of medications prescribed during this encounter
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: total_procedure_cost
+        description: Total cost of procedures performed during this encounter
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: total_event_cost
+        description: >
+          Total cost of all clinical events (conditions + medications + procedures).
+          Note: Condition costs are currently set to 0 in the model.
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+  - name: int_patients__with_conditions
+    description: >
+      Patient-level condition history with aggregated statistics and chronic disease flags.
+      Provides counts of total and active conditions, condition date ranges, and boolean
+      flags for common chronic conditions (diabetes, hypertension, heart disease).
+
+      IMPORTANT: Chronic condition flags use simplified text matching on condition descriptions.
+      This is for analytics/reporting only, not clinical decisions.
+    data_tests:
+      # Row count validation (v0.8 - dbt_expectations)
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          min_value: 900
+          config:
+            severity: warn
+    columns:
+      - name: patient_id
+        description: Unique patient identifier (UUID), sourced from current dim_patients records
+        data_tests:
+          - unique
+          - not_null
+
+      - name: total_conditions
+        description: Total number of conditions ever diagnosed for this patient
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: active_conditions
+        description: Number of currently active conditions (no end date)
+        data_tests:
+          - not_null
+          # Value must be non-negative (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              config:
+                severity: warn
+
+      - name: first_condition_date
+        description: Date of earliest condition diagnosis for this patient
+        data_tests:
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::date"
+              max_value: "current_date"
+              row_condition: "first_condition_date is not null"
+              config:
+                severity: warn
+
+      - name: last_condition_date
+        description: Date of most recent condition diagnosis for this patient
+        data_tests:
+          # Date range validation (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: "'1900-01-01'::date"
+              max_value: "current_date"
+              row_condition: "last_condition_date is not null"
+              config:
+                severity: warn
+
+      - name: has_diabetes
+        description: Boolean flag indicating if patient has any diabetes-related condition
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+      - name: has_hypertension
+        description: Boolean flag indicating if patient has hypertension or high blood pressure
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+      - name: has_heart_disease
+        description: Boolean flag indicating if patient has any heart disease condition
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              quote: false
+
+      - name: chronic_condition_count
+        description: Count of tracked chronic conditions (0-3, based on diabetes + hypertension + heart disease flags)
+        data_tests:
+          - not_null
+          # Value must be 0-3 based on the three tracked chronic conditions (v0.8 - dbt_expectations)
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 3
+              config:
+                severity: warn
