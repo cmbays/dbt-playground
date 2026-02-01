@@ -1225,3 +1225,65 @@ models:
 
       - name: patient_responsibility
         description: Amount owed by patient
+
+  - name: mart_dq_summary
+    description: |
+      Data quality summary metrics for monitoring quarantine rates and validation failures.
+      One row per entity type (encounters, medications) with quarantine counts and failure breakdowns.
+      Grain: entity_type
+
+      Use cases:
+      - Data quality monitoring dashboards
+      - Quarantine rate trending
+      - Validation failure root cause analysis
+      - Data quality SLA tracking
+
+    config:
+      tags: ['analytics', 'data_quality', 'marts']
+    meta:
+      grain: entity_type
+      owner: healthcare_analytics
+      uses:
+        - "Data quality dashboards"
+        - "Quarantine monitoring"
+        - "Data quality alerting"
+
+    columns:
+      - name: entity_type
+        description: "Type of entity being measured (encounters, medications)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['encounters', 'medications']
+
+      - name: quarantined_count
+        description: "Number of records failing data quality validations"
+        tests:
+          - not_null
+
+      - name: total_count
+        description: "Total number of records (valid + quarantined)"
+        tests:
+          - not_null
+
+      - name: quarantine_rate_pct
+        description: "Percentage of records quarantined (quarantined_count / total_count * 100)"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 100
+
+      - name: failed_timestamp_validations
+        description: "Count of records failing timestamp/date sequence validations"
+
+      - name: failed_future_date_validations
+        description: "Count of records with future dates"
+
+      - name: failed_historical_end_validations
+        description: "Count of records with end dates before 1900"
+
+      - name: failed_historical_start_validations
+        description: "Count of records with start dates before 1900"
+
+      - name: _generated_at
+        description: "Timestamp when summary was generated"
