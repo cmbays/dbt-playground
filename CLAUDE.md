@@ -271,22 +271,33 @@ gh run rerun <run-id> --failed
 
 ## Milestone Status
 
-Tracking progress toward v0.8, v0.9, and v1.0 releases.
+Tracking progress toward v0.8, v0.10, and v1.0 releases.
 
 | Milestone | Target | Open | Closed | Progress |
 |-----------|--------|------|--------|----------|
 | v0.7.0 | Jan 31, 2026 | 0 | 4 | 100% (Complete) |
-| v0.8 | Feb 28, 2026 | 0 | 0 | 0% |
-| v0.9 | Mar 31, 2026 | - | - | - |
-| v1.0 | Jun 30, 2026 | - | - | - |
+| v0.8 | Feb 28, 2026 | 5 | 0 | In Progress |
+| v0.9 | Mar 31, 2026 | 0 | 15 | 100% (Complete) |
+| v0.10 | Apr 30, 2026 | 20 | 0 | Planned |
+| v1.0 | Jun 30, 2026 | 2 | 0 | Planned |
+
+### v0.10 Feature Sets (Agent Orchestration)
+
+| Feature Set | Epic | Status |
+|-------------|------|--------|
+| Agent Memory & Learning | #143 | Planned |
+| Kanban Workflow Engine | #144 | Planned |
+| QA & Testing Enforcement | #145 | Planned |
+| Metrics & Dashboard | #146 | Planned |
+| GitHub Integration | #147 | Planned |
+
+See `docs/specs/ROADMAP-v0.10.md` for detailed planning.
 
 **Update Command**:
 
 ```bash
-uv run scripts/github-ops.py milestone list
+gh api repos/{owner}/{repo}/milestones --jq '.[] | "\(.title): \(.open_issues) open, \(.closed_issues) closed"'
 ```
-
-See `scripts/github-ops.py` for more milestone commands (create, status).
 
 ## Notes for Claude
 
