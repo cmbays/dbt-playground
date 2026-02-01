@@ -56,47 +56,6 @@ jobs:
           uv run dbt parse 2>&1 | tee dbt_output.log
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
 
-      - name: Parse test results
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const output = fs.readFileSync('dbt_project/dbt_output.log', 'utf8');
-
-            // Parse dbt output for test results
-            const passMatch = output.match(/(\d+) of (\d+) PASS/);
-            const failMatch = output.match(/(\d+) of (\d+) FAIL/);
-            const warnMatch = output.match(/(\d+) of (\d+) WARN/);
-
-            let comment = '## dbt Test Results\n\n';
-
-            if (passMatch) {
-              comment += `- **Passed**: ${passMatch[1]} tests\n`;
-            }
-            if (failMatch && parseInt(failMatch[1]) > 0) {
-              comment += `- **Failed**: ${failMatch[1]} tests\n`;
-            }
-            if (warnMatch && parseInt(warnMatch[1]) > 0) {
-              comment += `- **Warnings**: ${warnMatch[1]} tests\n`;
-            }
-
-            // Add failure details if present
-            const failures = output.match(/FAIL \d+ .+/g);
-            if (failures) {
-              comment += '\n### Failed Tests\n\n';
-              comment += '```\n' + failures.join('\n') + '\n```\n';
-            }
-
-            // Comment on PR
-            if (context.eventName === 'pull_request') {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
-                body: comment
-              });
-            }
 
       - name: Upload dbt artifacts
         if: always()
