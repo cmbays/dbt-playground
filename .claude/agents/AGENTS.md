@@ -22,6 +22,7 @@
 | Typo fix | **Manual** | Direct | Too simple for agent overhead |
 | Small CSS tweak | **Manual** | Direct | Quick, obvious change |
 | Exploratory research | **Agent** | `Explore` | Thorough codebase analysis |
+| Readiness assessment | **Skill** | `/readiness-check` | Assess gaps before new work |
 | dbt model design | **Agent** | `data-modeler` | Dimensional modeling expertise |
 | dbt implementation | **Agent** | `dbt-developer` | SQL/Jinja best practices |
 | dbt testing | **Agent** | `dbt-tester` | Data quality validation |
@@ -1156,10 +1157,11 @@ Healthcare Analyst → Data Modeler → dbt Developer → dbt Tester → Code Re
   Domain Context      Design SQL    Implement      Add tests      Review        Document
 ```
 
-**Commands** (see `.claude/commands/dbt-*.md` for details):
+**Commands** (see `.claude/commands/` for details):
 
-| Command | Purpose | Agent |
-|---------|---------|-------|
+| Command | Purpose | Agent/Skill |
+|---------|---------|-------------|
+| `/readiness-check` | Assess capability gaps before work | Supervisor + Skill |
 | `/dbt-model` | Create new models | Data Modeler |
 | `/dbt-test` | Add/run tests | dbt Tester |
 | `/dbt-run` | Execute dbt commands | dbt Developer |

@@ -412,6 +412,165 @@ When thresholds are met, Sage is automatically invoked.
 
 ---
 
+## Readiness Check Integration
+
+The Supervisor runs `/readiness-check` at new request intake to assess capability gaps before committing to work.
+
+### When to Invoke
+
+**Automatic**: After scope clarification for any non-trivial request, before `/orchestrate`.
+
+**Skip for**:
+
+- Simple tasks (typo fixes, minor edits)
+- Tasks resuming from previous session (already assessed)
+- Pure documentation or research tasks
+
+### Readiness Check Flow
+
+```
+[After Scope Clarification]
+    │
+    ├─ Run /readiness-check [request]
+    │
+    ├─ Wait for assessment (checks knowledge, tools, experience)
+    │
+    ├─ Receive status and score:
+    │
+    ├─ READY (≥80)
+    │   └─ Proceed to /orchestrate [feature] [flags]
+    │
+    ├─ ADVISORY (60-79)
+    │   └─ Note gaps in WORKFLOW_STATE.md
+    │   └─ Inform user of gaps
+    │   └─ Proceed to /orchestrate with caution
+    │
+    ├─ RESEARCH_NEEDED (40-59)
+    │   └─ Report gaps to user
+    │   └─ Offer: /repo-research [url] or sage: resolve gaps
+    │   └─ Wait for research completion
+    │   └─ Re-run /readiness-check
+    │
+    └─ BLOCKED (<40)
+        └─ Report blockers to user
+        └─ List required actions (tool install, config, clarification)
+        └─ Wait for user decision
+        └─ Do NOT proceed to /orchestrate
+```
+
+### Updated New Request Flow
+
+The original New Request flow is augmented with readiness check:
+
+```
+[New Request Received]
+    │
+    ├─ Is this on the roadmap?
+    │   ├─ Yes → Check for existing PRD
+    │   └─ No → Ad-hoc request
+    │
+    ├─ Clarify: What phases should be skipped?
+    │   ├─ Full workflow → No flags
+    │   ├─ Minor fix → --skip-prd or --skip-tdd
+    │   └─ Quick fix → --dev-only
+    │
+    ├─ **NEW: Run /readiness-check [request]**
+    │   ├─ READY → Continue
+    │   ├─ ADVISORY → Note gaps, continue
+    │   ├─ RESEARCH_NEEDED → Pause for research
+    │   └─ BLOCKED → Stop, report blockers
+    │
+    ├─ Which track? (new or existing)
+    │   ├─ New → Create track in WORKFLOW_STATE.md
+    │   └─ Existing → Update track status
+    │
+    └─ Delegate to /orchestrate with appropriate flags
+```
+
+### Threshold Decision Handling
+
+| Score | Status | Supervisor Action |
+|-------|--------|-------------------|
+| 80-100 | READY | Proceed immediately to `/orchestrate` |
+| 60-79 | ADVISORY | Note gaps in WORKFLOW_STATE.md, inform user, proceed |
+| 40-59 | RESEARCH_NEEDED | Pause workflow, offer `/repo-research` or `sage: resolve gaps` |
+| 0-39 | BLOCKED | Stop workflow, report blockers, await user decision |
+
+### WORKFLOW_STATE.md Recording
+
+When readiness check completes, record the result:
+
+```yaml
+### Track: feat/example-feature (ACTIVE)
+- **Phase**: PLANNING
+- **Readiness Check**: 2026-01-31T10:00:00Z
+- **Readiness Score**: 75/100 (ADVISORY)
+- **Readiness Status**: ADVISORY
+- **Gaps Noted**:
+  - [ ] Missing dbt_expectations patterns (ADVISORY)
+  - [ ] Package not installed (ADVISORY)
+```
+
+### Gap Resolution Coordination
+
+For RESEARCH_NEEDED results, coordinate with Sage:
+
+```
+super: → sage:
+
+Readiness check returned RESEARCH_NEEDED (score: 52/100).
+
+**Gaps requiring research**:
+1. No Tuva patterns in LEARNINGS.md
+2. Healthcare connector patterns unknown
+
+**Request**: Research gaps and extract patterns.
+
+**Readiness check output**: temp/READINESS_CHECK_tuva-integration.md
+
+sage: resolve gaps for tuva-integration
+```
+
+After Sage completes gap resolution:
+
+1. Re-run `/readiness-check [request]`
+2. If now READY or ADVISORY, proceed
+3. If still RESEARCH_NEEDED, assess if additional research needed
+4. If still BLOCKED, escalate to user
+
+### Example Readiness Check Invocations
+
+```text
+# Standard new feature request
+super: I want to add customer analytics
+→ [clarify scope]
+→ /readiness-check Add customer analytics mart with LTV calculations
+→ READY (85/100)
+→ /orchestrate customer-analytics
+
+# Complex integration request
+super: Let's integrate Tuva health data
+→ [clarify scope]
+→ /readiness-check Integrate Tuva clinical data connector
+→ RESEARCH_NEEDED (48/100)
+→ Offer: /repo-research https://github.com/tuva-health/tuva
+→ [user accepts]
+→ [research completes]
+→ /readiness-check Integrate Tuva clinical data connector
+→ ADVISORY (72/100)
+→ /orchestrate tuva-integration
+
+# Blocked request
+super: Deploy to Snowflake production
+→ [clarify scope]
+→ /readiness-check Add Snowflake production deployment
+→ BLOCKED (32/100)
+→ Report: Missing dbt-snowflake adapter, no credentials configured
+→ Await user decision
+```
+
+---
+
 ## PR-Centric Review Orchestration (NEW)
 
 The Supervisor manages multi-agent reviews through GitHub PRs, ensuring feedback is captured in git history.
