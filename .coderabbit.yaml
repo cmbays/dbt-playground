@@ -1,0 +1,23 @@
+# .coderabbit.yaml
+language: "en-US"
+reviews:
+  profile: "assertive" # Gives more detailed, rigorous feedback
+  request_changes_workflow: true # AI will "Request Changes" on bugs
+  high_level_summary: true
+  path_instructions:
+    - path: "dbt_project/models/**"
+      instructions: "Ensure every dbt model has a description and at least one primary key test."
+    - path: "scripts/**/*.py"
+      instructions: |
+        - Ensure all API calls (OpenAI, Anthropic, etc.) have proper error handling and retries.
+        - Verify that environment variables are accessed via `os.getenv()` with a default or a clear error.
+        - Flag any long-running loops without an explicit "kill-switch" or timeout.
+    - path: "web_app/**"
+      instructions: |
+        - Check for hardcoded local URLs (e.g., http://localhost:8000); recommend using environment variables.
+        - Ensure new UI components have basic accessibility tags (alt text, aria-labels).
+  path_filters:
+    - "!dbt_project/target/**"
+    - "!dbt_project/dbt_packages/**"
+    - "!.venv/**"
+    - "!**/__pycache__/**"

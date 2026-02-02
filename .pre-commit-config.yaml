@@ -1,0 +1,9 @@
+repos:
+- repo: https://github.com/dbt-checkpoint/dbt-checkpoint
+  rev: v2.0.6  # Use the latest version
+  hooks:
+    - id: dbt-parse
+    - id: check-model-has-description
+    - id: check-model-has-tests
+      args: ["--test-cnt", "1"]
+    - id: check-script-has-no-table-name
