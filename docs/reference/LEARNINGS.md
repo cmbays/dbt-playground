@@ -76,6 +76,21 @@
   - [PEP 723 Script Headers](#pattern-pep-723-script-headers)
   - [Version Constraint Selection](#pattern-version-constraint-selection)
   - [Lock File Strategy](#pattern-lock-file-strategy)
+- [v0.9 PM Orchestration Patterns](#v09-pm-orchestration-patterns)
+  - [Architecture Decisions](#v09-architecture-decisions)
+    - [Hybrid Lite Over Complex Infrastructure](#pattern-hybrid-lite-over-complex-infrastructure)
+    - [Single Active Session Per Worktree](#pattern-single-active-session-per-worktree)
+    - [JSON File as Coordination Layer](#pattern-json-file-as-coordination-layer)
+  - [Implementation Patterns](#implementation-patterns)
+    - [Atomic File Operations with Locking](#pattern-atomic-file-operations-with-locking)
+    - [DRY Abstraction with updateSession Pattern](#pattern-dry-abstraction-with-updatesession-pattern)
+    - [Schema Validation with AJV](#pattern-schema-validation-with-ajv)
+  - [Testing Strategy Patterns](#testing-strategy-patterns)
+    - [Unit Tests for State Machine Operations](#pattern-unit-tests-for-state-machine-operations)
+    - [E2E Tests Without Full Integration](#pattern-e2e-tests-without-full-integration)
+  - [Multi-Worktree Coordination](#multi-worktree-coordination)
+    - [Shared State via Temp Directory](#pattern-shared-state-via-temp-directory)
+    - [Cross-Worktree Visibility via API](#pattern-cross-worktree-visibility-via-api)
 
 ---
 
@@ -96,6 +111,8 @@ Patterns in this document may originate from Architecture Decision Records (ADRs
 | Pattern | Source ADR | Validated In | Promoted |
 |---------|------------|--------------|----------|
 | Three-Layer Model Architecture | [ADR-2](../specs/TDD-001-DBT-PROJECT-ARCHITECTURE.md#adr-2-three-layer-model-architecture) | v0.3 (9 staging), v0.4 (11 models), v0.5 (7 analytics) | 2026-01-31 |
+| Hybrid Lite Over Complex Infrastructure | [ADR-001](../decisions/ADR-001-backlog-md-adoption.md), [ADR-002](../decisions/ADR-002-sqlite-state-layer.md) (superseded) | v0.9 PM Orchestration | 2026-02-01 |
+| JSON File as Coordination Layer | [TDD-022 ADR-15](../specs/TDD-022-PM-ORCHESTRATION-HYBRID-LITE.md#adr-15-session-tracking-via-json-file) | v0.9 PM Sessions | 2026-02-01 |
 
 ---
 
@@ -2010,9 +2027,302 @@ uv sync --upgrade         # Updates uv.lock to latest compatible
 
 ---
 
+## v0.9 PM Orchestration Patterns
+
+_Learnings from the PM Orchestration Hybrid Lite implementation (session management, multi-worktree coordination, task tracking)._
+
+### v0.9 Architecture Decisions
+
+#### Pattern: Hybrid Lite Over Complex Infrastructure
+
+**When to apply**: Building state management or coordination systems where simplicity trumps features
+
+**Proven in**: v0.9 PM Orchestration (replaced SQLite + sync architecture with JSON + REST API)
+
+**Description**: When evaluating architecture options, prefer solutions that deliver 90% of value with 10% of complexity. Avoid over-engineering for theoretical requirements not yet proven necessary.
+
+**The Decision Journey**:
+
+Original PRD-022 proposed complex architecture:
+
+- Backlog.md with bi-directional sync
+- SQLite (9 tables for state database)
+- dbt analytics (staging + marts)
+- Custom dashboard
+
+After testing Backlog.md, this simplified to:
+
+- Backlog.md (markdown + REST API + MCP)
+- PM_SESSIONS.json (simple heartbeat tracker)
+- Workflow Hub (3 widgets)
+
+**Result**: 4 hours implementation vs. 2-3 weeks original estimate.
+
+**Decision Criteria for Hybrid Lite**:
+
+1. **Test before committing**: Install and explore the tool before designing around assumptions
+2. **Measure real requirements**: Do not build for imagined scale or features
+3. **Defer complexity**: Features can be added when proven necessary
+4. **Value implementation speed**: Time-to-value matters
+
+**Trade-offs Accepted**:
+
+| Trade-off | Why Acceptable |
+|-----------|----------------|
+| Non-atomic task claiming | 1-2 concurrent sessions makes race conditions rare |
+| 60s vs 30s heartbeat | Does not affect real user experience |
+| No SQL analytics | Can parse markdown later if genuinely needed |
+
+**See also**:
+
+- ADR-002: SQLite State Layer (superseded by Hybrid Lite)
+- `temp/AGENT_REPORTS/pm-orchestration-backlog/ARCH_DECISION_HYBRID_LITE.md`
+
+---
+
+#### Pattern: Single Active Session Per Worktree
+
+**When to apply**: Multi-session coordination where one actor per context is the common case
+
+**Proven in**: v0.9 PM Sessions implementation (pm_sessions.js lines 256-262)
+
+**Description**: When a new session registers for a worktree that already has an active session, automatically end the previous session rather than allowing multiple.
+
+**Rationale**:
+
+1. **Matches typical workflow**: One Claude Code session per worktree at a time
+2. **Simplifies conflict detection**: Only one actor can claim tasks per worktree
+3. **Automatic cleanup**: No orphaned sessions accumulate
+4. **Clear ownership**: No ambiguity about which session is active
+
+**Consequences**:
+
+- Cannot run multiple test sessions in same worktree (use different worktrees instead)
+- Session history shows previous sessions as "ended" not "concurrent"
+- Simplifies stale detection (only check one session per worktree)
+
+---
+
+#### Pattern: JSON File as Coordination Layer
+
+**When to apply**: Lightweight cross-process coordination where SQLite is overkill
+
+**Proven in**: v0.9 PM_SESSIONS.json implementation
+
+**Description**: Use a JSON file in a shared directory for simple state coordination between processes. Combine with file locking for safe concurrent access.
+
+**When JSON beats SQLite**:
+
+| Criterion | JSON | SQLite |
+|-----------|------|--------|
+| Human readable | Yes | No (binary) |
+| Query capability | Basic | Full SQL |
+| Concurrent writes | With locking | WAL mode |
+| Setup required | None | Schema migration |
+| Debugging ease | High | Low |
+
+**Decision Matrix**:
+
+- **<100 records**: JSON is likely sufficient
+- **Read-heavy, write-light**: JSON works well
+- **Need complex queries**: SQLite wins
+- **Need transactions**: SQLite wins
+- **Debugging ease important**: JSON wins
+
+---
+
+### Implementation Patterns
+
+#### Pattern: Atomic File Operations with Locking
+
+**When to apply**: Any file-based state that may have concurrent readers/writers
+
+**Proven in**: v0.9 pm_sessions.js (lines 124-141, 157-177)
+
+**Description**: Combine temp-file-then-rename pattern for atomicity with file locking for concurrency safety.
+
+**Implementation approach**:
+
+1. **Temp + rename for atomicity**: Write to .tmp file, then rename (POSIX guarantees atomic rename)
+2. **File locking for concurrency**: Use proper-lockfile with retry configuration
+3. **Always use both together** for file-based state
+4. **Release lock in finally** to prevent deadlocks
+
+**Why both patterns**:
+
+| Pattern | Protects Against |
+|---------|-----------------|
+| Temp + rename | Partial writes, corruption on crash |
+| File locking | Concurrent writers clobbering each other |
+
+**Security Review Validated**: Security review confirmed these patterns as best practices.
+
+---
+
+#### Pattern: DRY Abstraction with updateSession Pattern
+
+**When to apply**: Multiple operations that follow read-modify-write pattern on same data structure
+
+**Proven in**: v0.9 pm_sessions.js (lines 185-203, reduced duplication 60%)
+
+**Description**: Extract common read-lock-modify-write pattern into a higher-order function that takes the update logic as a callback.
+
+**Benefits**:
+
+1. **Single point of locking**: Lock logic in one place
+2. **Consistent error handling**: Session-not-found handled uniformly
+3. **Atomic operations**: Read-modify-write always together
+4. **Testable**: Update logic can be tested in isolation
+
+**Code Review Validated**: Code review specifically called out this pattern as "reducing duplication 60%".
+
+---
+
+#### Pattern: Schema Validation with AJV
+
+**When to apply**: Any JSON file that needs structure validation before use
+
+**Proven in**: v0.9 pm_sessions.js (lines 38-66, 105-109)
+
+**Description**: Use AJV (Another JSON Validator) to validate JSON schema before processing. Return safe defaults on validation failure.
+
+**Key principles**:
+
+1. **Use ajv-formats** for date-time, uri, email validation
+2. **Define enums explicitly** for status fields
+3. **Mark required fields** to catch incomplete data
+4. **Return safe defaults** on validation failure (do not throw)
+5. **Log validation errors** for debugging
+
+**Security Consideration**: Schema validation prevents malformed data from causing runtime errors.
+
+---
+
+### Testing Strategy Patterns
+
+#### Pattern: Unit Tests for State Machine Operations
+
+**When to apply**: Session lifecycle, status transitions, or any state-based logic
+
+**Proven in**: v0.9 pm_sessions.test.js (40 unit tests covering all state transitions)
+
+**Description**: Treat session management as a state machine and test all valid transitions, edge cases, and invalid operations.
+
+**Test Categories**:
+
+| Category | Tests | What It Validates |
+|----------|-------|-------------------|
+| Registration | 5 | New session creation, UUID generation |
+| Heartbeat | 4 | Timestamp updates, stale recovery |
+| Session ending | 3 | Status transition, ended_at timestamp |
+| Stale detection | 5 | Threshold timing, status change |
+| Task claiming | 6 | Claim, conflict detection, release |
+| Cleanup | 2 | Retention period, old session removal |
+
+**Key testing principles**:
+
+1. **Test state transitions explicitly**: active -> stale, stale -> active
+2. **Test boundary conditions**: exactly at threshold, one second before/after
+3. **Test conflict scenarios**: two sessions claiming same task
+4. **Test idempotency**: re-claiming already-claimed task
+
+---
+
+#### Pattern: E2E Tests Without Full Integration
+
+**When to apply**: Validating infrastructure and APIs without requiring full system setup
+
+**Proven in**: v0.9 multi-worktree-visibility.spec.ts (10 tests)
+
+**Description**: E2E tests can verify that the necessary infrastructure and APIs work correctly without requiring complex setup like creating real worktrees.
+
+**Rationale**:
+
+Creating real worktrees during CI runs would pollute the repository, require cleanup, slow down tests, and risk leaving orphaned worktrees.
+
+Instead, tests verify the APIs and infrastructure that enable multi-worktree coordination, without actually creating worktrees.
+
+**Key insight**: Testing the **mechanism** (APIs work, files update correctly) is often more valuable than testing the **integration** (two real worktrees coordinating).
+
+---
+
+### Multi-Worktree Coordination
+
+#### Pattern: Shared State via Temp Directory
+
+**When to apply**: Cross-worktree coordination where state should not be committed to git
+
+**Proven in**: v0.9 PM_SESSIONS.json in temp/ directory
+
+**Description**: Place coordination files in a temp/ directory that is shared across worktrees but not committed to git.
+
+**Key characteristics**:
+
+1. **Gitignored**: temp/ is in .gitignore, state not committed
+2. **Shared path**: All worktrees access same file via main repo path
+3. **Ephemeral**: State can be regenerated, not critical data
+4. **Human readable**: JSON for easy debugging
+
+**Why not git-tracked state**: Session data changes frequently (heartbeats every 60s), would create constant merge conflicts.
+
+**Why not per-worktree state**: Cross-worktree visibility is the goal; each worktree seeing its own state defeats the purpose.
+
+---
+
+#### Pattern: Cross-Worktree Visibility via API
+
+**When to apply**: When worktrees need to see each other's work without git sync
+
+**Proven in**: v0.9 Backlog.md integration with remote_operations: true
+
+**Description**: Use an API server (Backlog.md at localhost:6420) that can scan remote branches, providing visibility across worktrees without requiring git push/pull.
+
+**How it works**:
+
+1. Backlog.md server runs on localhost:6420
+2. Server scans remote branches (last 30 days)
+3. API returns tasks from all branches
+4. Worktrees see each other's tasks via API
+
+**Benefits**:
+
+- No git push required for visibility
+- Centralized view of all work
+- Browser UI shows consolidated board
+- REST API enables programmatic access
+
+---
+
+### Key Takeaways from v0.9 PM Orchestration
+
+**Architecture Decision Patterns**:
+
+1. Test tools before designing around assumptions
+2. Defer complexity until proven necessary
+3. Single source of truth beats sync
+
+**Implementation Patterns**:
+
+1. Atomic writes + file locking for concurrent access
+2. Schema validation on read prevents crashes
+3. DRY higher-order functions reduce code
+
+**Testing Patterns**:
+
+1. State machine testing covers all transitions
+2. Infrastructure validation without full integration
+3. 40 unit + 10 E2E tests provides comprehensive coverage
+
+**Future Implications**:
+
+- What this enables: Additional worktree-aware tools, task-based automation
+- Constraints: Backlog.md dependency, JSON file scaling limit (~100 sessions)
+
+---
+
 ## Metrics
 
-**Total Patterns**: 34 (as of 2026-01-30)
+**Total Patterns**: 44 (as of 2026-02-01)
 
 - Proven Patterns: 8
 - Decision Frameworks: 2
@@ -2022,8 +2332,9 @@ uv sync --upgrade         # Updates uv.lock to latest compatible
 - Phase 2 Engagement Patterns: 6 (Architecture: 2, Bugs: 2, SVG: 2)
 - Workflow Enforcement Patterns: 2 (Defense-in-depth, Phase gate design)
 - dbt + uv Patterns: 4 (pyproject.toml, PEP 723, version constraints, lock files)
+- v0.9 PM Orchestration Patterns: 10 (Architecture: 3, Implementation: 3, Testing: 2, Multi-Worktree: 2)
 
-**Last Updated**: 2026-01-30 (Added Context Window Discipline pattern for multi-agent workflows)
+**Last Updated**: 2026-02-01 (Added v0.9 PM Orchestration patterns - Hybrid Lite architecture, session management, multi-worktree coordination)
 
 **Related Skills**:
 
