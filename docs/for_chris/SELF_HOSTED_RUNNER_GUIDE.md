@@ -30,7 +30,7 @@ A self-hosted runner allows GitHub Actions to run on your local Mac instead of G
 2. **Install the runner**:
 
    ```bash
-   cd ~/Documents/claude/parent-dbt-playground/dbt-playground
+   cd /path/to/your/dbt-playground  # Navigate to your repository clone
    ./scripts/setup-github-runner.sh
    ```
 

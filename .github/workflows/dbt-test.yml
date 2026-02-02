@@ -12,7 +12,7 @@ on:
 
 jobs:
   dbt-test:
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS, ARM64]
     timeout-minutes: 30
     defaults:
       run:

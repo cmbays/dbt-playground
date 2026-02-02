@@ -6,7 +6,7 @@ on:
 
 jobs:
   validate-title:
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS, ARM64]
     timeout-minutes: 10
     steps:
       - name: Check PR title format

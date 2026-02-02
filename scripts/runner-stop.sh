@@ -19,7 +19,7 @@ fi
 echo "Stopping GitHub Actions runner (PID: $RUNNER_PID)..."
 
 # Send SIGTERM for graceful shutdown
-kill -TERM "$RUNNER_PID"
+kill -TERM "$RUNNER_PID" 2>/dev/null || true
 
 # Wait for graceful shutdown (up to 30 seconds)
 echo "Waiting for graceful shutdown..."

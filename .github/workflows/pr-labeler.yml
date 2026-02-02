@@ -6,7 +6,7 @@ on:
 
 jobs:
   label:
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS, ARM64]
     timeout-minutes: 10
     permissions:
       pull-requests: write

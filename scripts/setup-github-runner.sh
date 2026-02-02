@@ -15,7 +15,7 @@
 set -e
 
 # Configuration
-RUNNER_VERSION="2.321.0"  # Latest stable as of 2026-02
+RUNNER_VERSION="2.322.0"  # Latest stable as of Feb 2026
 RUNNER_DIR="$HOME/actions-runner"
 REPO_OWNER="cmbays"
 REPO_NAME="dbt-playground"
@@ -102,10 +102,10 @@ fi
 echo "Downloading runner from:"
 echo "  $DOWNLOAD_URL"
 echo
-curl -o "$ARCHIVE_NAME" -L "$DOWNLOAD_URL"
+curl -fSL -o "$ARCHIVE_NAME" "$DOWNLOAD_URL"
 
 # Verify download
-if [ ! -f "$ARCHIVE_NAME" ]; then
+if [ ! -f "$ARCHIVE_NAME" ] || [ ! -s "$ARCHIVE_NAME" ]; then
     echo "Error: Download failed"
     exit 1
 fi
