@@ -1598,7 +1598,7 @@ active_track: feat/example
 
         // Details
         let details = '';
-        if (track.branch) details += `<div class="track-detail"><span class="track-detail-label">Branch:</span><span class="track-detail-value">${track.branch}</span></div>`;
+        if (track.branch) details += `<div class="track-detail"><span class="track-detail-label">Branch:</span><span class="track-detail-value">${parseMarkdown(track.branch)}</span></div>`;
         if (track.pr) details += `<div class="track-detail"><span class="track-detail-label">PR:</span><span class="track-detail-value">${parseMarkdown(track.pr)}</span></div>`;
         if (track.issue) details += `<div class="track-detail"><span class="track-detail-label">Issue:</span><span class="track-detail-value">${parseMarkdown(track.issue)}</span></div>`;
         if (track.prd) details += `<div class="track-detail"><span class="track-detail-label">PRD:</span><span class="track-detail-value">${parseMarkdown(track.prd)}</span></div>`;
