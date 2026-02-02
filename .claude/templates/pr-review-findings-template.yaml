@@ -1,0 +1,104 @@
+# PR Review Findings Template
+#
+# Use this template for all PR reviews. Write to:
+#   temp/AGENT_REPORTS/[feature]/[REVIEWER]_FINDINGS.yaml
+#
+# Then invoke git-master:
+#   git: pr-comment N --findings [path-to-this-file]
+#
+# Git-master will post:
+#   - Inline comments (line-specific)
+#   - File-level comments (overall file feedback)
+#   - PR summary review with verdict
+
+# Required metadata
+pr: 0                          # PR number (integer)
+reviewer: code-reviewer        # Agent name: code-reviewer, security-reviewer, design-reviewer, etc.
+date: 2026-01-31               # Review date (YYYY-MM-DD) for audit trail
+verdict: approved              # approved | changes-requested | comment-only
+
+# Brief summary for PR review body
+summary: |
+  Brief overall assessment (1-2 sentences).
+
+# Inline comments - for SPECIFIC LINE feedback
+# MUST use conventional label in body: praise, nit, suggestion, issue, question, chore, thought
+# Add (blocking) decorator when comment blocks approval
+# Requires: file, line, label, body
+inline:
+  - file: "path/to/file.md"    # Relative path from repo root
+    line: 42                    # Line number in the file (integer)
+    label: suggestion           # praise | nit | suggestion | issue | question | chore | thought
+    blocking: false             # true if this blocks PR approval
+    body: |
+      suggestion: Brief issue description.
+
+      Details if needed.
+      Current: `problematic code`
+      Recommended: `better code`
+
+  - file: "path/to/other.sql"
+    line: 78
+    label: issue
+    blocking: true
+    body: |
+      issue (blocking): Missing null check could cause runtime failures.
+
+      Add: `coalesce(column_name, 'default')`
+
+# File-level comments - for OVERALL FILE feedback
+# MUST use conventional label in body
+# Requires: file, label, body
+file_level:
+  - file: "path/to/file.md"
+    label: suggestion
+    body: |
+      suggestion: Overall feedback about this file. This applies to
+      the file structure as a whole, not a specific line.
+
+# PR summary - NARRATIVE/CONVERSATIONAL (not a mechanical list)
+# Communicate tone, highlight blockers clearly, include praise
+# This becomes the main body of the PR review comment
+pr_summary: |
+  This is solid work that improves [feature/area]. The implementation
+  is clean and follows our conventions well.
+
+  **One blocker needs attention:** The null handling issue in file.sql:78
+  could cause silent failures in production.
+
+  Minor suggestion on line 42 for code clarity, but non-blocking.
+
+  After addressing the blocker, this is ready to merge. Nice work!
+
+# Praise items - weave these into the pr_summary narrative
+praise:
+  - "Clean implementation"
+  - "Good pattern usage"
+
+# ---
+# FORMATTING RULES
+# ---
+# INLINE/FILE-LEVEL: MUST start with conventional label (praise:, nit:, suggestion:, etc.)
+# Add (blocking) when comment blocks approval: "issue (blocking): ..."
+# PR SUMMARY: Should be conversational - highlight blockers, include praise
+#
+# ---
+# CONVENTIONAL LABELS
+# ---
+# praise:     - Good work worth noting (None)
+# nit:        - Minor style preference (Optional)
+# suggestion: - Improvement idea (Optional)
+# issue:      - Problem that needs fixing (Yes)
+# question:   - Needs clarification (Response needed)
+# chore:      - Maintenance/cleanup task (Optional)
+# thought:    - Sharing an observation (None)
+#
+# BLOCKING DECORATOR: Add (blocking) when comment blocks PR approval
+# Example: "issue (blocking): Missing required test coverage"
+#
+# ---
+# WHEN TO USE EACH COMMENT TYPE
+# ---
+# INLINE:     "Line 42 has a typo" → inline with line=42, label in body
+# FILE-LEVEL: "This file needs better organization" → file_level, label in body
+# PR SUMMARY: "Overall narrative with tone" → pr_summary (conversational)
