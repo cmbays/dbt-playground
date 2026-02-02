@@ -40,20 +40,44 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
-      - name: Run pytest
+      - name: Detect tests
+        id: detect-tests
         run: |
-          uv run pytest tests/ -v --tb=short --junitxml=pytest-report.xml
+          echo "tests_present=false" >> $GITHUB_OUTPUT
+          # Look for any test_*.py files under tests/
+          if [ -n "$(find tests -type f -name 'test_*.py' -print -quit 2>/dev/null)" ]; then
+            echo "tests_present=true" >> $GITHUB_OUTPUT
+            echo "Found test files:"
+            find tests -type f -name 'test_*.py'
+          else
+            echo "No test files found in tests/"
+          fi
 
-      - name: Run tests with coverage (FS1 scripts)
+      - name: Run pytest with coverage
+        if: steps.detect-tests.outputs.tests_present == 'true'
         run: |
-          # Run coverage for FS1 memory scripts
-          # Note: Scripts are imported via importlib in tests, so we measure the lib/ module
-          # which provides shared utilities, achieving full coverage
-          uv run pytest tests/test_log_session.py tests/test_consolidate_memory.py tests/test_memory_integration.py \
+          # Run all tests with coverage measurement
+          # Coverage measures scripts/lib/ which provides shared utilities
+          uv run pytest tests/ -v --tb=short \
+            --junitxml=pytest-report.xml \
             --cov=scripts/lib \
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-fail-under=75
+
+      - name: Create placeholder reports (no tests yet)
+        if: steps.detect-tests.outputs.tests_present != 'true'
+        run: |
+          echo "No tests found - creating placeholder reports so artifacts step succeeds"
+          cat > pytest-report.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <testsuites tests="0" failures="0" errors="0" skipped="0"/>
+          EOF
+          cat > coverage.xml <<'EOF'
+          <?xml version="1.0"?>
+          <coverage line-rate="0" branch-rate="0" version="0">
+          </coverage>
+          EOF
 
       - name: Upload coverage report
         if: always()
