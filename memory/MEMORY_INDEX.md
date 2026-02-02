@@ -1,8 +1,8 @@
 # Memory Index
 
-**Generated**: 2026-02-02T15:34:21
+**Generated**: 2026-02-02T15:53:02
 **Period**: 2026-01-26 to 2026-02-02
-**Total Entries**: 2
+**Total Entries**: 7
 
 ---
 
@@ -10,13 +10,17 @@
 
 | Day | Entries | Outcomes |
 |-----|---------|----------|
-| 2026-02-02 | 2 | SUCCESS: 2 |
+| 2026-02-02 | 7 | SUCCESS: 6, PARTIAL: 1 |
 
 ---
 
 ## Recurring Patterns (2+ occurrences)
 
-No recurring patterns detected this period.
+### Pattern 1: Learning
+**Occurrences**: 2 (2026-02-02)
+**Summary**: Use incremental models for large tables to improve build performance
+**Score**: 0.79
+**Promotion Status**: CANDIDATE
 
 ---
 
@@ -24,6 +28,27 @@ No recurring patterns detected this period.
 
 | Topic | Count |
 |-------|-------|
+| incremental | 3 |
+| improve | 2 |
+| performance | 2 |
+| tables | 2 |
+| models | 2 |
+| large | 2 |
+| build | 1 |
+| catch | 1 |
+| bugs | 1 |
+| early | 1 |
+| development | 1 |
+| test | 1 |
+| driven | 1 |
+| helps | 1 |
+| significantly | 1 |
+
+---
+
+## Promotion Candidates for LEARNINGS.md
+
+- [ ] Use incremental models for large tables to improve build performance
 
 ---
 
