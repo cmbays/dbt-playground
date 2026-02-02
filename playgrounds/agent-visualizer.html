@@ -1224,6 +1224,7 @@ active_track: feat/example
     // Section 1: Configuration
     // =================================================================
     const CONFIG = {
+      API_BASE: 'http://localhost:5050/api',
       MERMAID_TIMEOUT: 5000,
       STORAGE_KEY: 'agent-visualizer-state',
       PHASES: ['UNDERSTAND', 'PLAN', 'BUILD', 'VERIFY', 'DEPLOY'],
@@ -1984,7 +1985,29 @@ active_track: feat/example
     // Section 8: Initialization
     // =================================================================
 
-    function init() {
+    /**
+     * Fetch workflow state from API (if server is running)
+     */
+    async function loadFromAPI() {
+      try {
+        const response = await fetch(`${CONFIG.API_BASE}/workflow-state`, { mode: 'cors' });
+        if (!response.ok) throw new Error('API request failed');
+
+        const data = await response.json();
+        if (data.content) {
+          AppState.workflow = parseWorkflowState(data.content);
+          StorageManager.save(data.content);
+          updateDataStatus('loaded');
+          renderAll();
+          return true;
+        }
+      } catch (error) {
+        console.log('API not available, falling back to cache:', error.message);
+        return false;
+      }
+    }
+
+    async function init() {
       // Initialize Mermaid
       if (window.mermaid) {
         mermaid.initialize({
@@ -2053,15 +2076,20 @@ active_track: feat/example
         }
       });
 
-      // Load cached data
-      const cached = StorageManager.load();
-      if (cached && cached.data) {
-        try {
-          AppState.workflow = parseWorkflowState(cached.data);
-          updateDataStatus('cached');
-          renderAll();
-        } catch (e) {
-          console.warn('Failed to load cached data:', e);
+      // Try to load from API first (if server is running)
+      const apiLoaded = await loadFromAPI();
+
+      // If API failed, fall back to cached data
+      if (!apiLoaded) {
+        const cached = StorageManager.load();
+        if (cached && cached.data) {
+          try {
+            AppState.workflow = parseWorkflowState(cached.data);
+            updateDataStatus('cached');
+            renderAll();
+          } catch (e) {
+            console.warn('Failed to load cached data:', e);
+          }
         }
       }
     }
