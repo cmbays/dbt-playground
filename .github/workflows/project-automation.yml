@@ -7,7 +7,8 @@ on:
 jobs:
   add-to-project:
     name: Add issue to project
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    timeout-minutes: 10
     # Only run for issues with 'workflow' or 'phase-3' labels
     if: |
       contains(github.event.issue.labels.*.name, 'workflow') ||
