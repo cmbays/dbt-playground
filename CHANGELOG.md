@@ -15,6 +15,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.1] - 2026-02-02
+
+### Added
+
+- **Agent Visualizer Playground** - Interactive tool for visualizing agent workflows and state
+  - `playgrounds/agent-visualizer.html` - Single-file HTML playground (2047 lines)
+  - `/playground:agents` command for launching
+
+- **F1.1: Workflow Diagram Generator**
+  - Auto-generates Mermaid flowcharts from WORKFLOW_STATE.md
+  - Visualizes phase progression (UNDERSTAND -> PLAN -> BUILD -> VERIFY -> DEPLOY)
+  - Shows track status with color-coded nodes
+  - Export to clipboard or download as PNG/SVG
+
+- **F1.2: Execution Timeline**
+  - Phase progress bars with visual status indicators
+  - Agent execution sequence tracking
+  - Duration tracking for completed phases
+  - Session metrics display (releases, models, tests, worktrees)
+
+- **F1.4: State Inspector**
+  - Visual display of WORKFLOW_STATE.md content
+  - Frontmatter card with last updated, active track, last release
+  - Track cards with phase pills, artifacts, and progress indicators
+  - Real-time health score calculation
+
+### Technical Highlights
+
+- Manual paste mode for WORKFLOW_STATE.md content (API endpoints optional)
+- Drag-and-drop file support for quick data loading
+- localStorage caching for session persistence
+- Consistent UI patterns with existing playgrounds (Workflow Hub, Chronicle)
+- Mermaid.js integration for diagram rendering
+- Responsive design with dark mode support
+- Comprehensive help modal with keyboard shortcuts
+
+### Documentation
+
+- Updated CLAUDE.md with Agent Visualizer in playground table
+- Updated playgrounds/README.md with usage instructions
+- Added `/playground:agents` command integration
+
+---
+
 ## [0.8.0] - 2026-02-01
 
 ### Added
@@ -410,6 +454,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.7.1   | 2026-02-02 | Agent Visualizer Playground - workflow diagrams, timeline, state inspector |
 | 0.7.0   | 2026-01-31 | v0.7 Phase 3 GitHub Project Management + ADR Phase 2 Promotion Workflow |
 | 0.6.0   | 2026-01-31 | v0.6 Playgrounds - Worktree Coordinator, Mermaid Designer |
 | 0.5.0   | 2026-01-30 | v0.5 Analytics - 7 models, 91 tests, BI integration |
