@@ -1426,6 +1426,21 @@ active_track: feat/example
     // =================================================================
 
     /**
+     * Parse markdown links and convert to HTML
+     * Converts [text](url) to <a href="url" target="_blank">text</a>
+     */
+    function parseMarkdownLinks(text) {
+      if (!text || typeof text !== 'string') return text;
+
+      // Regex to match markdown links: [text](url)
+      const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+      return text.replace(markdownLinkRegex, (match, text, url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+      });
+    }
+
+    /**
      * Update glance panel with current state
      */
     function renderGlancePanel() {
@@ -1516,7 +1531,7 @@ active_track: feat/example
         html += `
           <div class="frontmatter-row">
             <span class="frontmatter-key">${key}</span>
-            <span class="frontmatter-value">${value}</span>
+            <span class="frontmatter-value">${parseMarkdownLinks(value)}</span>
           </div>
         `;
       }
@@ -1580,9 +1595,9 @@ active_track: feat/example
         // Details
         let details = '';
         if (track.branch) details += `<div class="track-detail"><span class="track-detail-label">Branch:</span><span class="track-detail-value">${track.branch}</span></div>`;
-        if (track.pr) details += `<div class="track-detail"><span class="track-detail-label">PR:</span><span class="track-detail-value">${track.pr}</span></div>`;
-        if (track.issue) details += `<div class="track-detail"><span class="track-detail-label">Issue:</span><span class="track-detail-value">${track.issue}</span></div>`;
-        if (track.prd) details += `<div class="track-detail"><span class="track-detail-label">PRD:</span><span class="track-detail-value">${track.prd}</span></div>`;
+        if (track.pr) details += `<div class="track-detail"><span class="track-detail-label">PR:</span><span class="track-detail-value">${parseMarkdownLinks(track.pr)}</span></div>`;
+        if (track.issue) details += `<div class="track-detail"><span class="track-detail-label">Issue:</span><span class="track-detail-value">${parseMarkdownLinks(track.issue)}</span></div>`;
+        if (track.prd) details += `<div class="track-detail"><span class="track-detail-label">PRD:</span><span class="track-detail-value">${parseMarkdownLinks(track.prd)}</span></div>`;
 
         // Artifacts
         let artifactsHtml = '';
