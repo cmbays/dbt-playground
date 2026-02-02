@@ -18,4 +18,31 @@ dev = [
     "pre-commit>=3.7.0",
     "flask>=3.1.2",
     "flask-cors>=6.0.2",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+markers = [
+    "unit: Unit tests for individual functions",
+    "integration: Integration tests across components",
+    "slow: Tests that take longer to run",
+]
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+show_missing = true
+# Note: Coverage for FS1 scripts (log-session.py, consolidate-memory.py)
+# is measured separately with --cov-fail-under flag
