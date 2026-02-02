@@ -47,10 +47,10 @@ jobs:
       - name: Detect tests
         id: detect-tests
         run: |
-          echo "tests_present=false" >> $GITHUB_OUTPUT
+          echo "tests_present=false" >> "$GITHUB_OUTPUT"
           # Look for any test_*.py files under tests/
           if [ -n "$(find tests -type f -name 'test_*.py' -print -quit 2>/dev/null)" ]; then
-            echo "tests_present=true" >> $GITHUB_OUTPUT
+            echo "tests_present=true" >> "$GITHUB_OUTPUT"
             echo "Found test files:"
             find tests -type f -name 'test_*.py'
           else

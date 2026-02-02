@@ -108,7 +108,7 @@ LOCAL STATUS: RUNNING
   Uptime: 02:30:15
 
 INSTALLATION:
-  Directory: /Users/cmbays/actions-runner
+  Directory: $HOME/actions-runner
   Runner name: local-macos-runner
 
 GITHUB STATUS:
@@ -163,7 +163,8 @@ rm -rf ~/actions-runner
    ```
 
 2. **Check GitHub sees the runner**:
-   - Go to: <https://github.com/cmbays/dbt-playground/settings/actions/runners>
+   - Go to: `https://github.com/<owner>/<repo>/settings/actions/runners`
+   - Or run: `gh repo view --web --branch '' && open "$(gh repo view --json url -q .url)/settings/actions/runners"`
    - Runner should show as "online"
 
 3. **Check labels match**:
@@ -184,8 +185,9 @@ Tokens expire after 1 hour. If setup fails:
 ```bash
 # Get a fresh token and reconfigure
 cd ~/actions-runner
-TOKEN=$(gh api -X POST repos/cmbays/dbt-playground/actions/runners/registration-token --jq .token)
-./config.sh --url https://github.com/cmbays/dbt-playground --token "$TOKEN" --replace
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+TOKEN=$(gh api -X POST "repos/$REPO/actions/runners/registration-token" --jq .token)
+./config.sh --url "https://github.com/$REPO" --token "$TOKEN" --replace
 ```
 
 ### Performance Issues
@@ -304,8 +306,9 @@ rm -rf ~/actions-runner
 
 View and manage runners in GitHub:
 
-- **Runners page**: <https://github.com/cmbays/dbt-playground/settings/actions/runners>
-- **Workflow runs**: <https://github.com/cmbays/dbt-playground/actions>
+- **Runners page**: `https://github.com/<owner>/<repo>/settings/actions/runners`
+- **Workflow runs**: `https://github.com/<owner>/<repo>/actions`
+- **Quick access**: `gh repo view --web` then navigate to Settings → Actions → Runners
 
 ## Workflow Integration
 

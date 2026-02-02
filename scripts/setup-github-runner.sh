@@ -15,7 +15,7 @@
 set -e
 
 # Configuration
-RUNNER_VERSION="2.322.0"  # Latest stable as of Feb 2026
+RUNNER_VERSION="2.322.0"  # Released Dec 2024, update periodically
 RUNNER_DIR="$HOME/actions-runner"
 REPO_OWNER="cmbays"
 REPO_NAME="dbt-playground"
@@ -118,9 +118,7 @@ rm "$ARCHIVE_NAME"
 # Get registration token
 echo
 echo "Getting registration token from GitHub..."
-TOKEN=$(gh api -X POST "repos/${REPO_OWNER}/${REPO_NAME}/actions/runners/registration-token" --jq .token)
-
-if [ -z "$TOKEN" ]; then
+if ! TOKEN=$(gh api -X POST "repos/${REPO_OWNER}/${REPO_NAME}/actions/runners/registration-token" --jq .token 2>/dev/null) || [ -z "$TOKEN" ]; then
     echo "Error: Failed to get registration token"
     echo "Make sure you have admin access to the repository"
     exit 1
