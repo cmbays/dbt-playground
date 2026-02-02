@@ -17,6 +17,7 @@
 ## Recurring Patterns (2+ occurrences)
 
 ### Pattern 1: Learning
+
 **Occurrences**: 2 (2026-02-02)
 **Summary**: Use incremental models for large tables to improve build performance
 **Score**: 0.79
