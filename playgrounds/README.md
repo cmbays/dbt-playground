@@ -10,8 +10,8 @@ Visual tools for learning, development, and debugging in dbt-playground.
 | Workflow Chronicle | `workflow-chronicle.html` | Stratified timeline, health pulse, agent export | **v0.7.0** |
 | Worktree Coordinator | `worktree-coordinator.html` | Manage parallel git worktrees | **v0.6.0** |
 | Mermaid Designer | `mermaid-designer.html` | Create and export Mermaid diagrams | **v0.6.0** |
-| Agent Visualizer | `agent-visualizer.html` | View agent workflows and state | Planned (v0.7.1) |
-| Schema Explorer | `schema-explorer.html` | Browse Synthea healthcare data | Planned (v0.7.1) |
+| Agent Visualizer | `agent-visualizer.html` | View agent workflows and state | **v0.7.1** |
+| Schema Explorer | `schema-explorer.html` | Browse Synthea healthcare data | Planned (v0.7.2) |
 | Lineage Explorer | `lineage-explorer.html` | Trace dbt data flow | Planned (v0.7.2) |
 | Dashboard Builder | `dashboard-builder.html` | Mock analytics layouts | Planned (v0.7.3) |
 
@@ -101,7 +101,7 @@ Access playgrounds via slash commands:
 /playground:chronicle    # Workflow Chronicle (stratified timeline)
 /playground:worktrees    # Git Worktree Coordinator
 /playground:mermaid      # Mermaid Diagram Designer
-/playground:agents       # Agent Visualizer (planned)
+/playground:agents       # Agent Visualizer
 /playground:schema       # Schema Explorer (planned)
 /playground:lineage      # Lineage Explorer (planned)
 /playground:dashboards   # Dashboard Builder (planned)
@@ -126,13 +126,29 @@ All playgrounds share these shortcuts:
 | `Ctrl+Enter` | Render (Mermaid Designer) |
 | `Ctrl+S` | Save (Mermaid Designer) |
 
+### Agent Visualizer
+
+Visualize agent workflows, execution timeline, and workflow state:
+
+1. Open `agent-visualizer.html` in a browser
+2. Paste contents of `temp/WORKFLOW_STATE.md` (or drag-drop the file)
+3. Explore Workflow Diagram, Timeline, and State Inspector tabs
+
+**Features**:
+
+- Mermaid-powered phase progression flowchart
+- Execution timeline with agent labels and status
+- State inspector with YAML frontmatter and track cards
+- Copy Mermaid syntax or download SVG
+- localStorage caching for quick reload
+
 ## Build Order
 
 ```text
 Phase 1 (v0.6.0): Workflow Hub, Worktree Coordinator, Mermaid Designer  <-- Complete
 Phase 2 (v0.7.0): Workflow Chronicle (stratified timeline)              <-- Complete
-Phase 3 (v0.7.1): Agent Visualizer, Schema Explorer
-Phase 4 (v0.7.2): Lineage Explorer
+Phase 3 (v0.7.1): Agent Visualizer                                      <-- Complete
+Phase 4 (v0.7.2): Schema Explorer, Lineage Explorer
 Phase 5 (v0.7.3): Dashboard Builder
 ```
 

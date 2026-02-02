@@ -136,8 +136,8 @@ Interactive visual tools for learning and development.
 | Workflow Chronicle | ✅ Complete | v0.7.0 |
 | Worktree Coordinator | ✅ Complete | v0.6.0 |
 | Mermaid Designer | ✅ Complete | v0.6.0 |
-| Agent Visualizer | Planned | v0.7.1 |
-| Schema Explorer | Planned | v0.7.1 |
+| Agent Visualizer | ✅ Complete | v0.7.1 |
+| Schema Explorer | Planned | v0.7.2 |
 | Lineage Explorer | Planned | v0.7.2 |
 | Dashboard Builder | Planned | v0.7.3 |
 
@@ -149,7 +149,7 @@ playgrounds/
 ├── workflow-chronicle.html     # ✅ Timeline visualization
 ├── worktree-coordinator.html   # ✅ Git worktree management
 ├── mermaid-designer.html       # ✅ Diagram creation
-├── agent-visualizer.html       # Planned
+├── agent-visualizer.html       # ✅ Agent workflow visualization
 ├── schema-explorer.html        # Planned
 ├── lineage-explorer.html       # Planned
 └── dashboard-builder.html      # Planned

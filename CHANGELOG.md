@@ -15,220 +15,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.9.0] - 2026-02-01
+## [0.7.1] - 2026-02-02
 
 ### Added
 
-- **PM Orchestration (Hybrid Lite)** - Multi-session coordination system (#118, #131)
-  - **Session Management**:
-    - `PM_SESSIONS.json` - Session tracking with heartbeat and stale detection
-    - `scripts/pm_sessions.js` - CLI helpers (625 lines) for session lifecycle management
-    - Commands: `register`, `heartbeat`, `claim`, `release`, `active`, `check-stale`
-    - 5-minute stale session threshold with automatic detection
-    - File locking with DRY abstraction and schema validation
-    - 40/40 unit tests passing for core session operations
+- **Agent Visualizer Playground** - Interactive tool for visualizing agent workflows and state
+  - `playgrounds/agent-visualizer.html` - Single-file HTML playground (2047 lines)
+  - `/playground:agents` command for launching
 
-  - **Backlog.md Integration**:
-    - v1.35.4 installed and configured with custom 5-stage workflow columns
-    - Workflow stages: UNDERSTAND → PLAN → BUILD → VERIFY → DEPLOY (+ BLOCKED)
-    - REST API integration (`/api/tasks`, `/api/config`) for cross-session task visibility
-    - Remote operations support for multi-worktree coordination
-    - Active branch checking to prevent conflicts
-    - MCP integration for agent-driven task management
+- **F1.1: Workflow Diagram Generator**
+  - Auto-generates Mermaid flowcharts from WORKFLOW_STATE.md
+  - Visualizes phase progression (UNDERSTAND -> PLAN -> BUILD -> VERIFY -> DEPLOY)
+  - Shows track status with color-coded nodes
+  - Export to clipboard or download as PNG/SVG
 
-  - **Workflow Hub Widgets** (Phase 2):
-    - **PM Overview Widget** - Session health metrics and status summary
-    - **Active Sessions Widget** - Real-time session tracking with heartbeat indicators
-    - **Kanban Board Widget** (#110, #130) - 7-column drag-and-drop task board
-      - Columns: Backlog, UNDERSTAND, PLAN, BUILD, VERIFY, DEPLOY, Done
-      - Card details: type icons, priority, labels, issue numbers
-      - Click-to-expand modal with "Start Session", "Move to", GitHub link actions
-      - Done lane archiving with show more/less (20 cards default)
-      - GitHub sync via `/api/github-issues` endpoint
-      - Responsive design for tablet/mobile with swipe indicator
-      - Keyboard shortcuts: D (Kanban), K (All), S (sync), Esc (close)
-      - Toast notifications for user actions
-      - Accessibility: ARIA attributes, keyboard navigation, focus management
-      - LocalStorage for column assignments and collapsed state
-      - ~600 lines of elegant functional code (70% reduction from initial design)
+- **F1.2: Execution Timeline**
+  - Phase progress bars with visual status indicators
+  - Agent execution sequence tracking
+  - Duration tracking for completed phases
+  - Session metrics display (releases, models, tests, worktrees)
 
-  - **Supervisor Integration** (Phase 3):
-    - Session registration workflow on startup
-    - Backlog.md API integration for task queries
-    - Automatic heartbeat maintenance
-    - Task claiming with conflict detection
-    - 8/8 E2E tests passing for Supervisor integration (TASK-10, TASK-11)
-
-  - **Multi-Worktree Visibility** (Phase 3):
-    - Cross-worktree task visibility via Backlog.md API
-    - Shared state architecture (PM_SESSIONS.json + Backlog.md)
-    - Single active session per worktree enforcement
-    - 10/10 E2E tests passing for multi-worktree coordination (TASK-12)
-
-  - **Testing**:
-    - **Unit Tests**: 40/40 passing (`scripts/__tests__/pm_sessions.test.js`)
-    - **E2E Tests**: 29/29 passing (3.3s execution time)
-      - 11 widget tests (PM Overview, PM Sessions, health checks)
-      - 8 supervisor integration tests (registration, API, heartbeat)
-      - 10 multi-worktree visibility tests (config, task tracking, workflow)
-    - Performance verified: 10 concurrent operations in <2s
-
-  - **Configuration**:
-    - `backlog/config.yml` - Custom workflow stages and settings
-    - `scripts/pm_config.js` - Shared configuration module (33 lines)
-    - Test infrastructure: `scripts/update_tests_async.js` for async test updates
-
-- **Architecture Documentation**:
-  - `PRD-022-PM-ORCHESTRATION.md` - Product requirements (updated to Hybrid Lite scope)
-  - `TDD-022-PM-ORCHESTRATION-HYBRID-LITE.md` - Technical design specification
-  - `PRD-023-KANBAN-BOARD.md` - Kanban board product requirements
-  - `TDD-023-KANBAN-BOARD.md` - Kanban board technical design
-  - `ARCH_DECISION_HYBRID_LITE.md` - Architecture decision rationale
-  - `ADR-001-backlog-md-adoption.md` - Decision record (Approved)
-  - `ADR-002-sqlite-state-layer.md` - Decision record (Superseded by Hybrid Lite)
-  - `ADR-003-dbt-pm-analytics.md` - Decision record (Superseded by Hybrid Lite)
-
-- **Workflow Hub Enhancements**:
-  - PM sessions endpoint (`/api/pm-sessions`) in playground server
-  - Backlog.md CORS proxy endpoints (`/api/backlog/tasks`, `/api/backlog/config`)
-  - Improved error handling and cleanup in server endpoints
-  - Body scroll locking when modal is open for better UX
-
-- **Planning for v0.10**:
-  - Agent Orchestration planning documents for 7 feature sets (#143-149)
-  - Epic issues for FS1-FS8: Memory & Learning, Kanban Workflow, QA Enforcement, Metrics, Multi-Agent Coordination, GitHub Integration, Hackathon System
-  - Implementation issues #150-170 for v0.10 milestone tasks
-  - Target: Apr 30, 2026
-
-### Changed
-
-- **Supervisor Agent** - Enhanced with PM orchestration capabilities
-  - Session registration on startup
-  - Backlog.md API integration for task management
-  - Heartbeat workflow for session health tracking
-  - Updated documentation (383 line addition to `.claude/agents/supervisor.md`)
-
-- **Workflow Hub** - Major UI/UX improvements
-  - Integrated Kanban board as primary view (587 lines added)
-  - Enhanced PM overview and sessions widgets
-  - Improved keyboard shortcuts and accessibility
-  - Better responsive design for mobile/tablet
-
-- **Project Status** - Updated CLAUDE.md and ROADMAP.md
-  - v0.8.0 marked complete (31 models, 425 tests, 0 errors)
-  - v0.9 marked implementation complete, ready for deployment
-  - Added v0.10 milestone planning with 7 epic feature sets
-
-### Fixed
-
-- **Playground Server**:
-  - PM sessions endpoint error handling
-  - Backlog.md CORS proxy endpoints for cross-origin requests
-  - Test assertions to match actual API responses (`session_id` vs `id`)
-  - Proper cleanup in E2E tests to prevent state leakage
-
-- **Kanban Board**:
-  - LocalStorage cleanup for closed issues during sync
-  - Clipboard error handling with `prompt()` fallback
-  - Focus management for modal accessibility
-  - Schema validation for localStorage data integrity
-  - External link security with `rel="noopener noreferrer"`
-
-- **CI/CD**:
-  - Removed data loading step from dbt-test workflow (#c78183c)
-  - Removed GitHub comment step from dbt-test workflow (#f992553)
-
-### Deprecated
-
-- **SQLite State Database** - Deferred to future enhancements (#140)
-  - Only implement if Hybrid Lite shows race conditions or needs SQL analytics
-  - Current JSON + Backlog.md approach provides 90% of requirements
-
-- **dbt PM Analytics** - Deferred to future enhancements (#141)
-  - Task velocity, bottleneck detection, agent productivity metrics
-  - Only implement if business value is proven
-
-- **Advanced Alerting** - Deferred to future enhancements (#142)
-  - Conflict detection, orphaned tasks, branch drift, PR feedback tracking
-  - Current simple stale detection sufficient for v0.9
+- **F1.4: State Inspector**
+  - Visual display of WORKFLOW_STATE.md content
+  - Frontmatter card with last updated, active track, last release
+  - Track cards with phase pills, artifacts, and progress indicators
+  - Real-time health score calculation
 
 ### Technical Highlights
 
-- **Architecture Decision**: Hybrid Lite over SQLite + bi-directional sync
-  - Rationale: Backlog.md provides REST API, MCP, browser UI, CLI out of the box
-  - Implementation time: 4 hours vs 2-3 weeks for full SQLite solution
-  - Maintenance: 1 system + 1 JSON file vs 3 systems (MD + SQLite + dbt)
-  - Zero sync complexity (single source of truth)
+- Manual paste mode for WORKFLOW_STATE.md content (API endpoints optional)
+- Drag-and-drop file support for quick data loading
+- localStorage caching for session persistence
+- Consistent UI patterns with existing playgrounds (Workflow Hub, Chronicle)
+- Mermaid.js integration for diagram rendering
+- Responsive design with dark mode support
+- Comprehensive help modal with keyboard shortcuts
 
-- **Kanban Board Rewrite**: Functional module pattern
-  - 70% code reduction (~500 lines vs ~1,600 lines in initial implementation)
-  - Uses existing `issues` array as data source (no duplication)
-  - Only stores column assignments in localStorage (minimal state)
-  - Elegant IIFE module pattern for better maintainability
+### Documentation
 
-- **Multi-Worktree Coordination**: Shared state architecture
-  - PM_SESSIONS.json provides session-level tracking across worktrees
-  - Backlog.md API provides task-level visibility across worktrees
-  - One active session per worktree enforcement prevents conflicts
-  - Remote operations config enables cross-worktree task queries
-
-- **Testing Strategy**: Comprehensive coverage at multiple levels
-  - Unit tests for core session operations (40 tests)
-  - E2E tests for UI widgets, API integration, multi-worktree scenarios (29 tests)
-  - Manual CLI verification for all commands
-  - Performance testing for concurrent operations
-
-### Performance
-
-- **E2E Test Suite**: 29 tests execute in 3.3 seconds
-- **Concurrent Operations**: 10 simultaneous PM session operations complete in <2s
-- **Kanban Board**: Smooth drag-and-drop performance with minimal DOM manipulation
-- **LocalStorage**: Efficient schema with only column assignments stored (not full card data)
-
-### Accessibility
-
-- **ARIA Attributes**: Proper roles, labels, and states for screen readers
-- **Keyboard Navigation**: Tab navigation, Enter/Space activation, Escape to close
-- **Focus Management**: Auto-focus on modal open, focus trapping, visible focus indicators
-- **Mobile Support**: Responsive design with swipe indicator, touch-friendly targets
-
-### Related Issues & PRs
-
-- Closes #118 - PM Orchestration System (Hybrid Lite)
-- Closes #110 - Kanban Board Widget
-- Implemented via PR #131 - Phase 1 Backlog.md Core Integration
-- Implemented via PR #130 - Kanban Board Implementation (v0.7.2)
-- Related to #113 - Multi-session coordination requirements
-- Deferred #140 - SQLite state database
-- Deferred #141 - dbt PM analytics integration
-- Deferred #142 - Advanced alerting system
-
-### Migration Notes
-
-No breaking changes. PM Orchestration is purely additive:
-
-- Existing workflows continue to work unchanged
-- New PM features are opt-in via Supervisor integration
-- Workflow Hub widgets can be used independently
-
-### Future Enhancements
-
-**Deferred from v0.9 to future releases**:
-
-- SQLite state database (only if race conditions emerge)
-- dbt PM analytics (task velocity, bottleneck detection)
-- Advanced alerting (conflict detection, orphaned tasks)
-- Bi-directional sync engine (eliminated - single source of truth via Backlog.md)
-
-**Planned for v0.10** (Apr 2026):
-
-- Agent Memory & Learning System (FS1)
-- Kanban Workflow Engine automation (FS2)
-- QA & Testing Enforcement (FS3)
-- Metrics & Dashboard System (FS5)
-- GitHub Integration enhancements (FS7)
-
----
+- Updated CLAUDE.md with Agent Visualizer in playground table
+- Updated playgrounds/README.md with usage instructions
+- Added `/playground:agents` command integration
 
 ---
 
@@ -627,6 +454,7 @@ No breaking changes. PM Orchestration is purely additive:
 
 | Version | Date       | Highlights                                         |
 | ------- | ---------- | -------------------------------------------------- |
+| 0.7.1   | 2026-02-02 | Agent Visualizer Playground - workflow diagrams, timeline, state inspector |
 | 0.7.0   | 2026-01-31 | v0.7 Phase 3 GitHub Project Management + ADR Phase 2 Promotion Workflow |
 | 0.6.0   | 2026-01-31 | v0.6 Playgrounds - Worktree Coordinator, Mermaid Designer |
 | 0.5.0   | 2026-01-30 | v0.5 Analytics - 7 models, 91 tests, BI integration |

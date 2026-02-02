@@ -20,7 +20,7 @@ This is a dbt learning project for data transformation best practices, agent orc
   - Individual validation flags for precise debugging
   - 6 records quarantined (0.006% rate)
   - Documentation: ADR-004, reference guide, macro README
-- Interactive playgrounds: Workflow Hub, Workflow Chronicle, Worktree Coordinator, Mermaid Designer
+- Interactive playgrounds: Workflow Hub, Workflow Chronicle, Worktree Coordinator, Mermaid Designer, Agent Visualizer
 - Agent context management with inter-agent reports
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
 - GitHub Actions automation: PR validation, issue linking, auto-labeling, dbt CI tests
@@ -225,8 +225,8 @@ Visual tools for learning and development. Launch via commands or explore the HT
 | Workflow Chronicle | `/playground:chronicle` | Timeline visualization, health pulse, agent tracking | ✅ v0.7.0 |
 | Worktree Coordinator | `/playground:worktrees` | Manage parallel git worktree sessions | ✅ v0.6.0 |
 | Mermaid Designer | `/playground:mermaid` | Create architecture diagrams visually | ✅ v0.6.0 |
-| Agent Visualizer | `/playground:agents` | View agent workflows and handoffs | Planned v0.7.1 |
-| Schema Explorer | `/playground:schema` | Browse Synthea healthcare data | Planned v0.7.1 |
+| Agent Visualizer | `/playground:agents` | View agent workflows and handoffs | ✅ v0.7.1 |
+| Schema Explorer | `/playground:schema` | Browse Synthea healthcare data | Planned v0.7.2 |
 | Lineage Explorer | `/playground:lineage` | Trace dbt data flow | Planned v0.7.2 |
 | Dashboard Builder | `/playground:dashboards` | Mock analytics layouts | Planned v0.7.3 |
 
