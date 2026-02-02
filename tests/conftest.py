@@ -12,13 +12,12 @@ import json
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Generator
 
 import pytest
 
 # Add scripts directory to path for imports
 PROJECT_ROOT = Path(__file__).parent.parent
-SCRIPTS_DIR = PROJECT_ROOT / "scripts"
+SCRIPTS_DIR = PROJECT_ROOT / 'scripts'
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 
@@ -31,7 +30,7 @@ def project_root() -> Path:
 @pytest.fixture
 def memory_dir(tmp_path: Path) -> Path:
     """Create a temporary memory directory."""
-    mem_dir = tmp_path / "memory"
+    mem_dir = tmp_path / 'memory'
     mem_dir.mkdir()
     return mem_dir
 
@@ -40,11 +39,11 @@ def memory_dir(tmp_path: Path) -> Path:
 def memory_dir_with_claude_md(tmp_path: Path) -> Path:
     """Create a temp directory structure with CLAUDE.md for project detection."""
     # Create CLAUDE.md to simulate project root
-    claude_md = tmp_path / "CLAUDE.md"
-    claude_md.write_text("# Test Project\n")
+    claude_md = tmp_path / 'CLAUDE.md'
+    claude_md.write_text('# Test Project\n')
 
     # Create memory directory
-    mem_dir = tmp_path / "memory"
+    mem_dir = tmp_path / 'memory'
     mem_dir.mkdir()
 
     return mem_dir
@@ -80,8 +79,8 @@ def sample_log_entry() -> str:
 @pytest.fixture
 def sample_log_file(memory_dir: Path, sample_log_entry: str) -> Path:
     """Create a sample log file in the memory directory."""
-    today = datetime.now().strftime("%Y-%m-%d")
-    log_file = memory_dir / f"{today}.md"
+    today = datetime.now().strftime('%Y-%m-%d')
+    log_file = memory_dir / f'{today}.md'
     log_file.write_text(sample_log_entry)
     return log_file
 
@@ -93,8 +92,8 @@ def multi_day_logs(memory_dir: Path) -> list[Path]:
 
     for i in range(5):
         log_date = datetime.now() - timedelta(days=i)
-        date_str = log_date.strftime("%Y-%m-%d")
-        log_file = memory_dir / f"{date_str}.md"
+        date_str = log_date.strftime('%Y-%m-%d')
+        log_file = memory_dir / f'{date_str}.md'
 
         log_file.write_text(f"""## [{date_str}T10:00:00] Task: Task for day {i}
 
@@ -122,12 +121,12 @@ def multi_day_logs(memory_dir: Path) -> list[Path]:
 def logs_with_recurring_pattern(memory_dir: Path) -> list[Path]:
     """Create log files with a recurring learning pattern (3+ occurrences)."""
     log_files = []
-    recurring_learning = "Always validate input before processing"
+    recurring_learning = 'Always validate input before processing'
 
     for i in range(3):
         log_date = datetime.now() - timedelta(days=i)
-        date_str = log_date.strftime("%Y-%m-%d")
-        log_file = memory_dir / f"{date_str}.md"
+        date_str = log_date.strftime('%Y-%m-%d')
+        log_file = memory_dir / f'{date_str}.md'
 
         log_file.write_text(f"""## [{date_str}T10:00:00] Task: Task {i}
 
@@ -147,46 +146,46 @@ def logs_with_recurring_pattern(memory_dir: Path) -> list[Path]:
 @pytest.fixture
 def sample_events_jsonl(memory_dir: Path) -> Path:
     """Create a sample events.jsonl file."""
-    events_file = memory_dir / "events.jsonl"
+    events_file = memory_dir / 'events.jsonl'
 
     events = [
         {
-            "timestamp": "2026-02-02T10:30:00Z",
-            "event": "session_logged",
-            "version": "1.0",
-            "data": {
-                "task": "Implement customer analytics",
-                "task_id": "TASK-42",
-                "outcome": "SUCCESS",
-                "files_modified": 5,
-                "decisions_count": 2,
-                "learnings_count": 2,
-                "improvements_count": 1,
-                "related_issue": "#142",
-                "related_pr": "#145",
+            'timestamp': '2026-02-02T10:30:00Z',
+            'event': 'session_logged',
+            'version': '1.0',
+            'data': {
+                'task': 'Implement customer analytics',
+                'task_id': 'TASK-42',
+                'outcome': 'SUCCESS',
+                'files_modified': 5,
+                'decisions_count': 2,
+                'learnings_count': 2,
+                'improvements_count': 1,
+                'related_issue': '#142',
+                'related_pr': '#145',
             },
         },
         {
-            "timestamp": "2026-02-02T11:00:00Z",
-            "event": "session_logged",
-            "version": "1.0",
-            "data": {
-                "task": "Fix null handling",
-                "task_id": None,
-                "outcome": "SUCCESS",
-                "files_modified": 2,
-                "decisions_count": 0,
-                "learnings_count": 1,
-                "improvements_count": 0,
-                "related_issue": None,
-                "related_pr": None,
+            'timestamp': '2026-02-02T11:00:00Z',
+            'event': 'session_logged',
+            'version': '1.0',
+            'data': {
+                'task': 'Fix null handling',
+                'task_id': None,
+                'outcome': 'SUCCESS',
+                'files_modified': 2,
+                'decisions_count': 0,
+                'learnings_count': 1,
+                'improvements_count': 0,
+                'related_issue': None,
+                'related_pr': None,
             },
         },
     ]
 
-    with open(events_file, "w") as f:
+    with open(events_file, 'w') as f:
         for event in events:
-            f.write(json.dumps(event) + "\n")
+            f.write(json.dumps(event) + '\n')
 
     return events_file
 
@@ -197,12 +196,12 @@ def mock_git_modified_files(monkeypatch):
 
     def mock_run(*args, **kwargs):
         class MockResult:
-            stdout = "models/staging/stg_patients.sql\nmodels/marts/dim_patients.sql\n"
+            stdout = 'models/staging/stg_patients.sql\nmodels/marts/dim_patients.sql\n'
             returncode = 0
 
         return MockResult()
 
-    monkeypatch.setattr("subprocess.run", mock_run)
+    monkeypatch.setattr('subprocess.run', mock_run)
 
 
 @pytest.fixture
@@ -210,18 +209,18 @@ def mock_git_unavailable(monkeypatch):
     """Mock git being unavailable."""
 
     def mock_run(*args, **kwargs):
-        raise FileNotFoundError("git not found")
+        raise FileNotFoundError('git not found')
 
-    monkeypatch.setattr("subprocess.run", mock_run)
+    monkeypatch.setattr('subprocess.run', mock_run)
 
 
 @pytest.fixture
 def workflow_state_file(tmp_path: Path) -> Path:
     """Create a mock WORKFLOW_STATE.md with task reference."""
-    temp_dir = tmp_path / "temp"
+    temp_dir = tmp_path / 'temp'
     temp_dir.mkdir()
 
-    workflow_state = temp_dir / "WORKFLOW_STATE.md"
+    workflow_state = temp_dir / 'WORKFLOW_STATE.md'
     workflow_state.write_text("""# Workflow State
 
 ## Active Track: feat/customer-analytics
@@ -254,4 +253,4 @@ def count_entries_in_log(log_file: Path) -> int:
         return 0
 
     content = log_file.read_text()
-    return content.count("## [")
+    return content.count('## [')

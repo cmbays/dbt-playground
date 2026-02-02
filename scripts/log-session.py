@@ -23,13 +23,20 @@ import argparse
 import json
 import re
 import subprocess
-from datetime import datetime, timezone
+import sys
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import NamedTuple
+
+# Add scripts directory to path for lib imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+from lib.memory_utils import get_memory_dir
 
 
 class SessionEntry(NamedTuple):
     """Validated session log entry."""
+
     timestamp: datetime
     task: str
     outcome: str
@@ -42,22 +49,10 @@ class SessionEntry(NamedTuple):
     task_id: str
 
 
-def get_memory_dir() -> Path:
-    """Get memory directory path, creating if needed."""
-    cwd = Path.cwd()
-    while cwd != cwd.parent:
-        if (cwd / 'CLAUDE.md').exists():
-            memory_dir = cwd / 'memory'
-            memory_dir.mkdir(exist_ok=True)
-            return memory_dir
-        cwd = cwd.parent
-    raise FileNotFoundError("Could not find project root (CLAUDE.md)")
-
-
 def get_today_log() -> Path:
     """Get path to today's log file."""
     memory_dir = get_memory_dir()
-    today = datetime.now().strftime('%Y-%m-%d')
+    today = datetime.now(UTC).strftime('%Y-%m-%d')
     return memory_dir / f'{today}.md'
 
 
@@ -72,7 +67,7 @@ def detect_task_id() -> str | None:
         # Look for task reference patterns
         match = re.search(r'(?:Task ID|TASK)[:\s]+([A-Z]+-\d+)', content, re.IGNORECASE)
         return match.group(1) if match else None
-    except Exception:
+    except (OSError, UnicodeDecodeError, re.error):
         return None
 
 
@@ -80,11 +75,10 @@ def get_modified_files() -> list[str]:
     """Get list of modified files from git status."""
     try:
         result = subprocess.run(
-            ['git', 'diff', '--name-only', 'HEAD~1'],
-            capture_output=True, text=True, timeout=5
+            ['git', 'diff', '--name-only', 'HEAD~1'], capture_output=True, text=True, timeout=5
         )
         return [f.strip() for f in result.stdout.strip().split('\n') if f.strip()]
-    except Exception:
+    except (subprocess.CalledProcessError, subprocess.SubprocessError, FileNotFoundError, OSError):
         return []
 
 
@@ -93,7 +87,7 @@ def validate_entry(entry: SessionEntry) -> list[str]:
     warnings = []
 
     if not entry.task:
-        warnings.append("[WARN] Task description is empty")
+        warnings.append('[WARN] Task description is empty')
 
     if entry.outcome not in ('SUCCESS', 'FAILURE', 'PARTIAL'):
         warnings.append(f"[WARN] Unknown outcome '{entry.outcome}', using as-is")
@@ -167,20 +161,20 @@ def emit_event(entry: SessionEntry) -> None:
     events_file = memory_dir / 'events.jsonl'
 
     event = {
-        "timestamp": entry.timestamp.astimezone(timezone.utc).isoformat(),
-        "event": "session_logged",
-        "version": "1.0",
-        "data": {
-            "task": entry.task,
-            "task_id": entry.task_id or None,
-            "outcome": entry.outcome,
-            "files_modified": len(entry.files),
-            "decisions_count": len(entry.decisions),
-            "learnings_count": len(entry.learnings),
-            "improvements_count": len(entry.improvements),
-            "related_issue": f'#{entry.issue}' if entry.issue else None,
-            "related_pr": f'#{entry.pr}' if entry.pr else None
-        }
+        'timestamp': entry.timestamp.astimezone(UTC).isoformat(),
+        'event': 'session_logged',
+        'version': '1.0',
+        'data': {
+            'task': entry.task,
+            'task_id': entry.task_id or None,
+            'outcome': entry.outcome,
+            'files_modified': len(entry.files),
+            'decisions_count': len(entry.decisions),
+            'learnings_count': len(entry.learnings),
+            'improvements_count': len(entry.improvements),
+            'related_issue': f'#{entry.issue}' if entry.issue else None,
+            'related_pr': f'#{entry.pr}' if entry.pr else None,
+        },
     }
 
     with open(events_file, 'a') as f:
@@ -214,7 +208,7 @@ def gather_full() -> SessionEntry:
     task = prompt_input('Task description')
 
     outcome = prompt_input('Outcome (SUCCESS/FAILURE/PARTIAL)', 'SUCCESS').upper()
-    if outcome not in ['SUCCESS', 'FAILURE', 'PARTIAL']:
+    if outcome not in ('SUCCESS', 'FAILURE', 'PARTIAL'):
         print(f'[WARN] Unknown outcome "{outcome}", using as-is')
 
     files = get_modified_files()
@@ -229,7 +223,7 @@ def gather_full() -> SessionEntry:
 
     detected_task_id = detect_task_id()
     if detected_task_id:
-        task_id = prompt_input(f'\nTask ID', detected_task_id)
+        task_id = prompt_input('\nTask ID', detected_task_id)
     else:
         task_id = prompt_input('\nBacklog.md task ID (e.g., TASK-42, or empty)')
 
@@ -252,7 +246,7 @@ def gather_full() -> SessionEntry:
     pr = prompt_input('Related PR number (or empty)')
 
     return SessionEntry(
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         task=task,
         outcome=outcome,
         files=files,
@@ -261,14 +255,14 @@ def gather_full() -> SessionEntry:
         improvements=improvements,
         issue=issue,
         pr=pr,
-        task_id=task_id
+        task_id=task_id,
     )
 
 
 def gather_quick(task: str, outcome: str = 'SUCCESS', task_id: str = '') -> SessionEntry:
     """Gather entry with minimal input (quick mode)."""
     return SessionEntry(
-        timestamp=datetime.now(),
+        timestamp=datetime.now(UTC),
         task=task,
         outcome=outcome,
         files=get_modified_files(),
@@ -277,19 +271,23 @@ def gather_quick(task: str, outcome: str = 'SUCCESS', task_id: str = '') -> Sess
         improvements=[],
         issue='',
         pr='',
-        task_id=task_id or detect_task_id() or ''
+        task_id=task_id or detect_task_id() or '',
     )
 
 
 def main():
     parser = argparse.ArgumentParser(
         description='Log session entry to memory',
-        epilog='Part of FS1: Agent Memory & Learning System'
+        epilog='Part of FS1: Agent Memory & Learning System',
     )
     parser.add_argument('--task', '-t', help='Task description (enables quick mode)')
-    parser.add_argument('--outcome', '-o', default='SUCCESS',
-                       choices=['SUCCESS', 'FAILURE', 'PARTIAL'],
-                       help='Task outcome (default: SUCCESS)')
+    parser.add_argument(
+        '--outcome',
+        '-o',
+        default='SUCCESS',
+        choices=['SUCCESS', 'FAILURE', 'PARTIAL'],
+        help='Task outcome (default: SUCCESS)',
+    )
     parser.add_argument('--task-id', '-i', help='Backlog.md task ID (e.g., TASK-42)')
     args = parser.parse_args()
 
@@ -315,7 +313,7 @@ def main():
         emit_event(entry)
 
         print(f'\n[OK] Entry logged to {log_file}')
-        print(f'[OK] Event emitted to memory/events.jsonl')
+        print('[OK] Event emitted to memory/events.jsonl')
 
         return 0
 
