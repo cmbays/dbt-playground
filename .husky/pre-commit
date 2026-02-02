@@ -1,1 +1,30 @@
-npx lint-staged
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/husky.sh"
+
+# 1. Prevent large files (AI agents often accidentally commit database dumps or logs)
+# Check only STAGED files for size (over 5MB)
+git diff --cached --name-only | while read file; do
+  if [ -f "$file" ]; then
+    size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+    if [ "$size" -gt 5242880 ]; then
+      echo "Error: Large file detected in staging: $file ($(($size / 1024 / 1024))MB)"
+      exit 1
+    fi
+  fi
+done
+
+# 2. Check for unresolved merge conflicts in STAGED files
+git diff --cached --name-only | while read file; do
+  if [ -f "$file" ] && grep -qE '^(<<<<<<<|=======|>>>>>>>)' "$file"; then
+    echo "Error: Unresolved merge conflicts found in: $file"
+    exit 1
+  fi
+done
+
+# 3. Detect "Private" keys in STAGED files
+git diff --cached --name-only | while read file; do
+  if [ -f "$file" ] && grep -qE 'BEGIN (RSA|OPENSSH|PRIVATE) KEY' "$file"; then
+    echo "Error: Private key detected in: $file"
+    exit 1
+  fi
+done

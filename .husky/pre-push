@@ -1,0 +1,16 @@
+echo "🚀 Running Final Agentic Quality Gate..."
+
+# 1. Ensure dbt can still compile (Prevents broken refs)
+echo "🧪 Running dbt quality checks..."
+cd dbt_project && uv run dbt compile && cd ..
+
+# 2. Check for "Hardcoded" Table Names (AI agents love to forget ref() and source())
+# This grep fails if it finds a raw database.schema.table reference in models
+# Use grep -q for quiet mode (no output unless match found)
+if grep -rE "from [a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+\\.[a-zA-Z0-9_]+" dbt_project/models/; then
+  echo "Error: Hardcoded table reference found. Use ref() or source()!"
+  exit 1
+fi
+
+
+

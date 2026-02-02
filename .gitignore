@@ -1,3 +1,27 @@
+# ----------------------------------------
+# AGENT CONFIGURATION (The "Split" Strategy)
+# ----------------------------------------
+
+# 1. First, ignore EVERYTHING inside .claude to be safe
+.claude/*
+
+# 2. Now, "un-ignore" (whitelist) the specific logic you want to share
+!.claude/agents/
+!.claude/skills/
+!.claude/commands/
+!.claude/workflows/
+!.claude/hooks/
+!.claude/docs/
+!.claude/project_instructions.md
+
+# 3. Explicitly double-check that sensitive files are ignored
+# (Redundant safety net for files that often hold keys or chat history)
+.claude/mcp-settings.json
+.claude/history/
+.claude/memories/
+.claude/chats/
+
+# ----------------------------------------
 # Work in progress
 temp/
 
