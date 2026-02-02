@@ -329,6 +329,46 @@ gh run rerun <run-id> --failed
 - `docs/reference/GITHUB_ACTIONS.md` - Quick reference
 - `docs/for_chris/GITHUB_ACTIONS_GUIDE.md` - Setup and testing guide
 
+## Self-Hosted GitHub Actions Runner
+
+This project uses a self-hosted runner for CI to avoid consuming GitHub Actions minutes on the private repository.
+
+### For Users
+
+**Daily workflow**:
+
+1. Start runner before development: `./scripts/runner-start.sh`
+2. Work normally (CI runs on local machine)
+3. Stop runner when done: `./scripts/runner-stop.sh`
+
+**Quick commands**:
+
+| Command | Purpose |
+|---------|---------|
+| `./scripts/runner-start.sh` | Start runner (keep terminal open) |
+| `./scripts/runner-stop.sh` | Stop runner |
+| `./scripts/runner-status.sh` | Check status + recent runs |
+
+**First-time setup**: `./scripts/setup-github-runner.sh`
+
+**Full guide**: `docs/for_chris/SELF_HOSTED_RUNNER_GUIDE.md`
+
+### For Agents
+
+**Before CI operations**:
+
+1. Check runner status: `./scripts/runner-status.sh`
+2. If not running, inform user: "GitHub Actions runner is not running. Please start it with `./scripts/runner-start.sh`"
+3. Do NOT attempt to start/stop runner automatically
+
+**CI operations requiring runner**:
+
+- Pushing commits that trigger workflows
+- Creating/updating PRs
+- Running dbt tests via CI
+
+**Important**: Agents should NEVER start or stop the runner. Only inform the user if it's needed.
+
 ## Milestone Status
 
 Tracking progress toward v0.8, v0.10, and v1.0 releases.
