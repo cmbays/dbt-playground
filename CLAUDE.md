@@ -169,6 +169,59 @@ temp/AGENT_REPORTS/[feature-name]/
 | `/dbt-run` | Execute dbt commands |
 | `/readiness-check` | Assess capability gaps before new work |
 
+## Session Memory (v0.10+)
+
+The Agent Memory System enables compound learning across sessions through persistent logging and automated pattern extraction.
+
+### Directory Structure
+
+```text
+memory/
+  |-- 2026-02-02.md       # Daily append-only session log
+  |-- MEMORY_INDEX.md     # Weekly summary and pattern index
+  |-- events.jsonl        # Machine-readable events for metrics
+```
+
+### Quick Commands
+
+| Command | Purpose |
+|---------|---------|
+| `sage: log session` | Full interactive session logging |
+| `sage: log "[task]"` | Quick log with auto-defaults |
+| `sage: consolidate week` | Weekly pattern extraction |
+| `uv run scripts/log-session.py` | CLI session logging |
+| `uv run scripts/consolidate-memory.py` | CLI consolidation |
+
+### Session Logging
+
+```bash
+# Quick mode - minimal input
+uv run scripts/log-session.py -t "Implemented feature X" -o SUCCESS
+
+# Interactive mode - full prompts
+uv run scripts/log-session.py
+
+# With task ID for Kanban correlation
+uv run scripts/log-session.py -t "Task description" -i TASK-42
+```
+
+### Pattern Detection
+
+Weekly consolidation scans logs for recurring patterns:
+- Patterns appearing 2+ times are identified
+- Multi-factor scoring: frequency (40%), recency (30%), consistency (30%)
+- Promotion candidates can be added to LEARNINGS.md
+
+```bash
+# Run weekly consolidation
+uv run scripts/consolidate-memory.py
+
+# Preview without writing
+uv run scripts/consolidate-memory.py --dry-run
+```
+
+See `.claude/agents/sage.md` for Workflow J (logging) and Workflow K (consolidation) details.
+
 ## Git Worktrees (Parallel Development)
 
 This project supports parallel Claude Code sessions using git worktrees. Each worktree provides an isolated directory with its own branch.
