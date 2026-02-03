@@ -130,6 +130,24 @@ python scripts/extract_content.py <args>
 | YAML | yamllint | No |
 | SQL | sqlfluff | Manual: `npm run lint:sql:fix` |
 
+## Testing
+
+### Test Best Practices
+
+- Always use `datetime.now(UTC)` for timezone-aware timestamps
+- Use fixed test dates for determinism: `TEST_DATE = datetime(2026, 2, 15, tzinfo=UTC)`
+- Explicit `encoding='utf-8'` on all file open() operations
+- Specific exception handling: `except CalledProcessError` not `except Exception`
+- Test coverage artifacts (.coverage, htmlcov/, coverage.xml) are gitignored
+
+### Running Tests
+
+```bash
+uv run pytest tests/ -v                    # Full test suite
+uv run pytest tests/ -v --tb=short         # Abbreviated tracebacks
+uv run pytest tests/ -q --tb=no            # Quick run, no output
+```
+
 ## Agent System
 
 See `.claude/agents/AGENTS.md` for orchestration details.
@@ -150,6 +168,31 @@ temp/AGENT_REPORTS/[feature-name]/
 
 **Workflow**: Orchestrators pass file paths, not content summaries. Downstream agents read upstream reports directly. See `docs/templates/agent-reports/` for templates.
 
+### Multi-Agent Orchestration Patterns
+
+**Parallel Execution**: Launch multiple agents concurrently using single message with multiple Task calls:
+
+```bash
+# Example: Launch 2 agents in parallel
+Task(subagent_type="code-reviewer", prompt="Review scripts/")
+Task(subagent_type="security-reviewer", prompt="Review for vulnerabilities")
+```
+
+**Competitive Implementation**: For complex features, use competing teams:
+
+1. **Planning Phase**: Assemble team to create initial plan
+2. **Review Phase**: Spin up second team to review and identify gaps
+3. **Implementation Phase**: Launch competing teams (Alpha/Beta) to independently solve
+4. **Convergence Phase**: Review both solutions and create hybrid/best-of-breed
+
+**Benefits**:
+- Reduces single-point-of-failure in design decisions
+- Surfaces alternative approaches
+- Higher quality through competitive pressure
+
+**Example workflow** (FS1 Agent Memory):
+- Planning team → Review team → Gap analysis → Competing implementation → Final convergence
+
 ### Key Personas
 
 | Persona | Prefix | Focus |
@@ -168,6 +211,59 @@ temp/AGENT_REPORTS/[feature-name]/
 | `/plan` | Structured planning |
 | `/dbt-run` | Execute dbt commands |
 | `/readiness-check` | Assess capability gaps before new work |
+
+## Session Memory (v0.10+)
+
+The Agent Memory System enables compound learning across sessions through persistent logging and automated pattern extraction.
+
+### Directory Structure
+
+```text
+memory/
+  |-- 2026-02-02.md       # Daily append-only session log
+  |-- MEMORY_INDEX.md     # Weekly summary and pattern index
+  |-- events.jsonl        # Machine-readable events for metrics
+```
+
+### Quick Commands
+
+| Command | Purpose |
+|---------|---------|
+| `sage: log session` | Full interactive session logging |
+| `sage: log "[task]"` | Quick log with auto-defaults |
+| `sage: consolidate week` | Weekly pattern extraction |
+| `uv run scripts/log-session.py` | CLI session logging |
+| `uv run scripts/consolidate-memory.py` | CLI consolidation |
+
+### Session Logging
+
+```bash
+# Quick mode - minimal input
+uv run scripts/log-session.py -t "Implemented feature X" -o SUCCESS
+
+# Interactive mode - full prompts
+uv run scripts/log-session.py
+
+# With task ID for Kanban correlation
+uv run scripts/log-session.py -t "Task description" -i TASK-42
+```
+
+### Pattern Detection
+
+Weekly consolidation scans logs for recurring patterns:
+- Patterns with 2+ occurrences are identified (appeared at least twice)
+- Multi-factor scoring: frequency (40%), recency (30%), consistency (30%)
+- Promotion candidates can be added to LEARNINGS.md
+
+```bash
+# Run weekly consolidation
+uv run scripts/consolidate-memory.py
+
+# Preview without writing
+uv run scripts/consolidate-memory.py --dry-run
+```
+
+See `.claude/agents/sage.md` for Workflow J (logging) and Workflow K (consolidation) details.
 
 ## Git Worktrees (Parallel Development)
 
@@ -302,10 +398,13 @@ This project uses a self-hosted runner for CI to avoid consuming GitHub Actions 
 
 ### For Agents
 
+**CRITICAL**: CI jobs will queue indefinitely if runner is not running.
+
 **Before CI operations**:
 
 1. Check runner status: `./scripts/runner-status.sh`
 2. If not running, inform user: "GitHub Actions runner is not running. Please start it with `./scripts/runner-start.sh`"
+3. If CI jobs are queued: Verify runner is online at GitHub Settings → Actions → Runners
 3. Do NOT attempt to start/stop runner automatically
 
 **CI operations requiring runner**:
@@ -352,3 +451,8 @@ gh api repos/{owner}/{repo}/milestones --jq '.[] | "\(.title): \(.open_issues) o
 - Default to simpler solutions
 - Explain technical decisions
 - Use agents for complex work, manual for simple tasks
+- Address CodeRabbit feedback in batches by category (tests, exceptions, formatting)
+- When user corrects you, those corrections reveal gaps in best practices
+- Pre-existing linting failures ≠ new failures - document the distinction
+- Include ADRs in the same PR as the feature they document
+- Group related fixes into themed commits for easier review
