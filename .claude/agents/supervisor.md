@@ -381,6 +381,47 @@ QA gate results are exported for FS5 metrics:
 }
 ```
 
+### Sage Session Logging (Post-Review)
+
+After Review phase completes successfully (QA gate passed or bypassed), the Supervisor prompts for session logging to capture learnings while fresh.
+
+#### Trigger Conditions
+
+| Condition | Action |
+|-----------|--------|
+| QA gate PASS | Suggest session logging |
+| QA gate WARN (bypassed) | Suggest session logging with bypass note |
+| QA gate BLOCK | No logging prompt (work incomplete) |
+
+#### Session Logging Prompt Flow
+
+```
+[QA Gate Complete]
+    |
+    +-- If transition allowed (PASS or WARN):
+    |      Suggest: "Session complete. Consider logging learnings:"
+    |      Option 1: sage: log session
+    |      Option 2: uv run scripts/log-session.py -t "[feature-name]" -o SUCCESS
+    |
+    +-- Advisory only (don't block Deploy transition)
+```
+
+#### Prompt Template
+
+```text
+super: Review phase complete for [feature-name].
+
+Consider capturing session learnings:
+- sage: log session
+- Or: uv run scripts/log-session.py -t "[feature-name]" -o SUCCESS
+
+(Advisory: This helps compound learning but doesn't block deployment)
+```
+
+#### Integration with Deployment Complete
+
+The existing "Deployment Complete" workflow already invokes Sage for pattern extraction. This new trigger captures session logging at Review completion, which may occur before final deployment (e.g., when work is staged across multiple sessions).
+
 ### Rejection Protocol
 
 When an agent's output fails verification:

@@ -17,6 +17,29 @@ When this command is invoked:
    - Identify related existing files and patterns
    - Note any constraints or dependencies
 
+1.5 **Bootstrap from Session Memory** (when available)
+   - Check if `memory/MEMORY_INDEX.md` exists
+   - If present, extract relevant context:
+     - "Recurring Patterns" section - proven patterns to consider
+     - "Promotion Candidates" section - patterns nearing proven status
+   - Display relevant learnings to inform planning:
+
+   ```
+   [Memory Bootstrap]
+   Recent learnings that may inform this plan:
+
+   Recurring Patterns:
+   - [pattern summary] (score: X.XX)
+
+   Promotion Candidates:
+   - [ ] [candidate description]
+
+   Consider these patterns when designing the implementation approach.
+   ```
+
+   - Note: This is advisory context, not requirements
+   - Skip this step if memory/MEMORY_INDEX.md doesn't exist
+
 2. **Create Implementation Plan**
    - Create `temp/v[X.Y]_PLAN.md` with:
      - Feature summary
