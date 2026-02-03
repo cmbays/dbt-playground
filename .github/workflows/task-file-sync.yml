@@ -115,6 +115,7 @@ jobs:
           ISSUE_NUM: ${{ github.event.issue.number }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ACTION: ${{ github.event.action }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -141,7 +142,7 @@ jobs:
 
           # Retry push with rebase for race conditions
           for i in 1 2 3; do
-            git pull --rebase origin main && git push && exit 0
+            git pull --rebase origin "${DEFAULT_BRANCH}" && git push && exit 0
             echo "Retry $i..."
             sleep $((i * 2))
           done
