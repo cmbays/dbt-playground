@@ -21,6 +21,7 @@ def serialize_value(value: Any) -> Any:
     - datetime: returns .isoformat()
     - Objects with to_dict(): calls to_dict()
     - Lists: recursively serializes elements
+    - Dicts: recursively serializes values
     - Dataclasses: recursively serializes fields
     - Other: returns as-is
 
@@ -38,6 +39,8 @@ def serialize_value(value: Any) -> Any:
         return value.isoformat()
     if hasattr(value, "to_dict"):
         return value.to_dict()
+    if isinstance(value, dict):
+        return {k: serialize_value(v) for k, v in value.items()}
     if isinstance(value, list):
         return [serialize_value(v) for v in value]
     if is_dataclass(value) and not isinstance(value, type):
@@ -64,5 +67,13 @@ class SerializableMixin:
 
         Returns:
             Dictionary with all fields serialized for JSON.
+
+        Raises:
+            TypeError: If the class is not a dataclass.
         """
+        if not is_dataclass(type(self)):
+            raise TypeError(
+                f"{type(self).__name__} is not a dataclass. "
+                "SerializableMixin.to_dict() requires a dataclass."
+            )
         return {f.name: serialize_value(getattr(self, f.name)) for f in fields(self)}

@@ -8,6 +8,7 @@ Created: Phase 4 Day 0 (Pre-Work)
 
 import json
 import sys
+from copy import deepcopy
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -520,7 +521,9 @@ def archived_version_v09(tmp_archives_dir) -> Path:
             }
         ],
     }
-    (v09_dir / "archive.json").write_text(json.dumps(archive_data, indent=2))
+    (v09_dir / "archive.json").write_text(
+        json.dumps(archive_data, indent=2), encoding="utf-8"
+    )
     return v09_dir
 
 
@@ -562,8 +565,11 @@ def enriched_worktree_full(fixed_now) -> EnrichedWorktree:
 
 @pytest.fixture
 def enriched_worktree_with_anomalies(enriched_worktree_full) -> EnrichedWorktree:
-    """Enriched worktree with anomalies."""
-    wt = enriched_worktree_full
+    """Enriched worktree with anomalies.
+
+    Uses deepcopy to avoid mutating the shared enriched_worktree_full fixture.
+    """
+    wt = deepcopy(enriched_worktree_full)
     wt.ci_checks = CIChecks(total=3, passed=1, failed=1, pending=1)
     wt.coderabbit = CodeRabbitStatus(
         status=CodeRabbitReviewStatus.CHANGES_REQUESTED,
@@ -631,7 +637,9 @@ def tmp_config_dir(tmp_path, valid_version_plan_yaml) -> Path:
     """Temporary config directory with version plan."""
     config_dir = tmp_path / "config"
     config_dir.mkdir()
-    (config_dir / "version-plan.yaml").write_text(valid_version_plan_yaml)
+    (config_dir / "version-plan.yaml").write_text(
+        valid_version_plan_yaml, encoding="utf-8"
+    )
     return config_dir
 
 

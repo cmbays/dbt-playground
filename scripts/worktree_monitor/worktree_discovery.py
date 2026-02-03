@@ -30,17 +30,25 @@ class WorktreeDiscovery:
         git_executable: Path to the git executable.
     """
 
+    # Default timeout for git commands (seconds)
+    DEFAULT_GIT_TIMEOUT = 30
+
     def __init__(
-        self, repo_path: Path | None = None, git_executable: str = "git"
+        self,
+        repo_path: Path | None = None,
+        git_executable: str = "git",
+        git_timeout: int | None = None,
     ) -> None:
         """Initialize WorktreeDiscovery.
 
         Args:
             repo_path: Path to the git repository. If None, uses current directory.
             git_executable: Path to the git executable. Defaults to "git".
+            git_timeout: Timeout for git commands in seconds. Defaults to 30.
         """
         self.repo_path = repo_path
         self.git_executable = git_executable
+        self.git_timeout = git_timeout if git_timeout is not None else self.DEFAULT_GIT_TIMEOUT
 
     def list_worktrees(self) -> list[WorktreeInfo]:
         """List all worktrees with basic info.
@@ -354,7 +362,7 @@ class WorktreeDiscovery:
 
         Raises:
             GitNotFoundError: If git executable not found.
-            GitCommandError: If git command returns non-zero exit code.
+            GitCommandError: If git command returns non-zero exit code or times out.
         """
         cmd = [self.git_executable] + args
         working_dir = cwd or self.repo_path
@@ -365,10 +373,17 @@ class WorktreeDiscovery:
                 cwd=working_dir,
                 capture_output=True,
                 text=True,
-                check=False,  # Handle errors explicitly
+                check=False,
+                timeout=self.git_timeout,
             )
         except FileNotFoundError as e:
             raise GitNotFoundError(self.git_executable) from e
+        except subprocess.TimeoutExpired as e:
+            raise GitCommandError(
+                command=" ".join(cmd),
+                return_code=-1,
+                stderr=f"Command timed out after {self.git_timeout} seconds",
+            ) from e
 
         if result.returncode != 0:
             raise GitCommandError(

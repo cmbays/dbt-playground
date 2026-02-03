@@ -28,7 +28,6 @@ import yaml
 from worktree_monitor.exceptions import (
     VersionPlanNotFoundError,
     VersionPlanParseError,
-    VersionPlanSchemaError,
     VersionPlanValidationError,
 )
 from worktree_monitor.models import (

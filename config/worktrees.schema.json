@@ -51,7 +51,7 @@
     },
     "errors": {
       "type": "array",
-      "items": { "$ref": "#/definitions/ComponentError" },
+      "items": { "$ref": "#/definitions/ComponentFailureInfo" },
       "description": "Errors from components (for graceful degradation)"
     }
   },
@@ -211,6 +211,7 @@
     },
     "CodeRabbitFeedback": {
       "type": "object",
+      "required": ["major", "minor", "total"],
       "properties": {
         "major": { "type": "integer", "minimum": 0 },
         "minor": { "type": "integer", "minimum": 0 },
@@ -321,7 +322,7 @@
         }
       }
     },
-    "ComponentError": {
+    "ComponentFailureInfo": {
       "type": "object",
       "required": ["component", "message"],
       "properties": {
