@@ -149,16 +149,19 @@ models:
 Adds data quality validation columns to a CTE.
 
 **Parameters**:
+
 - `source_cte` (string): Name of the CTE to validate
 - `validations` (dict): Map of validation_name → SQL boolean expression
 
 **Returns**:
+
 - All original columns
 - Individual boolean flags for each validation
 - `is_dq_valid` (boolean): true if ALL validations pass
 - `failed_dq_tests` (varchar[]): array of failed validation names
 
 **Example**:
+
 ```sql
 {{ add_dq_flags(
     source_cte='renamed',
@@ -171,6 +174,7 @@ Adds data quality validation columns to a CTE.
 ```
 
 **Generated columns**:
+
 - `valid_timestamps` (bool)
 - `no_future_dates` (bool)
 - `end_after_1900` (bool)
@@ -182,14 +186,17 @@ Adds data quality validation columns to a CTE.
 Generates a WHERE clause to filter out quarantined records.
 
 **Parameters**:
+
 - `enabled` (bool, default=true): Whether to apply the filter
 - `field_name` (string, default='is_dq_valid'): Name of the validity flag
 
 **Returns**:
+
 - `WHERE is_dq_valid = true` (if enabled)
 - Empty string (if disabled)
 
 **Example**:
+
 ```sql
 with encounters as (
     select * from {{ ref('stg_synthea__encounters') }}
@@ -208,13 +215,16 @@ with encounters_debug as (
 Generates a complete quarantine model that selects only invalid records.
 
 **Parameters**:
+
 - `source_model` (string): Name of the staging model
 - `description` (string, optional): Comment for the model
 
 **Returns**:
+
 - Complete SQL: `SELECT * FROM ref(source_model) WHERE is_dq_valid = false`
 
 **Example**:
+
 ```sql
 {{ config(materialized='table', tags=['quarantine', 'data_quality']) }}
 
@@ -235,6 +245,7 @@ Follow this checklist to add data quality quarantine to any entity.
 Identify what makes a record "invalid" for your entity:
 
 **Common patterns**:
+
 - Timestamp sequences (end >= start)
 - Future date checks (date <= today)
 - Historical plausibility (date > 1900)
@@ -243,6 +254,7 @@ Identify what makes a record "invalid" for your entity:
 - Foreign key existence
 
 **Example for observations**:
+
 ```python
 validations = {
     'valid_observation_timestamps': 'observation_at <= current_timestamp',
@@ -451,7 +463,8 @@ order by quarantine_rate_pct desc
 ```
 
 **Expected output**:
-```
+
+```text
 entity_type  | quarantined | total  | rate_pct | timestamp_fails | future_date_fails
 -------------|-------------|--------|----------|-----------------|------------------
 encounters   | 1           | 53,346 | 0.00%    | 1               | 0
@@ -463,6 +476,7 @@ medications  | 5           | 42,989 | 0.01%    | 5               | 0
 **Recommendation**: Alert when `quarantine_rate_pct > 1%`
 
 **Severity levels**:
+
 - **0-0.1%**: Normal (current baseline)
 - **0.1-1%**: Warning (monitor trend)
 - **1-5%**: Alert (investigate root cause)
@@ -497,7 +511,8 @@ order by 2 desc
 ```
 
 **Example output**:
-```
+
+```text
 failed_validation             | failure_count
 ------------------------------|---------------
 valid_encounter_timestamps    | 1
@@ -546,6 +561,7 @@ where encounter_id = '8cd80b4d-69b8-4b6...'
 ```
 
 **Output interpretation**:
+
 - `valid_encounter_timestamps = false` → End time before start time
 - `failed_dq_tests = ['valid_encounter_timestamps']` → Only this rule failed
 
@@ -593,6 +609,7 @@ join {{ ref('int_dq_quarantine__encounters') }} q
 ```
 
 **Null handling**:
+
 ```sql
 -- If end can be null (ongoing)
 'valid_timestamps': 'end_at is null or end_at >= start_at'
@@ -608,6 +625,7 @@ join {{ ref('int_dq_quarantine__encounters') }} q
 ```
 
 **Grace period** (allow small clock skew):
+
 ```sql
 'no_future_dates': 'event_date <= current_date + interval \'1 day\''
 ```
@@ -622,6 +640,7 @@ join {{ ref('int_dq_quarantine__encounters') }} q
 ```
 
 **Business rule example**:
+
 ```sql
 -- Organization founded in 2010
 'date_after_org_founded': 'event_date >= date \'2010-06-15\''
@@ -656,6 +675,7 @@ join {{ ref('int_dq_quarantine__encounters') }} q
 ```
 
 **Note**: This is expensive. Consider using relationship tests instead:
+
 ```yaml
 tests:
   - relationships:
@@ -776,12 +796,14 @@ select * from dq_summary
 ### Issue: Macro not found
 
 **Error**:
-```
+
+```text
 Compilation Error in model stg_synthea__encounters
   'add_dq_flags' is undefined
 ```
 
 **Solution**:
+
 ```bash
 # Verify macro exists
 ls macros/data_quality/add_dq_flags.sql
@@ -796,7 +818,8 @@ dbt clean && dbt deps && dbt parse
 ### Issue: Array syntax error
 
 **Error**:
-```
+
+```text
 Binder Error: list_value is not a valid function
 ```
 
@@ -818,7 +841,8 @@ ARRAY[case when not valid then 'rule' else null end, ...]
 ### Issue: WHERE clause syntax error
 
 **Error**:
-```
+
+```text
 WHERE clause cannot contain aggregates
 ```
 
@@ -855,6 +879,7 @@ group by encounter_id
 **Debug steps**:
 
 1. Check staging model has DQ flags:
+
 ```sql
 select
     is_dq_valid,
@@ -864,6 +889,7 @@ group by is_dq_valid
 ```
 
 2. Verify validation logic:
+
 ```sql
 -- Show invalid records and why
 select
@@ -877,6 +903,7 @@ limit 10
 ```
 
 3. Check quarantine model compiles:
+
 ```bash
 dbt compile --select int_dq_quarantine__my_entity
 cat target/compiled/.../int_dq_quarantine__my_entity.sql
@@ -889,12 +916,14 @@ cat target/compiled/.../int_dq_quarantine__my_entity.sql
 **Debug steps**:
 
 1. Find which fact tables lack filter:
+
 ```bash
 grep -r "ref('stg_synthea__encounters')" models/marts/
 grep -r "quarantine_filter" models/marts/
 ```
 
 2. Check for indirect references (via intermediate models):
+
 ```bash
 # Find all models that reference the staging model
 dbt ls --select +stg_synthea__encounters
@@ -909,11 +938,13 @@ dbt ls --select +stg_synthea__encounters
 **Optimization**:
 
 1. Materialize staging as tables (not views):
+
 ```sql
 {{ config(materialized='table') }}
 ```
 
 2. Create index on `is_dq_valid`:
+
 ```sql
 -- In post-hook
 {{ config(
@@ -924,6 +955,7 @@ dbt ls --select +stg_synthea__encounters
 ```
 
 3. Sample quarantine for large datasets:
+
 ```sql
 -- Instead of full quarantine
 select *

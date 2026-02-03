@@ -31,6 +31,7 @@ All 5 deliverables from ARCH_REPORT implemented successfully.
 ### 1. LEARNINGS.md
 
 **Added sections**:
+
 - `## Pattern Promotion from ADRs` - Documents the promotion process
 - `### Promoted Patterns` table - Tracks ADR-2 as first promoted pattern
 - `## dbt Architecture Patterns` - New category for dbt-specific patterns
@@ -41,6 +42,7 @@ All 5 deliverables from ARCH_REPORT implemented successfully.
 ### 2. Sage Persona (sage.md)
 
 **Added Workflow H**: ADR Pattern Promotion Review
+
 - Trigger: Session end OR explicit `sage: review ADRs for promotion`
 - Process: Scan ADR_INDEX, check for 2+ implementations, promote to LEARNINGS
 - Includes promotion criteria table and example invocations
@@ -48,6 +50,7 @@ All 5 deliverables from ARCH_REPORT implemented successfully.
 ### 3. TDD-HISTORICAL.md (New File)
 
 **Created with 3 historical ADRs**:
+
 - ADR-6: PR-Centric Development Workflow (v0.5)
 - ADR-7: Single-File Playground Architecture (v0.6)
 - ADR-8: Inter-Agent Report Pattern (v0.6)
@@ -57,6 +60,7 @@ Each ADR follows the standard format with Context, Decision, Rationale, Conseque
 ### 4. ADR_INDEX.md
 
 **Updates**:
+
 - Quick Stats: 8 total ADRs, 1 promoted
 - ADR Registry: Added ADRs 6-8, new "Promoted" column
 - ADR Summary by Category: Added "Workflow & Agents" category
@@ -65,6 +69,7 @@ Each ADR follows the standard format with Context, Decision, Rationale, Conseque
 ### 5. SESSION_SUMMARY Template
 
 **Added ADR Review section** with 3 subsections:
+
 - ADRs Consulted This Session
 - ADR Candidates Identified
 - Promotion Candidates

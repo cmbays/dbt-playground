@@ -1922,6 +1922,7 @@ rating = get_rating(score)  # "excellent", "acceptable", "needs_improvement", "p
 ```
 
 **Scoring Formula**:
+
 - Base: `(completed_stages / total_stages) × 100`
 - Penalty: `-skip_penalty` per skip (default: -10)
 - Floor: 0
