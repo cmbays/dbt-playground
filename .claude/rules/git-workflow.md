@@ -64,6 +64,28 @@ git push origin main
 - Force push to main/master
 - `gh pr merge` without review
 
+## Rebasing Feature Branches
+
+When main is updated with infrastructure changes (CI, workflows, dependencies), rebase feature branches:
+
+```bash
+git checkout feature-branch
+git rebase main
+
+# If conflicts occur:
+git checkout --ours file.yml      # Keep main's version (for infrastructure)
+git add file.yml
+git rebase --continue
+
+# Push rebased branch
+git push --force-with-lease origin feature-branch
+```
+
+**Key points**:
+- Use `--force-with-lease` (safer than `--force`, prevents overwriting others' work)
+- For workflow/infrastructure conflicts, keep main's version with `--ours`
+- Always rebase after merging infrastructure PRs (runner setup, CI changes, etc.)
+
 ## Git Worktrees (Parallel Sessions)
 
 Git worktrees enable multiple Claude Code sessions to work simultaneously on different features without conflicts.
