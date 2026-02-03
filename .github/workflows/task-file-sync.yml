@@ -2,7 +2,7 @@ name: Task File Sync
 
 on:
   issues:
-    types: [opened, closed, labeled, unlabeled]
+    types: [opened, closed, labeled]
 
 permissions:
   contents: write
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   sync-task-file:
-    runs-on: self-hosted
+    runs-on: [self-hosted, macOS, ARM64]
     # Only run for issues with task labels
     if: |
       contains(github.event.issue.labels.*.name, 'type:task') ||
@@ -21,6 +21,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Verify dependencies
+        run: |
+          command -v jq >/dev/null 2>&1 || { echo "ERROR: jq is required"; exit 1; }
+          echo "Dependencies verified"
 
       - name: Create task file on issue open
         if: github.event.action == 'opened' || github.event.action == 'labeled'
@@ -34,50 +40,42 @@ jobs:
         run: |
           TASK_FILE="backlog/tasks/issue-${ISSUE_NUM}.md"
 
-          # Skip if file already exists
           if [[ -f "$TASK_FILE" ]]; then
             echo "Task file already exists: $TASK_FILE"
             exit 0
           fi
 
-          # Ensure directory exists
           mkdir -p backlog/tasks
 
-          # Escape single quotes in title for YAML
-          SAFE_TITLE="${ISSUE_TITLE//\'/\'\'}"
+          # Sanitize title - escape quotes, remove shell metacharacters, truncate
+          SAFE_TITLE=$(printf '%s' "$ISSUE_TITLE" | sed "s/'/'\\\\''/g" | tr -d '`$\\' | cut -c1-200)
 
-          # Extract labels as YAML array items
           LABELS_YAML=$(echo "$ISSUE_LABELS" | jq -r '.[] | "  - " + .')
-
-          # Set milestone (empty string if null)
           MILESTONE="${ISSUE_MILESTONE:-}"
 
-          # Create task file
-          cat > "$TASK_FILE" << EOF
-          ---
-          id: TASK-${ISSUE_NUM}
-          github_issue: ${ISSUE_NUM}
-          title: '${SAFE_TITLE}'
-          status: UNDERSTAND
-          assignee: []
-          created_date: '${ISSUE_CREATED}'
-          labels:
-          ${LABELS_YAML}
-          dependencies: []
-          priority: medium
-          milestone: ${MILESTONE}
-          ---
-
-          ## Description
-
-          <!-- Auto-generated from GitHub issue #${ISSUE_NUM} -->
-          <!-- Edit in GitHub issue for single source of truth -->
-
-          See: https://github.com/${REPO_FULL}/issues/${ISSUE_NUM}
-          EOF
-
-          # Fix heredoc indentation (remove leading spaces)
-          sed -i.bak 's/^          //' "$TASK_FILE" && rm -f "$TASK_FILE.bak"
+          # Create task file using printf for safety
+          {
+            printf '%s\n' "---"
+            printf 'id: TASK-%s\n' "${ISSUE_NUM}"
+            printf 'github_issue: %s\n' "${ISSUE_NUM}"
+            printf "title: '%s'\n" "${SAFE_TITLE}"
+            printf '%s\n' "status: UNDERSTAND"
+            printf '%s\n' "assignee: []"
+            printf "created_date: '%s'\n" "${ISSUE_CREATED}"
+            printf '%s\n' "labels:"
+            printf '%s\n' "${LABELS_YAML}"
+            printf '%s\n' "dependencies: []"
+            printf '%s\n' "priority: medium"
+            printf 'milestone: %s\n' "${MILESTONE}"
+            printf '%s\n' "---"
+            printf '\n'
+            printf '%s\n' "## Description"
+            printf '\n'
+            printf '<!-- Auto-generated from GitHub issue #%s -->\n' "${ISSUE_NUM}"
+            printf '%s\n' "<!-- Edit in GitHub issue for single source of truth -->"
+            printf '\n'
+            printf 'See: https://github.com/%s/issues/%s\n' "${REPO_FULL}" "${ISSUE_NUM}"
+          } > "$TASK_FILE"
 
           echo "Created task file: $TASK_FILE"
           cat "$TASK_FILE"
@@ -90,23 +88,28 @@ jobs:
           TASK_FILE="backlog/tasks/issue-${ISSUE_NUM}.md"
           ARCHIVE_DIR="backlog/archive/tasks"
 
-          # Skip if file doesn't exist
-          if [[ ! -f "$TASK_FILE" ]]; then
-            echo "No task file to archive for issue #${ISSUE_NUM}"
+          if [[ -f "$TASK_FILE" ]]; then
+            mkdir -p "$ARCHIVE_DIR"
+            mv "$TASK_FILE" "${ARCHIVE_DIR}/issue-${ISSUE_NUM}.md"
+            echo "Archived: ${ARCHIVE_DIR}/issue-${ISSUE_NUM}.md"
             exit 0
           fi
 
-          # Create archive directory if needed
-          mkdir -p "$ARCHIVE_DIR"
+          # Check for legacy task files with github_issue field
+          LEGACY=$(find backlog/tasks -maxdepth 1 -name "task-*.md" -exec grep -l "github_issue: ${ISSUE_NUM}" {} \; 2>/dev/null | head -1)
+          if [[ -n "$LEGACY" ]]; then
+            mkdir -p "$ARCHIVE_DIR"
+            mv "$LEGACY" "${ARCHIVE_DIR}/"
+            echo "Archived legacy: $LEGACY"
+            exit 0
+          fi
 
-          # Move to archive
-          mv "$TASK_FILE" "${ARCHIVE_DIR}/issue-${ISSUE_NUM}.md"
+          echo "No task file to archive for issue #${ISSUE_NUM}"
 
-          echo "Archived task file: ${ARCHIVE_DIR}/issue-${ISSUE_NUM}.md"
-
-      - name: Commit changes
+      - name: Commit and push changes
         env:
           ISSUE_NUM: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
           ACTION: ${{ github.event.action }}
         run: |
           git config user.name "github-actions[bot]"
@@ -119,18 +122,24 @@ jobs:
             exit 0
           fi
 
-          if [[ "$ACTION" == "opened" || "$ACTION" == "labeled" ]]; then
-            git commit -m "chore(backlog): create task file for #${ISSUE_NUM}
+          # Sanitize title for commit message
+          SHORT_TITLE=$(printf '%s' "$ISSUE_TITLE" | tr -d '`$\\:"' | cut -c1-50)
 
-          Auto-generated task file for GitHub issue #${ISSUE_NUM}
+          if [[ "$ACTION" == "opened" || "$ACTION" == "labeled" ]]; then
+            git commit -m "chore(backlog): create task file for #${ISSUE_NUM} - ${SHORT_TITLE}
 
           Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           elif [[ "$ACTION" == "closed" ]]; then
-            git commit -m "chore(backlog): archive task file for #${ISSUE_NUM}
-
-          Task file archived on issue close
+            git commit -m "chore(backlog): archive task file for #${ISSUE_NUM} - ${SHORT_TITLE}
 
           Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           fi
 
-          git push
+          # Retry push with rebase for race conditions
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "Retry $i..."
+            sleep $((i * 2))
+          done
+          echo "ERROR: Push failed after retries"
+          exit 1
