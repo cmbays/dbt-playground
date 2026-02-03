@@ -50,7 +50,7 @@ jobs:
           # Sanitize title - escape quotes, remove shell metacharacters, truncate
           SAFE_TITLE=$(printf '%s' "$ISSUE_TITLE" | sed "s/'/'\\\\''/g" | tr -d '`$\\' | cut -c1-200)
 
-          LABELS_YAML=$(echo "$ISSUE_LABELS" | jq -r '.[] | "  - " + .')
+          LABELS_YAML=$(echo "$ISSUE_LABELS" | jq -r '.[] | @json | "  - " + .')
           MILESTONE="${ISSUE_MILESTONE:-}"
 
           # Create task file using printf for safety

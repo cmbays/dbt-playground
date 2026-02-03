@@ -74,6 +74,7 @@ Task files in `backlog/tasks/` use the GitHub issue ID as the filename for direc
 **Pattern**: `issue-{N}.md` where `{N}` is the GitHub issue number.
 
 **Examples**:
+
 | GitHub Issue | Task File |
 |--------------|-----------|
 | #161 | `backlog/tasks/issue-161.md` |
@@ -84,6 +85,7 @@ Task files in `backlog/tasks/` use the GitHub issue ID as the filename for direc
 Existing files using `task-{N} - {Title}.md` pattern remain valid and are not renamed.
 
 **Legacy Examples**:
+
 ```
 backlog/tasks/task-2 - API-Test-Task.md
 backlog/tasks/task-12 - E2E-Test-Multi-worktree-task-visibility.md
@@ -137,6 +139,8 @@ See: https://github.com/cmbays/dbt-playground/issues/161
 | `epic_issue` | integer | No | Parent Epic issue number |
 | `milestone` | string | No | Target milestone |
 | `prd` | string | No | Related PRD document path |
+
+**Note**: The automatic `task-file-sync` workflow generates files with core fields only. Manually-created task files may include extended metadata (`epic_issue`, `milestone`, `prd`) which are fully supported by tooling.
 
 ### Automatic Task File Creation
 
