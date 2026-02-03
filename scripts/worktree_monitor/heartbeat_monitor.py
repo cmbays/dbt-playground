@@ -160,11 +160,12 @@ class HeartbeatMonitor:
             HeartbeatFileNotFoundError: If file doesn't exist.
             HeartbeatParseError: If JSON parsing fails.
         """
-        if not self.heartbeat_path.exists():
+        try:
+            text = self.heartbeat_path.read_text(encoding="utf-8")
+        except FileNotFoundError:
             raise HeartbeatFileNotFoundError(str(self.heartbeat_path))
 
         try:
-            text = self.heartbeat_path.read_text(encoding="utf-8")
             if not text.strip():
                 raise HeartbeatParseError(
                     str(self.heartbeat_path),
@@ -186,10 +187,10 @@ class HeartbeatMonitor:
         Raises:
             HeartbeatFileNotFoundError: If file doesn't exist.
         """
-        if not self.heartbeat_path.exists():
+        try:
+            return self.heartbeat_path.stat().st_mtime
+        except FileNotFoundError:
             raise HeartbeatFileNotFoundError(str(self.heartbeat_path))
-
-        return self.heartbeat_path.stat().st_mtime
 
     def _iter_orchestrator_entries(
         self, content: dict[str, Any]
@@ -207,6 +208,31 @@ class HeartbeatMonitor:
             return []
         return [entry for entry in orchestrators_data if isinstance(entry, dict)]
 
+    def _parse_request_type(
+        self, value: str | None, branch: str
+    ) -> RequestType | None:
+        """Parse a request type string into RequestType enum.
+
+        Args:
+            value: Raw request type string from heartbeat data.
+            branch: Branch name for logging context.
+
+        Returns:
+            RequestType if valid, None otherwise.
+        """
+        if not value:
+            return None
+        try:
+            return RequestType(value)
+        except ValueError as e:
+            logger.debug(
+                "Invalid RequestType value %r for branch %r: %s",
+                value,
+                branch,
+                e,
+            )
+            return None
+
     def _parse_orchestrators(self, content: dict[str, Any]) -> list[OrchestratorStatus]:
         """Parse orchestrator statuses from content.
 
@@ -220,20 +246,7 @@ class HeartbeatMonitor:
         for entry in self._iter_orchestrator_entries(content):
             branch = entry.get("branch", "")
             status_str = entry.get("status", "")
-            request_str = entry.get("request")
-
-            # Parse request type if present
-            request_type = None
-            if request_str:
-                try:
-                    request_type = RequestType(request_str)
-                except ValueError as e:
-                    logger.debug(
-                        "Invalid RequestType value %r for branch %r: %s",
-                        request_str,
-                        branch,
-                        e,
-                    )
+            request_type = self._parse_request_type(entry.get("request"), branch)
 
             result.append(
                 OrchestratorStatus(
@@ -261,24 +274,14 @@ class HeartbeatMonitor:
         """
         result: list[OrchestratorRequest] = []
         for entry in self._iter_orchestrator_entries(content):
-            request_str = entry.get("request")
-            if not request_str:
-                continue
-
-            try:
-                request_type = RequestType(request_str)
-            except ValueError as e:
-                logger.debug(
-                    "Invalid RequestType value %r for branch %r: %s",
-                    request_str,
-                    entry.get("branch", ""),
-                    e,
-                )
+            branch = entry.get("branch", "")
+            request_type = self._parse_request_type(entry.get("request"), branch)
+            if request_type is None:
                 continue
 
             result.append(
                 OrchestratorRequest(
-                    branch=entry.get("branch", ""),
+                    branch=branch,
                     request_type=request_type,
                     message=entry.get("message", ""),
                     timestamp=None,

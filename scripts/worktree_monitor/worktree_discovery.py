@@ -228,27 +228,33 @@ class WorktreeDiscovery:
         worktrees = []
         current_wt: dict[str, Any] = {}
 
+        # Define prefixes for maintainability
+        worktree_prefix = "worktree "
+        head_prefix = "HEAD "
+        branch_prefix = "branch "
+        refs_heads_prefix = "refs/heads/"
+
         for line in output.split("\n"):
             line = line.rstrip()
 
-            if line.startswith("worktree "):
+            if line.startswith(worktree_prefix):
                 # Start of new worktree block
                 if current_wt:
                     worktrees.append(current_wt)
                 current_wt = {
-                    "path": line[9:],  # Remove "worktree " prefix
+                    "path": line[len(worktree_prefix):],
                     "is_detached": False,
                     "branch": None,
                 }
 
-            elif line.startswith("HEAD "):
-                current_wt["head"] = line[5:]  # Remove "HEAD " prefix
+            elif line.startswith(head_prefix):
+                current_wt["head"] = line[len(head_prefix):]
 
-            elif line.startswith("branch "):
+            elif line.startswith(branch_prefix):
                 # Extract branch name from refs/heads/...
-                branch_ref = line[7:]  # Remove "branch " prefix
-                if branch_ref.startswith("refs/heads/"):
-                    current_wt["branch"] = branch_ref[11:]  # Remove "refs/heads/"
+                branch_ref = line[len(branch_prefix):]
+                if branch_ref.startswith(refs_heads_prefix):
+                    current_wt["branch"] = branch_ref[len(refs_heads_prefix):]
                 else:
                     current_wt["branch"] = branch_ref
 
