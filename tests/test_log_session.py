@@ -15,6 +15,7 @@ import json
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -88,7 +89,7 @@ class TestSessionEntry:
     def test_session_entry_creation(self):
         """SessionEntry can be created with all fields."""
         entry = log_session.SessionEntry(
-            timestamp=datetime.now(),
+            timestamp=datetime(2026, 2, 15, 10, 30, 0, tzinfo=UTC),
             task='Test task',
             outcome='SUCCESS',
             files=['file1.py', 'file2.py'],
@@ -109,7 +110,7 @@ class TestSessionEntry:
     def test_session_entry_with_empty_fields(self):
         """SessionEntry works with empty optional fields."""
         entry = log_session.SessionEntry(
-            timestamp=datetime.now(),
+            timestamp=datetime(2026, 2, 15, 10, 30, 0, tzinfo=UTC),
             task='Minimal task',
             outcome='SUCCESS',
             files=[],
@@ -132,7 +133,7 @@ class TestEntryValidation:
     def test_validate_empty_task_warns(self):
         """Validation warns on empty task."""
         entry = log_session.SessionEntry(
-            timestamp=datetime.now(),
+            timestamp=datetime(2026, 2, 15, 10, 30, 0, tzinfo=UTC),
             task='',
             outcome='SUCCESS',
             files=[],
@@ -150,7 +151,7 @@ class TestEntryValidation:
     def test_validate_unknown_outcome_warns(self):
         """Validation warns on unknown outcome."""
         entry = log_session.SessionEntry(
-            timestamp=datetime.now(),
+            timestamp=datetime(2026, 2, 15, 10, 30, 0, tzinfo=UTC),
             task='Test',
             outcome='UNKNOWN',
             files=[],
@@ -169,7 +170,7 @@ class TestEntryValidation:
         """Valid outcomes (SUCCESS, FAILURE, PARTIAL) don't warn."""
         for outcome in ['SUCCESS', 'FAILURE', 'PARTIAL']:
             entry = log_session.SessionEntry(
-                timestamp=datetime.now(),
+                timestamp=datetime(2026, 2, 15, 10, 30, 0, tzinfo=UTC),
                 task='Test',
                 outcome=outcome,
                 files=[],
@@ -187,7 +188,7 @@ class TestEntryValidation:
     def test_validate_unusual_task_id_warns(self):
         """Validation warns on unusual task_id format."""
         entry = log_session.SessionEntry(
-            timestamp=datetime.now(),
+            timestamp=datetime(2026, 2, 15, 10, 30, 0, tzinfo=UTC),
             task='Test',
             outcome='SUCCESS',
             files=[],
@@ -205,7 +206,7 @@ class TestEntryValidation:
     def test_validate_valid_task_id_no_warn(self):
         """Valid task_id format (e.g., TASK-42) doesn't warn."""
         entry = log_session.SessionEntry(
-            timestamp=datetime.now(),
+            timestamp=datetime(2026, 2, 15, 10, 30, 0, tzinfo=UTC),
             task='Test',
             outcome='SUCCESS',
             files=[],
@@ -645,12 +646,29 @@ class TestTodayLogPath:
     """Tests for today's log file path generation."""
 
     def test_get_today_log(self, memory_dir_with_claude_md: Path, monkeypatch):
-        """Today's log path is correctly generated."""
+        """Today's log path is correctly generated using UTC date."""
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
 
-        today = datetime.now().strftime('%Y-%m-%d')
-        expected = memory_dir_with_claude_md / f'{today}.md'
+        # Use UTC date to match the code's behavior
+        today_utc = datetime.now(UTC).strftime('%Y-%m-%d')
+        expected = memory_dir_with_claude_md / f'{today_utc}.md'
 
         result = log_session.get_today_log()
 
         assert result == expected
+
+    def test_get_today_log_uses_utc(self, memory_dir_with_claude_md: Path, monkeypatch):
+        """Verify get_today_log uses UTC timezone for date calculation."""
+        monkeypatch.chdir(memory_dir_with_claude_md.parent)
+
+        # Mock datetime.now to return a specific UTC time
+        fixed_time = datetime(2026, 3, 15, 23, 30, 0, tzinfo=UTC)
+
+        with patch.object(log_session, 'datetime') as mock_datetime:
+            mock_datetime.now.return_value = fixed_time
+            mock_datetime.side_effect = lambda *args, **kw: datetime(*args, **kw)
+
+            result = log_session.get_today_log()
+
+            # Should use UTC date (2026-03-15)
+            assert '2026-03-15' in str(result)

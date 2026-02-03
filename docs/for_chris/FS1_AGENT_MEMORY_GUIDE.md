@@ -33,6 +33,7 @@ uv run scripts/log-session.py -t "Built customer analytics" -o SUCCESS -i TASK-4
 ```
 
 Flags:
+
 - `-t "task"` - What you did (required for quick mode)
 - `-o PARTIAL` - Outcome (SUCCESS, PARTIAL, FAILURE)
 - `-i TASK-42` - Link to Backlog.md task
@@ -54,6 +55,7 @@ This generates `memory/MEMORY_INDEX.md` with patterns and topics.
 ### When to Log
 
 Log sessions when:
+
 - You finish a significant task
 - You learn something you might forget
 - You make a decision with rationale worth preserving
@@ -81,6 +83,7 @@ uv run scripts/log-session.py
 ```
 
 You'll be prompted for:
+
 - Task description
 - Outcome
 - Decisions (with rationale)
@@ -94,7 +97,7 @@ You'll be prompted for:
 
 If you prefer natural language:
 
-```
+```text
 sage: log session              # Full interactive
 sage: log "Built customer mart" # Quick mode
 sage: end session              # Review and log
@@ -114,7 +117,7 @@ uv run scripts/consolidate-memory.py
 
 ### What You'll See
 
-```
+```text
 === Memory Consolidation ===
 Directory: /path/to/memory
 Period: 7 days
@@ -175,12 +178,14 @@ This enables metrics tracking across tasks (coming in FS5).
 ### 3. Keep Learnings Atomic
 
 Instead of:
-```
+
+```text
 - Learned a lot about incremental models and testing patterns and dbt config
 ```
 
 Write:
-```
+
+```text
 - Incremental models need unique_key for merge strategy
 - dbt_expectations tests should use column-level thresholds
 - DuckDB incremental differs from Snowflake
@@ -225,7 +230,7 @@ You need 2+ similar learnings for pattern detection. Keep logging! After a week 
 
 The expected format is `TASK-N` (e.g., TASK-42). Other formats work but generate a warning:
 
-```
+```text
 [WARN] Task ID 'issue-42' has unusual format
 ```
 
@@ -305,7 +310,7 @@ Auto-detection uses `git diff HEAD~1`. If you haven't committed recently, no fil
 
 ## How It All Connects
 
-```
+```text
 Daily Logging                    Weekly Consolidation
      |                                  |
      v                                  v
@@ -324,6 +329,7 @@ Session captured               Patterns identified
 ```
 
 The compound loop:
+
 1. You log sessions
 2. Patterns emerge from repetition
 3. Good patterns get promoted to LEARNINGS.md

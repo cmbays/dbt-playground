@@ -270,7 +270,7 @@ def determine_status(group: PatternGroup) -> str:
         return 'CANDIDATE'
     elif group.score >= 0.4:
         return 'REVIEW'
-    elif group.count >= 3 or group.count >= 2 and len(group.dates) >= 2:
+    elif group.count >= 3 or (group.count >= 2 and len(group.dates) >= 2):
         return 'CANDIDATE'
     elif group.count >= 2:
         return 'REVIEW'

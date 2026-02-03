@@ -10,7 +10,7 @@ Provides shared fixtures for:
 
 import json
 import sys
-from datetime import datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -19,6 +19,10 @@ import pytest
 PROJECT_ROOT = Path(__file__).parent.parent
 SCRIPTS_DIR = PROJECT_ROOT / 'scripts'
 sys.path.insert(0, str(SCRIPTS_DIR))
+
+# Fixed date for deterministic tests (avoids timezone issues)
+TEST_DATE = date(2026, 2, 15)
+TEST_DATETIME = datetime(2026, 2, 15, 10, 0, 0, tzinfo=UTC)
 
 
 @pytest.fixture
@@ -79,20 +83,21 @@ def sample_log_entry() -> str:
 @pytest.fixture
 def sample_log_file(memory_dir: Path, sample_log_entry: str) -> Path:
     """Create a sample log file in the memory directory."""
-    today = datetime.now().strftime('%Y-%m-%d')
-    log_file = memory_dir / f'{today}.md'
+    # Use fixed date for determinism
+    date_str = TEST_DATE.isoformat()
+    log_file = memory_dir / f'{date_str}.md'
     log_file.write_text(sample_log_entry)
     return log_file
 
 
 @pytest.fixture
 def multi_day_logs(memory_dir: Path) -> list[Path]:
-    """Create log files for the past 5 days."""
+    """Create log files for the past 5 days from a fixed date."""
     log_files = []
 
     for i in range(5):
-        log_date = datetime.now() - timedelta(days=i)
-        date_str = log_date.strftime('%Y-%m-%d')
+        log_date = TEST_DATE - timedelta(days=i)
+        date_str = log_date.isoformat()
         log_file = memory_dir / f'{date_str}.md'
 
         log_file.write_text(f"""## [{date_str}T10:00:00] Task: Task for day {i}
@@ -124,8 +129,8 @@ def logs_with_recurring_pattern(memory_dir: Path) -> list[Path]:
     recurring_learning = 'Always validate input before processing'
 
     for i in range(3):
-        log_date = datetime.now() - timedelta(days=i)
-        date_str = log_date.strftime('%Y-%m-%d')
+        log_date = TEST_DATE - timedelta(days=i)
+        date_str = log_date.isoformat()
         log_file = memory_dir / f'{date_str}.md'
 
         log_file.write_text(f"""## [{date_str}T10:00:00] Task: Task {i}

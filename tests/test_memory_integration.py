@@ -15,7 +15,6 @@ Test IDs reference FS1_TEST_SUITE_BETA.md specifications.
 import importlib.util
 import json
 import threading
-import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -30,6 +29,9 @@ consolidate_path = Path(__file__).parent.parent / 'scripts' / 'consolidate-memor
 spec = importlib.util.spec_from_file_location('consolidate_memory', consolidate_path)
 consolidate_memory = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(consolidate_memory)
+
+# Fixed dates for deterministic tests
+TEST_DATE = datetime(2026, 2, 15, 10, 0, 0, tzinfo=UTC)
 
 
 @pytest.mark.integration
@@ -184,9 +186,9 @@ class TestFS1FS5Integration:
         """I2.2: Events are appended, never overwritten."""
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
 
-        # Write first event
+        # Write first event with fixed timestamp
         entry1 = log_session.SessionEntry(
-            timestamp=datetime.now(UTC),
+            timestamp=TEST_DATE,
             task='Task 1',
             outcome='SUCCESS',
             files=[],
@@ -205,10 +207,9 @@ class TestFS1FS5Integration:
         first_event = json.loads(first_content.strip())
         first_ts = first_event['timestamp']
 
-        # Wait and write second event
-        time.sleep(0.01)
+        # Write second event
         entry2 = log_session.SessionEntry(
-            timestamp=datetime.now(UTC),
+            timestamp=TEST_DATE + timedelta(hours=1),
             task='Task 2',
             outcome='FAILURE',
             files=[],
@@ -259,9 +260,9 @@ class TestFS1FS5Integration:
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
         memory_dir = memory_dir_with_claude_md
 
-        # Create sample logs
+        # Create sample logs with fixed dates
         for i in range(3):
-            log_date = datetime.now() - timedelta(days=i)
+            log_date = TEST_DATE - timedelta(days=i)
             date_str = log_date.strftime('%Y-%m-%d')
             log_file = memory_dir / f'{date_str}.md'
             log_file.write_text(f"""## [{date_str}T10:00:00] Task: Task {i}
@@ -297,12 +298,12 @@ class TestWorkflowInteraction:
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
         memory_dir = memory_dir_with_claude_md
 
-        # Workflow J: Create entry
-        today = datetime.now().strftime('%Y-%m-%d')
-        log_file = memory_dir / f'{today}.md'
+        # Workflow J: Create entry with fixed date
+        date_str = TEST_DATE.strftime('%Y-%m-%d')
+        log_file = memory_dir / f'{date_str}.md'
 
         entry = log_session.SessionEntry(
-            timestamp=datetime.now(),
+            timestamp=TEST_DATE,
             task='Test task',
             outcome='SUCCESS',
             files=[],
@@ -327,9 +328,9 @@ class TestWorkflowInteraction:
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
         memory_dir = memory_dir_with_claude_md
 
-        # Create 5 days of logs
+        # Create 5 days of logs with fixed dates
         for i in range(5):
-            log_date = datetime.now() - timedelta(days=i)
+            log_date = TEST_DATE - timedelta(days=i)
             date_str = log_date.strftime('%Y-%m-%d')
             log_file = memory_dir / f'{date_str}.md'
             log_file.write_text(f"""## [{date_str}T10:00:00] Task: Task for day {i}
@@ -348,16 +349,21 @@ class TestWorkflowInteraction:
         assert result['total_entries'] == 5
 
     def test_concurrent_logging_safety(self, memory_dir_with_claude_md: Path, monkeypatch):
-        """I3.3: Concurrent log writes don't corrupt data."""
+        """I3.3: Concurrent log writes don't corrupt data.
+
+        Note: This test verifies basic thread safety through file append semantics.
+        Python's file.write() for small writes is typically atomic on POSIX systems.
+        For production use, consider using file locking (fcntl) if needed.
+        """
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
         memory_dir = memory_dir_with_claude_md
 
-        today = datetime.now().strftime('%Y-%m-%d')
-        log_file = memory_dir / f'{today}.md'
+        date_str = TEST_DATE.strftime('%Y-%m-%d')
+        log_file = memory_dir / f'{date_str}.md'
 
         def log_entry(task_num: int):
             entry = log_session.SessionEntry(
-                timestamp=datetime.now(),
+                timestamp=TEST_DATE + timedelta(minutes=task_num),
                 task=f'Task {task_num}',
                 outcome='SUCCESS',
                 files=[],
@@ -370,7 +376,7 @@ class TestWorkflowInteraction:
             )
             markdown = log_session.format_markdown(entry)
 
-            # Append with file lock (basic thread safety)
+            # Append to file (relies on POSIX atomic write for small buffers)
             with open(log_file, 'a') as f:
                 f.write(markdown)
 
@@ -397,9 +403,9 @@ class TestEndToEnd:
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
         memory_dir = memory_dir_with_claude_md
 
-        # Step 1: Create 3 sessions with common pattern
+        # Step 1: Create 3 sessions with common pattern using fixed dates
         for i in range(3):
-            log_date = datetime.now() - timedelta(days=i)
+            log_date = TEST_DATE - timedelta(days=i)
             date_str = log_date.strftime('%Y-%m-%d')
             log_file = memory_dir / f'{date_str}.md'
 
@@ -446,9 +452,9 @@ class TestEndToEnd:
         monkeypatch.chdir(memory_dir_with_claude_md.parent)
         memory_dir = memory_dir_with_claude_md
 
-        # Create entries with same learning
+        # Create entries with same learning using fixed dates
         for i in range(3):
-            log_date = datetime.now() - timedelta(days=i)
+            log_date = TEST_DATE - timedelta(days=i)
             date_str = log_date.strftime('%Y-%m-%d')
             log_file = memory_dir / f'{date_str}.md'
             log_file.write_text(f"""## [{date_str}T10:00:00] Task: Task {i}
