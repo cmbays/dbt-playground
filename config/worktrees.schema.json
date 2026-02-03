@@ -1,0 +1,344 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dbt-playground/schemas/worktrees.schema.json",
+  "title": "Worktree Monitor Output",
+  "description": "Schema for the worktrees.json output file consumed by the UI",
+  "type": "object",
+  "required": ["timestamp", "config_version", "milestone", "worktree_count", "worktrees"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of data collection"
+    },
+    "config_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Version of the configuration schema"
+    },
+    "milestone": {
+      "type": "string",
+      "description": "Current active milestone (e.g., 'v0.10')"
+    },
+    "worktree_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of worktrees"
+    },
+    "worktrees": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/EnrichedWorktree" },
+      "description": "List of enriched worktree data"
+    },
+    "tracks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/TrackSummary" },
+      "description": "Summary of each track/workstream"
+    },
+    "archived": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ArchivedWorktree" },
+      "description": "Recently archived worktrees"
+    },
+    "heartbeat": {
+      "$ref": "#/definitions/HeartbeatStatus",
+      "description": "Orchestrator heartbeat status"
+    },
+    "anomalies": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Anomaly" },
+      "description": "Detected anomalies across all worktrees"
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ComponentFailureInfo" },
+      "description": "Errors from components (for graceful degradation)"
+    }
+  },
+  "definitions": {
+    "EnrichedWorktree": {
+      "type": "object",
+      "required": ["path", "branch", "commit_hash", "commit_short", "is_main", "status"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Absolute path to worktree directory"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch name checked out in this worktree"
+        },
+        "commit_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$",
+          "description": "Full SHA of HEAD commit"
+        },
+        "commit_short": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{7,8}$",
+          "description": "Short SHA of HEAD commit"
+        },
+        "is_main": {
+          "type": "boolean",
+          "description": "Whether this is the main worktree"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["clean", "dirty", "detached"],
+          "description": "Git working directory status"
+        },
+        "files_changed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of modified files"
+        },
+        "files_staged": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of staged files"
+        },
+        "last_commit_msg": {
+          "type": "string",
+          "description": "Subject line of last commit"
+        },
+        "last_commit_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last commit"
+        },
+        "track_name": {
+          "type": ["string", "null"],
+          "description": "Name of the track/workstream this worktree belongs to"
+        },
+        "track_color": {
+          "type": ["string", "null"],
+          "pattern": "^#[a-fA-F0-9]{6}$",
+          "description": "Hex color code for the track"
+        },
+        "epic_number": {
+          "type": ["integer", "null"],
+          "description": "GitHub issue number of the epic"
+        },
+        "epic_issues": {
+          "$ref": "#/definitions/EpicIssues",
+          "description": "Issue counts for the epic"
+        },
+        "pr": {
+          "$ref": "#/definitions/PRInfo",
+          "description": "Pull request information"
+        },
+        "ci_checks": {
+          "$ref": "#/definitions/CIChecks",
+          "description": "CI check status"
+        },
+        "coderabbit": {
+          "$ref": "#/definitions/CodeRabbitStatus",
+          "description": "CodeRabbit review status"
+        },
+        "anomalies": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Anomaly" },
+          "description": "Anomalies detected for this worktree"
+        }
+      }
+    },
+    "EpicIssues": {
+      "type": "object",
+      "required": ["open", "closed", "total"],
+      "properties": {
+        "open": { "type": "integer", "minimum": 0 },
+        "closed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "PRInfo": {
+      "type": "object",
+      "required": ["url", "number", "state", "title"],
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the pull request"
+        },
+        "number": {
+          "type": "integer",
+          "description": "PR number"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["open", "closed", "merged"],
+          "description": "PR state"
+        },
+        "title": {
+          "type": "string",
+          "description": "PR title"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "draft": {
+          "type": "boolean",
+          "description": "Whether PR is a draft"
+        }
+      }
+    },
+    "CIChecks": {
+      "type": "object",
+      "required": ["total", "passed", "failed", "pending"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "pending": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "CodeRabbitStatus": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": ["string", "null"],
+          "enum": ["approved", "changes_requested", "commented", "pending", null]
+        },
+        "feedback": {
+          "$ref": "#/definitions/CodeRabbitFeedback"
+        }
+      }
+    },
+    "CodeRabbitFeedback": {
+      "type": "object",
+      "required": ["major", "minor", "total"],
+      "properties": {
+        "major": { "type": "integer", "minimum": 0 },
+        "minor": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "TrackSummary": {
+      "type": "object",
+      "required": ["name", "epic", "color"],
+      "properties": {
+        "name": { "type": "string" },
+        "epic": { "type": "integer" },
+        "color": { "type": "string", "pattern": "^#[a-fA-F0-9]{6}$" },
+        "worktree_count": { "type": "integer", "minimum": 0 },
+        "issues_open": { "type": "integer", "minimum": 0 },
+        "issues_closed": { "type": "integer", "minimum": 0 },
+        "status": {
+          "type": "string",
+          "enum": ["PLANNED", "IN_PROGRESS", "COMPLETE", "BLOCKED", "ARCHIVED"]
+        }
+      }
+    },
+    "ArchivedWorktree": {
+      "type": "object",
+      "required": ["id", "worktree", "archived_at", "reason"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique archive ID (UUID)"
+        },
+        "worktree": {
+          "$ref": "#/definitions/EnrichedWorktree",
+          "description": "Full worktree state at archive time"
+        },
+        "archived_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["completed", "merged", "closed", "manual"]
+        },
+        "version": {
+          "type": "string",
+          "description": "Version this worktree belonged to"
+        }
+      }
+    },
+    "HeartbeatStatus": {
+      "type": "object",
+      "required": ["state", "last_update"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": ["FRESH", "WARNING", "STALE", "DISCONNECTED"]
+        },
+        "last_update": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "seconds_since_update": {
+          "type": "number",
+          "minimum": 0
+        },
+        "active_orchestrators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "branch": { "type": "string" },
+              "status": { "type": "string" },
+              "request": {
+                "type": "string",
+                "enum": ["WAITING", "PERMISSION_NEEDED", "MERGE_READY", "REVIEW_NEEDED", "BLOCKED", "COMPLETED", null]
+              }
+            }
+          }
+        }
+      }
+    },
+    "Anomaly": {
+      "type": "object",
+      "required": ["type", "severity", "message"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "CI_FAILURE",
+            "CHANGES_REQUESTED",
+            "STALE_HEARTBEAT",
+            "DIRTY_WORKTREE",
+            "BLOCKED_WORKSTREAM",
+            "DISCONNECTED_ORCHESTRATOR"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW"]
+        },
+        "message": {
+          "type": "string"
+        },
+        "worktree_path": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        }
+      }
+    },
+    "ComponentFailureInfo": {
+      "type": "object",
+      "required": ["component", "message"],
+      "properties": {
+        "component": {
+          "type": "string",
+          "description": "Name of the failed component"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

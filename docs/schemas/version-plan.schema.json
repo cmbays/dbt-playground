@@ -1,0 +1,215 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dbt-playground/schemas/version-plan.schema.json",
+  "title": "VersionPlan",
+  "description": "Version planning schema for Worktree Monitor v2.0 (v1.0)",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Schema version for forward compatibility"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "Semantic version identifier (e.g., 'v0.10')"
+    },
+    "target_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date (YYYY-MM-DD)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable version description"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PLANNED", "IN_PROGRESS", "COMPLETE", "ARCHIVED"],
+      "default": "PLANNED",
+      "description": "Current version status"
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Phase"
+      },
+      "minItems": 1,
+      "description": "Ordered list of phases in this version"
+    },
+    "orchestrator": {
+      "$ref": "#/definitions/Orchestrator"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional project-specific metadata",
+      "additionalProperties": true
+    }
+  },
+  "required": ["version", "name", "target_date", "phases"],
+  "additionalProperties": false,
+  "definitions": {
+    "Phase": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Phase identifier"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Execution order (1-based)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Phase purpose/scope"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PLANNED", "IN_PROGRESS", "COMPLETE"],
+          "default": "PLANNED",
+          "description": "Current phase status"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Phase names this depends on"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "workstreams": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Workstream"
+          },
+          "minItems": 1,
+          "description": "Workstreams in this phase"
+        }
+      },
+      "required": ["name", "order", "workstreams"],
+      "additionalProperties": false
+    },
+    "Workstream": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Workstream name"
+        },
+        "epic": {
+          "type": "integer",
+          "description": "GitHub issue number of the epic"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PLANNED", "IN_PROGRESS", "BLOCKED", "COMPLETE", "ARCHIVED"],
+          "default": "PLANNED",
+          "description": "Current workstream status"
+        },
+        "branches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Branch patterns (can include globs like 'feat/kanban-*')"
+        },
+        "description": {
+          "type": "string"
+        },
+        "color": {
+          "type": ["string", "null"],
+          "pattern": "^#[a-fA-F0-9]{6}$",
+          "description": "Hex color code for the workstream"
+        },
+        "pr_number": {
+          "type": ["integer", "null"],
+          "description": "Associated PR number"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "assignee": {
+          "type": ["string", "null"],
+          "description": "Assigned orchestrator/agent"
+        },
+        "notes": {
+          "type": ["string", "null"],
+          "description": "Free-form notes"
+        }
+      },
+      "required": ["name", "epic", "branches"],
+      "additionalProperties": false
+    },
+    "Orchestrator": {
+      "type": "object",
+      "properties": {
+        "last_heartbeat": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Last heartbeat timestamp"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "IDLE", "WAITING", "OFFLINE"],
+          "description": "Orchestrator status"
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Request"
+          },
+          "description": "Pending orchestrator requests"
+        },
+        "active_workstream": {
+          "type": ["string", "null"],
+          "description": "Currently active workstream name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Request": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["WAITING", "PERMISSION", "MERGE", "REVIEW", "BLOCKED"],
+          "description": "Request type"
+        },
+        "workstream": {
+          "type": "string",
+          "description": "Associated workstream"
+        },
+        "message": {
+          "type": ["string", "null"],
+          "description": "Human-readable message"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["LOW", "NORMAL", "HIGH"],
+          "default": "NORMAL"
+        }
+      },
+      "required": ["type", "workstream", "created_at"],
+      "additionalProperties": false
+    }
+  }
+}
