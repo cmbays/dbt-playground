@@ -5,13 +5,30 @@
   "description": "Version planning schema for Worktree Monitor v2.0 (v1.0)",
   "type": "object",
   "properties": {
-    "schema_version": {
-      "type": "string",
-      "const": "1.0",
+    "version": {
+      "type": "integer",
+      "minimum": 1,
       "description": "Schema version for forward compatibility"
     },
-    "version": {
-      "$ref": "#/definitions/Version"
+    "name": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "Semantic version identifier (e.g., 'v0.10')"
+    },
+    "target_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Target completion date (YYYY-MM-DD)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable version description"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PLANNED", "IN_PROGRESS", "COMPLETE", "ARCHIVED"],
+      "default": "PLANNED",
+      "description": "Current version status"
     },
     "phases": {
       "type": "array",
@@ -30,45 +47,9 @@
       "additionalProperties": true
     }
   },
-  "required": ["schema_version", "version", "phases"],
+  "required": ["version", "name", "target_date", "phases"],
   "additionalProperties": false,
   "definitions": {
-    "Version": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "pattern": "^v[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
-          "description": "Semantic version identifier"
-        },
-        "target_date": {
-          "type": "string",
-          "format": "date",
-          "description": "Target completion date (YYYY-MM-DD)"
-        },
-        "description": {
-          "type": "string",
-          "description": "Human-readable version description"
-        },
-        "status": {
-          "type": "string",
-          "enum": ["PLANNED", "IN_PROGRESS", "COMPLETE", "ARCHIVED"],
-          "description": "Current version status"
-        },
-        "started_at": {
-          "type": ["string", "null"],
-          "format": "date-time",
-          "description": "When version work began"
-        },
-        "completed_at": {
-          "type": ["string", "null"],
-          "format": "date-time",
-          "description": "When version was completed"
-        }
-      },
-      "required": ["name", "target_date", "status"],
-      "additionalProperties": false
-    },
     "Phase": {
       "type": "object",
       "properties": {
@@ -88,6 +69,7 @@
         "status": {
           "type": "string",
           "enum": ["PLANNED", "IN_PROGRESS", "COMPLETE"],
+          "default": "PLANNED",
           "description": "Current phase status"
         },
         "dependencies": {
@@ -114,7 +96,7 @@
           "description": "Workstreams in this phase"
         }
       },
-      "required": ["name", "order", "status", "workstreams"],
+      "required": ["name", "order", "workstreams"],
       "additionalProperties": false
     },
     "Workstream": {
@@ -125,24 +107,29 @@
           "description": "Workstream name"
         },
         "epic": {
-          "type": ["string", "null"],
-          "pattern": "^#[0-9]+$",
-          "description": "GitHub issue reference"
+          "type": "integer",
+          "description": "GitHub issue number of the epic"
         },
         "status": {
           "type": "string",
           "enum": ["PLANNED", "IN_PROGRESS", "BLOCKED", "COMPLETE", "ARCHIVED"],
+          "default": "PLANNED",
           "description": "Current workstream status"
         },
-        "worktrees": {
+        "branches": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Branch names for worktrees"
+          "description": "Branch patterns (can include globs like 'feat/kanban-*')"
         },
         "description": {
           "type": "string"
+        },
+        "color": {
+          "type": ["string", "null"],
+          "pattern": "^#[a-fA-F0-9]{6}$",
+          "description": "Hex color code for the workstream"
         },
         "pr_number": {
           "type": ["integer", "null"],
@@ -165,7 +152,7 @@
           "description": "Free-form notes"
         }
       },
-      "required": ["name", "status", "worktrees"],
+      "required": ["name", "epic", "branches"],
       "additionalProperties": false
     },
     "Orchestrator": {

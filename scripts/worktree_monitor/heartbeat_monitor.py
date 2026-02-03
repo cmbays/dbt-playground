@@ -15,7 +15,10 @@ between reading mtime and reading content.
 from datetime import datetime, timezone
 from pathlib import Path
 import json
+import logging
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 from .models import HeartbeatStatus, OrchestratorStatus, OrchestratorRequest
 from .constants import (
@@ -224,8 +227,13 @@ class HeartbeatMonitor:
             if request_str:
                 try:
                     request_type = RequestType(request_str)
-                except ValueError:
-                    pass
+                except ValueError as e:
+                    logger.debug(
+                        "Invalid RequestType value %r for branch %r: %s",
+                        request_str,
+                        branch,
+                        e,
+                    )
 
             result.append(
                 OrchestratorStatus(
@@ -259,7 +267,13 @@ class HeartbeatMonitor:
 
             try:
                 request_type = RequestType(request_str)
-            except ValueError:
+            except ValueError as e:
+                logger.debug(
+                    "Invalid RequestType value %r for branch %r: %s",
+                    request_str,
+                    entry.get("branch", ""),
+                    e,
+                )
                 continue
 
             result.append(
