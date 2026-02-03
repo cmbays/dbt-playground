@@ -1,0 +1,72 @@
+# .github/CODEOWNERS
+# Code Owners for dbt-playground
+# Automatically request review from code owners when PRs touch these paths
+# Last match wins - order from general to specific
+#
+# Documentation: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# =============================================================================
+# DEFAULT OWNER
+# =============================================================================
+# Catch-all: any file not matched below
+* @cmbays
+
+# =============================================================================
+# DBT MODELS (by layer)
+# =============================================================================
+# Staging layer - source transformations
+dbt_project/models/staging/** @cmbays
+
+# Intermediate layer - business logic
+dbt_project/models/intermediate/** @cmbays
+
+# Marts layer - dimensional models
+dbt_project/models/marts/** @cmbays
+
+# Analytics layer - reporting models
+dbt_project/models/analytics/** @cmbays
+
+# Quarantine layer - data quality
+dbt_project/models/quarantine/** @cmbays
+
+# =============================================================================
+# DBT CONFIGURATION
+# =============================================================================
+dbt_project/dbt_project.yml @cmbays
+dbt_project/packages.yml @cmbays
+dbt_project/macros/** @cmbays
+dbt_project/tests/** @cmbays
+dbt_project/seeds/** @cmbays
+
+# =============================================================================
+# INFRASTRUCTURE
+# =============================================================================
+# GitHub Actions and automation
+.github/** @cmbays
+
+# Claude agent configuration
+.claude/** @cmbays
+
+# Python scripts
+scripts/** @cmbays
+
+# =============================================================================
+# DOCUMENTATION
+# =============================================================================
+docs/** @cmbays
+*.md @cmbays
+CHANGELOG.md @cmbays
+
+# =============================================================================
+# PROJECT CONFIGURATION
+# =============================================================================
+pyproject.toml @cmbays
+uv.lock @cmbays
+.python-version @cmbays
+.gitignore @cmbays
+
+# =============================================================================
+# BACKLOG AND PLANNING
+# =============================================================================
+backlog/** @cmbays
+playgrounds/** @cmbays
