@@ -1,0 +1,140 @@
+name: Test Suite
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: [self-hosted, macOS, ARM64]
+    # Block fork PRs from running on self-hosted runner (security)
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    name: Python Tests (${{ matrix.python-version }})
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.13"
+
+      - name: Cache uv packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            .venv
+          key: ${{ runner.os }}-uv-${{ matrix.python-version }}-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ matrix.python-version }}-
+
+      - name: Set up Python
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        env:
+          UV_PYTHON: ${{ matrix.python-version }}
+        run: uv sync --all-extras
+
+      - name: Detect tests
+        id: detect-tests
+        run: |
+          echo "tests_present=false" >> "$GITHUB_OUTPUT"
+          # Look for any test_*.py files under tests/
+          if [ -n "$(find tests -type f -name 'test_*.py' -print -quit 2>/dev/null)" ]; then
+            echo "tests_present=true" >> "$GITHUB_OUTPUT"
+            echo "Found test files:"
+            find tests -type f -name 'test_*.py'
+          else
+            echo "No test files found in tests/"
+          fi
+
+      - name: Run pytest with coverage
+        if: steps.detect-tests.outputs.tests_present == 'true'
+        run: |
+          # Run all tests with coverage measurement
+          # Coverage measures scripts/lib/ which provides shared utilities
+          uv run pytest tests/ -v --tb=short \
+            --junitxml=pytest-report.xml \
+            --cov=scripts/lib \
+            --cov-report=term-missing \
+            --cov-report=xml \
+            --cov-fail-under=75
+
+      - name: Create placeholder reports (no tests yet)
+        if: steps.detect-tests.outputs.tests_present != 'true'
+        run: |
+          echo "No tests found - creating placeholder reports so artifacts step succeeds"
+          cat > pytest-report.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <testsuites tests="0" failures="0" errors="0" skipped="0"/>
+          EOF
+          cat > coverage.xml <<'EOF'
+          <?xml version="1.0"?>
+          <coverage line-rate="0" branch-rate="0" version="0">
+          </coverage>
+          EOF
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: coverage.xml
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: pytest-report.xml
+          retention-days: 7
+
+  lint:
+    runs-on: [self-hosted, macOS, ARM64]
+    # Block fork PRs from running on self-hosted runner (security)
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    timeout-minutes: 15
+    name: Linting
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.13"
+
+      - name: Cache uv packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            .venv
+          key: ${{ runner.os }}-uv-lint-${{ hashFiles('uv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-lint-
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        env:
+          UV_PYTHON: "3.11"
+        run: uv sync --all-extras
+
+      - name: Run ruff linter
+        run: uv run ruff check scripts/ tests/
+
+      - name: Run ruff formatter check
+        run: uv run ruff format --check scripts/ tests/
