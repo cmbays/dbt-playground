@@ -90,7 +90,7 @@ class TestAM01DirectoryCreation:
 
         ArchiveManager(archives_dir)
         assert marker_file.exists()
-        assert marker_file.read_text() == "existing"
+        assert marker_file.read_text(encoding="utf-8") == "existing"
 
 
 # =============================================================================
@@ -562,8 +562,8 @@ class TestAM13PermissionErrors:
         """Permission errors raise ArchiveWriteError."""
         from worktree_monitor.exceptions import ArchiveWriteError
 
-        # Mock os.rename to raise PermissionError
-        with patch("os.rename", side_effect=PermissionError("Permission denied")):
+        # Mock os.replace to raise PermissionError
+        with patch("os.replace", side_effect=PermissionError("Permission denied")):
             with pytest.raises(ArchiveWriteError) as exc_info:
                 archive_manager.archive_version(
                     version_name="v0.10",
@@ -580,7 +580,7 @@ class TestAM13PermissionErrors:
         """Permission error includes the path that failed."""
         from worktree_monitor.exceptions import ArchiveWriteError
 
-        with patch("os.rename", side_effect=PermissionError("Permission denied")):
+        with patch("os.replace", side_effect=PermissionError("Permission denied")):
             with pytest.raises(ArchiveWriteError) as exc_info:
                 archive_manager.archive_version(
                     version_name="v0.10",

@@ -3485,7 +3485,7 @@ Building customer analytics models. Currently implementing dim_customer.
         const withPR = worktrees.filter(wt => wt.pr?.url).length;
         const anomalies = worktrees.filter(wt =>
           (wt.anomalies && wt.anomalies.length > 0) ||
-          (wt.ci_checks && wt.ci_checks.state === 'failure')
+          (wt.ci_checks && wt.ci_checks.failed > 0)
         ).length;
 
         return `
@@ -3560,10 +3560,11 @@ Building customer analytics models. Currently implementing dim_customer.
         const anomalyClasses = this.getAnomalyClasses(wt);
         const ciStatus = wt.ci_checks ? this.renderCIStatus(wt.ci_checks) : '';
 
+        const escapedBranch = this.escapeHtml(wt.branch || '');
         return `
-          <div class="worktree-card ${anomalyClasses}" data-branch="${wt.branch}">
+          <div class="worktree-card ${anomalyClasses}" data-branch="${escapedBranch}">
             <div class="wt-card-header">
-              <span class="branch-name">${wt.branch}</span>
+              <span class="branch-name">${escapedBranch}</span>
               <span class="wt-status-badge" data-status="${wt.status}">${wt.status}</span>
             </div>
             <div class="wt-card-body">
@@ -3593,13 +3594,18 @@ Building customer analytics models. Currently implementing dim_customer.
       getAnomalyClasses(wt) {
         const classes = [];
 
-        // Check for anomalies array
+        // Check for anomalies array (extract type property from anomaly objects)
         if (wt.anomalies && Array.isArray(wt.anomalies)) {
-          wt.anomalies.forEach(a => classes.push(`anomaly-${a}`));
+          wt.anomalies.forEach(a => {
+            const anomalyType = (typeof a === 'object' && a.type) ? a.type : (typeof a === 'string' ? a : null);
+            if (anomalyType) {
+              classes.push(`anomaly-${anomalyType}`);
+            }
+          });
         }
 
-        // Check CI status
-        if (wt.ci_checks && wt.ci_checks.state === 'failure') {
+        // Check CI status (derive failure from counts, not state)
+        if (wt.ci_checks && wt.ci_checks.failed > 0) {
           if (!classes.includes('anomaly-ci_failed')) {
             classes.push('anomaly-ci_failed');
           }

@@ -84,11 +84,22 @@ class GitHubAdapter:
     def _set_cached(self, key: str, value: Any) -> None:
         """Store value in cache with current timestamp.
 
+        Enforces MAX_CACHE_SIZE by evicting oldest entries when full.
+        Stores None values as _CACHED_NONE sentinel.
+
         Args:
             key: Cache key
-            value: Value to cache
+            value: Value to cache (None is stored as sentinel)
         """
-        self._cache[key] = CacheEntry(data=value, timestamp=time.time())
+        # Enforce cache size limit by evicting oldest entries
+        while len(self._cache) >= self.MAX_CACHE_SIZE:
+            # Find and remove the oldest entry by timestamp
+            oldest_key = min(self._cache, key=lambda k: self._cache[k].timestamp)
+            del self._cache[oldest_key]
+
+        # Store None as sentinel to distinguish from cache miss
+        store_value = self._CACHED_NONE if value is None else value
+        self._cache[key] = CacheEntry(data=store_value, timestamp=time.time())
 
     def clear_cache(self) -> None:
         """Clear all cached data."""
@@ -157,6 +168,9 @@ class GitHubAdapter:
         cache_key = f"pr:{branch}"
         # Use instance cache_ttl (allows per-adapter TTL configuration)
         cached = self._get_cached(cache_key)
+        # Check for cached "no PR" sentinel (distinguishes from cache miss)
+        if cached == self._CACHED_NONE:
+            return None
         if cached is not None:
             return cached
 
@@ -342,9 +356,11 @@ class GitHubAdapter:
         cache_key = f"coderabbit:{pr_number}"
         # Use instance cache_ttl (allows per-adapter TTL configuration)
         cached = self._get_cached(cache_key)
+        # Check for cached "no CodeRabbit review" sentinel
+        if cached == self._CACHED_NONE:
+            return None
         if cached is not None:
-            # Handle cached None value (distinguished from cache miss)
-            return cached if cached != self._CACHED_NONE else None
+            return cached
 
         # Query GitHub for PR reviews
         args = [
@@ -361,8 +377,8 @@ class GitHubAdapter:
 
         result = self._parse_coderabbit_status(reviews)
 
-        # Cache None as special value to distinguish from cache miss
-        self._set_cached(cache_key, result if result is not None else self._CACHED_NONE)
+        # Cache result (None is automatically stored as sentinel by _set_cached)
+        self._set_cached(cache_key, result)
         return result
 
     def _parse_coderabbit_status(self, reviews: list[dict[str, Any]]) -> str | None:

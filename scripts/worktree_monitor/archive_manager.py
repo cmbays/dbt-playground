@@ -325,10 +325,11 @@ class ArchiveManager:
                 with os.fdopen(fd, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, default=str)
 
-                # Atomic rename
-                os.rename(temp_path, path)
-            except Exception:
-                # Clean up temp file on error
+                # Atomic replace (works consistently across platforms)
+                os.replace(temp_path, path)
+            except (OSError, TypeError, ValueError):
+                # Clean up temp file on write/replace failures, then re-raise
+                # for outer handlers to convert to ArchiveWriteError
                 if os.path.exists(temp_path):
                     os.unlink(temp_path)
                 raise
