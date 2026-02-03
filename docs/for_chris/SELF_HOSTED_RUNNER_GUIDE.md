@@ -324,4 +324,4 @@ All workflows in this repository are configured to use self-hosted runners:
 | Test Suite | 30 min | PR + push to main |
 | Lint | 15 min | PR + push to main |
 
-If the runner is not available, jobs will queue until it comes online (or timeout after 24 hours).
+If the runner is not available, jobs will queue until it comes online (or time out after 24 hours).

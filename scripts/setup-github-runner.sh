@@ -60,11 +60,10 @@ echo
 # Check if already installed
 if [ -d "$RUNNER_DIR" ]; then
     echo "Runner directory already exists at $RUNNER_DIR"
-    echo "Options:"
-    echo "  1. Remove existing and reinstall: rm -rf $RUNNER_DIR"
-    echo "  2. Reconfigure existing: cd $RUNNER_DIR && ./config.sh remove"
+    echo "This script currently supports a clean reinstall only."
+    echo "To reconfigure in-place, run: cd \"$RUNNER_DIR\" && ./config.sh remove"
     echo
-    read -p "Remove existing and reinstall? [y/N] " -n 1 -r
+    read -p "Proceed with clean reinstall? [y/N] " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "Removing existing runner..."
