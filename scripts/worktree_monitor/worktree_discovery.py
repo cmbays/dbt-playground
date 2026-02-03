@@ -51,6 +51,18 @@ class WorktreeDiscovery:
         Raises:
             GitWorktreeError: If listing worktrees fails.
         """
+        parsed = self._get_raw_worktree_data()
+        return [self._build_worktree_info(wt, idx) for idx, wt in enumerate(parsed)]
+
+    def _get_raw_worktree_data(self) -> list[dict[str, Any]]:
+        """Get raw worktree data from git.
+
+        Returns:
+            List of parsed worktree dictionaries.
+
+        Raises:
+            GitWorktreeError: If git command fails.
+        """
         try:
             porcelain_output = self._run_git_command(
                 ["worktree", "list", "--porcelain"]
@@ -61,49 +73,51 @@ class WorktreeDiscovery:
                 worktree_path=str(self.repo_path) if self.repo_path else None,
             ) from e
 
-        parsed = self._parse_porcelain_output(porcelain_output)
-        worktrees = []
+        return self._parse_porcelain_output(porcelain_output)
 
-        for idx, wt_data in enumerate(parsed):
-            wt_path = Path(wt_data["path"])
+    def _build_worktree_info(self, wt_data: dict[str, Any], idx: int) -> WorktreeInfo:
+        """Build WorktreeInfo from parsed worktree data.
 
-            # Get status and commit info
-            try:
-                files_changed, files_staged = self._get_git_status(wt_path)
-            except (GitCommandError, GitNotFoundError):
-                files_changed, files_staged = 0, 0
+        Args:
+            wt_data: Parsed worktree dictionary.
+            idx: Index of this worktree (0 = main).
 
-            try:
-                commit_hash, commit_msg, commit_date = self._get_last_commit(wt_path)
-            except (GitCommandError, GitNotFoundError):
-                commit_hash = wt_data.get("head", "")
-                commit_msg = ""
-                commit_date = None
+        Returns:
+            WorktreeInfo object.
+        """
+        wt_path = Path(wt_data["path"])
 
-            # Determine status
-            status = self._determine_status(
+        # Get status and commit info with graceful fallbacks
+        try:
+            files_changed, files_staged = self._get_git_status(wt_path)
+        except (GitCommandError, GitNotFoundError):
+            files_changed, files_staged = 0, 0
+
+        try:
+            commit_hash, commit_msg, commit_date = self._get_last_commit(wt_path)
+        except (GitCommandError, GitNotFoundError):
+            commit_hash = wt_data.get("head", "")
+            commit_msg = ""
+            commit_date = None
+
+        # Use parsed head if commit_hash not set
+        if not commit_hash:
+            commit_hash = wt_data.get("head", "")
+
+        return WorktreeInfo(
+            path=wt_data["path"],
+            branch=wt_data.get("branch") or "",
+            commit_hash=commit_hash,
+            commit_short=commit_hash[:7] if commit_hash else "",
+            is_main=(idx == 0),
+            status=self._determine_status(
                 wt_data.get("is_detached", False), files_changed, files_staged
-            )
-
-            # Use parsed head if commit_hash not set
-            if not commit_hash:
-                commit_hash = wt_data.get("head", "")
-
-            worktree = WorktreeInfo(
-                path=wt_data["path"],
-                branch=wt_data.get("branch") or "",
-                commit_hash=commit_hash,
-                commit_short=commit_hash[:7] if commit_hash else "",
-                is_main=(idx == 0),  # First worktree is main
-                status=status,
-                files_changed=files_changed,
-                files_staged=files_staged,
-                last_commit_msg=commit_msg,
-                last_commit_date=commit_date,
-            )
-            worktrees.append(worktree)
-
-        return worktrees
+            ),
+            files_changed=files_changed,
+            files_staged=files_staged,
+            last_commit_msg=commit_msg,
+            last_commit_date=commit_date,
+        )
 
     def get_worktree_status(self, worktree_path: Path) -> WorktreeInfo:
         """Get detailed status for a single worktree.

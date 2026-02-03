@@ -188,6 +188,22 @@ class HeartbeatMonitor:
 
         return self.heartbeat_path.stat().st_mtime
 
+    def _iter_orchestrator_entries(
+        self, content: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        """Get valid orchestrator entries from content.
+
+        Args:
+            content: Parsed heartbeat file content.
+
+        Returns:
+            List of valid orchestrator entry dictionaries.
+        """
+        orchestrators_data = content.get("orchestrators", [])
+        if not isinstance(orchestrators_data, list):
+            return []
+        return [entry for entry in orchestrators_data if isinstance(entry, dict)]
+
     def _parse_orchestrators(self, content: dict[str, Any]) -> list[OrchestratorStatus]:
         """Parse orchestrator statuses from content.
 
@@ -197,17 +213,8 @@ class HeartbeatMonitor:
         Returns:
             List of OrchestratorStatus objects.
         """
-        orchestrators_data = content.get("orchestrators", [])
-
-        # Handle non-list gracefully
-        if not isinstance(orchestrators_data, list):
-            return []
-
         result: list[OrchestratorStatus] = []
-        for entry in orchestrators_data:
-            if not isinstance(entry, dict):
-                continue
-
+        for entry in self._iter_orchestrator_entries(content):
             branch = entry.get("branch", "")
             status_str = entry.get("status", "")
             request_str = entry.get("request")
@@ -218,7 +225,6 @@ class HeartbeatMonitor:
                 try:
                     request_type = RequestType(request_str)
                 except ValueError:
-                    # Invalid request type, leave as None
                     pass
 
             result.append(
@@ -226,7 +232,7 @@ class HeartbeatMonitor:
                     branch=branch,
                     status=status_str,
                     request=request_type,
-                    last_update=None,  # We don't track per-orchestrator timestamps
+                    last_update=None,
                 )
             )
 
@@ -245,38 +251,23 @@ class HeartbeatMonitor:
         Returns:
             List of OrchestratorRequest objects.
         """
-        orchestrators_data = content.get("orchestrators", [])
-
-        # Handle non-list gracefully
-        if not isinstance(orchestrators_data, list):
-            return []
-
         result: list[OrchestratorRequest] = []
-        for entry in orchestrators_data:
-            if not isinstance(entry, dict):
-                continue
-
-            # Only include entries with valid request field
+        for entry in self._iter_orchestrator_entries(content):
             request_str = entry.get("request")
             if not request_str:
                 continue
 
-            # Validate request type
             try:
                 request_type = RequestType(request_str)
             except ValueError:
-                # Invalid request type, skip this entry
                 continue
-
-            branch = entry.get("branch", "")
-            message = entry.get("message", "")
 
             result.append(
                 OrchestratorRequest(
-                    branch=branch,
+                    branch=entry.get("branch", ""),
                     request_type=request_type,
-                    message=message,
-                    timestamp=None,  # We don't track per-request timestamps
+                    message=entry.get("message", ""),
+                    timestamp=None,
                 )
             )
 
