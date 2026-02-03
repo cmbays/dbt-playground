@@ -3,15 +3,15 @@ audience: [pm, architect, multi-agent]
 priority: medium
 size: large
 dependencies: [PROJECT_WORKFLOW]
-last_updated: 2026-01-25
+last_updated: 2026-02-02
 status: active
 tags: [workflow, claude-tasks, coordination]
 ---
 
 # Claude Task GitHub Integration Guide
 
-**Version**: v0.3 (MVP - Phases 0-2)
-**Last Updated**: 2026-01-25
+**Version**: v0.4 (Issue-ID Naming Convention)
+**Last Updated**: 2026-02-02
 **Status**: Active
 
 ---
@@ -19,14 +19,15 @@ tags: [workflow, claude-tasks, coordination]
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Architecture](#architecture)
-3. [Metadata Schema](#metadata-schema)
-4. [Validation Rules](#validation-rules)
-5. [Usage Examples](#usage-examples)
-6. [Script Reference](#script-reference)
-7. [Workflows](#workflows)
-8. [Troubleshooting](#troubleshooting)
-9. [FAQ](#faq)
+2. [Task File Naming Convention](#task-file-naming-convention)
+3. [Architecture](#architecture)
+4. [Metadata Schema](#metadata-schema)
+5. [Validation Rules](#validation-rules)
+6. [Usage Examples](#usage-examples)
+7. [Script Reference](#script-reference)
+8. [Workflows](#workflows)
+9. [Troubleshooting](#troubleshooting)
+10. [FAQ](#faq)
 
 ---
 
@@ -59,6 +60,91 @@ The Claude Task GitHub Integration system enables cross-session task persistence
 - External visibility and collaboration
 - Milestone tracking and release planning
 - Source of truth for project management
+
+---
+
+## Task File Naming Convention
+
+### Overview (v0.10+)
+
+Task files in `backlog/tasks/` use the GitHub issue ID as the filename for direct traceability.
+
+### New Convention
+
+**Pattern**: `issue-{N}.md` where `{N}` is the GitHub issue number.
+
+**Examples**:
+| GitHub Issue | Task File |
+|--------------|-----------|
+| #161 | `backlog/tasks/issue-161.md` |
+| #170 | `backlog/tasks/issue-170.md` |
+
+### Legacy Convention
+
+Existing files using `task-{N} - {Title}.md` pattern remain valid and are not renamed.
+
+**Legacy Examples**:
+```
+backlog/tasks/task-2 - API-Test-Task.md
+backlog/tasks/task-12 - E2E-Test-Multi-worktree-task-visibility.md
+```
+
+Both patterns coexist. The system detects file format automatically.
+
+### Task File Schema
+
+New task files include the `github_issue` field for direct linking:
+
+```yaml
+---
+id: TASK-161
+github_issue: 161           # Direct link to GitHub issue
+title: 'Create CODEOWNERS file'
+status: UNDERSTAND
+assignee: []
+created_date: '2026-02-02'
+labels:
+  - enhancement
+  - ci/cd
+dependencies: []
+priority: high
+epic_issue: 147             # Parent Epic (optional)
+milestone: v0.10            # Milestone (optional)
+prd: docs/specs/PRD-029-GITHUB-INTEGRATION.md  # PRD reference (optional)
+---
+
+## Description
+
+<!-- Auto-generated from GitHub issue #161 -->
+<!-- Edit in GitHub issue for single source of truth -->
+
+See: https://github.com/cmbays/dbt-playground/issues/161
+```
+
+### Schema Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Task identifier (e.g., TASK-161) |
+| `github_issue` | integer | Recommended | GitHub issue number |
+| `title` | string | Yes | Task title |
+| `status` | string | Yes | Workflow status |
+| `assignee` | array | Yes | Assigned agents/sessions |
+| `created_date` | string | Yes | Creation date |
+| `labels` | array | Yes | GitHub labels |
+| `dependencies` | array | Yes | Blocking tasks |
+| `priority` | string | Yes | Priority level |
+| `epic_issue` | integer | No | Parent Epic issue number |
+| `milestone` | string | No | Target milestone |
+| `prd` | string | No | Related PRD document path |
+
+### Automatic Task File Creation
+
+When using the task-file-sync GitHub workflow (v0.10+), task files are automatically created when issues are opened with the `task` or `type:task` label.
+
+**Trigger**: Issue opened with task label
+**Result**: `backlog/tasks/issue-{N}.md` created automatically
+**Archive**: File moved to `backlog/archive/tasks/` on issue close
 
 ---
 
@@ -735,6 +821,7 @@ jq --version
 
 **Version History**:
 
+- v0.4 (2026-02-02): Issue-ID naming convention, github_issue field, auto-sync workflow
 - v0.3 (2026-01-25): Initial MVP (Phases 0-2)
 
 **Maintained by**: Claude (Technical Architect / Developer)
