@@ -1645,3 +1645,325 @@ The Workflow Hub (playground) displays PM Orchestration status via widgets:
 | Active Sessions | Session grid with heartbeat status |
 
 **Suggest to user**: "Run `/playground:hub` to see PM Overview widget."
+
+---
+
+## Kanban Workflow Engine Integration
+
+The Supervisor integrates with the Kanban Workflow Engine for enforcing workflow discipline through transition guards, WIP limits, and compliance tracking.
+
+### Overview
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| **kanban module** | Core workflow engine | `kanban/` |
+| **Transition Guards** | Validate stage transitions | `kanban/transitions.py` |
+| **WIP Tracking** | Track tasks per stage | `kanban/wip.py` |
+| **Compliance Scoring** | Track skip/bypass penalties | `kanban/compliance.py` |
+| **Checklist Management** | Per-ticket checklist operations | `kanban/checklist.py` |
+
+### Importing the Kanban Module
+
+```python
+from kanban import (
+    transition_task,
+    create_checklist,
+    get_wip_counts,
+    calculate_compliance_score,
+    TransitionResult,
+    Stage,
+)
+from kanban.wip import update_wip_counts
+from kanban.checklist import mark_item_complete
+```
+
+### Phase Transition with Guards
+
+When a task transitions between workflow stages, the Supervisor MUST call `transition_task()` to validate the transition:
+
+```
+[Phase Transition Request]
+    │
+    ├─ 1. Load task checklist from state:
+    │      checklist = task_state["checklist"]
+    │
+    ├─ 2. Call transition guard:
+    │      from kanban import transition_task
+    │      result = transition_task(
+    │          task_id="TASK-100",
+    │          from_stage="plan",
+    │          to_stage="build",
+    │          checklist=checklist,
+    │          bypass_reason=None,  # Or reason if bypassing
+    │          current_user="supervisor"
+    │      )
+    │
+    ├─ 3. Handle result:
+    │      │
+    │      ├─ result.success == True:
+    │      │    - Log warnings if any
+    │      │    - Update WIP counts
+    │      │    - Proceed with transition
+    │      │
+    │      └─ result.success == False:
+    │           - BLOCK transition
+    │           - Report: result.message
+    │           - Show: result.blocked_by
+    │           - Request: completion or bypass
+    │
+    └─ 4. Update WIP counts:
+         from kanban.wip import update_wip_counts
+         update_wip_counts("plan", "build")
+```
+
+### TransitionResult Structure
+
+```python
+@dataclass
+class TransitionResult:
+    success: bool          # True if transition allowed
+    message: str           # Description of result
+    warnings: list[str]    # Non-blocking warnings
+    blocked_by: str | None # Guard that blocked (if any)
+    sage_invoked: bool     # True if Sage should extract learnings
+```
+
+### Guard Types
+
+The Kanban engine runs these guards in sequence:
+
+| Guard | Purpose | Can Bypass |
+|-------|---------|------------|
+| **Valid Transition** | Checks transition matrix | No |
+| **Skip Detection** | Detects skipped stages | Yes (with penalty) |
+| **Checklist Validation** | Verifies required items | Yes (soft mode) |
+| **WIP Limit** | Checks stage capacity | Yes (with reason) |
+| **QA Gates** | FS3 external validation | Yes (with reason) |
+
+### Enforcement Modes
+
+The Kanban engine supports two enforcement modes configured in `backlog/config.yml`:
+
+| Mode | Behavior |
+|------|----------|
+| **soft** | Warnings for violations, transitions allowed |
+| **hard** | Violations block transitions until resolved |
+
+```yaml
+# backlog/config.yml
+kanban:
+  enforcement_mode: "soft"  # or "hard"
+```
+
+### WIP Limit Enforcement
+
+Before allowing transition TO a stage, the Supervisor checks WIP capacity:
+
+```
+[WIP Check During Transition]
+    │
+    ├─ Get current counts:
+    │    from kanban.wip import check_wip_capacity
+    │    capacity = check_wip_capacity("build")
+    │
+    ├─ If capacity.at_limit:
+    │    │
+    │    ├─ enforcement_mode == "hard":
+    │    │    BLOCK: "WIP limit reached for build (2/2)"
+    │    │    Suggest: Complete existing build tasks first
+    │    │
+    │    └─ enforcement_mode == "soft":
+    │         WARN: "WIP limit exceeded for build"
+    │         Allow transition with warning
+    │
+    └─ If capacity.percentage >= 80:
+         WARN: "Approaching WIP limit: build (1/2)"
+```
+
+### Compliance Scoring
+
+The Kanban engine tracks compliance scores that penalize skipped stages:
+
+```python
+from kanban.compliance import calculate_compliance_score, get_rating
+
+# Calculate current score
+score = calculate_compliance_score(checklist)
+
+# Get rating label
+rating = get_rating(score)  # "excellent", "acceptable", "needs_improvement", "poor"
+```
+
+**Scoring Formula**:
+- Base: `(completed_stages / total_stages) × 100`
+- Penalty: `-skip_penalty` per skip (default: -10)
+- Floor: 0
+
+### Sage Invocation on Skips
+
+When `result.sage_invoked == True`, the Supervisor should invoke Sage:
+
+```text
+sage: Extract learnings from workflow skip. Focus on:
+- Why stage [skipped_stage] was skipped
+- Whether skip was justified
+- Pattern to avoid repeating unnecessary skips
+- Context: Task [task_id] skipped [stage] with reason: [bypass_reason]
+```
+
+### Creating Task Checklists
+
+When a new task starts, the Supervisor creates a checklist:
+
+```python
+from kanban import create_checklist
+
+# Create checklist for new task
+checklist = create_checklist("TASK-100", agent="supervisor")
+
+# Store in task state (WORKFLOW_STATE.md or Backlog.md)
+task_state["checklist"] = checklist
+```
+
+### Marking Checklist Items Complete
+
+As work progresses, the Supervisor marks items complete:
+
+```python
+from kanban.checklist import mark_item_complete
+
+# Developer completed tests
+mark_item_complete(checklist, "build", "tests_written", agent="developer")
+
+# Developer completed implementation
+mark_item_complete(checklist, "build", "implementation_complete", agent="developer")
+
+# Local tests pass
+mark_item_complete(checklist, "build", "local_tests_pass", agent="developer")
+```
+
+### Required Checklist Items by Stage
+
+From `backlog/config.yml`:
+
+| Stage | Required Items |
+|-------|----------------|
+| **understand** | requirements_clarified, acceptance_criteria_defined |
+| **plan** | branch_created |
+| **build** | tests_written, implementation_complete, local_tests_pass |
+| **verify** | code_review_approved, changelog_updated, ci_passing |
+| **deploy** | pr_merged, docs_updated |
+
+### FS3 QA Gate Integration
+
+The Kanban engine supports QA gate hooks registered by FS3:
+
+```python
+from kanban import register_qa_gate_hook
+
+def fs3_qa_check(task_id: str, from_stage: str, to_stage: str):
+    """FS3 registers this hook for QA validation."""
+    # Check QA_REPORT.md exists and passes
+    # Return QAGateResult(passed=True/False, message="...")
+    pass
+
+register_qa_gate_hook(fs3_qa_check)
+```
+
+The Supervisor doesn't need to manage this directly - FS3 registers their hooks at initialization, and the Kanban engine calls them automatically during BUILD→VERIFY and VERIFY→DEPLOY transitions.
+
+### WORKFLOW_STATE.md Integration
+
+The Supervisor stores checklist state in WORKFLOW_STATE.md:
+
+```yaml
+### Track: feat/customer-analytics (ACTIVE)
+- **Phase**: BUILD
+- **Checklist**:
+  - understand: complete
+  - plan: complete
+  - build: in_progress
+    - [x] tests_written
+    - [x] implementation_complete
+    - [ ] local_tests_pass
+  - verify: pending
+  - deploy: pending
+- **Compliance**: 85/100 (excellent)
+- **WIP**: build 2/2 (at limit)
+```
+
+### Example: Full Transition Flow
+
+```text
+# 1. Developer completes build phase work
+dev: Build complete for TASK-100
+
+# 2. Supervisor validates checklist
+→ from kanban.checklist import is_stage_complete
+→ is_stage_complete(checklist, "build")  # True
+
+# 3. Supervisor requests transition
+→ result = transition_task("TASK-100", "build", "verify", checklist)
+
+# 4. Guards run:
+→ Valid transition: build→verify ✓
+→ Skip detection: no skip ✓
+→ Checklist: all items complete ✓
+→ WIP limit: verify 1/3 ✓
+→ QA gates: (none registered yet) ✓
+
+# 5. Transition succeeds
+→ result.success == True
+→ result.warnings == []
+
+# 6. Update WIP counts
+→ update_wip_counts("build", "verify")
+
+# 7. Update state file
+→ Task now in VERIFY phase
+```
+
+### Error Handling
+
+| Error | Supervisor Response |
+|-------|---------------------|
+| Invalid stage name | Report error, do not proceed |
+| Invalid transition | Block, show valid options |
+| Incomplete checklist | Block (hard) or warn (soft) |
+| WIP limit reached | Block (hard) or warn (soft) |
+| QA gate failed | Block, show failure details |
+| Skip detected | Allow with penalty + Sage invocation |
+
+### Configuration
+
+Kanban configuration is in `backlog/config.yml`:
+
+```yaml
+kanban:
+  version: "1.0"
+  enforcement_mode: "soft"  # soft or hard
+  skip_penalty: 10          # Compliance penalty per skip
+
+  wip_limits:
+    understand: 5
+    plan: 3
+    build: 2
+    verify: 3
+    deploy: 2
+    blocked: 10
+
+  critical_transitions:     # Cannot skip without bypass
+    - ["plan", "build"]
+    - ["build", "verify"]
+
+  stage_requirements:       # Required checklist items
+    understand:
+      required: [requirements_clarified, acceptance_criteria_defined]
+    # ... etc
+```
+
+### Related Documentation
+
+- **Schema**: `docs/schemas/workflow-checklist.schema.json`
+- **PRD**: `docs/specs/PRD-026-KANBAN-WORKFLOW-PHASE1.md`
+- **Module**: `kanban/` directory
