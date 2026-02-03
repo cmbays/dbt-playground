@@ -9,7 +9,7 @@ Created: Phase 4 Day 0 (Pre-Work)
 import json
 import sys
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
@@ -17,40 +17,38 @@ from unittest.mock import MagicMock
 import pytest
 
 # Add scripts to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 
 from worktree_monitor.constants import (
-    HeartbeatState,
-    WorktreeStatus,
-    PRState,
-    WorkstreamStatus,
-    PhaseStatus,
-    VersionStatus,
-    CodeRabbitReviewStatus,
-    AnomalyType,
     AnomalySeverity,
+    AnomalyType,
     ArchiveReason,
-    HEARTBEAT_THRESHOLDS,
+    CodeRabbitReviewStatus,
+    HeartbeatState,
+    PhaseStatus,
+    PRState,
+    VersionStatus,
+    WorkstreamStatus,
+    WorktreeStatus,
 )
 from worktree_monitor.models import (
-    WorktreeInfo,
-    EnrichedWorktree,
-    PRInfo,
-    CIChecks,
-    EpicIssues,
-    CodeRabbitStatus,
-    CodeRabbitFeedback,
-    HeartbeatStatus,
-    OrchestratorStatus,
     Anomaly,
-    TrackSummary,
     ArchivedWorktree,
+    CIChecks,
+    CodeRabbitFeedback,
+    CodeRabbitStatus,
+    EnrichedWorktree,
+    EpicIssues,
+    HeartbeatStatus,
     MonitorOutput,
-    VersionPlan,
+    OrchestratorStatus,
     PhaseConfig,
+    PRInfo,
+    TrackSummary,
+    VersionPlan,
     WorkstreamConfig,
+    WorktreeInfo,
 )
-
 
 # =============================================================================
 # Time Fixtures
@@ -60,7 +58,7 @@ from worktree_monitor.models import (
 @pytest.fixture
 def fixed_now() -> datetime:
     """Fixed timestamp for deterministic testing."""
-    return datetime(2026, 2, 3, 12, 0, 0, tzinfo=timezone.utc)
+    return datetime(2026, 2, 3, 12, 0, 0, tzinfo=UTC)
 
 
 @pytest.fixture
@@ -68,7 +66,7 @@ def fixed_now_factory():
     """Factory for creating fixed timestamps with offsets."""
 
     def _factory(seconds_offset: int = 0) -> datetime:
-        base = datetime(2026, 2, 3, 12, 0, 0, tzinfo=timezone.utc)
+        base = datetime(2026, 2, 3, 12, 0, 0, tzinfo=UTC)
         from datetime import timedelta
 
         return base + timedelta(seconds=seconds_offset)
@@ -265,15 +263,15 @@ branch refs/heads/main
 def sample_worktree_info(fixed_now) -> WorktreeInfo:
     """Sample WorktreeInfo object."""
     return WorktreeInfo(
-        path="/Users/dev/dbt-playground--feat-kanban",
-        branch="feat/kanban-phase1",
-        commit_hash="def4567890abcdef1234567890abcdef12345678",
-        commit_short="def4567",
+        path='/Users/dev/dbt-playground--feat-kanban',
+        branch='feat/kanban-phase1',
+        commit_hash='def4567890abcdef1234567890abcdef12345678',
+        commit_short='def4567',
         is_main=False,
         status=WorktreeStatus.CLEAN,
         files_changed=0,
         files_staged=0,
-        last_commit_msg="feat(kanban): add workflow engine",
+        last_commit_msg='feat(kanban): add workflow engine',
         last_commit_date=fixed_now,
     )
 
@@ -282,15 +280,15 @@ def sample_worktree_info(fixed_now) -> WorktreeInfo:
 def sample_worktree_info_dirty(fixed_now) -> WorktreeInfo:
     """Sample dirty WorktreeInfo object."""
     return WorktreeInfo(
-        path="/Users/dev/dbt-playground--feat-qa",
-        branch="feat/qa-enforcement",
-        commit_hash="789abcdef1234567890abcdef1234567890abcdef",
-        commit_short="789abcd",
+        path='/Users/dev/dbt-playground--feat-qa',
+        branch='feat/qa-enforcement',
+        commit_hash='789abcdef1234567890abcdef1234567890abcdef',
+        commit_short='789abcd',
         is_main=False,
         status=WorktreeStatus.DIRTY,
         files_changed=3,
         files_staged=1,
-        last_commit_msg="wip: qa gate",
+        last_commit_msg='wip: qa gate',
         last_commit_date=fixed_now,
     )
 
@@ -299,15 +297,15 @@ def sample_worktree_info_dirty(fixed_now) -> WorktreeInfo:
 def sample_worktree_main(fixed_now) -> WorktreeInfo:
     """Sample main worktree."""
     return WorktreeInfo(
-        path="/Users/dev/dbt-playground",
-        branch="main",
-        commit_hash="abc1234567890abcdef1234567890abcdef123456",
-        commit_short="abc1234",
+        path='/Users/dev/dbt-playground',
+        branch='main',
+        commit_hash='abc1234567890abcdef1234567890abcdef123456',
+        commit_short='abc1234',
         is_main=True,
         status=WorktreeStatus.CLEAN,
         files_changed=0,
         files_staged=0,
-        last_commit_msg="Merge PR #184",
+        last_commit_msg='Merge PR #184',
         last_commit_date=fixed_now,
     )
 
@@ -321,15 +319,15 @@ def sample_worktree_main(fixed_now) -> WorktreeInfo:
 def mock_github_pr_response() -> dict[str, Any]:
     """Mock GitHub PR API response."""
     return {
-        "url": "https://github.com/owner/repo/pull/184",
-        "number": 184,
-        "state": "open",
-        "title": "feat(qa): implement QA enforcement",
-        "created_at": "2026-02-01T10:00:00Z",
-        "updated_at": "2026-02-03T08:00:00Z",
-        "draft": False,
-        "head": {"ref": "feat/qa-enforcement"},
-        "base": {"ref": "main"},
+        'url': 'https://github.com/owner/repo/pull/184',
+        'number': 184,
+        'state': 'open',
+        'title': 'feat(qa): implement QA enforcement',
+        'created_at': '2026-02-01T10:00:00Z',
+        'updated_at': '2026-02-03T08:00:00Z',
+        'draft': False,
+        'head': {'ref': 'feat/qa-enforcement'},
+        'base': {'ref': 'main'},
     }
 
 
@@ -337,15 +335,15 @@ def mock_github_pr_response() -> dict[str, Any]:
 def mock_github_pr_merged() -> dict[str, Any]:
     """Mock merged PR response."""
     return {
-        "url": "https://github.com/owner/repo/pull/182",
-        "number": 182,
-        "state": "closed",
-        "merged": True,
-        "title": "feat(kanban): add workflow engine",
-        "created_at": "2026-02-01T08:00:00Z",
-        "updated_at": "2026-02-03T04:00:00Z",
-        "merged_at": "2026-02-03T04:00:00Z",
-        "draft": False,
+        'url': 'https://github.com/owner/repo/pull/182',
+        'number': 182,
+        'state': 'closed',
+        'merged': True,
+        'title': 'feat(kanban): add workflow engine',
+        'created_at': '2026-02-01T08:00:00Z',
+        'updated_at': '2026-02-03T04:00:00Z',
+        'merged_at': '2026-02-03T04:00:00Z',
+        'draft': False,
     }
 
 
@@ -353,13 +351,13 @@ def mock_github_pr_merged() -> dict[str, Any]:
 def mock_github_ci_response() -> dict[str, Any]:
     """Mock GitHub CI checks response."""
     return {
-        "total_count": 5,
-        "check_runs": [
-            {"name": "lint", "status": "completed", "conclusion": "success"},
-            {"name": "test", "status": "completed", "conclusion": "success"},
-            {"name": "build", "status": "completed", "conclusion": "success"},
-            {"name": "dbt-test", "status": "completed", "conclusion": "success"},
-            {"name": "security", "status": "completed", "conclusion": "success"},
+        'total_count': 5,
+        'check_runs': [
+            {'name': 'lint', 'status': 'completed', 'conclusion': 'success'},
+            {'name': 'test', 'status': 'completed', 'conclusion': 'success'},
+            {'name': 'build', 'status': 'completed', 'conclusion': 'success'},
+            {'name': 'dbt-test', 'status': 'completed', 'conclusion': 'success'},
+            {'name': 'security', 'status': 'completed', 'conclusion': 'success'},
         ],
     }
 
@@ -368,11 +366,11 @@ def mock_github_ci_response() -> dict[str, Any]:
 def mock_github_ci_failed() -> dict[str, Any]:
     """Mock GitHub CI with failures."""
     return {
-        "total_count": 3,
-        "check_runs": [
-            {"name": "lint", "status": "completed", "conclusion": "success"},
-            {"name": "test", "status": "completed", "conclusion": "failure"},
-            {"name": "build", "status": "in_progress", "conclusion": None},
+        'total_count': 3,
+        'check_runs': [
+            {'name': 'lint', 'status': 'completed', 'conclusion': 'success'},
+            {'name': 'test', 'status': 'completed', 'conclusion': 'failure'},
+            {'name': 'build', 'status': 'in_progress', 'conclusion': None},
         ],
     }
 
@@ -381,10 +379,10 @@ def mock_github_ci_failed() -> dict[str, Any]:
 def mock_github_issues_response() -> list[dict[str, Any]]:
     """Mock GitHub issues for an epic."""
     return [
-        {"number": 156, "state": "closed", "title": "QA_REPORT.md template"},
-        {"number": 157, "state": "closed", "title": "qa-reviewer persona"},
-        {"number": 165, "state": "open", "title": "Supervisor QA gate"},
-        {"number": 166, "state": "open", "title": "/qa command"},
+        {'number': 156, 'state': 'closed', 'title': 'QA_REPORT.md template'},
+        {'number': 157, 'state': 'closed', 'title': 'qa-reviewer persona'},
+        {'number': 165, 'state': 'open', 'title': 'Supervisor QA gate'},
+        {'number': 166, 'state': 'open', 'title': '/qa command'},
     ]
 
 
@@ -415,9 +413,9 @@ def mock_coderabbit_changes_requested() -> CodeRabbitStatus:
 def workflow_state_fresh(fixed_now) -> dict[str, Any]:
     """Fresh workflow state (heartbeat < 30s)."""
     return {
-        "last_update": fixed_now.isoformat(),
-        "active_tracks": [
-            {"branch": "feat/qa-enforcement", "status": "IN_PROGRESS"},
+        'last_update': fixed_now.isoformat(),
+        'active_tracks': [
+            {'branch': 'feat/qa-enforcement', 'status': 'IN_PROGRESS'},
         ],
     }
 
@@ -426,9 +424,9 @@ def workflow_state_fresh(fixed_now) -> dict[str, Any]:
 def workflow_state_stale() -> dict[str, Any]:
     """Stale workflow state (heartbeat > 60s)."""
     return {
-        "last_update": "2026-02-03T11:58:00Z",  # 2 minutes old relative to fixed_now
-        "active_tracks": [
-            {"branch": "feat/qa-enforcement", "status": "IN_PROGRESS"},
+        'last_update': '2026-02-03T11:58:00Z',  # 2 minutes old relative to fixed_now
+        'active_tracks': [
+            {'branch': 'feat/qa-enforcement', 'status': 'IN_PROGRESS'},
         ],
     }
 
@@ -442,8 +440,8 @@ def heartbeat_status_fresh(fixed_now) -> HeartbeatStatus:
         seconds_since_update=10.0,
         active_orchestrators=[
             OrchestratorStatus(
-                branch="feat/qa-enforcement",
-                status="IN_PROGRESS",
+                branch='feat/qa-enforcement',
+                status='IN_PROGRESS',
                 request=None,
                 last_update=fixed_now,
             )
@@ -473,7 +471,7 @@ def heartbeat_status_stale(fixed_now) -> HeartbeatStatus:
 @pytest.fixture
 def tmp_archives_dir(tmp_path) -> Path:
     """Temporary archives directory."""
-    archives = tmp_path / "archives"
+    archives = tmp_path / 'archives'
     archives.mkdir()
     return archives
 
@@ -482,14 +480,14 @@ def tmp_archives_dir(tmp_path) -> Path:
 def archived_worktree_sample(fixed_now, sample_worktree_info) -> ArchivedWorktree:
     """Sample archived worktree."""
     enriched = EnrichedWorktree.from_worktree_info(sample_worktree_info)
-    enriched.track_name = "Kanban Workflow Engine"
+    enriched.track_name = 'Kanban Workflow Engine'
     enriched.epic_number = 144
     return ArchivedWorktree(
-        id="archive-uuid-001",
+        id='archive-uuid-001',
         worktree=enriched,
         archived_at=fixed_now,
         reason=ArchiveReason.MERGED,
-        version="v0.10",
+        version='v0.10',
     )
 
 
@@ -497,33 +495,31 @@ def archived_worktree_sample(fixed_now, sample_worktree_info) -> ArchivedWorktre
 def archive_index_sample() -> dict[str, Any]:
     """Sample archive index JSON."""
     return {
-        "version": 1,
-        "versions": ["v0.9", "v0.10"],
-        "last_updated": "2026-02-03T12:00:00Z",
+        'version': 1,
+        'versions': ['v0.9', 'v0.10'],
+        'last_updated': '2026-02-03T12:00:00Z',
     }
 
 
 @pytest.fixture
 def archived_version_v09(tmp_archives_dir) -> Path:
     """Create sample v0.9 archive directory with data."""
-    v09_dir = tmp_archives_dir / "v0.9"
+    v09_dir = tmp_archives_dir / 'v0.9'
     v09_dir.mkdir()
 
     archive_data = {
-        "version": "v0.9",
-        "archived_at": "2026-01-15T10:00:00Z",
-        "worktrees": [
+        'version': 'v0.9',
+        'archived_at': '2026-01-15T10:00:00Z',
+        'worktrees': [
             {
-                "id": "old-uuid-001",
-                "branch": "feat/old-feature",
-                "archived_at": "2026-01-15T10:00:00Z",
-                "reason": "completed",
+                'id': 'old-uuid-001',
+                'branch': 'feat/old-feature',
+                'archived_at': '2026-01-15T10:00:00Z',
+                'reason': 'completed',
             }
         ],
     }
-    (v09_dir / "archive.json").write_text(
-        json.dumps(archive_data, indent=2), encoding="utf-8"
-    )
+    (v09_dir / 'archive.json').write_text(json.dumps(archive_data, indent=2), encoding='utf-8')
     return v09_dir
 
 
@@ -536,25 +532,25 @@ def archived_version_v09(tmp_archives_dir) -> Path:
 def enriched_worktree_full(fixed_now) -> EnrichedWorktree:
     """Fully enriched worktree with all data."""
     return EnrichedWorktree(
-        path="/Users/dev/dbt-playground--feat-qa",
-        branch="feat/qa-enforcement",
-        commit_hash="789abcdef1234567890abcdef1234567890abcdef",
-        commit_short="789abcd",
+        path='/Users/dev/dbt-playground--feat-qa',
+        branch='feat/qa-enforcement',
+        commit_hash='789abcdef1234567890abcdef1234567890abcdef',
+        commit_short='789abcd',
         is_main=False,
         status=WorktreeStatus.CLEAN,
         files_changed=0,
         files_staged=0,
-        last_commit_msg="feat(qa): implement QA enforcement",
+        last_commit_msg='feat(qa): implement QA enforcement',
         last_commit_date=fixed_now,
-        track_name="QA Enforcement",
-        track_color="#dc2626",
+        track_name='QA Enforcement',
+        track_color='#dc2626',
         epic_number=145,
         epic_issues=EpicIssues(open=2, closed=2, total=4),
         pr=PRInfo(
-            url="https://github.com/owner/repo/pull/184",
+            url='https://github.com/owner/repo/pull/184',
             number=184,
             state=PRState.OPEN,
-            title="feat(qa): implement QA enforcement",
+            title='feat(qa): implement QA enforcement',
             draft=False,
         ),
         ci_checks=CIChecks(total=5, passed=5, failed=0, pending=0),
@@ -586,7 +582,7 @@ def enriched_worktree_with_anomalies(enriched_worktree_full) -> EnrichedWorktree
         Anomaly(
             type=AnomalyType.CHANGES_REQUESTED,
             severity=AnomalySeverity.MEDIUM,
-            message="CodeRabbit requested changes (2 major)",
+            message='CodeRabbit requested changes (2 major)',
             worktree_path=wt.path,
             branch=wt.branch,
         ),
@@ -598,9 +594,9 @@ def enriched_worktree_with_anomalies(enriched_worktree_full) -> EnrichedWorktree
 def track_summary_sample() -> TrackSummary:
     """Sample track summary."""
     return TrackSummary(
-        name="QA Enforcement",
+        name='QA Enforcement',
         epic=145,
-        color="#dc2626",
+        color='#dc2626',
         worktree_count=1,
         issues_open=2,
         issues_closed=2,
@@ -616,7 +612,7 @@ def monitor_output_sample(
     return MonitorOutput(
         timestamp=fixed_now,
         config_version=1,
-        milestone="v0.10",
+        milestone='v0.10',
         worktree_count=1,
         worktrees=[enriched_worktree_full],
         tracks=[track_summary_sample],
@@ -635,11 +631,9 @@ def monitor_output_sample(
 @pytest.fixture
 def tmp_config_dir(tmp_path, valid_version_plan_yaml) -> Path:
     """Temporary config directory with version plan."""
-    config_dir = tmp_path / "config"
+    config_dir = tmp_path / 'config'
     config_dir.mkdir()
-    (config_dir / "version-plan.yaml").write_text(
-        valid_version_plan_yaml, encoding="utf-8"
-    )
+    (config_dir / 'version-plan.yaml').write_text(valid_version_plan_yaml, encoding='utf-8')
     return config_dir
 
 
@@ -648,39 +642,39 @@ def version_plan_model() -> VersionPlan:
     """Sample VersionPlan model object."""
     return VersionPlan(
         version=1,
-        name="v0.10",
-        target_date="2026-04-30",
-        description="Agent Orchestration Enhancements",
+        name='v0.10',
+        target_date='2026-04-30',
+        description='Agent Orchestration Enhancements',
         status=VersionStatus.IN_PROGRESS,
         phases=[
             PhaseConfig(
-                name="Phase A",
+                name='Phase A',
                 order=1,
-                description="Foundation",
+                description='Foundation',
                 status=PhaseStatus.COMPLETE,
                 workstreams=[
                     WorkstreamConfig(
-                        name="Agent Memory & Learning",
+                        name='Agent Memory & Learning',
                         epic=143,
-                        branches=["feat/agent-memory", "feat/memory-*"],
+                        branches=['feat/agent-memory', 'feat/memory-*'],
                         status=WorkstreamStatus.COMPLETE,
-                        color="#7c3aed",
+                        color='#7c3aed',
                     ),
                 ],
             ),
             PhaseConfig(
-                name="Phase B",
+                name='Phase B',
                 order=2,
-                description="Quality & Observability",
+                description='Quality & Observability',
                 status=PhaseStatus.IN_PROGRESS,
-                dependencies=["Phase A"],
+                dependencies=['Phase A'],
                 workstreams=[
                     WorkstreamConfig(
-                        name="QA Enforcement",
+                        name='QA Enforcement',
                         epic=145,
-                        branches=["feat/qa-enforcement", "feat/qa-*"],
+                        branches=['feat/qa-enforcement', 'feat/qa-*'],
                         status=WorkstreamStatus.COMPLETE,
-                        color="#dc2626",
+                        color='#dc2626',
                     ),
                 ],
             ),
@@ -704,17 +698,17 @@ def mock_gh_cli():
     """Mock for gh CLI commands."""
 
     def _mock_response(command: list[str]) -> str:
-        cmd_str = " ".join(command)
-        if "pr list" in cmd_str:
-            return json.dumps([{"number": 184, "state": "open"}])
-        elif "pr view" in cmd_str:
+        cmd_str = ' '.join(command)
+        if 'pr list' in cmd_str:
+            return json.dumps([{'number': 184, 'state': 'open'}])
+        elif 'pr view' in cmd_str:
             return json.dumps(
                 {
-                    "number": 184,
-                    "state": "open",
-                    "title": "feat(qa): implement QA enforcement",
+                    'number': 184,
+                    'state': 'open',
+                    'title': 'feat(qa): implement QA enforcement',
                 }
             )
-        return "{}"
+        return '{}'
 
     return _mock_response
