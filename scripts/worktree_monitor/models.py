@@ -12,20 +12,19 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 from .constants import (
-    VersionStatus,
-    PhaseStatus,
-    WorkstreamStatus,
-    HeartbeatState,
-    RequestType,
-    WorktreeStatus,
-    PRState,
-    CodeRabbitReviewStatus,
-    AnomalyType,
     AnomalySeverity,
+    AnomalyType,
     ArchiveReason,
+    CodeRabbitReviewStatus,
+    HeartbeatState,
+    PhaseStatus,
+    PRState,
+    RequestType,
+    VersionStatus,
+    WorkstreamStatus,
+    WorktreeStatus,
 )
 from .serialization import SerializableMixin
-
 
 # =============================================================================
 # Configuration Models (from version-plan.yaml)

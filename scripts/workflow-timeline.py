@@ -22,13 +22,13 @@ import re
 import subprocess
 import sys
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from rich.console import Console
-from rich.table import Table
 from rich.panel import Panel
+from rich.table import Table
 from rich.text import Text
 
 console = Console()
@@ -244,10 +244,7 @@ def calculate_gaps(commits: list[CommitInfo]) -> list[tuple[int, str]]:
         if minutes > 30:  # Only report significant gaps
             hours = minutes // 60
             mins = minutes % 60
-            if hours > 0:
-                gap_str = f"{hours}h {mins}m"
-            else:
-                gap_str = f"{mins}m"
+            gap_str = f"{hours}h {mins}m" if hours > 0 else f"{mins}m"
             gaps.append((minutes, gap_str))
     return gaps
 
@@ -264,7 +261,7 @@ def format_timeline(commits: list[CommitInfo], branch: str) -> None:
 
     # Header
     header = Text()
-    header.append(f"WORKFLOW TIMELINE: ", style="bold")
+    header.append("WORKFLOW TIMELINE: ", style="bold")
     header.append(f"{branch}", style="cyan")
     header.append(f" ({active_time} active)", style="dim")
 
@@ -289,7 +286,7 @@ def format_timeline(commits: list[CommitInfo], branch: str) -> None:
         details.append(f": {commit.message.split(':')[-1].strip()[:60]}")
 
         if commit.co_authored_by:
-            details.append(f"\n       Agent: ", style="dim")
+            details.append("\n       Agent: ", style="dim")
             details.append(", ".join(commit.co_authored_by), style="magenta")
 
         # Calculate gap from previous
@@ -354,10 +351,7 @@ def commits_to_events(commits: list[CommitInfo], branch: str) -> list[TimelineEv
 def validate_event(event: dict[str, Any], schema_path: Path) -> bool:
     """Validate event against JSON schema (basic validation)."""
     required_fields = ["schema_version", "timestamp", "event_type", "source", "correlation_id"]
-    for field in required_fields:
-        if field not in event:
-            return False
-    return True
+    return all(f in event for f in required_fields)
 
 
 def main() -> int:
@@ -400,7 +394,7 @@ Examples:
         events = commits_to_events(commits, branch)
         output = {
             "metadata": {
-                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "generated_at": datetime.now(UTC).isoformat(),
                 "branch": branch,
                 "since": args.since,
                 "event_count": len(events),

@@ -16,10 +16,11 @@ Usage:
 """
 
 import argparse
+import contextlib
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rich.console import Console
@@ -109,7 +110,7 @@ def get_last_commit() -> tuple[str, str, str, int]:
     )
     files_changed = 0
     if stat_result.returncode == 0:
-        lines = [l for l in stat_result.stdout.split("\n") if l.strip()]
+        lines = [line for line in stat_result.stdout.split("\n") if line.strip()]
         files_changed = max(0, len(lines) - 1)  # Last line is summary
 
     return message, sha, time_since, files_changed
@@ -199,17 +200,15 @@ def get_recent_events(limit: int = 5) -> list[dict]:
     with open(EVENTS_FILE) as f:
         for line in f:
             if line.strip():
-                try:
+                with contextlib.suppress(json.JSONDecodeError):
                     events.append(json.loads(line))
-                except json.JSONDecodeError:
-                    pass
 
     return events[-limit:]
 
 
 def generate_bootstrap(include_events: bool = False) -> str:
     """Generate CONTEXT_BOOTSTRAP.md content."""
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     branch = get_branch_name()
     phase = derive_phase(branch)
     message, sha, time_since, files_changed = get_last_commit()
@@ -228,7 +227,7 @@ def generate_bootstrap(include_events: bool = False) -> str:
         "",
         f"- **Branch**: `{branch}`",
         f"- **Phase**: {phase}",
-        f"- **Health**: --/100 *(not yet computed)*",
+        "- **Health**: --/100 *(not yet computed)*",
         "",
         "---",
         "",

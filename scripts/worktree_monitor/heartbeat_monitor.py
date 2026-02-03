@@ -12,22 +12,22 @@ checking mtime to avoid race conditions where the file is updated
 between reading mtime and reading content.
 """
 
-from datetime import datetime, timezone
-from pathlib import Path
 import json
 import logging
+from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
-logger = logging.getLogger(__name__)
-
-from .models import HeartbeatStatus, OrchestratorStatus, OrchestratorRequest
 from .constants import (
-    HeartbeatState,
-    RequestType,
     HEARTBEAT_THRESHOLDS,
+    HeartbeatState,
     HeartbeatThresholds,
+    RequestType,
 )
-from .exceptions import HeartbeatError, HeartbeatFileNotFoundError, HeartbeatParseError
+from .exceptions import HeartbeatFileNotFoundError, HeartbeatParseError
+from .models import HeartbeatStatus, OrchestratorRequest, OrchestratorStatus
+
+logger = logging.getLogger(__name__)
 
 
 class HeartbeatMonitor:
@@ -74,14 +74,14 @@ class HeartbeatMonitor:
             HeartbeatParseError: If heartbeat file cannot be parsed.
         """
         if now is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         # CRITICAL: Read content BEFORE mtime to avoid race condition
         content = self._read_content()
         mtime = self._get_mtime()
 
         # Calculate staleness
-        last_update = datetime.fromtimestamp(mtime, tz=timezone.utc)
+        last_update = datetime.fromtimestamp(mtime, tz=UTC)
         seconds_since_update = (now - last_update).total_seconds()
         state = self.thresholds.get_state(seconds_since_update)
 
@@ -111,7 +111,7 @@ class HeartbeatMonitor:
             HeartbeatFileNotFoundError: If heartbeat file doesn't exist.
         """
         if now is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         seconds = self.get_seconds_since_update(now=now)
         return self.thresholds.get_state(seconds)
@@ -130,10 +130,10 @@ class HeartbeatMonitor:
             HeartbeatFileNotFoundError: If heartbeat file doesn't exist.
         """
         if now is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         mtime = self._get_mtime()
-        last_update = datetime.fromtimestamp(mtime, tz=timezone.utc)
+        last_update = datetime.fromtimestamp(mtime, tz=UTC)
         return (now - last_update).total_seconds()
 
     def parse_orchestrator_requests(self) -> list[OrchestratorRequest]:
@@ -162,8 +162,8 @@ class HeartbeatMonitor:
         """
         try:
             text = self.heartbeat_path.read_text(encoding="utf-8")
-        except FileNotFoundError:
-            raise HeartbeatFileNotFoundError(str(self.heartbeat_path))
+        except FileNotFoundError as e:
+            raise HeartbeatFileNotFoundError(str(self.heartbeat_path)) from e
 
         try:
             if not text.strip():
@@ -189,8 +189,8 @@ class HeartbeatMonitor:
         """
         try:
             return self.heartbeat_path.stat().st_mtime
-        except FileNotFoundError:
-            raise HeartbeatFileNotFoundError(str(self.heartbeat_path))
+        except FileNotFoundError as e:
+            raise HeartbeatFileNotFoundError(str(self.heartbeat_path)) from e
 
     def _iter_orchestrator_entries(
         self, content: dict[str, Any]

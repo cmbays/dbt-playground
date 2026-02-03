@@ -16,12 +16,10 @@ Usage:
 
 import argparse
 import json
-import re
 import subprocess
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from pathlib import Path
+from datetime import UTC, datetime
 
 from rich.console import Console
 from rich.panel import Panel
@@ -479,7 +477,7 @@ def main() -> int:
 
     if args.format == "json":
         output = {
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "branch": state.branch,
             "phase": state.phase,
             "active_time": state.active_time,

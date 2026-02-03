@@ -117,7 +117,7 @@ def get_repo_context() -> tuple[str, str]:
             raise RuntimeError("Could not determine repo context")
         return tuple(owner_repo.split("/"))
     except Exception as e:
-        raise RuntimeError(f"Failed to get repo context: {e}")
+        raise RuntimeError(f"Failed to get repo context: {e}") from e
 
 
 # === Issue Commands ===
@@ -199,11 +199,11 @@ def create(
             issue_num = output.split("#")[1].split()[0]
             console.print(f"[green]✓[/green] Created issue #{issue_num}")
         else:
-            console.print(f"[green]✓[/green] Issue created")
+            console.print("[green]✓[/green] Issue created")
             console.print(output)
 
     except subprocess.CalledProcessError as e:
-        console.print(f"[red]✗[/red] Failed to create issue")
+        console.print("[red]✗[/red] Failed to create issue")
         console.print(f"Error: {e.stderr}")
         sys.exit(1)
 
@@ -230,7 +230,7 @@ def batch(template_file: str, dry_run: bool) -> None:
         try:
             validate(instance=template, schema=schema)
         except ValidationError as e:
-            console.print(f"[red]✗[/red] Template validation failed")
+            console.print("[red]✗[/red] Template validation failed")
             console.print(f"Error: {e.message}")
             sys.exit(1)
 
@@ -290,21 +290,21 @@ def batch(template_file: str, dry_run: bool) -> None:
                     issue_num = output.split("#")[1].split()[0]
                     console.print(f"    [green]✓[/green] Created #{issue_num}")
                 else:
-                    console.print(f"    [green]✓[/green] Created")
+                    console.print("    [green]✓[/green] Created")
 
             except subprocess.CalledProcessError as e:
                 console.print(f"    [red]✗[/red] Failed: {e.stderr}")
 
-        console.print(f"\n[green]Done![/green]\n")
+        console.print("\n[green]Done![/green]\n")
 
     except FileNotFoundError as e:
         console.print(f"[red]✗[/red] {e}")
         sys.exit(1)
 
 
-@issue.command()
+@issue.command("validate")
 @click.argument("template_file")
-def validate(template_file: str) -> None:
+def validate_template(template_file: str) -> None:
     """Validate YAML template against schema.
 
     Example:
@@ -343,7 +343,7 @@ def milestone():
     pass
 
 
-@milestone.command()
+@milestone.command("create")
 @click.argument("title")
 @click.option(
     "--due",
@@ -357,7 +357,7 @@ def milestone():
     default=None,
     help="Milestone description",
 )
-def create(title: str, due: str | None, description: str | None) -> None:
+def milestone_create(title: str, due: str | None, description: str | None) -> None:
     """Create a GitHub milestone.
 
     Example:
@@ -386,7 +386,7 @@ def create(title: str, due: str | None, description: str | None) -> None:
             console.print(f"  Number: {data['number']}")
 
     except subprocess.CalledProcessError as e:
-        console.print(f"[red]✗[/red] Failed to create milestone")
+        console.print("[red]✗[/red] Failed to create milestone")
         console.print(f"Error: {e.stderr}")
         sys.exit(1)
 
@@ -442,7 +442,7 @@ def list() -> None:
         console.print(table)
 
     except subprocess.CalledProcessError as e:
-        console.print(f"[red]✗[/red] Failed to list milestones")
+        console.print("[red]✗[/red] Failed to list milestones")
         console.print(f"Error: {e.stderr}")
         sys.exit(1)
 
@@ -497,7 +497,7 @@ def status(title: str) -> None:
         console.print()
 
     except subprocess.CalledProcessError as e:
-        console.print(f"[red]✗[/red] Failed to get milestone status")
+        console.print("[red]✗[/red] Failed to get milestone status")
         console.print(f"Error: {e.stderr}")
         sys.exit(1)
 

@@ -116,14 +116,14 @@ def format_decision(decision: dict, score: float | None = None) -> None:
     # Rationale
     rationale = decision.get("rationale", "").strip()
     if rationale:
-        console.print(f"\n  [bold]Rationale:[/bold]")
+        console.print("\n  [bold]Rationale:[/bold]")
         for line in rationale.split("\n"):
             console.print(f"    {line}")
 
     # Trigger
     trigger = decision.get("reconsidering_trigger", "")
     if trigger:
-        console.print(f"\n  [bold yellow]Reconsider when:[/bold yellow]")
+        console.print("\n  [bold yellow]Reconsider when:[/bold yellow]")
         console.print(f"    {trigger}")
 
     console.print()
@@ -163,7 +163,6 @@ def check_triggers(decisions: list[dict]) -> None:
     """Check if any reconsideration triggers might apply."""
     console.print("[bold]Checking reconsideration triggers...[/bold]\n")
 
-    triggered = []
     for decision in decisions:
         trigger = decision.get("reconsidering_trigger", "")
         if not trigger:

@@ -19,7 +19,8 @@ v0.7.0 - Added session-states and github-issues endpoints for Workflow Hub
 import json
 import subprocess
 from pathlib import Path
-from flask import Flask, jsonify, send_from_directory, request
+
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 # Project paths
@@ -228,7 +229,7 @@ def get_session_states():
                 "content": content,
                 "modified": f.stat().st_mtime,
             })
-        except Exception as e:
+        except Exception:
             # Skip files that can't be read
             continue
 
@@ -278,7 +279,7 @@ def get_pm_sessions():
         })
 
     try:
-        with open(pm_sessions_file, 'r') as f:
+        with open(pm_sessions_file) as f:
             data = json.load(f)
         return jsonify({**data, "error": None})
     except Exception as e:
@@ -301,15 +302,15 @@ def get_backlog_tasks():
         return jsonify(data)
     except urllib.error.URLError:
         return jsonify([]), 503  # Empty array with error status
-    except Exception as e:
+    except Exception:
         return jsonify([]), 500  # Empty array with error status
 
 
 @app.route("/api/backlog/config")
 def get_backlog_config():
     """Proxy Backlog.md config endpoint for connection check (v0.9)."""
-    import urllib.request
     import urllib.error
+    import urllib.request
     try:
         with urllib.request.urlopen("http://localhost:6420/api/config", timeout=5) as response:
             data = json.loads(response.read().decode())
@@ -405,24 +406,24 @@ if __name__ == "__main__":
     print("  Playground Server")
     print("=" * 50)
     print(f"\n  Project: {PROJECT_ROOT}")
-    print(f"\n  URLs:")
-    print(f"    Hub:        http://localhost:5050/")
-    print(f"    Worktrees:  http://localhost:5050/playgrounds/worktree-coordinator.html")
-    print(f"    Mermaid:    http://localhost:5050/playgrounds/mermaid-designer.html")
-    print(f"\n  API Endpoints:")
-    print(f"    GET /api/health            - Health check")
-    print(f"    GET /api/all               - All data (combined)")
-    print(f"    GET /api/worktrees         - Git worktree list")
-    print(f"    GET /api/git-status        - Git status")
-    print(f"    GET /api/git-log           - Recent commits")
-    print(f"    GET /api/workflow-state    - WORKFLOW_STATE.md")
-    print(f"    GET /api/session-summaries - Session summaries")
-    print(f"    GET /api/session-states    - Session state files (v0.7)")
-    print(f"    GET /api/github-issues     - GitHub issues via gh (v0.7)")
-    print(f"    GET /api/pm-sessions       - PM sessions tracker (v0.9)")
-    print(f"    GET /api/backlog/tasks     - Backlog.md proxy (v0.9)")
-    print(f"    GET /api/agent-reports     - Agent reports")
-    print(f"\n  Press Ctrl+C to stop\n")
+    print("\n  URLs:")
+    print("    Hub:        http://localhost:5050/")
+    print("    Worktrees:  http://localhost:5050/playgrounds/worktree-coordinator.html")
+    print("    Mermaid:    http://localhost:5050/playgrounds/mermaid-designer.html")
+    print("\n  API Endpoints:")
+    print("    GET /api/health            - Health check")
+    print("    GET /api/all               - All data (combined)")
+    print("    GET /api/worktrees         - Git worktree list")
+    print("    GET /api/git-status        - Git status")
+    print("    GET /api/git-log           - Recent commits")
+    print("    GET /api/workflow-state    - WORKFLOW_STATE.md")
+    print("    GET /api/session-summaries - Session summaries")
+    print("    GET /api/session-states    - Session state files (v0.7)")
+    print("    GET /api/github-issues     - GitHub issues via gh (v0.7)")
+    print("    GET /api/pm-sessions       - PM sessions tracker (v0.9)")
+    print("    GET /api/backlog/tasks     - Backlog.md proxy (v0.9)")
+    print("    GET /api/agent-reports     - Agent reports")
+    print("\n  Press Ctrl+C to stop\n")
     print("=" * 50 + "\n")
 
     app.run(port=5050, debug=False)

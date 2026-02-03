@@ -20,6 +20,7 @@ Issues: #150, #151, #152
 """
 
 import argparse
+import contextlib
 import json
 import logging
 import re
@@ -62,7 +63,7 @@ def get_today_log() -> Path:
 
 def detect_task_id() -> str | None:
     """Detect task_id from WORKFLOW_STATE.md if available."""
-    try:
+    with contextlib.suppress(OSError, UnicodeDecodeError, re.error):
         workflow_state = Path('temp/WORKFLOW_STATE.md')
         if not workflow_state.exists():
             return None
@@ -71,8 +72,7 @@ def detect_task_id() -> str | None:
         # Look for task reference patterns
         match = re.search(r'(?:Task ID|TASK)[:\s]+([A-Z]+-\d+)', content, re.IGNORECASE)
         return match.group(1) if match else None
-    except (OSError, UnicodeDecodeError, re.error):
-        return None
+    return None
 
 
 def get_modified_files() -> list[str]:

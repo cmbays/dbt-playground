@@ -164,10 +164,7 @@ class VersionPlanLoader:
         Returns:
             True if branch matches any pattern, False otherwise.
         """
-        for pattern in workstream.branches:
-            if fnmatch(branch, pattern):
-                return True
-        return False
+        return any(fnmatch(branch, pattern) for pattern in workstream.branches)
 
     def _load_yaml(self) -> dict[str, Any]:
         """Load YAML content from file.
@@ -325,7 +322,7 @@ class VersionPlanLoader:
 
         if errors:
             raise VersionPlanValidationError(
-                f"Phase validation failed",
+                "Phase validation failed",
                 validation_errors=errors,
             )
 
@@ -372,7 +369,7 @@ class VersionPlanLoader:
 
         if errors:
             raise VersionPlanValidationError(
-                f"Workstream validation failed",
+                "Workstream validation failed",
                 validation_errors=errors,
             )
 
@@ -425,7 +422,7 @@ class VersionPlanLoader:
 
         if errors:
             raise VersionPlanValidationError(
-                f"Workstream validation failed",
+                "Workstream validation failed",
                 validation_errors=errors,
             )
 

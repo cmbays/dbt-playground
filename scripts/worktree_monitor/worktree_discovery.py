@@ -7,6 +7,7 @@ Provides structured WorktreeInfo objects with status details.
 Created: Phase 4 Day 0 (Implementation)
 """
 
+import contextlib
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -347,10 +348,8 @@ class WorktreeDiscovery:
         # Parse ISO date
         commit_date = None
         if date_str:
-            try:
+            with contextlib.suppress(ValueError):
                 commit_date = datetime.fromisoformat(date_str)
-            except ValueError:
-                pass
 
         return commit_hash, commit_msg, commit_date
 

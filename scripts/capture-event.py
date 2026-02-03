@@ -19,10 +19,10 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-from jsonschema import Draft202012Validator, ValidationError
+from jsonschema import Draft202012Validator
 from rich.console import Console
 
 console = Console()
@@ -100,7 +100,7 @@ def log_rejected_event(event: dict, reason: str) -> None:
     WORKFLOW_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
 
     entry = {
-        "rejected_at": datetime.now(timezone.utc).isoformat(),
+        "rejected_at": datetime.now(UTC).isoformat(),
         "reason": reason,
         "event": event,
     }
@@ -128,7 +128,7 @@ def build_event(event_type: str, payload: dict) -> dict:
 
     return {
         "schema_version": SCHEMA_VERSION,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "event_type": event_type,
         "source": {
             "type": "human",  # Manual capture is human-initiated

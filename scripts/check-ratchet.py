@@ -20,7 +20,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rich.console import Console
@@ -72,7 +72,7 @@ def schedule_baseline_increase(metric_name: str, new_value: float, reason: str) 
             # Append to history (immutable)
             history_entry = {
                 "action": "baseline_increased",
-                "date": datetime.now(timezone.utc).isoformat(),
+                "date": datetime.now(UTC).isoformat(),
                 "value": new_value,
                 "previous_value": old_value,
                 "reason": reason,
@@ -83,7 +83,7 @@ def schedule_baseline_increase(metric_name: str, new_value: float, reason: str) 
             metric["current_baseline"] = new_value
 
             # Update last_updated
-            data["last_updated"] = datetime.now(timezone.utc).isoformat()
+            data["last_updated"] = datetime.now(UTC).isoformat()
 
             save_baselines(data)
             return True
@@ -149,7 +149,7 @@ def get_current_model_count() -> int:
         timeout=60,
     )
 
-    return len([l for l in result.stdout.split("\n") if l.strip()])
+    return len([line for line in result.stdout.split("\n") if line.strip()])
 
 
 def check_all_metrics() -> list[tuple[str, bool, str, float, float]]:
@@ -181,7 +181,7 @@ def check_all_metrics() -> list[tuple[str, bool, str, float, float]]:
                     timeout=60,
                 )
                 # Filter to only include lines that are actual model references
-                lines = [l for l in result.stdout.split("\n") if l.strip() and l.startswith("healthcare_analytics.")]
+                lines = [line for line in result.stdout.split("\n") if line.strip() and line.startswith("healthcare_analytics.")]
                 current = len(lines)
             else:
                 current = 0

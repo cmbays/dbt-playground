@@ -20,7 +20,7 @@ import json
 import subprocess
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rich.console import Console
@@ -367,7 +367,6 @@ def format_health_pulse(pulse: HealthPulse, verbose: bool = False) -> None:
     if verbose:
         console.print("[bold]Components:[/bold]")
         for c in pulse.components:
-            status_color = {"good": "green", "fair": "yellow", "poor": "red"}.get(c.status, "white")
             console.print(f"  {c.name:20} [{render_bar(c.score, 8)}] {c.score:3d}  [dim]{c.detail}[/dim]")
     else:
         console.print("[dim]Use --verbose for component breakdown[/dim]")
@@ -410,7 +409,7 @@ def main() -> int:
                 }
                 for c in pulse.components
             ],
-            "computed_at": datetime.now(timezone.utc).isoformat(),
+            "computed_at": datetime.now(UTC).isoformat(),
         }
         print(json.dumps(output, indent=2))
     else:

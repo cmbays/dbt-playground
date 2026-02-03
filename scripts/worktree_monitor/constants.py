@@ -8,9 +8,8 @@ the worktree monitor system.
 Created: Phase 4 Day 0 (Pre-Work)
 """
 
-from enum import Enum
 from dataclasses import dataclass
-
+from enum import Enum
 
 # =============================================================================
 # Status Enums

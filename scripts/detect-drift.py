@@ -15,12 +15,12 @@ Usage:
 """
 
 import argparse
-import os
+import contextlib
 import re
 import subprocess
 import sys
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rich.console import Console
@@ -102,12 +102,10 @@ def parse_bootstrap_file() -> dict | None:
     # Extract generated timestamp
     match = re.search(r'\*Auto-generated:\s*([^*]+)\*', content)
     if match:
-        try:
+        with contextlib.suppress(ValueError):
             parsed["generated_at"] = datetime.fromisoformat(
                 match.group(1).strip().replace(" UTC", "+00:00")
             )
-        except ValueError:
-            pass
 
     # Extract branch
     match = re.search(r'\*\*Branch\*\*:\s*`([^`]+)`', content)
@@ -182,17 +180,16 @@ def check_bootstrap_drift() -> list[DriftIssue]:
         ))
 
     # Check age of bootstrap
-    if parsed["generated_at"] and last_commit_time:
-        if last_commit_time > parsed["generated_at"]:
-            age_minutes = (datetime.now(timezone.utc) - parsed["generated_at"]).total_seconds() / 60
-            issues.append(DriftIssue(
-                category="Bootstrap",
-                severity="warning",
-                description="Bootstrap older than latest commit",
-                actual=f"Generated {age_minutes:.0f}m ago",
-                expected="Should be regenerated after commits",
-                fixable=True,
-            ))
+    if parsed["generated_at"] and last_commit_time and last_commit_time > parsed["generated_at"]:
+        age_minutes = (datetime.now(UTC) - parsed["generated_at"]).total_seconds() / 60
+        issues.append(DriftIssue(
+            category="Bootstrap",
+            severity="warning",
+            description="Bootstrap older than latest commit",
+            actual=f"Generated {age_minutes:.0f}m ago",
+            expected="Should be regenerated after commits",
+            fixable=True,
+        ))
 
     return issues
 
@@ -204,7 +201,7 @@ def check_worktree_drift() -> list[DriftIssue]:
     # Check for uncommitted changes
     status = run_git(["status", "--porcelain"])
     if status:
-        lines = [l for l in status.split("\n") if l.strip()]
+        lines = [line for line in status.split("\n") if line.strip()]
         issues.append(DriftIssue(
             category="Working Tree",
             severity="warning",

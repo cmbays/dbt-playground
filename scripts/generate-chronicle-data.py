@@ -16,12 +16,13 @@ Usage:
 """
 
 import argparse
+import contextlib
 import json
 import re
 import subprocess
 import sys
-from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -268,10 +269,8 @@ def load_events() -> list[dict[str, Any]]:
     with open(EVENTS_FILE) as f:
         for line in f:
             if line.strip():
-                try:
+                with contextlib.suppress(json.JSONDecodeError):
                     events.append(json.loads(line))
-                except json.JSONDecodeError:
-                    pass
 
     return events
 
@@ -360,7 +359,7 @@ def generate_chronicle_data(since: str) -> ChronicleData:
     decisions = load_negative_space()
     insights = compute_insights(commits)
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     metadata = {
         "generated_at": now.isoformat(),

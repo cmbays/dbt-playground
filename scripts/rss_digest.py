@@ -19,7 +19,7 @@ import json
 import re
 import subprocess
 import webbrowser
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -102,13 +102,13 @@ def fetch_feed(name: str, url: str, timeout: float = 10.0) -> list[dict[str, Any
             for date_field in ['published_parsed', 'updated_parsed', 'created_parsed']:
                 if hasattr(entry, date_field) and getattr(entry, date_field):
                     try:
-                        published = datetime(*getattr(entry, date_field)[:6], tzinfo=timezone.utc)
+                        published = datetime(*getattr(entry, date_field)[:6], tzinfo=UTC)
                         break
                     except (TypeError, ValueError):
                         continue
 
             if not published:
-                published = datetime.now(timezone.utc)
+                published = datetime.now(UTC)
 
             # Extract summary
             summary = ""
@@ -152,7 +152,7 @@ def categorize_entry(entry: dict[str, Any]) -> list[str]:
 
 def fetch_all_feeds(days: int = 14) -> list[dict[str, Any]]:
     """Fetch all configured RSS feeds."""
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    cutoff = datetime.now(UTC) - timedelta(days=days)
     all_entries = []
 
     with Progress(
@@ -615,7 +615,7 @@ def cmd_generate(args):
     console.print(f"Fetching content from last {args.days} days...")
     entries = fetch_all_feeds(days=args.days)
 
-    console.print(f"\n[green]Found {len(entries)} articles from {len(set(e['source'] for e in entries))} sources[/green]\n")
+    console.print(f"\n[green]Found {len(entries)} articles from {len({e['source'] for e in entries})} sources[/green]\n")
 
     # Generate HTML
     output_path = Path(args.output)
