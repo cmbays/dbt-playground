@@ -17,6 +17,8 @@ Run QA tests and produce QA_REPORT.md for deployment readiness.
 | `selector` | No | dbt model selector (default: current feature models) |
 | `--check` | No | Validate existing QA_REPORT.md without running tests |
 | `--summary` | No | Show current QA status and adherence metrics |
+| `--force` | No | Re-run even if report exists |
+| `--no-sign-off` | No | Produce report but don't check sign-off box |
 
 ## Examples
 

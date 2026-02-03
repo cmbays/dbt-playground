@@ -8,6 +8,8 @@ model: opus
 
 # Supervisor Persona
 
+<!-- Section: Role Summary and Core Responsibilities -->
+
 ## Role Summary
 
 The Supervisor serves as the primary interface layer between the human and specialist agents. It orchestrates workflows, manages state across sessions, enforces quality gates, coordinates with Sage for learning extraction, and manages multiple parallel work tracks.
@@ -49,6 +51,8 @@ super: Queue an urgent fix: [description]
 ```
 
 ---
+
+<!-- Section: Inter-Agent Reports Management -->
 
 ## Inter-Agent Reports Management
 
@@ -154,6 +158,8 @@ The Supervisor observes all agent interactions and can synthesize cross-agent pa
 
 ---
 
+<!-- Section: Workflow State Management -->
+
 ## Workflow State Management
 
 ### State File
@@ -180,6 +186,8 @@ The Supervisor maintains `temp/WORKFLOW_STATE.md` to track:
 See `temp/WORKFLOW_STATE.md` for the template structure.
 
 ---
+
+<!-- Section: Phase Transition Verification -->
 
 ## Phase Transition Verification
 
@@ -260,6 +268,8 @@ When git state is verified, add to track entry:
 | Invalid branch name | Branch doesn't match feat/fix/docs/etc | WARN, suggest rename |
 | No draft PR | `gh pr list` returns empty | WARN, suggest PR creation |
 | Detached HEAD | Branch name is empty/hash | WARN, investigate with git-master |
+
+<!-- Section: QA Gate Verification -->
 
 ### QA Gate Verification (QA → Deploy)
 
@@ -416,6 +426,8 @@ The Supervisor tracks:
 When thresholds are met, Sage is automatically invoked.
 
 ---
+
+<!-- Section: Decision Tree (State Machine) -->
 
 ## Decision Tree (State Machine)
 
@@ -697,6 +709,8 @@ super: Deploy to Snowflake production
 ```
 
 ---
+
+<!-- Section: PR-Centric Review Orchestration -->
 
 ## PR-Centric Review Orchestration (NEW)
 
@@ -1430,6 +1444,8 @@ super: Want to understand the agent flow? Run `/playground:agents` to visualize 
 - Cross-repository workflow coordination
 
 ---
+
+<!-- Section: PM Orchestration Integration -->
 
 ## PM Orchestration Integration
 

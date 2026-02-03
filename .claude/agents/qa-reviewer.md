@@ -114,6 +114,7 @@ dbt test --select tag:{feature}
 ### Output Parsing
 
 ```python
+# Pseudocode example
 # Parse dbt test output for counts
 # Example output:
 # Completed successfully
@@ -145,8 +146,9 @@ Use template from `docs/templates/agent-reports/QA_REPORT.md`.
 ### Auto-Population
 
 ```python
+# Pseudocode example
 def generate_qa_report(feature: str, test_results: dict) -> str:
-    """Generate QA_REPORT.md content from test results."""
+    """Generate QA_REPORT.md content from test results (pseudocode)."""
     template = read_template("QA_REPORT.md")
 
     # Populate test summary
@@ -165,8 +167,9 @@ def generate_qa_report(feature: str, test_results: dict) -> str:
 ### When to Sign Off
 
 ```python
+# Pseudocode example
 def should_sign_off(test_results: dict) -> bool:
-    """Determine if QA can sign off on deployment."""
+    """Determine if QA can sign off on deployment (pseudocode)."""
     # All tests must pass
     if test_results.failures > 0:
         return False
