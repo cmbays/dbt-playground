@@ -47,8 +47,8 @@ jobs:
 
           mkdir -p backlog/tasks
 
-          # Sanitize title - escape quotes, remove shell metacharacters, truncate
-          SAFE_TITLE=$(printf '%s' "$ISSUE_TITLE" | sed "s/'/'\\\\''/g" | tr -d '`$\\' | cut -c1-200)
+          # Sanitize title using jq for proper YAML escaping (handles colons, newlines, quotes, etc.)
+          SAFE_TITLE=$(printf '%s' "$ISSUE_TITLE" | jq -Rs '.[0:200]')
 
           LABELS_YAML=$(echo "$ISSUE_LABELS" | jq -r '.[] | @json | "  - " + .')
           MILESTONE="${ISSUE_MILESTONE:-}"
@@ -58,7 +58,7 @@ jobs:
             printf '%s\n' "---"
             printf 'id: TASK-%s\n' "${ISSUE_NUM}"
             printf 'github_issue: %s\n' "${ISSUE_NUM}"
-            printf "title: '%s'\n" "${SAFE_TITLE}"
+            printf 'title: %s\n' "${SAFE_TITLE}"
             printf '%s\n' "status: UNDERSTAND"
             printf '%s\n' "assignee: []"
             printf "created_date: '%s'\n" "${ISSUE_CREATED}"
