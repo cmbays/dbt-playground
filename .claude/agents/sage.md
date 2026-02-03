@@ -118,7 +118,7 @@ Create a FOR_CHRIS doc **only if ≥2 criteria** are met:
 4. **Multiple approaches evaluated** with clear winner and rationale
 5. **High educational value** for Christopher's stated learning goals
 
-**Quality bar**: Only extract patterns proven in **≥2 real implementations** (not theoretical).
+**Quality bar**: Only extract patterns proven in **2+ real implementations** (not theoretical).
 
 #### Examples: When to Create FOR_CHRIS Docs
 
@@ -210,7 +210,7 @@ Trigger: Pattern identified across ≥2 sessions/features
 Input: Code examples, workflow observations, decision points
 
 Process:
-1. Validate pattern (proven ≥2 times in practice)
+1. Validate pattern (proven 2+ times in practice)
 2. Write pattern as .claude/skills/learned-pattern-*.md (if actionable)
 3. Document in docs/reference/LEARNINGS.md (with cross-ref to skill)
 4. Create FOR_CHRIS doc only if decision rubric met
@@ -430,7 +430,7 @@ Sage extracts learnings when:
 
 **Process**:
 
-1. Validate pattern proven ≥2 times
+1. Validate pattern proven 2+ times
 2. Create `.claude/skills/learned-pattern-assembly-line.md`
 3. Add entry to LEARNINGS.md with cross-reference
 4. Evaluate decision rubric (meets 3 criteria → create FOR_CHRIS doc)
@@ -484,7 +484,7 @@ Sage extracts learnings when:
 
 | Artifact | Location | When |
 |----------|----------|------|
-| Technical patterns | `docs/reference/LEARNINGS.md` | Pattern proven ≥2 times |
+| Technical patterns | `docs/reference/LEARNINGS.md` | Pattern proven 2+ times |
 | Learned skills | `.claude/skills/learned-pattern-*.md` | Actionable workflow identified |
 | Educational docs | `docs/for_chris/[topic].md` | Decision rubric met (≥2 criteria) |
 | Learning digest | `temp/LEARNING_DIGEST_[DATE].md` | After session curation |
@@ -496,7 +496,7 @@ Sage extracts learnings when:
 
 ### For LEARNINGS.md Entries
 
-- [ ] Pattern proven in ≥2 real implementations
+- [ ] Pattern proven in 2+ real implementations
 - [ ] Clear "when to apply" guidance
 - [ ] Real examples from codebase
 - [ ] Cross-references to related skills/docs
@@ -618,16 +618,124 @@ sage: checkpoint — milestone v0.3 complete
 sage: what's in the latest context checkpoint?
 ```
 
+## Session Memory System (v0.10+)
+
+The Agent Memory System enables compound learning across sessions through persistent logging and automated pattern extraction.
+
+### Workflow J: Session Logging
+
+```
+Trigger: `sage: log session` or `sage: log "[quick description]"`
+Input: Session context, git state, user input
+
+Process:
+1. Determine log mode:
+   - Full mode: `sage: log session` - Interactive prompts for all fields
+   - Quick mode: `sage: log "[task]"` - Auto-fill defaults, minimal prompts
+
+2. Gather session data:
+   - Task description (required)
+   - Outcome (SUCCESS/FAILURE/PARTIAL, default SUCCESS)
+   - Files modified (auto-detect from git status)
+   - Task ID (auto-detect from WORKFLOW_STATE.md, optional for FS2 correlation)
+   - Decisions, learnings, improvements (full mode)
+   - Related issue/PR (optional)
+
+3. Validate and write:
+   - Warn on validation issues (don't block)
+   - Append markdown to memory/YYYY-MM-DD.md
+   - Emit JSON event to memory/events.jsonl (for FS5)
+
+4. Confirm to user
+
+Output: Entry in daily log + event for FS5 metrics
+```
+
+**Example Invocations**:
+
+```text
+sage: log session                           # Full interactive mode
+sage: log "Implemented customer analytics"  # Quick mode
+sage: log "Fixed bug" --outcome PARTIAL     # Quick mode with outcome
+```
+
+### Workflow K: Weekly Consolidation
+
+```
+Trigger: `sage: consolidate week` or automated weekly
+Input: memory/*.md files from past 7 days
+
+Process:
+1. Parse all log entries from date range
+2. Extract learnings, decisions, improvements
+3. Group similar items (>50% keyword overlap)
+4. Score patterns by frequency, recency, consistency
+5. Generate MEMORY_INDEX.md:
+   - Weekly summary table
+   - Recurring patterns section
+   - Topics index
+   - Failed experiments
+6. Emit consolidation event to events.jsonl
+7. Report promotion candidates
+
+Output: Updated MEMORY_INDEX.md, promotion candidates listed
+```
+
+**Pattern Detection**:
+
+- Threshold: Items with >50% keyword overlap are grouped
+- Minimum: 2+ occurrences required for pattern status
+- Scoring: frequency (40%) + recency (30%) + consistency (30%)
+- Promotion: Score >= 0.7 becomes CANDIDATE for LEARNINGS.md
+
+**Example Invocations**:
+
+```text
+sage: consolidate week
+sage: what patterns emerged this week?
+sage: promote pattern "incremental models" to LEARNINGS.md
+```
+
+### Memory Directory Structure
+
+```
+memory/
+  |-- 2026-02-02.md       # Daily append-only log
+  |-- 2026-02-03.md       # Each day gets new file
+  |-- MEMORY_INDEX.md     # Weekly summary (regenerated)
+  |-- events.jsonl        # Machine-readable events for FS5
+  |-- .gitkeep            # Ensure directory exists
+```
+
+### Quick Commands
+
+| Command | Purpose |
+|---------|---------|
+| `sage: log session` | Full interactive session logging |
+| `sage: log "[task]"` | Quick log with auto-defaults |
+| `sage: end session` | Review session and log learnings |
+| `sage: consolidate week` | Weekly pattern extraction |
+| `uv run scripts/log-session.py` | CLI alternative |
+
+### Integration Points
+
+| Feature Set | Integration | Data Flow |
+|-------------|-------------|-----------|
+| FS2 (Kanban) | task_id correlation | Log entry -> Backlog.md task |
+| FS5 (Metrics) | events.jsonl | Events -> SQLite metrics DB |
+| Supervisor | Session triggers | Session end -> log prompt |
+
 ## Future Enhancements
 
-**v0.4+:**
+**v0.10+:**
 
-- Automated hook: Suggest Sage review when >5 files modified OR >50 lines changed
-- Tag learnings by topic (agents, testing, architecture, etc.)
-- Search functionality for patterns
+- Automated session-end triggers from Supervisor
+- Session context bootstrap at start
+- Pattern promotion workflow to LEARNINGS.md
 
 **v1.0+:**
 
 - Generate "learning reports" after each version
 - Visualization of pattern evolution
 - Export learnings as blog posts
+- Semantic search across memory
