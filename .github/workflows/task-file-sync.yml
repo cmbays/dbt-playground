@@ -66,7 +66,11 @@ jobs:
             printf '%s\n' "${LABELS_YAML}"
             printf '%s\n' "dependencies: []"
             printf '%s\n' "priority: medium"
-            printf 'milestone: %s\n' "${MILESTONE}"
+            if [[ -n "${MILESTONE}" ]]; then
+              printf "milestone: '%s'\n" "${MILESTONE}"
+            else
+              printf '%s\n' "milestone: null"
+            fi
             printf '%s\n' "---"
             printf '\n'
             printf '%s\n' "## Description"
