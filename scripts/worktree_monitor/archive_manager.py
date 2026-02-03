@@ -168,6 +168,10 @@ class ArchiveManager:
 
         summaries = []
         for version_name in index_data.get("versions", []):
+            # Skip invalid/corrupted version names to prevent path traversal
+            if not self.VERSION_PATTERN.match(version_name):
+                logger.warning(f"Skipping invalid version name in index: {version_name}")
+                continue
             archive = self.get_version(version_name)
             if archive:
                 summaries.append(
@@ -188,11 +192,16 @@ class ArchiveManager:
             version_name: Version identifier (e.g., "v0.10").
 
         Returns:
-            VersionArchive if found, None if not found.
+            VersionArchive if found, None if not found or invalid name.
 
         Raises:
             ArchiveCorruptedError: If the manifest file is corrupted.
         """
+        # Validate version_name to prevent path traversal attacks
+        if not self.VERSION_PATTERN.match(version_name):
+            logger.warning(f"Invalid version name rejected: {version_name}")
+            return None
+
         version_dir = self.archives_dir / version_name
         manifest_path = version_dir / self.MANIFEST_FILENAME
 

@@ -8,6 +8,7 @@ Created: Phase 4 Day 3
 """
 
 import json
+import random
 import subprocess
 import time
 from dataclasses import dataclass
@@ -47,6 +48,23 @@ class GitHubAdapter:
     # Sentinel value for caching None results
     _CACHED_NONE = "__NONE__"
 
+    # Retry configuration for transient failures
+    DEFAULT_MAX_RETRIES = 3
+    DEFAULT_BASE_DELAY = 1.0  # seconds
+    DEFAULT_MAX_DELAY = 10.0  # seconds
+
+    # Transient error indicators in stderr
+    TRANSIENT_ERROR_PATTERNS = (
+        "connection reset",
+        "connection refused",
+        "network is unreachable",
+        "temporary failure",
+        "timeout",
+        "502",
+        "503",
+        "504",
+    )
+
     def __init__(self, repo: str, cache_ttl: int | None = None):
         """Initialize GitHubAdapter.
 
@@ -85,17 +103,19 @@ class GitHubAdapter:
         """Store value in cache with current timestamp.
 
         Enforces MAX_CACHE_SIZE by evicting oldest entries when full.
+        Only evicts when inserting a new key, not when updating existing.
         Stores None values as _CACHED_NONE sentinel.
 
         Args:
             key: Cache key
             value: Value to cache (None is stored as sentinel)
         """
-        # Enforce cache size limit by evicting oldest entries
-        while len(self._cache) >= self.MAX_CACHE_SIZE:
-            # Find and remove the oldest entry by timestamp
-            oldest_key = min(self._cache, key=lambda k: self._cache[k].timestamp)
-            del self._cache[oldest_key]
+        # Only enforce cache size limit when inserting a NEW key
+        if key not in self._cache:
+            while len(self._cache) >= self.MAX_CACHE_SIZE:
+                # Find and remove the oldest entry by timestamp
+                oldest_key = min(self._cache, key=lambda k: self._cache[k].timestamp)
+                del self._cache[oldest_key]
 
         # Store None as sentinel to distinguish from cache miss
         store_value = self._CACHED_NONE if value is None else value
@@ -105,8 +125,23 @@ class GitHubAdapter:
         """Clear all cached data."""
         self._cache.clear()
 
+    def _is_transient_error(self, stderr: str) -> bool:
+        """Check if stderr indicates a transient/retriable error.
+
+        Args:
+            stderr: Error output from gh CLI
+
+        Returns:
+            True if error appears transient and should be retried
+        """
+        stderr_lower = stderr.lower()
+        return any(pattern in stderr_lower for pattern in self.TRANSIENT_ERROR_PATTERNS)
+
     def _run_gh_command(self, args: list[str]) -> str:
-        """Execute gh CLI command and return output.
+        """Execute gh CLI command with retry logic for transient failures.
+
+        Implements exponential backoff with jitter for transient errors.
+        Does NOT retry: FileNotFoundError, TimeoutExpired, rate-limit errors.
 
         Args:
             args: Command arguments (without 'gh' prefix)
@@ -115,42 +150,82 @@ class GitHubAdapter:
             Command stdout
 
         Raises:
-            RateLimitError: When GitHub API rate limit is exceeded
-            GitHubAPIError: For other API errors
+            RateLimitError: When GitHub API rate limit is exceeded (no retry)
+            GitHubAPIError: For other API errors (after retries exhausted)
         """
         cmd = ["gh"] + args
+        endpoint = " ".join(args)
+        last_error: Exception | None = None
+        last_stderr: str = ""
 
-        try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=30,
-            )
-        except FileNotFoundError as e:
-            raise GitHubAPIError(
-                message="gh CLI not found. Please install GitHub CLI.",
-                status_code=None,
-                endpoint=" ".join(args),
-            ) from e
-        except subprocess.TimeoutExpired as e:
-            raise GitHubAPIError(
-                message="gh CLI command timed out",
-                status_code=None,
-                endpoint=" ".join(args),
-            ) from e
+        for attempt in range(self.DEFAULT_MAX_RETRIES):
+            try:
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                )
+            except FileNotFoundError as e:
+                # Not retriable - gh CLI not installed
+                raise GitHubAPIError(
+                    message="gh CLI not found. Please install GitHub CLI.",
+                    status_code=None,
+                    endpoint=endpoint,
+                ) from e
+            except subprocess.TimeoutExpired as e:
+                # Not retriable - command timed out
+                raise GitHubAPIError(
+                    message="gh CLI command timed out",
+                    status_code=None,
+                    endpoint=endpoint,
+                ) from e
 
-        if result.returncode != 0:
-            stderr = result.stderr.lower()
-            if "rate limit" in stderr:
+            # Check for success
+            if result.returncode == 0:
+                return result.stdout
+
+            # Check for non-retriable errors
+            stderr = result.stderr
+            stderr_lower = stderr.lower()
+
+            # Rate limit errors are not retriable
+            if "rate limit" in stderr_lower:
                 raise RateLimitError(remaining=0)
-            raise GitHubAPIError(
-                message=f"gh CLI failed: {result.stderr}",
-                status_code=result.returncode,
-                endpoint=" ".join(args),
-            )
 
-        return result.stdout
+            # Check if this is a transient error worth retrying
+            if not self._is_transient_error(stderr):
+                # Non-transient error, fail immediately
+                raise GitHubAPIError(
+                    message=f"gh CLI failed: {stderr}",
+                    status_code=result.returncode,
+                    endpoint=endpoint,
+                )
+
+            # Transient error - prepare for retry
+            last_error = GitHubAPIError(
+                message=f"gh CLI failed: {stderr}",
+                status_code=result.returncode,
+                endpoint=endpoint,
+            )
+            last_stderr = stderr
+
+            # Calculate delay with exponential backoff and jitter
+            if attempt < self.DEFAULT_MAX_RETRIES - 1:
+                delay = min(
+                    self.DEFAULT_BASE_DELAY * (2 ** attempt),
+                    self.DEFAULT_MAX_DELAY,
+                )
+                # Add jitter (0-50% of delay)
+                jitter = random.uniform(0, delay * 0.5)
+                time.sleep(delay + jitter)
+
+        # All retries exhausted
+        raise GitHubAPIError(
+            message=f"gh CLI failed after {self.DEFAULT_MAX_RETRIES} attempts: {last_stderr}",
+            status_code=None,
+            endpoint=endpoint,
+        ) from last_error
 
     def get_pr_state(self, branch: str) -> PRInfo | None:
         """Get PR state for a branch.
