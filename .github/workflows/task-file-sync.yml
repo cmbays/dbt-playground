@@ -1,0 +1,136 @@
+name: Task File Sync
+
+on:
+  issues:
+    types: [opened, closed, labeled, unlabeled]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  sync-task-file:
+    runs-on: self-hosted
+    # Only run for issues with task labels
+    if: |
+      contains(github.event.issue.labels.*.name, 'type:task') ||
+      contains(github.event.issue.labels.*.name, 'task')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create task file on issue open
+        if: github.event.action == 'opened' || github.event.action == 'labeled'
+        env:
+          ISSUE_NUM: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_CREATED: ${{ github.event.issue.created_at }}
+          ISSUE_MILESTONE: ${{ github.event.issue.milestone.title }}
+          ISSUE_LABELS: ${{ toJSON(github.event.issue.labels.*.name) }}
+          REPO_FULL: ${{ github.repository }}
+        run: |
+          TASK_FILE="backlog/tasks/issue-${ISSUE_NUM}.md"
+
+          # Skip if file already exists
+          if [[ -f "$TASK_FILE" ]]; then
+            echo "Task file already exists: $TASK_FILE"
+            exit 0
+          fi
+
+          # Ensure directory exists
+          mkdir -p backlog/tasks
+
+          # Escape single quotes in title for YAML
+          SAFE_TITLE="${ISSUE_TITLE//\'/\'\'}"
+
+          # Extract labels as YAML array items
+          LABELS_YAML=$(echo "$ISSUE_LABELS" | jq -r '.[] | "  - " + .')
+
+          # Set milestone (empty string if null)
+          MILESTONE="${ISSUE_MILESTONE:-}"
+
+          # Create task file
+          cat > "$TASK_FILE" << EOF
+          ---
+          id: TASK-${ISSUE_NUM}
+          github_issue: ${ISSUE_NUM}
+          title: '${SAFE_TITLE}'
+          status: UNDERSTAND
+          assignee: []
+          created_date: '${ISSUE_CREATED}'
+          labels:
+          ${LABELS_YAML}
+          dependencies: []
+          priority: medium
+          milestone: ${MILESTONE}
+          ---
+
+          ## Description
+
+          <!-- Auto-generated from GitHub issue #${ISSUE_NUM} -->
+          <!-- Edit in GitHub issue for single source of truth -->
+
+          See: https://github.com/${REPO_FULL}/issues/${ISSUE_NUM}
+          EOF
+
+          # Fix heredoc indentation (remove leading spaces)
+          sed -i.bak 's/^          //' "$TASK_FILE" && rm -f "$TASK_FILE.bak"
+
+          echo "Created task file: $TASK_FILE"
+          cat "$TASK_FILE"
+
+      - name: Archive task file on issue close
+        if: github.event.action == 'closed'
+        env:
+          ISSUE_NUM: ${{ github.event.issue.number }}
+        run: |
+          TASK_FILE="backlog/tasks/issue-${ISSUE_NUM}.md"
+          ARCHIVE_DIR="backlog/archive/tasks"
+
+          # Skip if file doesn't exist
+          if [[ ! -f "$TASK_FILE" ]]; then
+            echo "No task file to archive for issue #${ISSUE_NUM}"
+            exit 0
+          fi
+
+          # Create archive directory if needed
+          mkdir -p "$ARCHIVE_DIR"
+
+          # Move to archive
+          mv "$TASK_FILE" "${ARCHIVE_DIR}/issue-${ISSUE_NUM}.md"
+
+          echo "Archived task file: ${ARCHIVE_DIR}/issue-${ISSUE_NUM}.md"
+
+      - name: Commit changes
+        env:
+          ISSUE_NUM: ${{ github.event.issue.number }}
+          ACTION: ${{ github.event.action }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add backlog/
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          if [[ "$ACTION" == "opened" || "$ACTION" == "labeled" ]]; then
+            git commit -m "chore(backlog): create task file for #${ISSUE_NUM}
+
+          Auto-generated task file for GitHub issue #${ISSUE_NUM}
+
+          Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          elif [[ "$ACTION" == "closed" ]]; then
+            git commit -m "chore(backlog): archive task file for #${ISSUE_NUM}
+
+          Task file archived on issue close
+
+          Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          fi
+
+          git push
