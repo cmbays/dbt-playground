@@ -16,9 +16,18 @@ body:
     attributes:
       label: PRD Document
       description: Link to the PRD document in docs/specs/
-      placeholder: docs/specs/PRD-001-JLPT-Mastery-Engine.md
+      placeholder: docs/specs/PRD-029-GITHUB-INTEGRATION.md
     validations:
       required: true
+
+  - type: input
+    id: tdd-link
+    attributes:
+      label: TDD Document
+      description: Link to the Technical Design Document (if exists)
+      placeholder: docs/specs/TDD-029-GITHUB-INTEGRATION.md
+    validations:
+      required: false
 
   - type: dropdown
     id: phase
@@ -26,20 +35,29 @@ body:
       label: Phase
       description: Which roadmap phase does this belong to?
       options:
-        - "Phase 1 (v0.3 Foundation)"
-        - "Phase 2 (v0.4 Engagement)"
-        - "Phase 3 (v0.5 Deep Learning)"
-        - "Phase 4 (v0.6 Active Recall)"
-        - "Future (v0.7+)"
+        - "v0.8 (Data Quality)"
+        - "v0.9 (TBD)"
+        - "v0.10 (Agent Orchestration)"
+        - "v1.0 (Production Ready)"
+        - "Future (v1.1+)"
     validations:
       required: true
+
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone
+      description: Target milestone for this epic
+      placeholder: v0.10
+    validations:
+      required: false
 
   - type: textarea
     id: summary
     attributes:
       label: Summary
       description: Brief description of what this epic accomplishes (1-3 sentences)
-      placeholder: Implement the core SRS algorithm with JLPT-integrated mastery tracking system.
+      placeholder: Implement GitHub integration enhancements with CODEOWNERS, task file sync, and PRD traceability.
     validations:
       required: true
 
@@ -47,10 +65,11 @@ body:
     id: user-benefit
     attributes:
       label: User Benefit
-      description: How does this help learners?
+      description: How does this help developers/agents?
       placeholder: |
-        - Efficient Learning: Study cards you need to review, not ones you already know
-        - Clear JLPT Goals: See exactly how much of N5, N4, N3, N2 you've mastered
+        - Automatic reviewer assignment via CODEOWNERS
+        - Full traceability from PRD to implementation
+        - Reduced manual task file management
     validations:
       required: true
 
@@ -60,9 +79,9 @@ body:
       label: Acceptance Criteria (High-Level)
       description: Summary of key acceptance criteria from PRD
       placeholder: |
-        - [ ] Per-kanji SRS tracking (interval, ease, stage)
-        - [ ] Due cards queue based on review dates
-        - [ ] Mastery stages with progression rules
+        - [ ] CODEOWNERS file created
+        - [ ] Task files auto-created on issue open
+        - [ ] PRD links present in all implementation issues
       render: markdown
     validations:
       required: true
@@ -73,9 +92,9 @@ body:
       label: Task Breakdown
       description: List of implementation tasks (will be created as separate issues)
       placeholder: |
-        - [ ] #XX T1.1 - Design localStorage schema
-        - [ ] #XX T1.2 - Implement SM-2 algorithm
-        - [ ] #XX T1.3 - Create mastery progression system
+        - [ ] #XX T1.1 - Create CODEOWNERS file
+        - [ ] #XX T1.2 - Implement task file sync workflow
+        - [ ] #XX T1.3 - Add PRD traceability metadata
       render: markdown
 
   - type: textarea
@@ -95,7 +114,7 @@ body:
         - "Technical Architect"
         - "Developer"
         - "Tester"
-        - "Design Reviewer"
-        - "Japanese Sensei"
+        - "Code Reviewer"
+        - "Git-Master"
     validations:
       required: true

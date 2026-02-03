@@ -344,6 +344,7 @@ Automated enforcement via GitHub Actions provides server-side checks that cannot
 | Issue Linker | PR open/edit | Require issue references |
 | PR Labeler | PR open/sync | Auto-apply type/size/layer labels |
 | dbt Tests | PR + push to main | Run dbt build and tests |
+| Task File Sync | Issue opened/closed/labeled | Auto-create/archive task files |
 
 ### PR Requirements
 

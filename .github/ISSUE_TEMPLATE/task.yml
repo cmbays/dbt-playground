@@ -14,25 +14,34 @@ body:
     attributes:
       label: Parent Epic
       description: Issue number of parent Epic
-      placeholder: "#7"
+      placeholder: "#147"
     validations:
       required: true
 
   - type: input
-    id: task-id
+    id: prd-reference
     attributes:
-      label: Task ID
-      description: Task identifier (e.g., T1.2, T2.5)
-      placeholder: "T1.2"
+      label: PRD Reference
+      description: Link to related PRD document (for traceability)
+      placeholder: docs/specs/PRD-029-GITHUB-INTEGRATION.md
     validations:
-      required: true
+      required: false
+
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone
+      description: Target milestone for this task
+      placeholder: v0.10
+    validations:
+      required: false
 
   - type: textarea
     id: description
     attributes:
       label: Description
       description: Specific implementation work to be done
-      placeholder: Implement the SM-2 spaced repetition algorithm with interval calculation and ease factor adjustment
+      placeholder: Create CODEOWNERS file with ownership patterns for all major directories
     validations:
       required: true
 
@@ -42,9 +51,9 @@ body:
       label: Acceptance Criteria
       description: How do we know this task is complete?
       placeholder: |
-        - [ ] Function calculates correct interval for repetitions 0, 1, 2+
-        - [ ] Ease factor adjusts based on quality rating (0-5)
-        - [ ] Edge cases handled (quality < 3, first review, etc.)
+        - [ ] CODEOWNERS file created at .github/CODEOWNERS
+        - [ ] All major directories have explicit owners
+        - [ ] PR reviewer auto-assignment works
       render: markdown
     validations:
       required: true
@@ -53,18 +62,13 @@ body:
     id: technical-notes
     attributes:
       label: Technical Implementation Notes
-      description: Implementation approach, files to modify, algorithms to use
+      description: Implementation approach, files to modify
       placeholder: |
         **Files to create/modify:**
-        - `kanji/js/srs-engine.js` - Create new file with SM2 class
+        - `.github/CODEOWNERS` - New file with ownership patterns
 
-        **Algorithm reference:**
-        - SM-2 from SuperMemo: https://www.supermemo.com/en/blog/application-of-a-computer-to-improve-the-results-obtained-in-working-with-the-supermemo-method
-
-        **Function signature:**
-        ```javascript
-        calculateNextReview(currentInterval, easeFactor, quality, repetitions)
-        ```
+        **Validation:**
+        - `gh api repos/{owner}/{repo}/codeowners/errors`
       render: markdown
 
   - type: dropdown
@@ -87,20 +91,19 @@ body:
       label: Blocked By
       description: Other tasks that must be completed first
       placeholder: |
-        - #XX T1.1 - localStorage schema must be defined first
+        - #XX - Dependency task
 
   - type: textarea
     id: testing
     attributes:
       label: Testing Plan
-      description: How to verify this works (unit tests, manual testing, edge cases)
+      description: How to verify this works
       placeholder: |
-        **Unit tests:**
-        - Test quality=0 resets interval to 1
-        - Test quality=4 increases interval correctly
+        **Integration tests:**
+        - Open PR, verify reviewer auto-assigned
 
         **Manual testing:**
-        - Review 3 cards with different qualities, check intervals in localStorage
+        - Create issue, verify task file created
       render: markdown
 
   - type: checkboxes
@@ -111,12 +114,10 @@ body:
       options:
         - label: Code implemented and working
           required: true
-        - label: Manual testing complete (no console errors)
+        - label: Tests passing
           required: true
-        - label: Works on mobile (375px width tested)
-          required: true
-        - label: localStorage data validates correctly
-          required: true
+        - label: Documentation updated (if applicable)
+          required: false
         - label: Code reviewed (if applicable)
           required: false
         - label: PR merged to main
