@@ -137,7 +137,7 @@ Promotion candidates for LEARNINGS.md:
 Open `memory/MEMORY_INDEX.md` to see:
 
 1. **Weekly Summary** - Entries by day and outcome
-2. **Recurring Patterns** - Ideas that came up 2+ times
+2. **Recurring Patterns** - Ideas with 2+ occurrences (appeared at least twice)
 3. **Topics Index** - What you worked on most
 4. **Promotion Candidates** - Patterns worth adding to LEARNINGS.md
 

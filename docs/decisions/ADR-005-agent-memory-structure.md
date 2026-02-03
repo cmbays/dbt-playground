@@ -20,7 +20,7 @@ tags: [architecture, v0.10, agent-memory, fs1]
 v0.10 introduces an agent memory system (Epic #143) with two types of data:
 
 1. **Session logs** - Detailed, per-developer debugging notes and decisions
-2. **Consolidated patterns** - Promoted learnings that appeared 2+ times across sessions
+2. **Consolidated patterns** - Promoted learnings with 2+ occurrences across sessions
 
 We need to decide:
 - Where to place the `memory/` directory (root vs `.claude/memory/`)

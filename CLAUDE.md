@@ -208,7 +208,7 @@ uv run scripts/log-session.py -t "Task description" -i TASK-42
 ### Pattern Detection
 
 Weekly consolidation scans logs for recurring patterns:
-- Patterns appearing 2+ times are identified
+- Patterns with 2+ occurrences are identified (appeared at least twice)
 - Multi-factor scoring: frequency (40%), recency (30%), consistency (30%)
 - Promotion candidates can be added to LEARNINGS.md
 

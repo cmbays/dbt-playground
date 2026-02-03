@@ -33,9 +33,9 @@ from typing import NamedTuple
 logger = logging.getLogger(__name__)
 
 # Add scripts directory to path for lib imports
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent))  # noqa: E402
 
-from lib.memory_utils import get_memory_dir
+from lib.memory_utils import get_memory_dir  # noqa: E402
 
 
 class SessionEntry(NamedTuple):
