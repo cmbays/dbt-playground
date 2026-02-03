@@ -13,3 +13,81 @@ bypass_git_hooks: false
 check_active_branches: true
 active_branch_days: 30
 task_prefix: "task"
+
+# ═══════════════════════════════════════════════════════════════════
+# Kanban Workflow Engine Configuration (v1.0)
+# Added by FS2 Kanban Phase 1-2 - Issue #154, #155, #164
+# ═══════════════════════════════════════════════════════════════════
+
+kanban:
+  # Schema version for forward compatibility
+  version: "1.0"
+
+  # Enforcement mode: "soft" (warn) or "hard" (block)
+  enforcement_mode: "soft"
+
+  # Compliance scoring
+  skip_penalty: 10
+
+  # WIP (Work in Progress) limits per stage
+  wip_limits:
+    understand: 5
+    plan: 3
+    build: 2
+    verify: 3
+    deploy: 2
+    blocked: 10
+
+  # Critical transitions that cannot be skipped without bypass
+  critical_transitions:
+    - ["plan", "build"]
+    - ["build", "verify"]
+
+  # Required checklist items per stage
+  stage_requirements:
+    understand:
+      required:
+        - requirements_clarified
+        - acceptance_criteria_defined
+      optional:
+        - blocking_questions_resolved
+
+    plan:
+      required:
+        - branch_created
+      optional:
+        - prd_created
+        - tdd_created
+        - draft_pr_created
+
+    build:
+      required:
+        - tests_written
+        - implementation_complete
+        - local_tests_pass
+      optional:
+        - dev_report_written
+
+    verify:
+      required:
+        - code_review_approved
+        - changelog_updated
+        - ci_passing
+      optional:
+        - security_review_approved
+        - qa_report_approved
+
+    deploy:
+      required:
+        - pr_merged
+        - docs_updated
+      optional:
+        - learnings_extracted
+
+  # FS3 QA Gate integration points (configured by FS3)
+  qa_gates:
+    enabled: false
+    required_transitions:
+      - ["build", "verify"]
+      - ["verify", "deploy"]
+    artifact: "QA_REPORT.md"
