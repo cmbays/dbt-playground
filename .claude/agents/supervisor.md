@@ -296,6 +296,7 @@ Before allowing transition to DEPLOY phase, Supervisor validates the QA gate.
     │
     ├─ 3. Check sign-off status:
     │      Look for checked "QA Complete" checkbox
+    │      Pattern: /- \[x\] \*\*QA Complete\*\*/i
     │
     │      If not signed:
     │        Advisory mode: ⚠️ WARN "QA not signed off" → Track skip → ALLOW
