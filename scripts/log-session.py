@@ -21,12 +21,16 @@ Issues: #150, #151, #152
 
 import argparse
 import json
+import logging
 import re
 import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import NamedTuple
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # Add scripts directory to path for lib imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -75,10 +79,24 @@ def get_modified_files() -> list[str]:
     """Get list of modified files from git status."""
     try:
         result = subprocess.run(
-            ['git', 'diff', '--name-only', 'HEAD~1'], capture_output=True, text=True, timeout=5
+            ['git', 'diff', '--name-only', 'HEAD~1'],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=True,
         )
         return [f.strip() for f in result.stdout.strip().split('\n') if f.strip()]
-    except (subprocess.CalledProcessError, subprocess.SubprocessError, FileNotFoundError, OSError):
+    except subprocess.CalledProcessError as e:
+        logger.warning('git diff failed: %s', e.stderr or e)
+        return []
+    except subprocess.SubprocessError as e:
+        logger.warning('subprocess error running git: %s', e)
+        return []
+    except FileNotFoundError:
+        logger.warning('git command not found')
+        return []
+    except OSError as e:
+        logger.warning('OS error running git: %s', e)
         return []
 
 
@@ -101,7 +119,7 @@ def validate_entry(entry: SessionEntry) -> list[str]:
 def format_markdown(entry: SessionEntry) -> str:
     """Format entry as markdown."""
     lines = [
-        f'## [{entry.timestamp.isoformat(timespec="seconds")}] Task: {entry.task}',
+        f'## [{entry.timestamp.replace(tzinfo=None).isoformat(timespec="seconds")}] Task: {entry.task}',
         '',
     ]
 
@@ -315,17 +333,22 @@ def main():
         print(f'\n[OK] Entry logged to {log_file}')
         print('[OK] Event emitted to memory/events.jsonl')
 
-        return 0
-
     except KeyboardInterrupt:
         print('\nCancelled')
         return 1
     except FileNotFoundError as e:
         print(f'Error: {e}')
         return 1
-    except Exception as e:
-        print(f'Error: {e}')
+    except PermissionError as e:
+        print(f'Permission error: {e}')
         return 1
+    except OSError as e:
+        print(f'OS error: {e}')
+        return 1
+    else:
+        return 0
+
+    return 1  # Fallback for any unhandled path
 
 
 if __name__ == '__main__':

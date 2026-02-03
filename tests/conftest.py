@@ -188,7 +188,7 @@ def sample_events_jsonl(memory_dir: Path) -> Path:
         },
     ]
 
-    with open(events_file, 'w') as f:
+    with open(events_file, 'w', encoding='utf-8') as f:
         for event in events:
             f.write(json.dumps(event) + '\n')
 
@@ -245,7 +245,7 @@ def read_events(events_file: Path) -> list[dict]:
         return []
 
     events = []
-    with open(events_file) as f:
+    with open(events_file, encoding='utf-8') as f:
         for line in f:
             if line.strip():
                 events.append(json.loads(line))

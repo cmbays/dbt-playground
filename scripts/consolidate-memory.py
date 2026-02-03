@@ -157,7 +157,7 @@ def parse_log_file(path: Path) -> list[dict]:
         entry = {}
 
         # Parse timestamp and task
-        match = re.match(r'([\d\-T:]+)\] Task: (.+)', section)
+        match = re.match(r'([\d\-T:+Z]+)\] Task: (.+)', section)
         if match:
             entry['timestamp'] = match.group(1)
             entry['task'] = match.group(2).strip()
@@ -413,7 +413,7 @@ def emit_consolidation_event(result: dict, memory_dir: Path) -> None:
 
 def consolidate(memory_dir: Path, days: int = 7) -> dict:
     """Main consolidation function."""
-    today = date.today()
+    today = datetime.now(UTC).date()
     cutoff = today - timedelta(days=days)
 
     items = []

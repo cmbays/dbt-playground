@@ -15,7 +15,7 @@ Test IDs reference FS1_TEST_SUITE_ALPHA.md and FS1_TEST_SUITE_BETA.md specificat
 # Import the module under test
 import importlib.util
 import json
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -431,7 +431,7 @@ class TestConsolidation:
 
     def test_consolidate_tracks_failures(self, memory_dir: Path):
         """Consolidation tracks failed experiments."""
-        today = datetime.now().strftime('%Y-%m-%d')
+        today = datetime.now(UTC).strftime('%Y-%m-%d')
         log_file = memory_dir / f'{today}.md'
         log_file.write_text("""## [2026-02-02T10:00:00] Task: Failed experiment
 
@@ -451,7 +451,7 @@ class TestConsolidation:
     def test_consolidate_respects_date_range(self, memory_dir: Path):
         """Consolidation only includes entries in date range."""
         # Create old entry (15 days ago)
-        old_date = (datetime.now() - timedelta(days=15)).strftime('%Y-%m-%d')
+        old_date = (datetime.now(UTC) - timedelta(days=15)).strftime('%Y-%m-%d')
         old_file = memory_dir / f'{old_date}.md'
         old_file.write_text("""## [2026-01-18T10:00:00] Task: Old task
 
@@ -462,7 +462,7 @@ class TestConsolidation:
 """)
 
         # Create recent entry
-        recent_date = (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d')
+        recent_date = (datetime.now(UTC) - timedelta(days=2)).strftime('%Y-%m-%d')
         recent_file = memory_dir / f'{recent_date}.md'
         recent_file.write_text("""## [2026-01-31T10:00:00] Task: Recent task
 

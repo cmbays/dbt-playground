@@ -18,11 +18,22 @@ def get_memory_dir() -> Path:
 
     Raises:
         FileNotFoundError: If project root (CLAUDE.md) not found
+        PermissionError: If unable to create memory directory
     """
-    for parent in [Path.cwd()] + list(Path.cwd().parents):
+    for parent in [Path.cwd(), *Path.cwd().parents]:
         if (parent / 'CLAUDE.md').exists():
             memory_dir = parent / 'memory'
-            memory_dir.mkdir(exist_ok=True)
+            try:
+                memory_dir.mkdir(exist_ok=True)
+            except PermissionError as e:
+                raise PermissionError(
+                    f'Cannot create memory directory at {memory_dir}: {e}. '
+                    f'Check write permissions for {parent}'
+                ) from e
+            except OSError as e:
+                raise OSError(
+                    f'Cannot create memory directory at {memory_dir}: {e}'
+                ) from e
             return memory_dir
     raise FileNotFoundError(
         f'Could not find project root (CLAUDE.md). Current directory: {Path.cwd()}'

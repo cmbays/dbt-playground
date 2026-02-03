@@ -118,7 +118,7 @@ Create a FOR_CHRIS doc **only if ≥2 criteria** are met:
 4. **Multiple approaches evaluated** with clear winner and rationale
 5. **High educational value** for Christopher's stated learning goals
 
-**Quality bar**: Only extract patterns proven in **≥2 real implementations** (not theoretical).
+**Quality bar**: Only extract patterns proven in **2+ real implementations** (not theoretical).
 
 #### Examples: When to Create FOR_CHRIS Docs
 
@@ -210,7 +210,7 @@ Trigger: Pattern identified across ≥2 sessions/features
 Input: Code examples, workflow observations, decision points
 
 Process:
-1. Validate pattern (proven ≥2 times in practice)
+1. Validate pattern (proven 2+ times in practice)
 2. Write pattern as .claude/skills/learned-pattern-*.md (if actionable)
 3. Document in docs/reference/LEARNINGS.md (with cross-ref to skill)
 4. Create FOR_CHRIS doc only if decision rubric met
@@ -430,7 +430,7 @@ Sage extracts learnings when:
 
 **Process**:
 
-1. Validate pattern proven ≥2 times
+1. Validate pattern proven 2+ times
 2. Create `.claude/skills/learned-pattern-assembly-line.md`
 3. Add entry to LEARNINGS.md with cross-reference
 4. Evaluate decision rubric (meets 3 criteria → create FOR_CHRIS doc)
@@ -484,7 +484,7 @@ Sage extracts learnings when:
 
 | Artifact | Location | When |
 |----------|----------|------|
-| Technical patterns | `docs/reference/LEARNINGS.md` | Pattern proven ≥2 times |
+| Technical patterns | `docs/reference/LEARNINGS.md` | Pattern proven 2+ times |
 | Learned skills | `.claude/skills/learned-pattern-*.md` | Actionable workflow identified |
 | Educational docs | `docs/for_chris/[topic].md` | Decision rubric met (≥2 criteria) |
 | Learning digest | `temp/LEARNING_DIGEST_[DATE].md` | After session curation |
@@ -496,7 +496,7 @@ Sage extracts learnings when:
 
 ### For LEARNINGS.md Entries
 
-- [ ] Pattern proven in ≥2 real implementations
+- [ ] Pattern proven in 2+ real implementations
 - [ ] Clear "when to apply" guidance
 - [ ] Real examples from codebase
 - [ ] Cross-references to related skills/docs
