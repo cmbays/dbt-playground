@@ -4,6 +4,7 @@ Configuration loader for Kanban Workflow Engine.
 Loads settings from backlog/config.yml with sensible defaults.
 """
 
+import copy
 from pathlib import Path
 from typing import Any
 import yaml
@@ -83,10 +84,10 @@ def load_config(config_path: str | Path | None = None, force_reload: bool = Fals
         ]
         config_path = next((p for p in possible_paths if p.exists()), None)
 
-    config = DEFAULT_CONFIG.copy()
+    config = copy.deepcopy(DEFAULT_CONFIG)
 
     if config_path and Path(config_path).exists():
-        with open(config_path) as f:
+        with open(config_path, encoding="utf-8") as f:
             file_config = yaml.safe_load(f)
 
         # Extract kanban section if present
@@ -147,4 +148,8 @@ def is_critical_transition(from_stage: str, to_stage: str) -> bool:
     """Check if a transition is critical (cannot skip without bypass)."""
     config = load_config()
     transitions = config.get("critical_transitions", [])
-    return [from_stage.lower(), to_stage.lower()] in transitions
+    # Normalize both input and config transitions to lowercase for comparison
+    normalized_transitions = [
+        [t[0].lower(), t[1].lower()] for t in transitions if len(t) >= 2
+    ]
+    return [from_stage.lower(), to_stage.lower()] in normalized_transitions

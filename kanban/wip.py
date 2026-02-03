@@ -68,20 +68,30 @@ def update_wip_counts(from_stage: str | None, to_stage: str) -> dict[str, int]:
     Returns:
         Updated WIP counts dictionary.
 
+    Raises:
+        ValueError: If stage names are not recognized.
+
     Example:
         >>> # Task moves from plan to build
         >>> update_wip_counts("plan", "build")
         >>> # New task enters understand
         >>> update_wip_counts(None, "understand")
     """
+    # Validate from_stage if provided
     if from_stage:
         from_key = from_stage.lower()
-        if from_key in _wip_counts and _wip_counts[from_key] > 0:
+        if from_key not in _wip_counts:
+            raise ValueError(f"Invalid from_stage '{from_stage}'. "
+                           f"Valid stages: {list(_wip_counts.keys())}")
+        if _wip_counts[from_key] > 0:
             _wip_counts[from_key] -= 1
 
+    # Validate to_stage
     to_key = to_stage.lower()
-    if to_key in _wip_counts:
-        _wip_counts[to_key] += 1
+    if to_key not in _wip_counts:
+        raise ValueError(f"Invalid to_stage '{to_stage}'. "
+                        f"Valid stages: {list(_wip_counts.keys())}")
+    _wip_counts[to_key] += 1
 
     return _wip_counts.copy()
 
@@ -265,7 +275,7 @@ def load_wip_from_file(file_path: Path | str | None = None) -> bool:
         return False
 
     try:
-        content = path.read_text()
+        content = path.read_text(encoding="utf-8")
         counts = parse_wip_from_state_file(content)
 
         if counts:
@@ -276,7 +286,7 @@ def load_wip_from_file(file_path: Path | str | None = None) -> bool:
             logger.debug("No WIP section found in state file")
             return False
 
-    except Exception as e:
+    except (OSError, UnicodeDecodeError, ValueError) as e:
         logger.warning(f"Error loading WIP from {path}: {e}")
         return False
 
@@ -299,7 +309,7 @@ def save_wip_to_file(file_path: Path | str | None = None) -> bool:
 
     try:
         if path.exists():
-            content = path.read_text()
+            content = path.read_text(encoding="utf-8")
 
             # Replace existing WIP section or append
             wip_pattern = r"## WIP Counts\s*\n\n\|[^\n]+\n\|[-|\s]+\n(?:\|[^\n]+\n)+"
@@ -308,15 +318,15 @@ def save_wip_to_file(file_path: Path | str | None = None) -> bool:
             else:
                 content = content.rstrip() + "\n\n" + wip_section + "\n"
 
-            path.write_text(content)
+            path.write_text(content, encoding="utf-8")
         else:
             # Create new file with WIP section
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(f"# Workflow State\n\n{wip_section}\n")
+            path.write_text(f"# Workflow State\n\n{wip_section}\n", encoding="utf-8")
 
         logger.info(f"Saved WIP counts to {path}")
         return True
 
-    except Exception as e:
+    except (OSError, UnicodeError) as e:
         logger.warning(f"Error saving WIP to {path}: {e}")
         return False

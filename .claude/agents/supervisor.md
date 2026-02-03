@@ -1669,12 +1669,12 @@ from kanban import (
     transition_task,
     create_checklist,
     get_wip_counts,
+    update_wip_counts,
     calculate_compliance_score,
+    mark_item_complete,
     TransitionResult,
     Stage,
 )
-from kanban.wip import update_wip_counts
-from kanban.checklist import mark_item_complete
 ```
 
 ### Phase Transition with Guards

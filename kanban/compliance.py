@@ -7,10 +7,11 @@ stage completion and skip history.
 
 from typing import Any
 
+from .checklist import STAGES
 from .config import get_skip_penalty
 
-# Stage list for compliance calculation
-REQUIRED_STAGES = ["understand", "plan", "build", "verify", "deploy"]
+# Use canonical stage list from checklist module
+REQUIRED_STAGES = STAGES
 
 
 def calculate_compliance_score(checklist: dict[str, Any]) -> float:

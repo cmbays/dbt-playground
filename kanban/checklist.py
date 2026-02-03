@@ -5,9 +5,7 @@ Provides functions for creating, validating, and updating workflow checklists.
 """
 
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
-import json
 import re
 
 from .config import get_stage_requirements
@@ -277,12 +275,33 @@ def add_skip_record(
         to_stage: Target stage of the transition.
         skipped_stage: Stage that was skipped.
         reason: Optional reason for the skip.
+
+    Raises:
+        ValueError: If any stage name is invalid.
     """
+    # Validate stage names
+    stages_lower = {s.lower() for s in STAGES}
+    from_lower = from_stage.lower().strip()
+    to_lower = to_stage.lower().strip()
+    skipped_lower = skipped_stage.lower().strip()
+
+    invalid_stages = []
+    if from_lower not in stages_lower:
+        invalid_stages.append(f"from_stage '{from_stage}'")
+    if to_lower not in stages_lower:
+        invalid_stages.append(f"to_stage '{to_stage}'")
+    if skipped_lower not in stages_lower:
+        invalid_stages.append(f"skipped_stage '{skipped_stage}'")
+
+    if invalid_stages:
+        raise ValueError(f"Invalid stage names: {', '.join(invalid_stages)}. "
+                        f"Valid stages: {STAGES}")
+
     now = datetime.now(timezone.utc).isoformat()
     skip_record = {
-        "from_stage": from_stage.lower(),
-        "to_stage": to_stage.lower(),
-        "skipped_stage": skipped_stage.lower(),
+        "from_stage": from_lower,
+        "to_stage": to_lower,
+        "skipped_stage": skipped_lower,
         "timestamp": now,
         "reason": reason,
         "learning_extracted": False,

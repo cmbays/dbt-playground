@@ -90,7 +90,8 @@
           "description": "Agent that worked on this stage"
         }
       },
-      "required": ["status", "required_items", "completed_items"]
+      "required": ["status", "required_items", "completed_items"],
+      "additionalProperties": false
     },
     "SkipRecord": {
       "type": "object",
@@ -129,7 +130,8 @@
           "enum": ["wip_limit", "checklist_incomplete", "critical_skip", "qa_gate"]
         },
         "stage": {
-          "type": "string"
+          "type": "string",
+          "enum": ["understand", "plan", "build", "verify", "deploy", "blocked"]
         },
         "reason": {
           "type": "string"

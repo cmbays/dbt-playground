@@ -59,6 +59,7 @@ The existing 5-stage workflow (UNDERSTAND → PLAN → BUILD → VERIFY → DEPL
 **So that** I can verify stage completion programmatically.
 
 **Acceptance Criteria**:
+
 - [ ] JSON Schema defined with all 5 stages
 - [ ] Each stage tracks: status, required_items, completed_items, timestamps
 - [ ] Compliance section tracks skips and bypasses
@@ -71,6 +72,7 @@ The existing 5-stage workflow (UNDERSTAND → PLAN → BUILD → VERIFY → DEPL
 **So that** workflow discipline is enforced.
 
 **Acceptance Criteria**:
+
 - [ ] Guards validate all transitions against allowed matrix
 - [ ] Skip detection logs warning and reason
 - [ ] Bypass mechanism with explicit reason
@@ -83,6 +85,7 @@ The existing 5-stage workflow (UNDERSTAND → PLAN → BUILD → VERIFY → DEPL
 **So that** I understand capacity utilization.
 
 **Acceptance Criteria**:
+
 - [ ] WIP counts displayed in WORKFLOW_STATE.md
 - [ ] Counts updated on stage transitions
 - [ ] Warning when approaching configured limits
@@ -95,14 +98,29 @@ The existing 5-stage workflow (UNDERSTAND → PLAN → BUILD → VERIFY → DEPL
 
 ```json
 {
+  "version": "1.0",
   "task_id": "TASK-5",
   "created_at": "2026-02-02T12:00:00Z",
   "stages": {
-    "understand": { "status": "complete", "started_at": "...", "completed_at": "..." },
-    "plan": { "status": "in_progress", "started_at": "..." },
-    "build": { "status": "pending" },
-    "verify": { "status": "pending" },
-    "deploy": { "status": "pending" }
+    "understand": {
+      "status": "complete",
+      "required_items": ["requirements_clarified", "acceptance_criteria_defined"],
+      "completed_items": ["requirements_clarified", "acceptance_criteria_defined"],
+      "started_at": "2026-02-02T12:00:00Z",
+      "completed_at": "2026-02-02T13:00:00Z",
+      "agent": "pm-agent"
+    },
+    "plan": {
+      "status": "in_progress",
+      "required_items": ["branch_created"],
+      "completed_items": [],
+      "started_at": "2026-02-02T13:00:00Z",
+      "completed_at": null,
+      "agent": "arch-agent"
+    },
+    "build": { "status": "pending", "required_items": [], "completed_items": [] },
+    "verify": { "status": "pending", "required_items": [], "completed_items": [] },
+    "deploy": { "status": "pending", "required_items": [], "completed_items": [] }
   },
   "compliance": {
     "score": 100,
@@ -118,8 +136,9 @@ See TDD-025-KANBAN-WORKFLOW.md for pseudocode implementation.
 
 ### WIP Tracking Format
 
-```yaml
+```markdown
 ## WIP Counts
+
 | Stage | Count | Limit | % Used |
 |-------|-------|-------|--------|
 | UNDERSTAND | 2 | 5 | 40% |

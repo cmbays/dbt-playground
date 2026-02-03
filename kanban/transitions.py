@@ -221,6 +221,8 @@ def transition_task(
                         message=f"QA gate failed: {qa_result.message}",
                         blocked_by="qa_gate"
                     )
+        except (KeyboardInterrupt, SystemExit):
+            raise  # Re-raise critical signals
         except Exception as e:
             logger.warning(f"QA hook error: {e}")
             all_warnings.append(f"QA hook warning: {e}")
@@ -266,7 +268,9 @@ def _check_skip(
     if to_idx - from_idx <= 1:
         return None  # Normal progression
 
-    skipped_stage = STAGE_SEQUENCE[from_idx + 1]
+    # Collect all skipped stages
+    skipped_stages = STAGE_SEQUENCE[from_idx + 1:to_idx]
+    skipped_names = [s.value for s in skipped_stages]
 
     # Check if this is a critical skip
     is_critical = is_critical_transition(from_stage.value, to_stage.value)
@@ -274,24 +278,26 @@ def _check_skip(
     if is_critical and not bypass_reason:
         return TransitionResult(
             success=False,
-            message=f"Critical skip blocked. Skipped stage: {skipped_stage.value}. "
+            message=f"Critical skip blocked. Skipped stages: {skipped_names}. "
                     f"Provide bypass_reason to override.",
             blocked_by="skip_detection"
         )
 
-    # Log the skip to checklist
-    add_skip_record(
-        checklist,
-        from_stage.value,
-        to_stage.value,
-        skipped_stage.value,
-        bypass_reason
-    )
+    # Log each skipped stage to checklist
+    for skipped_stage in skipped_stages:
+        add_skip_record(
+            checklist,
+            from_stage.value,
+            to_stage.value,
+            skipped_stage.value,
+            bypass_reason
+        )
 
-    # Reduce compliance score
-    penalty = get_skip_penalty()
+    # Reduce compliance score (penalty per skipped stage)
+    penalty_per_skip = get_skip_penalty()
+    total_penalty = penalty_per_skip * len(skipped_stages)
     checklist["compliance"]["score"] = max(
-        0, checklist["compliance"]["score"] - penalty
+        0, checklist["compliance"]["score"] - total_penalty
     )
 
     # TODO: Invoke Sage for learning extraction
@@ -301,8 +307,8 @@ def _check_skip(
         success=True,
         message="Skip allowed",
         warnings=[
-            f"WARNING: Skipped stage {skipped_stage.value}. "
-            f"Compliance score reduced by {penalty}."
+            f"WARNING: Skipped stages {skipped_names}. "
+            f"Compliance score reduced by {total_penalty} ({penalty_per_skip} × {len(skipped_stages)})."
         ],
         sage_invoked=True  # Will invoke Sage
     )
