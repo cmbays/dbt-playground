@@ -31,9 +31,7 @@ def get_memory_dir() -> Path:
                     f'Check write permissions for {parent}'
                 ) from e
             except OSError as e:
-                raise OSError(
-                    f'Cannot create memory directory at {memory_dir}: {e}'
-                ) from e
+                raise OSError(f'Cannot create memory directory at {memory_dir}: {e}') from e
             return memory_dir
     raise FileNotFoundError(
         f'Could not find project root (CLAUDE.md). Current directory: {Path.cwd()}'

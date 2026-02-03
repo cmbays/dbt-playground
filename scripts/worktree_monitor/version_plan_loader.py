@@ -116,9 +116,7 @@ class VersionPlanLoader:
         result = self._find_workstream(branch)
         return result[1] if result else None
 
-    def get_workstream_for_branch(
-        self, branch: str
-    ) -> tuple[PhaseConfig, WorkstreamConfig] | None:
+    def get_workstream_for_branch(self, branch: str) -> tuple[PhaseConfig, WorkstreamConfig] | None:
         """Get phase and workstream for a branch.
 
         Args:
@@ -129,9 +127,7 @@ class VersionPlanLoader:
         """
         return self._find_workstream(branch)
 
-    def _find_workstream(
-        self, branch: str
-    ) -> tuple[PhaseConfig, WorkstreamConfig] | None:
+    def _find_workstream(self, branch: str) -> tuple[PhaseConfig, WorkstreamConfig] | None:
         """Internal method to find phase and workstream for a branch.
 
         Args:
@@ -150,9 +146,7 @@ class VersionPlanLoader:
 
         return None
 
-    def _branch_matches_workstream(
-        self, branch: str, workstream: WorkstreamConfig
-    ) -> bool:
+    def _branch_matches_workstream(self, branch: str, workstream: WorkstreamConfig) -> bool:
         """Check if a branch matches any of the workstream's branch patterns.
 
         Uses fnmatch for glob-style pattern matching.
@@ -176,23 +170,21 @@ class VersionPlanLoader:
             VersionPlanParseError: If YAML syntax is invalid.
         """
         try:
-            content = self._config_path.read_text(encoding="utf-8")
+            content = self._config_path.read_text(encoding='utf-8')
             data = yaml.safe_load(content)
             if data is None:
-                raise VersionPlanParseError(
-                    "YAML file is empty or contains only comments"
-                )
+                raise VersionPlanParseError('YAML file is empty or contains only comments')
             return data
         except yaml.YAMLError as e:
             # Extract line/column info if available
             line = None
             column = None
-            if hasattr(e, "problem_mark") and e.problem_mark:
+            if hasattr(e, 'problem_mark') and e.problem_mark:
                 line = e.problem_mark.line + 1
                 column = e.problem_mark.column + 1
 
             raise VersionPlanParseError(
-                f"Failed to parse YAML: {e}", line=line, column=column
+                f'Failed to parse YAML: {e}', line=line, column=column
             ) from e
 
     def _validate_and_build_model(self, data: dict[str, Any]) -> VersionPlan:
@@ -210,48 +202,48 @@ class VersionPlanLoader:
         errors: list[str] = []
 
         # Validate required top-level fields
-        if "version" not in data:
+        if 'version' not in data:
             errors.append("Missing required field: 'version'")
-        elif not isinstance(data.get("version"), int):
+        elif not isinstance(data.get('version'), int):
             errors.append("Field 'version' must be an integer")
 
-        if "name" not in data:
+        if 'name' not in data:
             errors.append("Missing required field: 'name'")
 
-        if "target_date" not in data:
+        if 'target_date' not in data:
             errors.append("Missing required field: 'target_date'")
 
-        if "phases" not in data:
+        if 'phases' not in data:
             errors.append("Missing required field: 'phases'")
-        elif not isinstance(data.get("phases"), list):
+        elif not isinstance(data.get('phases'), list):
             errors.append("Field 'phases' must be a list")
-        elif len(data.get("phases", [])) == 0:
+        elif len(data.get('phases', [])) == 0:
             errors.append("Field 'phases' must have at least one phase")
 
         # Validate status enum if present
-        if "status" in data and data["status"] not in [s.value for s in VersionStatus]:
+        if 'status' in data and data['status'] not in [s.value for s in VersionStatus]:
             errors.append(
                 f"Invalid status value: '{data['status']}'. "
-                f"Must be one of: {[s.value for s in VersionStatus]}"
+                f'Must be one of: {[s.value for s in VersionStatus]}'
             )
 
         if errors:
             raise VersionPlanValidationError(
-                f"Version plan validation failed: {'; '.join(errors)}",
+                f'Version plan validation failed: {"; ".join(errors)}',
                 validation_errors=errors,
             )
 
         # Build phases
-        phases = self._build_phases(data.get("phases", []))
+        phases = self._build_phases(data.get('phases', []))
 
         # Build VersionPlan with defaults
         return VersionPlan(
-            version=data["version"],
-            name=data["name"],
-            target_date=data["target_date"],
-            description=data.get("description", ""),
+            version=data['version'],
+            name=data['name'],
+            target_date=data['target_date'],
+            description=data.get('description', ''),
             status=self._parse_status(
-                data.get("status", "PLANNED"), VersionStatus, VersionStatus.PLANNED
+                data.get('status', 'PLANNED'), VersionStatus, VersionStatus.PLANNED
             ),
             phases=phases,
         )
@@ -280,7 +272,7 @@ class VersionPlanLoader:
 
         if errors:
             raise VersionPlanValidationError(
-                f"Phase validation failed: {'; '.join(errors)}",
+                f'Phase validation failed: {"; ".join(errors)}',
                 validation_errors=errors,
             )
 
@@ -301,44 +293,42 @@ class VersionPlanLoader:
         """
         errors: list[str] = []
 
-        if "name" not in data:
+        if 'name' not in data:
             errors.append(f"Phase {index + 1}: Missing required field 'name'")
 
-        if "order" not in data:
+        if 'order' not in data:
             errors.append(f"Phase {index + 1}: Missing required field 'order'")
-        elif not isinstance(data.get("order"), int):
+        elif not isinstance(data.get('order'), int):
             errors.append(f"Phase {index + 1}: Field 'order' must be an integer")
 
-        if "workstreams" not in data:
+        if 'workstreams' not in data:
             errors.append(f"Phase {index + 1}: Missing required field 'workstreams'")
-        elif not isinstance(data.get("workstreams"), list):
+        elif not isinstance(data.get('workstreams'), list):
             errors.append(f"Phase {index + 1}: Field 'workstreams' must be a list")
 
         # Validate status enum if present
-        if "status" in data and data["status"] not in [s.value for s in PhaseStatus]:
-            errors.append(
-                f"Phase {index + 1}: Invalid status value: '{data['status']}'"
-            )
+        if 'status' in data and data['status'] not in [s.value for s in PhaseStatus]:
+            errors.append(f"Phase {index + 1}: Invalid status value: '{data['status']}'")
 
         if errors:
             raise VersionPlanValidationError(
-                "Phase validation failed",
+                'Phase validation failed',
                 validation_errors=errors,
             )
 
         # Build workstreams
         workstreams = self._build_workstreams(
-            data.get("workstreams", []), data.get("name", f"Phase {index + 1}")
+            data.get('workstreams', []), data.get('name', f'Phase {index + 1}')
         )
 
         return PhaseConfig(
-            name=data["name"],
-            order=data["order"],
-            description=data.get("description", ""),
+            name=data['name'],
+            order=data['order'],
+            description=data.get('description', ''),
             status=self._parse_status(
-                data.get("status", "PLANNED"), PhaseStatus, PhaseStatus.PLANNED
+                data.get('status', 'PLANNED'), PhaseStatus, PhaseStatus.PLANNED
             ),
-            dependencies=data.get("dependencies", []),
+            dependencies=data.get('dependencies', []),
             workstreams=workstreams,
         )
 
@@ -369,7 +359,7 @@ class VersionPlanLoader:
 
         if errors:
             raise VersionPlanValidationError(
-                "Workstream validation failed",
+                'Workstream validation failed',
                 validation_errors=errors,
             )
 
@@ -393,47 +383,39 @@ class VersionPlanLoader:
         """
         errors: list[str] = []
 
-        if "name" not in data:
-            errors.append(
-                f"{phase_name}, Workstream {index + 1}: Missing required field 'name'"
-            )
+        if 'name' not in data:
+            errors.append(f"{phase_name}, Workstream {index + 1}: Missing required field 'name'")
 
-        if "epic" not in data:
-            errors.append(
-                f"{phase_name}, Workstream {index + 1}: Missing required field 'epic'"
-            )
+        if 'epic' not in data:
+            errors.append(f"{phase_name}, Workstream {index + 1}: Missing required field 'epic'")
 
-        if "branches" not in data:
+        if 'branches' not in data:
             errors.append(
                 f"{phase_name}, Workstream {index + 1}: Missing required field 'branches'"
             )
-        elif not isinstance(data.get("branches"), list):
-            errors.append(
-                f"{phase_name}, Workstream {index + 1}: Field 'branches' must be a list"
-            )
+        elif not isinstance(data.get('branches'), list):
+            errors.append(f"{phase_name}, Workstream {index + 1}: Field 'branches' must be a list")
 
         # Validate status enum if present
-        if "status" in data and data["status"] not in [
-            s.value for s in WorkstreamStatus
-        ]:
+        if 'status' in data and data['status'] not in [s.value for s in WorkstreamStatus]:
             errors.append(
                 f"{phase_name}, Workstream {index + 1}: Invalid status value: '{data['status']}'"
             )
 
         if errors:
             raise VersionPlanValidationError(
-                "Workstream validation failed",
+                'Workstream validation failed',
                 validation_errors=errors,
             )
 
         return WorkstreamConfig(
-            name=data["name"],
-            epic=data["epic"],
-            branches=data.get("branches", []),
+            name=data['name'],
+            epic=data['epic'],
+            branches=data.get('branches', []),
             status=self._parse_status(
-                data.get("status", "PLANNED"), WorkstreamStatus, WorkstreamStatus.PLANNED
+                data.get('status', 'PLANNED'), WorkstreamStatus, WorkstreamStatus.PLANNED
             ),
-            color=data.get("color"),
+            color=data.get('color'),
         )
 
     @staticmethod

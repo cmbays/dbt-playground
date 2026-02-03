@@ -37,7 +37,7 @@ def serialize_value(value: Any) -> Any:
         return value.value
     if isinstance(value, datetime):
         return value.isoformat()
-    if hasattr(value, "to_dict"):
+    if hasattr(value, 'to_dict'):
         return value.to_dict()
     if isinstance(value, dict):
         return {k: serialize_value(v) for k, v in value.items()}
@@ -73,7 +73,7 @@ class SerializableMixin:
         """
         if not is_dataclass(type(self)):
             raise TypeError(
-                f"{type(self).__name__} is not a dataclass. "
-                "SerializableMixin.to_dict() requires a dataclass."
+                f'{type(self).__name__} is not a dataclass. '
+                'SerializableMixin.to_dict() requires a dataclass.'
             )
         return {f.name: serialize_value(getattr(self, f.name)) for f in fields(self)}

@@ -37,7 +37,7 @@ class WorktreeDiscovery:
     def __init__(
         self,
         repo_path: Path | None = None,
-        git_executable: str = "git",
+        git_executable: str = 'git',
         git_timeout: int | None = None,
     ) -> None:
         """Initialize WorktreeDiscovery.
@@ -73,12 +73,10 @@ class WorktreeDiscovery:
             GitWorktreeError: If git command fails.
         """
         try:
-            porcelain_output = self._run_git_command(
-                ["worktree", "list", "--porcelain"]
-            )
+            porcelain_output = self._run_git_command(['worktree', 'list', '--porcelain'])
         except GitCommandError as e:
             raise GitWorktreeError(
-                f"Failed to list worktrees: {e.message}",
+                f'Failed to list worktrees: {e.message}',
                 worktree_path=str(self.repo_path) if self.repo_path else None,
             ) from e
 
@@ -94,7 +92,7 @@ class WorktreeDiscovery:
         Returns:
             WorktreeInfo object.
         """
-        wt_path = Path(wt_data["path"])
+        wt_path = Path(wt_data['path'])
 
         # Get status and commit info with graceful fallbacks
         try:
@@ -105,22 +103,22 @@ class WorktreeDiscovery:
         try:
             commit_hash, commit_msg, commit_date = self._get_last_commit(wt_path)
         except (GitCommandError, GitNotFoundError):
-            commit_hash = wt_data.get("head", "")
-            commit_msg = ""
+            commit_hash = wt_data.get('head', '')
+            commit_msg = ''
             commit_date = None
 
         # Use parsed head if commit_hash not set
         if not commit_hash:
-            commit_hash = wt_data.get("head", "")
+            commit_hash = wt_data.get('head', '')
 
         return WorktreeInfo(
-            path=wt_data["path"],
-            branch=wt_data.get("branch") or "",
+            path=wt_data['path'],
+            branch=wt_data.get('branch') or '',
             commit_hash=commit_hash,
-            commit_short=commit_hash[:7] if commit_hash else "",
+            commit_short=commit_hash[:7] if commit_hash else '',
             is_main=(idx == 0),
             status=self._determine_status(
-                wt_data.get("is_detached", False), files_changed, files_staged
+                wt_data.get('is_detached', False), files_changed, files_staged
             ),
             files_changed=files_changed,
             files_staged=files_staged,
@@ -145,7 +143,7 @@ class WorktreeDiscovery:
             files_changed, files_staged = self._get_git_status(worktree_path)
         except (GitCommandError, GitNotFoundError) as e:
             raise GitWorktreeError(
-                f"Failed to get status for worktree: {e}",
+                f'Failed to get status for worktree: {e}',
                 worktree_path=str(worktree_path),
             ) from e
 
@@ -153,29 +151,29 @@ class WorktreeDiscovery:
         try:
             commit_hash, commit_msg, commit_date = self._get_last_commit(worktree_path)
         except (GitCommandError, GitNotFoundError):
-            commit_hash = ""
-            commit_msg = ""
+            commit_hash = ''
+            commit_msg = ''
             commit_date = None
 
         # Get branch name
         try:
             branch = self._run_git_command(
-                ["rev-parse", "--abbrev-ref", "HEAD"], cwd=worktree_path
+                ['rev-parse', '--abbrev-ref', 'HEAD'], cwd=worktree_path
             ).strip()
         except (GitCommandError, GitNotFoundError):
-            branch = ""
+            branch = ''
 
         # Determine status
-        is_detached = branch == "HEAD"
+        is_detached = branch == 'HEAD'
         if is_detached:
-            branch = ""
+            branch = ''
         status = self._determine_status(is_detached, files_changed, files_staged)
 
         return WorktreeInfo(
             path=str(worktree_path),
             branch=branch,
             commit_hash=commit_hash,
-            commit_short=commit_hash[:7] if commit_hash else "",
+            commit_short=commit_hash[:7] if commit_hash else '',
             is_main=False,  # Cannot determine from single worktree query
             status=status,
             files_changed=files_changed,
@@ -230,12 +228,12 @@ class WorktreeDiscovery:
         current_wt: dict[str, Any] = {}
 
         # Define prefixes for maintainability
-        worktree_prefix = "worktree "
-        head_prefix = "HEAD "
-        branch_prefix = "branch "
-        refs_heads_prefix = "refs/heads/"
+        worktree_prefix = 'worktree '
+        head_prefix = 'HEAD '
+        branch_prefix = 'branch '
+        refs_heads_prefix = 'refs/heads/'
 
-        for line in output.split("\n"):
+        for line in output.split('\n'):
             line = line.rstrip()
 
             if line.startswith(worktree_prefix):
@@ -243,25 +241,25 @@ class WorktreeDiscovery:
                 if current_wt:
                     worktrees.append(current_wt)
                 current_wt = {
-                    "path": line[len(worktree_prefix):],
-                    "is_detached": False,
-                    "branch": None,
+                    'path': line[len(worktree_prefix) :],
+                    'is_detached': False,
+                    'branch': None,
                 }
 
             elif line.startswith(head_prefix):
-                current_wt["head"] = line[len(head_prefix):]
+                current_wt['head'] = line[len(head_prefix) :]
 
             elif line.startswith(branch_prefix):
                 # Extract branch name from refs/heads/...
-                branch_ref = line[len(branch_prefix):]
+                branch_ref = line[len(branch_prefix) :]
                 if branch_ref.startswith(refs_heads_prefix):
-                    current_wt["branch"] = branch_ref[len(refs_heads_prefix):]
+                    current_wt['branch'] = branch_ref[len(refs_heads_prefix) :]
                 else:
-                    current_wt["branch"] = branch_ref
+                    current_wt['branch'] = branch_ref
 
-            elif line == "detached":
-                current_wt["is_detached"] = True
-                current_wt["branch"] = None
+            elif line == 'detached':
+                current_wt['is_detached'] = True
+                current_wt['branch'] = None
 
         # Don't forget the last worktree
         if current_wt:
@@ -281,9 +279,7 @@ class WorktreeDiscovery:
         Returns:
             Tuple of (files_changed, files_staged).
         """
-        output = self._run_git_command(
-            ["status", "--porcelain"], cwd=worktree_path
-        )
+        output = self._run_git_command(['status', '--porcelain'], cwd=worktree_path)
 
         # Don't strip the whole string - we need leading spaces for status codes
         # Instead, strip trailing whitespace and check if empty
@@ -294,7 +290,7 @@ class WorktreeDiscovery:
         files_changed = 0
         files_staged = 0
 
-        for line in output.split("\n"):
+        for line in output.split('\n'):
             # Strip only trailing whitespace from each line, preserve leading
             line = line.rstrip()
             if not line:
@@ -308,18 +304,16 @@ class WorktreeDiscovery:
                 y_status = line[1]  # Worktree (unstaged)
 
                 # Any non-space character means a change
-                if x_status != " " or y_status != " ":
+                if x_status != ' ' or y_status != ' ':
                     files_changed += 1
 
                 # Staged changes (X is not space and not ?)
-                if x_status not in (" ", "?"):
+                if x_status not in (' ', '?'):
                     files_staged += 1
 
         return files_changed, files_staged
 
-    def _get_last_commit(
-        self, worktree_path: Path
-    ) -> tuple[str, str, datetime | None]:
+    def _get_last_commit(self, worktree_path: Path) -> tuple[str, str, datetime | None]:
         """Get (hash, message, date) for last commit.
 
         Args:
@@ -331,15 +325,15 @@ class WorktreeDiscovery:
         """
         # Format: %H = full hash, %s = subject, %aI = author date ISO format
         output = self._run_git_command(
-            ["log", "-1", "--format=%H%n%s%n%aI"], cwd=worktree_path
+            ['log', '-1', '--format=%H%n%s%n%aI'], cwd=worktree_path
         ).strip()
 
         if not output:
-            return "", "", None
+            return '', '', None
 
-        lines = output.split("\n")
+        lines = output.split('\n')
         if len(lines) < 3:
-            return "", "", None
+            return '', '', None
 
         commit_hash = lines[0]
         commit_msg = lines[1]
@@ -353,9 +347,7 @@ class WorktreeDiscovery:
 
         return commit_hash, commit_msg, commit_date
 
-    def _run_git_command(
-        self, args: list[str], cwd: Path | None = None
-    ) -> str:
+    def _run_git_command(self, args: list[str], cwd: Path | None = None) -> str:
         """Run a git command and return stdout.
 
         Args:
@@ -378,7 +370,7 @@ class WorktreeDiscovery:
                 cwd=working_dir,
                 capture_output=True,
                 text=True,
-                encoding="utf-8",
+                encoding='utf-8',
                 check=False,
                 timeout=self.git_timeout,
             )
@@ -386,14 +378,14 @@ class WorktreeDiscovery:
             raise GitNotFoundError(self.git_executable) from e
         except subprocess.TimeoutExpired as e:
             raise GitCommandError(
-                command=" ".join(cmd),
+                command=' '.join(cmd),
                 return_code=-1,
-                stderr=f"Command timed out after {self.git_timeout} seconds",
+                stderr=f'Command timed out after {self.git_timeout} seconds',
             ) from e
 
         if result.returncode != 0:
             raise GitCommandError(
-                command=" ".join(cmd),
+                command=' '.join(cmd),
                 return_code=result.returncode,
                 stderr=result.stderr.strip() if result.stderr else None,
             )

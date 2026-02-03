@@ -32,15 +32,16 @@ from rich.console import Console
 console = Console()
 
 # Paths
-WORKFLOW_HISTORY_DIR = Path("temp/WORKFLOW_HISTORY")
-EVENTS_FILE = WORKFLOW_HISTORY_DIR / "events.jsonl"
-OUTPUT_FILE = WORKFLOW_HISTORY_DIR / "chronicle-data.json"
-NEGATIVE_SPACE_FILE = Path("temp/NEGATIVE_SPACE.yaml")
+WORKFLOW_HISTORY_DIR = Path('temp/WORKFLOW_HISTORY')
+EVENTS_FILE = WORKFLOW_HISTORY_DIR / 'events.jsonl'
+OUTPUT_FILE = WORKFLOW_HISTORY_DIR / 'chronicle-data.json'
+NEGATIVE_SPACE_FILE = Path('temp/NEGATIVE_SPACE.yaml')
 
 
 @dataclass
 class CommitData:
     """Commit data for visualization."""
+
     sha: str
     short_sha: str
     timestamp: str
@@ -58,6 +59,7 @@ class CommitData:
 @dataclass
 class BranchSpan:
     """Branch lifecycle for feature layer."""
+
     name: str
     start_time: str
     end_time: str | None
@@ -68,6 +70,7 @@ class BranchSpan:
 @dataclass
 class DecisionData:
     """Rejected decision from Negative Space registry."""
+
     id: str
     question: str
     answer: str  # NO or NOT_YET
@@ -82,6 +85,7 @@ class DecisionData:
 @dataclass
 class ChronicleData:
     """Complete data structure for playground."""
+
     metadata: dict[str, Any]
     layers: dict[str, Any]
     insights: dict[str, Any]
@@ -91,11 +95,11 @@ class ChronicleData:
 def run_git(cmd: list[str]) -> str:
     """Run git command and return output."""
     result = subprocess.run(
-        ["git"] + cmd,
+        ['git'] + cmd,
         capture_output=True,
         text=True,
     )
-    return result.stdout.strip() if result.returncode == 0 else ""
+    return result.stdout.strip() if result.returncode == 0 else ''
 
 
 def parse_conventional_commit(message: str) -> tuple[str, str | None]:
@@ -104,7 +108,7 @@ def parse_conventional_commit(message: str) -> tuple[str, str | None]:
     match = re.match(pattern, message.lower())
     if match:
         return match.group(1), match.group(2)
-    return "other", None
+    return 'other', None
 
 
 def parse_co_authored_by(message: str) -> list[str]:
@@ -117,14 +121,14 @@ def parse_co_authored_by(message: str) -> list[str]:
 def get_commit_stats(sha: str) -> tuple[int, int, int]:
     """Get files changed, insertions, deletions for a commit."""
     result = subprocess.run(
-        ["git", "show", "--stat", "--format=", sha],
+        ['git', 'show', '--stat', '--format=', sha],
         capture_output=True,
         text=True,
     )
     if result.returncode != 0:
         return 0, 0, 0
 
-    lines = result.stdout.strip().split("\n")
+    lines = result.stdout.strip().split('\n')
     if not lines or not lines[-1]:
         return 0, 0, 0
 
@@ -149,10 +153,11 @@ def get_commit_stats(sha: str) -> tuple[int, int, int]:
 def get_commits(since: str) -> list[CommitData]:
     """Get commits from git log."""
     cmd = [
-        "git", "log",
-        f"--since={since}",
-        "--format=%H|%h|%aI|%an|%B%x00",
-        "--all",  # All branches
+        'git',
+        'log',
+        f'--since={since}',
+        '--format=%H|%h|%aI|%an|%B%x00',
+        '--all',  # All branches
     ]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -160,21 +165,21 @@ def get_commits(since: str) -> list[CommitData]:
         return []
 
     commits = []
-    raw_entries = result.stdout.split("\x00")
+    raw_entries = result.stdout.split('\x00')
 
     for entry in raw_entries:
         entry = entry.strip()
         if not entry:
             continue
 
-        parts = entry.split("|", 4)
+        parts = entry.split('|', 4)
         if len(parts) < 5:
             continue
 
         sha, short_sha, timestamp_str, author, message = parts
 
         # Parse conventional commit
-        first_line = message.split("\n")[0]
+        first_line = message.split('\n')[0]
         commit_type, scope = parse_conventional_commit(first_line)
 
         # Extract co-authors
@@ -185,27 +190,29 @@ def get_commits(since: str) -> list[CommitData]:
 
         # Determine branch
         branch_result = subprocess.run(
-            ["git", "branch", "--contains", sha, "--format=%(refname:short)"],
+            ['git', 'branch', '--contains', sha, '--format=%(refname:short)'],
             capture_output=True,
             text=True,
         )
-        branches = [b for b in branch_result.stdout.split("\n") if b.strip()]
-        branch = branches[0] if branches else "unknown"
+        branches = [b for b in branch_result.stdout.split('\n') if b.strip()]
+        branch = branches[0] if branches else 'unknown'
 
-        commits.append(CommitData(
-            sha=sha,
-            short_sha=short_sha,
-            timestamp=timestamp_str,
-            message=first_line.strip(),
-            commit_type=commit_type,
-            scope=scope,
-            author=author,
-            co_authored_by=co_authors,
-            files_changed=files_changed,
-            insertions=insertions,
-            deletions=deletions,
-            branch=branch,
-        ))
+        commits.append(
+            CommitData(
+                sha=sha,
+                short_sha=short_sha,
+                timestamp=timestamp_str,
+                message=first_line.strip(),
+                commit_type=commit_type,
+                scope=scope,
+                author=author,
+                co_authored_by=co_authors,
+                files_changed=files_changed,
+                insertions=insertions,
+                deletions=deletions,
+                branch=branch,
+            )
+        )
 
     return commits
 
@@ -213,7 +220,12 @@ def get_commits(since: str) -> list[CommitData]:
 def get_branches() -> list[BranchSpan]:
     """Get branch spans for feature layer."""
     result = subprocess.run(
-        ["git", "branch", "-a", "--format=%(refname:short)|%(creatordate:iso)|%(committerdate:iso)"],
+        [
+            'git',
+            'branch',
+            '-a',
+            '--format=%(refname:short)|%(creatordate:iso)|%(committerdate:iso)',
+        ],
         capture_output=True,
         text=True,
     )
@@ -221,41 +233,43 @@ def get_branches() -> list[BranchSpan]:
         return []
 
     branches = []
-    for line in result.stdout.split("\n"):
+    for line in result.stdout.split('\n'):
         if not line.strip():
             continue
 
-        parts = line.split("|")
+        parts = line.split('|')
         if len(parts) < 3:
             continue
 
         name = parts[0].strip()
-        if name.startswith("origin/"):
+        if name.startswith('origin/'):
             continue  # Skip remote tracking branches
 
         # Get first and last commit on branch
         log_result = subprocess.run(
-            ["git", "log", name, "--format=%aI", "--reverse"],
+            ['git', 'log', name, '--format=%aI', '--reverse'],
             capture_output=True,
             text=True,
         )
-        commits = [c for c in log_result.stdout.split("\n") if c.strip()]
+        commits = [c for c in log_result.stdout.split('\n') if c.strip()]
 
         start_time = commits[0] if commits else None
         end_time = commits[-1] if commits else None
 
         # Determine status
-        status = "active"
-        if name in ("main", "master"):
-            status = "mainline"
+        status = 'active'
+        if name in ('main', 'master'):
+            status = 'mainline'
 
-        branches.append(BranchSpan(
-            name=name,
-            start_time=start_time or "",
-            end_time=end_time,
-            commit_count=len(commits),
-            status=status,
-        ))
+        branches.append(
+            BranchSpan(
+                name=name,
+                start_time=start_time or '',
+                end_time=end_time,
+                commit_count=len(commits),
+                status=status,
+            )
+        )
 
     return branches
 
@@ -284,25 +298,27 @@ def load_negative_space() -> list[DecisionData]:
         with open(NEGATIVE_SPACE_FILE) as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError as e:
-        console.print(f"[yellow]Warning: Failed to parse {NEGATIVE_SPACE_FILE}: {e}[/yellow]")
+        console.print(f'[yellow]Warning: Failed to parse {NEGATIVE_SPACE_FILE}: {e}[/yellow]')
         return []
 
-    if not data or "decisions_not_made" not in data:
+    if not data or 'decisions_not_made' not in data:
         return []
 
     decisions = []
-    for entry in data["decisions_not_made"]:
-        decisions.append(DecisionData(
-            id=entry.get("id", ""),
-            question=entry.get("question", ""),
-            answer=entry.get("answer", ""),
-            date=entry.get("date", ""),
-            rationale=entry.get("rationale", "").strip(),
-            reconsidering_trigger=entry.get("reconsidering_trigger", ""),
-            raised_by=entry.get("raised_by", ""),
-            confidence=entry.get("confidence", ""),
-            related_feature=entry.get("related_feature"),
-        ))
+    for entry in data['decisions_not_made']:
+        decisions.append(
+            DecisionData(
+                id=entry.get('id', ''),
+                question=entry.get('question', ''),
+                answer=entry.get('answer', ''),
+                date=entry.get('date', ''),
+                rationale=entry.get('rationale', '').strip(),
+                reconsidering_trigger=entry.get('reconsidering_trigger', ''),
+                raised_by=entry.get('raised_by', ''),
+                confidence=entry.get('confidence', ''),
+                related_feature=entry.get('related_feature'),
+            )
+        )
 
     # Sort by date (newest first)
     decisions.sort(key=lambda d: d.date, reverse=True)
@@ -313,7 +329,7 @@ def load_negative_space() -> list[DecisionData]:
 def compute_insights(commits: list[CommitData]) -> dict[str, Any]:
     """Compute insights from commits."""
     if not commits:
-        return {"total_commits": 0}
+        return {'total_commits': 0}
 
     # Commit type distribution
     type_counts: dict[str, int] = {}
@@ -341,13 +357,13 @@ def compute_insights(commits: list[CommitData]) -> dict[str, Any]:
         duration_hours = 0
 
     return {
-        "total_commits": len(commits),
-        "commit_types": type_counts,
-        "agent_contribution_pct": agent_pct,
-        "total_files_changed": total_files,
-        "total_insertions": total_insertions,
-        "total_deletions": total_deletions,
-        "duration_hours": round(duration_hours, 1),
+        'total_commits': len(commits),
+        'commit_types': type_counts,
+        'agent_contribution_pct': agent_pct,
+        'total_files_changed': total_files,
+        'total_insertions': total_insertions,
+        'total_deletions': total_deletions,
+        'duration_hours': round(duration_hours, 1),
     }
 
 
@@ -362,35 +378,35 @@ def generate_chronicle_data(since: str) -> ChronicleData:
     now = datetime.now(UTC)
 
     metadata = {
-        "generated_at": now.isoformat(),
-        "since": since,
-        "version": "1.0.0",
+        'generated_at': now.isoformat(),
+        'since': since,
+        'version': '1.0.0',
     }
 
     layers = {
-        "surface": {
-            "name": "Commits",
-            "description": "Individual git commits",
-            "data": [asdict(c) for c in commits],
+        'surface': {
+            'name': 'Commits',
+            'description': 'Individual git commits',
+            'data': [asdict(c) for c in commits],
         },
-        "features": {
-            "name": "Branches",
-            "description": "Feature branch lifecycles",
-            "data": [asdict(b) for b in branches],
+        'features': {
+            'name': 'Branches',
+            'description': 'Feature branch lifecycles',
+            'data': [asdict(b) for b in branches],
         },
-        "decisions": {
-            "name": "Decisions",
-            "description": "Rejected decisions and deferred questions from Negative Space",
-            "data": [asdict(d) for d in decisions],
+        'decisions': {
+            'name': 'Decisions',
+            'description': 'Rejected decisions and deferred questions from Negative Space',
+            'data': [asdict(d) for d in decisions],
         },
-        "bedrock": {
-            "name": "Foundation",
-            "description": "Project constants and architecture",
-            "data": {
-                "project": "dbt-playground",
-                "dbt_version": "1.11.2",
-                "adapter": "duckdb",
-                "current_milestone": "v0.6.0",
+        'bedrock': {
+            'name': 'Foundation',
+            'description': 'Project constants and architecture',
+            'data': {
+                'project': 'dbt-playground',
+                'dbt_version': '1.11.2',
+                'adapter': 'duckdb',
+                'current_milestone': 'v0.6.0',
             },
         },
     }
@@ -405,44 +421,44 @@ def generate_chronicle_data(since: str) -> ChronicleData:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Generate chronicle data for timeline playground",
+        description='Generate chronicle data for timeline playground',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "--since",
-        default="7 days ago",
-        help="Time range for data (default: 7 days ago)",
+        '--since',
+        default='7 days ago',
+        help='Time range for data (default: 7 days ago)',
     )
     parser.add_argument(
-        "--output",
-        choices=["file", "stdout"],
-        default="file",
-        help="Output destination (default: file)",
+        '--output',
+        choices=['file', 'stdout'],
+        default='file',
+        help='Output destination (default: file)',
     )
 
     args = parser.parse_args()
 
     data = generate_chronicle_data(args.since)
     output = {
-        "metadata": data.metadata,
-        "layers": data.layers,
-        "insights": data.insights,
-        "events": data.events,
+        'metadata': data.metadata,
+        'layers': data.layers,
+        'insights': data.insights,
+        'events': data.events,
     }
 
-    if args.output == "stdout":
+    if args.output == 'stdout':
         print(json.dumps(output, indent=2))
     else:
         WORKFLOW_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-        with open(OUTPUT_FILE, "w") as f:
+        with open(OUTPUT_FILE, 'w') as f:
             json.dump(output, f, indent=2)
-        console.print(f"[green]Chronicle data generated: {OUTPUT_FILE}[/green]")
-        console.print(f"  Commits: {data.insights['total_commits']}")
-        console.print(f"  Decisions: {len(data.layers['decisions']['data'])}")
-        console.print(f"  Events: {len(data.events)}")
+        console.print(f'[green]Chronicle data generated: {OUTPUT_FILE}[/green]')
+        console.print(f'  Commits: {data.insights["total_commits"]}')
+        console.print(f'  Decisions: {len(data.layers["decisions"]["data"])}')
+        console.print(f'  Events: {len(data.events)}')
 
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

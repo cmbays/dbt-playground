@@ -34,54 +34,64 @@ console = Console()
 # RSS Feed Configuration - Key AI/Claude/Agents Contributors
 FEEDS = {
     # Anthropic (via community-maintained feeds - https://github.com/Olshansk/rss-feeds)
-    "Anthropic News": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml",
-    "Anthropic Engineering": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_engineering.xml",
-    "Anthropic Research": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml",
-    "Claude Code Changelog": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_changelog_claude_code.xml",
-
+    'Anthropic News': 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml',
+    'Anthropic Engineering': 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_engineering.xml',
+    'Anthropic Research': 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml',
+    'Claude Code Changelog': 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_changelog_claude_code.xml',
     # Other AI Companies (via community feeds)
-    "OpenAI Research": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_openai_research.xml",
-    "Cursor Blog": "https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_cursor.xml",
-
+    'OpenAI Research': 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_openai_research.xml',
+    'Cursor Blog': 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_cursor.xml',
     # Company Blogs (with working feeds)
-    "Hugging Face": "https://huggingface.co/blog/feed.xml",
-    "LangChain": "https://blog.langchain.dev/rss/",
-    "Google AI": "https://blog.google/technology/ai/rss/",
-
+    'Hugging Face': 'https://huggingface.co/blog/feed.xml',
+    'LangChain': 'https://blog.langchain.dev/rss/',
+    'Google AI': 'https://blog.google/technology/ai/rss/',
     # Individual Contributors & Researchers
-    "Simon Willison": "https://simonwillison.net/atom/everything/",
-    "Lilian Weng": "https://lilianweng.github.io/index.xml",
-    "Jay Alammar": "https://jalammar.github.io/feed.xml",
-    "Chip Huyen": "https://huyenchip.com/feed.xml",
-    "Eugene Yan": "https://eugeneyan.com/rss/",
-
+    'Simon Willison': 'https://simonwillison.net/atom/everything/',
+    'Lilian Weng': 'https://lilianweng.github.io/index.xml',
+    'Jay Alammar': 'https://jalammar.github.io/feed.xml',
+    'Chip Huyen': 'https://huyenchip.com/feed.xml',
+    'Eugene Yan': 'https://eugeneyan.com/rss/',
     # Newsletters & Podcasts (Substack)
-    "Latent Space": "https://www.latent.space/feed",
-    "AI Snake Oil": "https://www.aisnakeoil.com/feed",
-    "One Useful Thing (Ethan Mollick)": "https://www.oneusefulthing.org/feed",
-    "Interconnects (Nathan Lambert)": "https://www.interconnects.ai/feed",
-    "The Algorithmic Bridge": "https://thealgorithmicbridge.substack.com/feed",
-    "The Gradient": "https://thegradient.pub/rss/",
-    "Import AI (Jack Clark)": "https://importai.substack.com/feed",
-    "Ahead of AI (Sebastian Raschka)": "https://magazine.sebastianraschka.com/feed",
-
+    'Latent Space': 'https://www.latent.space/feed',
+    'AI Snake Oil': 'https://www.aisnakeoil.com/feed',
+    'One Useful Thing (Ethan Mollick)': 'https://www.oneusefulthing.org/feed',
+    'Interconnects (Nathan Lambert)': 'https://www.interconnects.ai/feed',
+    'The Algorithmic Bridge': 'https://thealgorithmicbridge.substack.com/feed',
+    'The Gradient': 'https://thegradient.pub/rss/',
+    'Import AI (Jack Clark)': 'https://importai.substack.com/feed',
+    'Ahead of AI (Sebastian Raschka)': 'https://magazine.sebastianraschka.com/feed',
     # Technical Blogs
-    "Weights & Biases": "https://wandb.ai/fully-connected/rss.xml",
-    "Cohere": "https://cohere.com/blog/rss.xml",
-
+    'Weights & Biases': 'https://wandb.ai/fully-connected/rss.xml',
+    'Cohere': 'https://cohere.com/blog/rss.xml',
     # GitHub Releases (via atom feeds)
-    "LangChain Releases": "https://github.com/langchain-ai/langchain/releases.atom",
-    "Anthropic SDK Releases": "https://github.com/anthropics/anthropic-sdk-python/releases.atom",
+    'LangChain Releases': 'https://github.com/langchain-ai/langchain/releases.atom',
+    'Anthropic SDK Releases': 'https://github.com/anthropics/anthropic-sdk-python/releases.atom',
 }
 
 # Topic keywords for categorization
 TOPICS = {
-    "Claude/Anthropic": ["claude", "anthropic", "constitutional ai", "claude code"],
-    "Agents & Orchestration": ["agent", "orchestration", "tool use", "function calling", "agentic", "multi-agent", "swarm"],
-    "Skills & Capabilities": ["skill", "capability", "benchmark", "evaluation", "reasoning"],
-    "Development & Building": ["api", "sdk", "integration", "tutorial", "guide", "building", "developer"],
-    "Research & Papers": ["paper", "research", "arxiv", "study", "findings"],
-    "Industry & News": ["release", "announcement", "launch", "update", "news"],
+    'Claude/Anthropic': ['claude', 'anthropic', 'constitutional ai', 'claude code'],
+    'Agents & Orchestration': [
+        'agent',
+        'orchestration',
+        'tool use',
+        'function calling',
+        'agentic',
+        'multi-agent',
+        'swarm',
+    ],
+    'Skills & Capabilities': ['skill', 'capability', 'benchmark', 'evaluation', 'reasoning'],
+    'Development & Building': [
+        'api',
+        'sdk',
+        'integration',
+        'tutorial',
+        'guide',
+        'building',
+        'developer',
+    ],
+    'Research & Papers': ['paper', 'research', 'arxiv', 'study', 'findings'],
+    'Industry & News': ['release', 'announcement', 'launch', 'update', 'news'],
 }
 
 
@@ -90,7 +100,7 @@ def fetch_feed(name: str, url: str, timeout: float = 10.0) -> list[dict[str, Any
     try:
         # Use httpx for better timeout handling
         with httpx.Client(timeout=timeout, follow_redirects=True) as client:
-            response = client.get(url, headers={"User-Agent": "RSS-Digest/1.0"})
+            response = client.get(url, headers={'User-Agent': 'RSS-Digest/1.0'})
             response.raise_for_status()
 
         feed = feedparser.parse(response.text)
@@ -111,43 +121,49 @@ def fetch_feed(name: str, url: str, timeout: float = 10.0) -> list[dict[str, Any
                 published = datetime.now(UTC)
 
             # Extract summary
-            summary = ""
+            summary = ''
             if hasattr(entry, 'summary'):
-                summary = entry.summary[:500] + "..." if len(entry.summary) > 500 else entry.summary
+                summary = entry.summary[:500] + '...' if len(entry.summary) > 500 else entry.summary
             elif hasattr(entry, 'description'):
-                summary = entry.description[:500] + "..." if len(entry.description) > 500 else entry.description
+                summary = (
+                    entry.description[:500] + '...'
+                    if len(entry.description) > 500
+                    else entry.description
+                )
 
-            entries.append({
-                "source": name,
-                "title": entry.get('title', 'No title'),
-                "link": entry.get('link', ''),
-                "published": published.isoformat(),
-                "published_dt": published,
-                "summary": summary,
-            })
+            entries.append(
+                {
+                    'source': name,
+                    'title': entry.get('title', 'No title'),
+                    'link': entry.get('link', ''),
+                    'published': published.isoformat(),
+                    'published_dt': published,
+                    'summary': summary,
+                }
+            )
 
         return entries
     except httpx.RequestError as e:
-        console.print(f"[yellow]Warning: Network error fetching {name}: {e}[/yellow]")
+        console.print(f'[yellow]Warning: Network error fetching {name}: {e}[/yellow]')
         return []
     except httpx.HTTPStatusError as e:
-        console.print(f"[yellow]Warning: HTTP {e.response.status_code} fetching {name}[/yellow]")
+        console.print(f'[yellow]Warning: HTTP {e.response.status_code} fetching {name}[/yellow]')
         return []
     except Exception as e:
-        console.print(f"[yellow]Warning: Failed to parse {name}: {type(e).__name__}: {e}[/yellow]")
+        console.print(f'[yellow]Warning: Failed to parse {name}: {type(e).__name__}: {e}[/yellow]')
         return []
 
 
 def categorize_entry(entry: dict[str, Any]) -> list[str]:
     """Categorize an entry based on keywords in title and summary."""
-    text = f"{entry['title']} {entry['summary']}".lower()
+    text = f'{entry["title"]} {entry["summary"]}'.lower()
     categories = []
 
     for category, keywords in TOPICS.items():
         if any(kw in text for kw in keywords):
             categories.append(category)
 
-    return categories if categories else ["General AI"]
+    return categories if categories else ['General AI']
 
 
 def fetch_all_feeds(days: int = 14) -> list[dict[str, Any]]:
@@ -157,13 +173,13 @@ def fetch_all_feeds(days: int = 14) -> list[dict[str, Any]]:
 
     with Progress(
         SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
+        TextColumn('[progress.description]{task.description}'),
         console=console,
     ) as progress:
-        task = progress.add_task("Fetching feeds...", total=len(FEEDS))
+        task = progress.add_task('Fetching feeds...', total=len(FEEDS))
 
         for name, url in FEEDS.items():
-            progress.update(task, description=f"Fetching {name}...")
+            progress.update(task, description=f'Fetching {name}...')
             entries = fetch_feed(name, url)
 
             # Filter by date and add categories
@@ -195,7 +211,7 @@ def generate_html(entries: list[dict[str, Any]], output_path: Path) -> None:
             category_counts[cat] = category_counts.get(cat, 0) + 1
         source_counts[entry['source']] = source_counts.get(entry['source'], 0) + 1
 
-    html_template = '''<!DOCTYPE html>
+    html_template = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -569,22 +585,26 @@ def generate_html(entries: list[dict[str, Any]], output_path: Path) -> None:
         renderEntries();
     </script>
 </body>
-</html>'''
+</html>"""
 
     # Generate category buttons
-    category_buttons = '\n'.join([
-        f'<button class="filter-btn" data-filter="{cat}">{cat} ({count})</button>'
-        for cat, count in sorted(category_counts.items(), key=lambda x: -x[1])
-    ])
+    category_buttons = '\n'.join(
+        [
+            f'<button class="filter-btn" data-filter="{cat}">{cat} ({count})</button>'
+            for cat, count in sorted(category_counts.items(), key=lambda x: -x[1])
+        ]
+    )
 
     # Generate source tags
-    source_tags = '\n'.join([
-        f'<span class="source-tag" data-source="{source}">{source} ({count})</span>'
-        for source, count in sorted(source_counts.items(), key=lambda x: -x[1])
-    ])
+    source_tags = '\n'.join(
+        [
+            f'<span class="source-tag" data-source="{source}">{source} ({count})</span>'
+            for source, count in sorted(source_counts.items(), key=lambda x: -x[1])
+        ]
+    )
 
     # Generate entries HTML (for initial render / no-JS fallback)
-    entries_html = ""  # JS will render
+    entries_html = ''  # JS will render
 
     # Calculate days range
     if entries:
@@ -604,18 +624,20 @@ def generate_html(entries: list[dict[str, Any]], output_path: Path) -> None:
     html = html.replace('ENTRIES_JSON', json.dumps(entries, indent=2))
 
     output_path.write_text(html)
-    console.print(f"[green]✓ Generated digest: {output_path}[/green]")
+    console.print(f'[green]✓ Generated digest: {output_path}[/green]')
 
 
 def cmd_generate(args):
     """Generate the RSS digest."""
-    console.print("[bold]🤖 AI/Claude RSS Digest Generator[/bold]\n")
+    console.print('[bold]🤖 AI/Claude RSS Digest Generator[/bold]\n')
 
     # Fetch feeds
-    console.print(f"Fetching content from last {args.days} days...")
+    console.print(f'Fetching content from last {args.days} days...')
     entries = fetch_all_feeds(days=args.days)
 
-    console.print(f"\n[green]Found {len(entries)} articles from {len({e['source'] for e in entries})} sources[/green]\n")
+    console.print(
+        f'\n[green]Found {len(entries)} articles from {len({e["source"] for e in entries})} sources[/green]\n'
+    )
 
     # Generate HTML
     output_path = Path(args.output)
@@ -625,49 +647,53 @@ def cmd_generate(args):
     # Save JSON for programmatic access
     json_path = output_path.with_suffix('.json')
     json_path.write_text(json.dumps(entries, indent=2))
-    console.print(f"[green]✓ Saved JSON data: {json_path}[/green]")
+    console.print(f'[green]✓ Saved JSON data: {json_path}[/green]')
 
     if not args.no_open:
-        webbrowser.open(f"file://{output_path.absolute()}")
-        console.print("[blue]Opened in browser[/blue]")
+        webbrowser.open(f'file://{output_path.absolute()}')
+        console.print('[blue]Opened in browser[/blue]')
 
 
 def cmd_list(args):
     """List all configured feeds with status."""
-    console.print("[bold]📋 Configured RSS Feeds[/bold]\n")
+    console.print('[bold]📋 Configured RSS Feeds[/bold]\n')
 
-    table = Table(show_header=True, header_style="bold cyan")
-    table.add_column("Feed Name", style="green")
-    table.add_column("URL", style="dim", max_width=60)
-    table.add_column("Status", justify="center")
+    table = Table(show_header=True, header_style='bold cyan')
+    table.add_column('Feed Name', style='green')
+    table.add_column('URL', style='dim', max_width=60)
+    table.add_column('Status', justify='center')
 
     for name, url in FEEDS.items():
         # Quick check if feed is reachable
         try:
             with httpx.Client(timeout=5.0, follow_redirects=True) as client:
-                response = client.head(url, headers={"User-Agent": "RSS-Digest/1.0"})
-                status = "[green]✓[/green]" if response.status_code == 200 else f"[yellow]{response.status_code}[/yellow]"
+                response = client.head(url, headers={'User-Agent': 'RSS-Digest/1.0'})
+                status = (
+                    '[green]✓[/green]'
+                    if response.status_code == 200
+                    else f'[yellow]{response.status_code}[/yellow]'
+                )
         except httpx.RequestError as e:
-            console.print(f"[dim]  {name}: {type(e).__name__}[/dim]")
-            status = "[red]✗[/red]"
+            console.print(f'[dim]  {name}: {type(e).__name__}[/dim]')
+            status = '[red]✗[/red]'
         except Exception as e:
-            console.print(f"[dim]  {name}: {type(e).__name__}: {e}[/dim]")
-            status = "[red]✗[/red]"
+            console.print(f'[dim]  {name}: {type(e).__name__}: {e}[/dim]')
+            status = '[red]✗[/red]'
 
-        table.add_row(name, url[:60] + "..." if len(url) > 60 else url, status)
+        table.add_row(name, url[:60] + '...' if len(url) > 60 else url, status)
 
     console.print(table)
-    console.print(f"\n[dim]Total: {len(FEEDS)} feeds[/dim]")
+    console.print(f'\n[dim]Total: {len(FEEDS)} feeds[/dim]')
 
 
 def cmd_config(args):
     """Open the script for editing."""
     script_path = Path(__file__).resolve()
-    console.print(f"[bold]Opening {script_path} for editing...[/bold]")
-    console.print("\n[dim]Edit the FEEDS dictionary to add/remove feeds.[/dim]\n")
+    console.print(f'[bold]Opening {script_path} for editing...[/bold]')
+    console.print('\n[dim]Edit the FEEDS dictionary to add/remove feeds.[/dim]\n')
 
     # Try common editors
-    editors = ["code", "cursor", "vim", "nano"]
+    editors = ['code', 'cursor', 'vim', 'nano']
     for editor in editors:
         try:
             subprocess.run([editor, str(script_path)], check=True)
@@ -675,66 +701,72 @@ def cmd_config(args):
         except (subprocess.CalledProcessError, FileNotFoundError):
             continue
 
-    console.print(f"[yellow]Could not open editor. Edit manually: {script_path}[/yellow]")
+    console.print(f'[yellow]Could not open editor. Edit manually: {script_path}[/yellow]')
 
 
 def cmd_schedule(args):
     """Show and manage schedule status."""
-    console.print("[bold]⏰ RSS Digest Schedule[/bold]\n")
+    console.print('[bold]⏰ RSS Digest Schedule[/bold]\n')
 
     # Check launchctl status
     try:
-        result = subprocess.run(
-            ["launchctl", "list"],
-            capture_output=True,
-            text=True
-        )
-        if "com.dbt-playground.rss-digest" in result.stdout:
-            console.print("[green]✓ Schedule is active[/green]")
+        result = subprocess.run(['launchctl', 'list'], capture_output=True, text=True)
+        if 'com.dbt-playground.rss-digest' in result.stdout:
+            console.print('[green]✓ Schedule is active[/green]')
 
             # Parse plist for schedule time
-            plist_path = Path(__file__).parent / "com.dbt-playground.rss-digest.plist"
+            plist_path = Path(__file__).parent / 'com.dbt-playground.rss-digest.plist'
             if plist_path.exists():
                 content = plist_path.read_text()
                 # Simple extraction
-                if "<key>Hour</key>" in content:
-                    hour_match = re.search(r"<key>Hour</key>\s*<integer>(\d+)</integer>", content)
-                    minute_match = re.search(r"<key>Minute</key>\s*<integer>(\d+)</integer>", content)
+                if '<key>Hour</key>' in content:
+                    hour_match = re.search(r'<key>Hour</key>\s*<integer>(\d+)</integer>', content)
+                    minute_match = re.search(
+                        r'<key>Minute</key>\s*<integer>(\d+)</integer>', content
+                    )
                     if hour_match and minute_match:
-                        console.print(f"[cyan]Time: {hour_match.group(1)}:{minute_match.group(1):0>2} daily[/cyan]")
+                        console.print(
+                            f'[cyan]Time: {hour_match.group(1)}:{minute_match.group(1):0>2} daily[/cyan]'
+                        )
         else:
-            console.print("[yellow]Schedule is not loaded[/yellow]")
-            console.print("\n[dim]To enable:[/dim]")
-            console.print("  launchctl load ~/Library/LaunchAgents/com.dbt-playground.rss-digest.plist")
+            console.print('[yellow]Schedule is not loaded[/yellow]')
+            console.print('\n[dim]To enable:[/dim]')
+            console.print(
+                '  launchctl load ~/Library/LaunchAgents/com.dbt-playground.rss-digest.plist'
+            )
     except subprocess.SubprocessError as e:
-        console.print(f"[red]Could not check schedule: {type(e).__name__}: {e}[/red]")
+        console.print(f'[red]Could not check schedule: {type(e).__name__}: {e}[/red]')
     except Exception as e:
-        console.print(f"[red]Could not check schedule: {type(e).__name__}: {e}[/red]")
+        console.print(f'[red]Could not check schedule: {type(e).__name__}: {e}[/red]')
 
-    console.print("\n[bold]Commands:[/bold]")
-    console.print("  [cyan]Run now:[/cyan]     launchctl start com.dbt-playground.rss-digest")
-    console.print("  [cyan]Disable:[/cyan]     launchctl unload ~/Library/LaunchAgents/com.dbt-playground.rss-digest.plist")
-    console.print("  [cyan]Re-enable:[/cyan]   launchctl load ~/Library/LaunchAgents/com.dbt-playground.rss-digest.plist")
-    console.print("  [cyan]View logs:[/cyan]   cat temp/rss_digest.log")
+    console.print('\n[bold]Commands:[/bold]')
+    console.print('  [cyan]Run now:[/cyan]     launchctl start com.dbt-playground.rss-digest')
+    console.print(
+        '  [cyan]Disable:[/cyan]     launchctl unload ~/Library/LaunchAgents/com.dbt-playground.rss-digest.plist'
+    )
+    console.print(
+        '  [cyan]Re-enable:[/cyan]   launchctl load ~/Library/LaunchAgents/com.dbt-playground.rss-digest.plist'
+    )
+    console.print('  [cyan]View logs:[/cyan]   cat temp/rss_digest.log')
 
 
 def cmd_add(args):
     """Add a new feed (prints instructions)."""
-    console.print("[bold]➕ Add New Feed[/bold]\n")
-    console.print("To add a feed, edit the FEEDS dictionary in the script:\n")
-    console.print(f"  [cyan]uv run {Path(__file__).name} config[/cyan]\n")
-    console.print("Then add your feed in this format:")
+    console.print('[bold]➕ Add New Feed[/bold]\n')
+    console.print('To add a feed, edit the FEEDS dictionary in the script:\n')
+    console.print(f'  [cyan]uv run {Path(__file__).name} config[/cyan]\n')
+    console.print('Then add your feed in this format:')
     console.print('  [green]"Feed Name": "https://example.com/feed.xml",[/green]\n')
-    console.print("[bold]Common feed URL patterns:[/bold]")
-    console.print("  Substack:  https://name.substack.com/feed")
-    console.print("  GitHub:    https://github.com/org/repo/releases.atom")
-    console.print("  YouTube:   https://www.youtube.com/feeds/videos.xml?channel_id=ID")
-    console.print("  WordPress: https://site.com/feed/")
+    console.print('[bold]Common feed URL patterns:[/bold]')
+    console.print('  Substack:  https://name.substack.com/feed')
+    console.print('  GitHub:    https://github.com/org/repo/releases.atom')
+    console.print('  YouTube:   https://www.youtube.com/feeds/videos.xml?channel_id=ID')
+    console.print('  WordPress: https://site.com/feed/')
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="AI/Claude RSS Digest Generator",
+        description='AI/Claude RSS Digest Generator',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -744,48 +776,50 @@ Examples:
   uv run scripts/rss_digest.py list         # Show all feeds
   uv run scripts/rss_digest.py config       # Edit feed configuration
   uv run scripts/rss_digest.py schedule     # View/manage schedule
-"""
+""",
     )
 
-    subparsers = parser.add_subparsers(dest="command", help="Commands")
+    subparsers = parser.add_subparsers(dest='command', help='Commands')
 
     # Generate (default)
-    gen_parser = subparsers.add_parser("generate", help="Generate digest (default)")
-    gen_parser.add_argument("--days", type=int, default=14, help="Days to include (default: 14)")
-    gen_parser.add_argument("--no-open", action="store_true", help="Don't open browser")
-    gen_parser.add_argument("--output", type=str, default="temp/rss_digest.html", help="Output path")
+    gen_parser = subparsers.add_parser('generate', help='Generate digest (default)')
+    gen_parser.add_argument('--days', type=int, default=14, help='Days to include (default: 14)')
+    gen_parser.add_argument('--no-open', action='store_true', help="Don't open browser")
+    gen_parser.add_argument(
+        '--output', type=str, default='temp/rss_digest.html', help='Output path'
+    )
 
     # List feeds
-    subparsers.add_parser("list", help="List all configured feeds")
+    subparsers.add_parser('list', help='List all configured feeds')
 
     # Config
-    subparsers.add_parser("config", help="Edit feed configuration")
+    subparsers.add_parser('config', help='Edit feed configuration')
 
     # Schedule
-    subparsers.add_parser("schedule", help="View/manage daily schedule")
+    subparsers.add_parser('schedule', help='View/manage daily schedule')
 
     # Add feed
-    subparsers.add_parser("add", help="Add a new feed (shows instructions)")
+    subparsers.add_parser('add', help='Add a new feed (shows instructions)')
 
     # Also support flags at top level for default generate behavior
-    parser.add_argument("--days", type=int, default=14, help="Days to include (default: 14)")
-    parser.add_argument("--no-open", action="store_true", help="Don't open browser")
-    parser.add_argument("--output", type=str, default="temp/rss_digest.html", help="Output path")
+    parser.add_argument('--days', type=int, default=14, help='Days to include (default: 14)')
+    parser.add_argument('--no-open', action='store_true', help="Don't open browser")
+    parser.add_argument('--output', type=str, default='temp/rss_digest.html', help='Output path')
 
     args = parser.parse_args()
 
-    if args.command == "list":
+    if args.command == 'list':
         cmd_list(args)
-    elif args.command == "config":
+    elif args.command == 'config':
         cmd_config(args)
-    elif args.command == "schedule":
+    elif args.command == 'schedule':
         cmd_schedule(args)
-    elif args.command == "add":
+    elif args.command == 'add':
         cmd_add(args)
     else:
         # Default: generate
         cmd_generate(args)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -28,7 +28,7 @@ class WorktreeMonitorError(Exception):
 
     def __str__(self) -> str:
         if self.details:
-            return f"{self.message} | Details: {self.details}"
+            return f'{self.message} | Details: {self.details}'
         return self.message
 
 
@@ -48,8 +48,8 @@ class VersionPlanNotFoundError(ConfigError):
 
     def __init__(self, path: str):
         super().__init__(
-            f"Version plan file not found: {path}",
-            details={"path": path},
+            f'Version plan file not found: {path}',
+            details={'path': path},
         )
         self.path = path
 
@@ -60,7 +60,7 @@ class VersionPlanValidationError(ConfigError):
     def __init__(self, message: str, validation_errors: list[str] | None = None):
         super().__init__(
             message,
-            details={"validation_errors": validation_errors or []},
+            details={'validation_errors': validation_errors or []},
         )
         self.validation_errors = validation_errors or []
 
@@ -71,7 +71,7 @@ class VersionPlanSchemaError(ConfigError):
     def __init__(self, message: str, field: str | None = None):
         super().__init__(
             message,
-            details={"field": field} if field else {},
+            details={'field': field} if field else {},
         )
         self.field = field
 
@@ -82,9 +82,9 @@ class VersionPlanParseError(ConfigError):
     def __init__(self, message: str, line: int | None = None, column: int | None = None):
         details = {}
         if line is not None:
-            details["line"] = line
+            details['line'] = line
         if column is not None:
-            details["column"] = column
+            details['column'] = column
         super().__init__(message, details=details)
         self.line = line
         self.column = column
@@ -104,10 +104,10 @@ class GitError(WorktreeMonitorError):
 class GitNotFoundError(GitError):
     """Raised when git executable is not found."""
 
-    def __init__(self, path: str = "git"):
+    def __init__(self, path: str = 'git'):
         super().__init__(
-            f"Git executable not found: {path}",
-            details={"executable": path},
+            f'Git executable not found: {path}',
+            details={'executable': path},
         )
         self.executable = path
 
@@ -121,15 +121,15 @@ class GitCommandError(GitError):
         return_code: int,
         stderr: str | None = None,
     ):
-        message = f"Git command failed: {command} (exit code {return_code})"
+        message = f'Git command failed: {command} (exit code {return_code})'
         if stderr:
-            message += f"\nStderr: {stderr}"
+            message += f'\nStderr: {stderr}'
         super().__init__(
             message,
             details={
-                "command": command,
-                "return_code": return_code,
-                "stderr": stderr,
+                'command': command,
+                'return_code': return_code,
+                'stderr': stderr,
             },
         )
         self.command = command
@@ -143,7 +143,7 @@ class GitWorktreeError(GitError):
     def __init__(self, message: str, worktree_path: str | None = None):
         super().__init__(
             message,
-            details={"worktree_path": worktree_path} if worktree_path else {},
+            details={'worktree_path': worktree_path} if worktree_path else {},
         )
         self.worktree_path = worktree_path
 
@@ -171,8 +171,8 @@ class GitHubAPIError(GitHubError):
         super().__init__(
             message,
             details={
-                "status_code": status_code,
-                "endpoint": endpoint,
+                'status_code': status_code,
+                'endpoint': endpoint,
             },
         )
         self.status_code = status_code
@@ -188,10 +188,10 @@ class RateLimitError(GitHubError):
         reset_at: str | None = None,
     ):
         super().__init__(
-            f"GitHub API rate limit exceeded. Remaining: {remaining}",
+            f'GitHub API rate limit exceeded. Remaining: {remaining}',
             details={
-                "remaining": remaining,
-                "reset_at": reset_at,
+                'remaining': remaining,
+                'reset_at': reset_at,
             },
         )
         self.remaining = remaining
@@ -201,7 +201,7 @@ class RateLimitError(GitHubError):
 class GitHubAuthError(GitHubError):
     """Raised when GitHub authentication fails."""
 
-    def __init__(self, message: str = "GitHub authentication failed"):
+    def __init__(self, message: str = 'GitHub authentication failed'):
         super().__init__(message)
 
 
@@ -210,10 +210,10 @@ class GitHubNotFoundError(GitHubError):
 
     def __init__(self, resource_type: str, identifier: str):
         super().__init__(
-            f"{resource_type} not found: {identifier}",
+            f'{resource_type} not found: {identifier}',
             details={
-                "resource_type": resource_type,
-                "identifier": identifier,
+                'resource_type': resource_type,
+                'identifier': identifier,
             },
         )
         self.resource_type = resource_type
@@ -236,8 +236,8 @@ class ArchiveNotFoundError(ArchiveError):
 
     def __init__(self, path: str):
         super().__init__(
-            f"Archive not found: {path}",
-            details={"path": path},
+            f'Archive not found: {path}',
+            details={'path': path},
         )
         self.path = path
 
@@ -247,8 +247,8 @@ class ArchiveCorruptedError(ArchiveError):
 
     def __init__(self, path: str, reason: str):
         super().__init__(
-            f"Archive corrupted: {path}. Reason: {reason}",
-            details={"path": path, "reason": reason},
+            f'Archive corrupted: {path}. Reason: {reason}',
+            details={'path': path, 'reason': reason},
         )
         self.path = path
         self.reason = reason
@@ -259,8 +259,8 @@ class ArchiveWriteError(ArchiveError):
 
     def __init__(self, path: str, reason: str):
         super().__init__(
-            f"Failed to write archive: {path}. Reason: {reason}",
-            details={"path": path, "reason": reason},
+            f'Failed to write archive: {path}. Reason: {reason}',
+            details={'path': path, 'reason': reason},
         )
         self.path = path
         self.reason = reason
@@ -282,8 +282,8 @@ class HeartbeatFileNotFoundError(HeartbeatError):
 
     def __init__(self, path: str):
         super().__init__(
-            f"Heartbeat file not found: {path}",
-            details={"path": path},
+            f'Heartbeat file not found: {path}',
+            details={'path': path},
         )
         self.path = path
 
@@ -293,8 +293,8 @@ class HeartbeatParseError(HeartbeatError):
 
     def __init__(self, path: str, reason: str):
         super().__init__(
-            f"Failed to parse heartbeat file: {path}. Reason: {reason}",
-            details={"path": path, "reason": reason},
+            f'Failed to parse heartbeat file: {path}. Reason: {reason}',
+            details={'path': path, 'reason': reason},
         )
         self.path = path
         self.reason = reason
@@ -327,8 +327,8 @@ class ComponentError(MonitorError):
         super().__init__(
             f"Component '{component}' failed: {message}",
             details={
-                "component": component,
-                "original_error": str(original_error) if original_error else None,
+                'component': component,
+                'original_error': str(original_error) if original_error else None,
             },
         )
         self.component = component
@@ -342,7 +342,7 @@ class CollectionError(MonitorError):
         super().__init__(
             message,
             details={
-                "component_errors": [str(e) for e in (component_errors or [])],
+                'component_errors': [str(e) for e in (component_errors or [])],
             },
         )
         self.component_errors = component_errors or []

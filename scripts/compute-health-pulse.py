@@ -30,12 +30,13 @@ from rich.text import Text
 console = Console()
 
 # Paths
-BASELINES_FILE = Path("temp/WORKFLOW_HISTORY/baselines/ratchet-history.json")
+BASELINES_FILE = Path('temp/WORKFLOW_HISTORY/baselines/ratchet-history.json')
 
 
 @dataclass
 class HealthComponent:
     """Individual health component score."""
+
     name: str
     score: int  # 0-100
     weight: float
@@ -46,6 +47,7 @@ class HealthComponent:
 @dataclass
 class HealthPulse:
     """Complete health pulse result."""
+
     score: int
     rating: str  # "EXCELLENT", "GOOD", "FAIR", "POOR"
     components: list[HealthComponent]
@@ -56,11 +58,11 @@ class HealthPulse:
 def run_git(cmd: list[str]) -> str:
     """Run git command and return output."""
     result = subprocess.run(
-        ["git"] + cmd,
+        ['git'] + cmd,
         capture_output=True,
         text=True,
     )
-    return result.stdout.strip() if result.returncode == 0 else ""
+    return result.stdout.strip() if result.returncode == 0 else ''
 
 
 def get_commit_velocity_score() -> HealthComponent:
@@ -70,33 +72,33 @@ def get_commit_velocity_score() -> HealthComponent:
     """
     # Get commits from last 7 days
     result = subprocess.run(
-        ["git", "log", "--since=7 days ago", "--format=%H"],
+        ['git', 'log', '--since=7 days ago', '--format=%H'],
         capture_output=True,
         text=True,
     )
-    commits = [c for c in result.stdout.split("\n") if c.strip()]
+    commits = [c for c in result.stdout.split('\n') if c.strip()]
     total = len(commits)
     daily_avg = total / 7
 
     # Scoring
     if daily_avg >= 3:
         score = min(100, int(50 + (daily_avg - 3) * 10))
-        status = "good"
+        status = 'good'
     elif daily_avg >= 1:
         score = int(30 + daily_avg * 20)
-        status = "fair"
+        status = 'fair'
     else:
         score = int(daily_avg * 30)
-        status = "poor"
+        status = 'poor'
 
     score = max(0, min(100, score))
 
     return HealthComponent(
-        name="Commit Velocity",
+        name='Commit Velocity',
         score=score,
         weight=0.25,
         status=status,
-        detail=f"{total} commits in 7 days ({daily_avg:.1f}/day)",
+        detail=f'{total} commits in 7 days ({daily_avg:.1f}/day)',
     )
 
 
@@ -105,30 +107,27 @@ def get_phase_duration_score() -> HealthComponent:
 
     Uses branch age as proxy for phase duration.
     """
-    branch = run_git(["branch", "--show-current"]) or "main"
+    branch = run_git(['branch', '--show-current']) or 'main'
 
-    if branch in ("main", "master"):
+    if branch in ('main', 'master'):
         return HealthComponent(
-            name="Phase Duration",
+            name='Phase Duration',
             score=100,
             weight=0.25,
-            status="good",
-            detail="On mainline (no active phase)",
+            status='good',
+            detail='On mainline (no active phase)',
         )
 
     # Get branch creation time (first commit on branch not on main)
-    first_commit = run_git([
-        "log", branch, "--not", "main",
-        "--format=%aI", "--reverse", "-1"
-    ])
+    first_commit = run_git(['log', branch, '--not', 'main', '--format=%aI', '--reverse', '-1'])
 
     if not first_commit:
         return HealthComponent(
-            name="Phase Duration",
+            name='Phase Duration',
             score=80,
             weight=0.25,
-            status="good",
-            detail="New branch (no divergence yet)",
+            status='good',
+            detail='New branch (no divergence yet)',
         )
 
     try:
@@ -137,38 +136,38 @@ def get_phase_duration_score() -> HealthComponent:
         days = (now - start).days
 
         # Scoring based on phase type
-        if branch.startswith("feat/"):
+        if branch.startswith('feat/'):
             expected_days = 5
-        elif branch.startswith("fix/"):
+        elif branch.startswith('fix/'):
             expected_days = 2
         else:
             expected_days = 3
 
         if days <= expected_days:
             score = 100
-            status = "good"
+            status = 'good'
         elif days <= expected_days * 2:
             score = 70
-            status = "fair"
+            status = 'fair'
         else:
             score = max(20, 100 - (days - expected_days) * 10)
-            status = "poor"
+            status = 'poor'
 
         return HealthComponent(
-            name="Phase Duration",
+            name='Phase Duration',
             score=score,
             weight=0.25,
             status=status,
-            detail=f"{days} days on {branch} (expected: {expected_days}d)",
+            detail=f'{days} days on {branch} (expected: {expected_days}d)',
         )
 
     except ValueError:
         return HealthComponent(
-            name="Phase Duration",
+            name='Phase Duration',
             score=50,
             weight=0.25,
-            status="fair",
-            detail="Could not determine branch age",
+            status='fair',
+            detail='Could not determine branch age',
         )
 
 
@@ -183,22 +182,22 @@ def get_test_coverage_score() -> HealthComponent:
         try:
             with open(BASELINES_FILE) as f:
                 data = json.load(f)
-            for metric in data.get("metrics", []):
-                if metric["name"] == "test_count_minimum":
-                    baseline = metric["current_baseline"]
+            for metric in data.get('metrics', []):
+                if metric['name'] == 'test_count_minimum':
+                    baseline = metric['current_baseline']
                     break
         except (json.JSONDecodeError, KeyError):
             pass
 
     # Run dbt test in dbt_project directory
-    dbt_project_dir = Path.cwd() / "dbt_project"
+    dbt_project_dir = Path.cwd() / 'dbt_project'
     if not dbt_project_dir.exists():
         # Try from parent if we're in a subdirectory
-        dbt_project_dir = Path.cwd().parent / "dbt_project"
+        dbt_project_dir = Path.cwd().parent / 'dbt_project'
 
     if dbt_project_dir.exists():
         result = subprocess.run(
-            ["uv", "run", "dbt", "test"],
+            ['uv', 'run', 'dbt', 'test'],
             capture_output=True,
             text=True,
             cwd=dbt_project_dir,
@@ -207,16 +206,17 @@ def get_test_coverage_score() -> HealthComponent:
     else:
         # Return placeholder if dbt_project not found
         return HealthComponent(
-            name="Test Coverage",
+            name='Test Coverage',
             score=50,
             weight=0.25,
-            status="fair",
-            detail="dbt_project directory not found",
+            status='fair',
+            detail='dbt_project directory not found',
         )
 
     # Parse output for pass count
     output = result.stdout + result.stderr
     import re
+
     match = re.search(r'PASS=(\d+)', output)
     pass_count = int(match.group(1)) if match else 0
 
@@ -225,19 +225,19 @@ def get_test_coverage_score() -> HealthComponent:
 
     if error_count > 0:
         score = max(0, 100 - error_count * 20)
-        status = "poor"
-        detail = f"{pass_count} passed, {error_count} failed"
+        status = 'poor'
+        detail = f'{pass_count} passed, {error_count} failed'
     elif pass_count >= baseline:
         score = min(100, int(80 + (pass_count - baseline) * 0.5))
-        status = "good"
-        detail = f"{pass_count} tests passing (baseline: {baseline})"
+        status = 'good'
+        detail = f'{pass_count} tests passing (baseline: {baseline})'
     else:
         score = int((pass_count / baseline) * 80)
-        status = "fair"
-        detail = f"{pass_count} tests (below baseline {baseline})"
+        status = 'fair'
+        detail = f'{pass_count} tests (below baseline {baseline})'
 
     return HealthComponent(
-        name="Test Coverage",
+        name='Test Coverage',
         score=score,
         weight=0.25,
         status=status,
@@ -251,42 +251,42 @@ def get_agent_collaboration_score() -> HealthComponent:
     Higher agent collaboration indicates effective AI-assisted development.
     """
     result = subprocess.run(
-        ["git", "log", "--since=7 days ago", "--format=%B%x00"],
+        ['git', 'log', '--since=7 days ago', '--format=%B%x00'],
         capture_output=True,
         text=True,
     )
-    commits = [c for c in result.stdout.split("\x00") if c.strip()]
+    commits = [c for c in result.stdout.split('\x00') if c.strip()]
     total = len(commits)
 
     if total == 0:
         return HealthComponent(
-            name="Agent Collaboration",
+            name='Agent Collaboration',
             score=50,
             weight=0.25,
-            status="fair",
-            detail="No recent commits to analyze",
+            status='fair',
+            detail='No recent commits to analyze',
         )
 
-    agent_commits = sum(1 for c in commits if "Co-Authored-By:" in c)
+    agent_commits = sum(1 for c in commits if 'Co-Authored-By:' in c)
     ratio = agent_commits / total
 
     # 40-80% agent collaboration is optimal
     if 0.4 <= ratio <= 0.8:
         score = 100
-        status = "good"
+        status = 'good'
     elif 0.2 <= ratio < 0.4 or 0.8 < ratio <= 0.95:
         score = 70
-        status = "fair"
+        status = 'fair'
     else:
         score = 40
-        status = "poor"
+        status = 'poor'
 
     return HealthComponent(
-        name="Agent Collaboration",
+        name='Agent Collaboration',
         score=score,
         weight=0.25,
         status=status,
-        detail=f"{agent_commits}/{total} commits agent-assisted ({ratio*100:.0f}%)",
+        detail=f'{agent_commits}/{total} commits agent-assisted ({ratio * 100:.0f}%)',
     )
 
 
@@ -305,13 +305,13 @@ def compute_health_pulse() -> HealthPulse:
 
     # Rating
     if score >= 85:
-        rating = "EXCELLENT"
+        rating = 'EXCELLENT'
     elif score >= 70:
-        rating = "GOOD"
+        rating = 'GOOD'
     elif score >= 50:
-        rating = "FAIR"
+        rating = 'FAIR'
     else:
-        rating = "POOR"
+        rating = 'POOR'
 
     # Find primary driver (lowest weighted contribution)
     contributions = [(c.name, c.score * c.weight) for c in components]
@@ -330,86 +330,88 @@ def render_bar(score: int, width: int = 10) -> str:
     """Render ASCII progress bar."""
     filled = int(score / 100 * width)
     empty = width - filled
-    return "=" * filled + "-" * empty
+    return '=' * filled + '-' * empty
 
 
 def format_health_pulse(pulse: HealthPulse, verbose: bool = False) -> None:
     """Print formatted health pulse output."""
     # Color based on rating
     color_map = {
-        "EXCELLENT": "green",
-        "GOOD": "blue",
-        "FAIR": "yellow",
-        "POOR": "red",
+        'EXCELLENT': 'green',
+        'GOOD': 'blue',
+        'FAIR': 'yellow',
+        'POOR': 'red',
     }
-    color = color_map.get(pulse.rating, "white")
+    color = color_map.get(pulse.rating, 'white')
 
     # Header
     bar = render_bar(pulse.score)
     header = Text()
-    header.append("HEALTH PULSE: ", style="bold")
-    header.append(f"{pulse.score}", style=f"bold {color}")
-    header.append(f" [{bar}] ", style="dim")
-    header.append(pulse.rating, style=f"bold {color}")
+    header.append('HEALTH PULSE: ', style='bold')
+    header.append(f'{pulse.score}', style=f'bold {color}')
+    header.append(f' [{bar}] ', style='dim')
+    header.append(pulse.rating, style=f'bold {color}')
 
     console.print(Panel(header, border_style=color))
 
     # Primary driver
     driver_text = Text()
-    driver_text.append("Primary Driver: ", style="dim")
-    driver_text.append(pulse.primary_driver, style="bold yellow")
-    if any(c.name == pulse.primary_driver and c.status == "poor" for c in pulse.components):
-        driver_text.append(" (dragging down)", style="red")
+    driver_text.append('Primary Driver: ', style='dim')
+    driver_text.append(pulse.primary_driver, style='bold yellow')
+    if any(c.name == pulse.primary_driver and c.status == 'poor' for c in pulse.components):
+        driver_text.append(' (dragging down)', style='red')
     console.print(driver_text)
     console.print()
 
     # Component details
     if verbose:
-        console.print("[bold]Components:[/bold]")
+        console.print('[bold]Components:[/bold]')
         for c in pulse.components:
-            console.print(f"  {c.name:20} [{render_bar(c.score, 8)}] {c.score:3d}  [dim]{c.detail}[/dim]")
+            console.print(
+                f'  {c.name:20} [{render_bar(c.score, 8)}] {c.score:3d}  [dim]{c.detail}[/dim]'
+            )
     else:
-        console.print("[dim]Use --verbose for component breakdown[/dim]")
+        console.print('[dim]Use --verbose for component breakdown[/dim]')
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Compute workflow health pulse",
+        description='Compute workflow health pulse',
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "--format",
-        choices=["text", "json"],
-        default="text",
-        help="Output format (default: text)",
+        '--format',
+        choices=['text', 'json'],
+        default='text',
+        help='Output format (default: text)',
     )
     parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Show component breakdown",
+        '--verbose',
+        action='store_true',
+        help='Show component breakdown',
     )
 
     args = parser.parse_args()
 
     pulse = compute_health_pulse()
 
-    if args.format == "json":
+    if args.format == 'json':
         output = {
-            "score": pulse.score,
-            "rating": pulse.rating,
-            "primary_driver": pulse.primary_driver,
-            "trend": pulse.trend,
-            "components": [
+            'score': pulse.score,
+            'rating': pulse.rating,
+            'primary_driver': pulse.primary_driver,
+            'trend': pulse.trend,
+            'components': [
                 {
-                    "name": c.name,
-                    "score": c.score,
-                    "weight": c.weight,
-                    "status": c.status,
-                    "detail": c.detail,
+                    'name': c.name,
+                    'score': c.score,
+                    'weight': c.weight,
+                    'status': c.status,
+                    'detail': c.detail,
                 }
                 for c in pulse.components
             ],
-            "computed_at": datetime.now(UTC).isoformat(),
+            'computed_at': datetime.now(UTC).isoformat(),
         }
         print(json.dumps(output, indent=2))
     else:
@@ -418,5 +420,5 @@ def main() -> int:
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

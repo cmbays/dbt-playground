@@ -45,57 +45,51 @@ from worktree_monitor.version_plan_loader import VersionPlanLoader
 class TestLoadValidYAML:
     """Test loading valid YAML configuration files."""
 
-    def test_load_valid_version_plan(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_load_valid_version_plan(self, tmp_path, valid_version_plan_yaml):
         """Load a complete valid version plan YAML file."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
 
         assert isinstance(plan, VersionPlan)
-        assert plan.name == "v0.10"
+        assert plan.name == 'v0.10'
         assert plan.version == 1
-        assert plan.target_date == "2026-04-30"
-        assert plan.description == "Agent Orchestration Enhancements"
+        assert plan.target_date == '2026-04-30'
+        assert plan.description == 'Agent Orchestration Enhancements'
         assert plan.status == VersionStatus.IN_PROGRESS
 
-    def test_load_minimal_version_plan(
-        self, tmp_path, minimal_version_plan_yaml
-    ):
+    def test_load_minimal_version_plan(self, tmp_path, minimal_version_plan_yaml):
         """Load a minimal valid version plan with only required fields."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(minimal_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(minimal_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
 
         assert isinstance(plan, VersionPlan)
-        assert plan.name == "v0.11"
-        assert plan.target_date == "2026-06-30"
+        assert plan.name == 'v0.11'
+        assert plan.target_date == '2026-06-30'
         # Default values should be applied
         assert plan.status == VersionStatus.PLANNED
-        assert plan.description == ""
+        assert plan.description == ''
 
-    def test_load_returns_version_plan_model(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_load_returns_version_plan_model(self, tmp_path, valid_version_plan_yaml):
         """Load method returns a properly typed VersionPlan model."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
 
         # Verify model structure
-        assert hasattr(plan, "version")
-        assert hasattr(plan, "name")
-        assert hasattr(plan, "target_date")
-        assert hasattr(plan, "description")
-        assert hasattr(plan, "status")
-        assert hasattr(plan, "phases")
+        assert hasattr(plan, 'version')
+        assert hasattr(plan, 'name')
+        assert hasattr(plan, 'target_date')
+        assert hasattr(plan, 'description')
+        assert hasattr(plan, 'status')
+        assert hasattr(plan, 'phases')
 
 
 # =============================================================================
@@ -108,7 +102,7 @@ class TestMissingFile:
 
     def test_missing_file_raises_not_found_error(self, tmp_path):
         """Raise VersionPlanNotFoundError for missing file."""
-        missing_file = tmp_path / "nonexistent.yaml"
+        missing_file = tmp_path / 'nonexistent.yaml'
 
         loader = VersionPlanLoader(missing_file)
 
@@ -120,7 +114,7 @@ class TestMissingFile:
 
     def test_missing_file_error_has_path_attribute(self, tmp_path):
         """VersionPlanNotFoundError includes the missing path."""
-        missing_file = tmp_path / "missing-config.yaml"
+        missing_file = tmp_path / 'missing-config.yaml'
 
         loader = VersionPlanLoader(missing_file)
 
@@ -138,12 +132,10 @@ class TestMissingFile:
 class TestMalformedYAML:
     """Test handling of malformed YAML syntax."""
 
-    def test_invalid_yaml_syntax_raises_parse_error(
-        self, tmp_path, invalid_yaml
-    ):
+    def test_invalid_yaml_syntax_raises_parse_error(self, tmp_path, invalid_yaml):
         """Raise VersionPlanParseError for invalid YAML syntax."""
-        config_file = tmp_path / "invalid.yaml"
-        config_file.write_text(invalid_yaml, encoding="utf-8")
+        config_file = tmp_path / 'invalid.yaml'
+        config_file.write_text(invalid_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
 
@@ -151,7 +143,7 @@ class TestMalformedYAML:
             loader.load()
 
         # Should indicate YAML parsing failed
-        assert "parse" in str(exc_info.value).lower() or "yaml" in str(exc_info.value).lower()
+        assert 'parse' in str(exc_info.value).lower() or 'yaml' in str(exc_info.value).lower()
 
     def test_malformed_yaml_with_tabs_and_spaces(self, tmp_path):
         """Handle YAML with inconsistent indentation."""
@@ -163,8 +155,8 @@ phases:
 \torder: 1  # Tab instead of space
     workstreams: []
 """
-        config_file = tmp_path / "bad-indent.yaml"
-        config_file.write_text(bad_indent_yaml, encoding="utf-8")
+        config_file = tmp_path / 'bad-indent.yaml'
+        config_file.write_text(bad_indent_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
 
@@ -173,8 +165,8 @@ phases:
 
     def test_completely_invalid_content(self, tmp_path):
         """Handle completely invalid content (not YAML at all)."""
-        config_file = tmp_path / "not-yaml.yaml"
-        config_file.write_text("{{{{not valid yaml at all::::", encoding="utf-8")
+        config_file = tmp_path / 'not-yaml.yaml'
+        config_file.write_text('{{{{not valid yaml at all::::', encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
 
@@ -204,8 +196,8 @@ phases:
         epic: 100
         branches: [feat/test]
 """
-        config_file = tmp_path / "incomplete.yaml"
-        config_file.write_text(incomplete_yaml, encoding="utf-8")
+        config_file = tmp_path / 'incomplete.yaml'
+        config_file.write_text(incomplete_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
 
@@ -213,7 +205,7 @@ phases:
             loader.load()
 
         # Should mention the missing field
-        assert "name" in str(exc_info.value).lower() or len(exc_info.value.validation_errors) > 0
+        assert 'name' in str(exc_info.value).lower() or len(exc_info.value.validation_errors) > 0
 
     def test_invalid_status_value_raises_validation_error(self, tmp_path):
         """Raise VersionPlanValidationError for invalid enum value."""
@@ -230,8 +222,8 @@ phases:
         epic: 100
         branches: [feat/test]
 """
-        config_file = tmp_path / "bad-status.yaml"
-        config_file.write_text(bad_status_yaml, encoding="utf-8")
+        config_file = tmp_path / 'bad-status.yaml'
+        config_file.write_text(bad_status_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
 
@@ -239,7 +231,7 @@ phases:
             loader.load()
 
         # Should mention the invalid status
-        assert "status" in str(exc_info.value).lower() or "INVALID_STATUS" in str(exc_info.value)
+        assert 'status' in str(exc_info.value).lower() or 'INVALID_STATUS' in str(exc_info.value)
 
 
 # =============================================================================
@@ -258,8 +250,8 @@ version: "not_an_int"
 target_date: "2026-04-30"
 phases: []
 """
-        config_file = tmp_path / "multi-error.yaml"
-        config_file.write_text(multi_error_yaml, encoding="utf-8")
+        config_file = tmp_path / 'multi-error.yaml'
+        config_file.write_text(multi_error_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
 
@@ -267,7 +259,7 @@ phases: []
             loader.load()
 
         # Should have validation_errors attribute with specific issues
-        assert hasattr(exc_info.value, "validation_errors")
+        assert hasattr(exc_info.value, 'validation_errors')
 
     def test_invalid_phase_order_type(self, tmp_path):
         """Report error when phase order is not an integer."""
@@ -283,8 +275,8 @@ phases:
         epic: 100
         branches: [feat/test]
 """
-        config_file = tmp_path / "bad-order.yaml"
-        config_file.write_text(bad_order_yaml, encoding="utf-8")
+        config_file = tmp_path / 'bad-order.yaml'
+        config_file.write_text(bad_order_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
 
@@ -315,8 +307,8 @@ phases:
         branches:
           - feat/feature-one
 """
-        config_file = tmp_path / "no-status.yaml"
-        config_file.write_text(no_status_yaml, encoding="utf-8")
+        config_file = tmp_path / 'no-status.yaml'
+        config_file.write_text(no_status_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -337,13 +329,13 @@ phases:
         epic: 200
         branches: [feat/feature-one]
 """
-        config_file = tmp_path / "no-desc.yaml"
-        config_file.write_text(no_desc_yaml, encoding="utf-8")
+        config_file = tmp_path / 'no-desc.yaml'
+        config_file.write_text(no_desc_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
 
-        assert plan.description == ""
+        assert plan.description == ''
 
     def test_phase_status_defaults_to_planned(self, tmp_path):
         """Phase status defaults to PLANNED if not specified."""
@@ -359,8 +351,8 @@ phases:
         epic: 200
         branches: [feat/feature-one]
 """
-        config_file = tmp_path / "no-phase-status.yaml"
-        config_file.write_text(no_phase_status_yaml, encoding="utf-8")
+        config_file = tmp_path / 'no-phase-status.yaml'
+        config_file.write_text(no_phase_status_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -381,8 +373,8 @@ phases:
         epic: 200
         branches: [feat/feature-one]
 """
-        config_file = tmp_path / "no-ws-status.yaml"
-        config_file.write_text(no_ws_status_yaml, encoding="utf-8")
+        config_file = tmp_path / 'no-ws-status.yaml'
+        config_file.write_text(no_ws_status_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -403,8 +395,8 @@ phases:
         epic: 200
         branches: [feat/feature-one]
 """
-        config_file = tmp_path / "no-color.yaml"
-        config_file.write_text(no_color_yaml, encoding="utf-8")
+        config_file = tmp_path / 'no-color.yaml'
+        config_file.write_text(no_color_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -425,8 +417,8 @@ phases:
         epic: 200
         branches: [feat/feature-one]
 """
-        config_file = tmp_path / "no-deps.yaml"
-        config_file.write_text(no_deps_yaml, encoding="utf-8")
+        config_file = tmp_path / 'no-deps.yaml'
+        config_file.write_text(no_deps_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -442,12 +434,10 @@ phases:
 class TestHotReloadDetection:
     """Test hot-reload detection based on file modification time."""
 
-    def test_reload_if_changed_returns_none_when_unchanged(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_reload_if_changed_returns_none_when_unchanged(self, tmp_path, valid_version_plan_yaml):
         """reload_if_changed returns None when file hasn't changed."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()  # Initial load
@@ -457,33 +447,29 @@ class TestHotReloadDetection:
 
         assert result is None
 
-    def test_reload_if_changed_returns_plan_when_modified(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_reload_if_changed_returns_plan_when_modified(self, tmp_path, valid_version_plan_yaml):
         """reload_if_changed returns new plan when file has been modified."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()  # Initial load
 
         # Modify the file
         time.sleep(0.1)  # Ensure mtime changes
-        modified_yaml = valid_version_plan_yaml.replace("v0.10", "v0.10.1")
-        config_file.write_text(modified_yaml, encoding="utf-8")
+        modified_yaml = valid_version_plan_yaml.replace('v0.10', 'v0.10.1')
+        config_file.write_text(modified_yaml, encoding='utf-8')
 
         result = loader.reload_if_changed()
 
         assert result is not None
         assert isinstance(result, VersionPlan)
-        assert result.name == "v0.10.1"
+        assert result.name == 'v0.10.1'
 
-    def test_reload_if_changed_caches_mtime(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_reload_if_changed_caches_mtime(self, tmp_path, valid_version_plan_yaml):
         """reload_if_changed caches modification time correctly."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()  # Initial load, caches mtime
@@ -492,19 +478,17 @@ class TestHotReloadDetection:
         assert loader.reload_if_changed() is None
         assert loader.reload_if_changed() is None
 
-    def test_reload_graceful_degradation_on_error(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_reload_graceful_degradation_on_error(self, tmp_path, valid_version_plan_yaml):
         """On reload failure, return None (keep using cached config)."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         original_plan = loader.load()  # Initial load
 
         # Modify file with invalid content
         time.sleep(0.1)
-        config_file.write_text("{{{{invalid yaml", encoding="utf-8")
+        config_file.write_text('{{{{invalid yaml', encoding='utf-8')
 
         # Should return None on error (graceful degradation)
         result = loader.reload_if_changed()
@@ -523,26 +507,22 @@ class TestHotReloadDetection:
 class TestMultiplePhaseParsing:
     """Test parsing of multiple phases in version plan."""
 
-    def test_parses_multiple_phases(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_parses_multiple_phases(self, tmp_path, valid_version_plan_yaml):
         """Parse version plan with multiple phases."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
 
         assert len(plan.phases) == 2
-        assert plan.phases[0].name == "Phase A"
-        assert plan.phases[1].name == "Phase B"
+        assert plan.phases[0].name == 'Phase A'
+        assert plan.phases[1].name == 'Phase B'
 
-    def test_phase_order_preserved(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_phase_order_preserved(self, tmp_path, valid_version_plan_yaml):
         """Phase order is preserved as defined in YAML."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -550,12 +530,10 @@ class TestMultiplePhaseParsing:
         assert plan.phases[0].order == 1
         assert plan.phases[1].order == 2
 
-    def test_phase_dependencies_parsed(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_phase_dependencies_parsed(self, tmp_path, valid_version_plan_yaml):
         """Phase dependencies are correctly parsed."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -563,14 +541,12 @@ class TestMultiplePhaseParsing:
         # Phase A has no dependencies
         assert plan.phases[0].dependencies == []
         # Phase B depends on Phase A
-        assert plan.phases[1].dependencies == ["Phase A"]
+        assert plan.phases[1].dependencies == ['Phase A']
 
-    def test_multiple_workstreams_per_phase(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_multiple_workstreams_per_phase(self, tmp_path, valid_version_plan_yaml):
         """Each phase can have multiple workstreams."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -580,12 +556,10 @@ class TestMultiplePhaseParsing:
         # Phase B has 2 workstreams
         assert len(plan.phases[1].workstreams) == 2
 
-    def test_phaseconfig_model_type(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_phaseconfig_model_type(self, tmp_path, valid_version_plan_yaml):
         """Phases are properly typed as PhaseConfig."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -593,12 +567,10 @@ class TestMultiplePhaseParsing:
         for phase in plan.phases:
             assert isinstance(phase, PhaseConfig)
 
-    def test_workstreamconfig_model_type(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_workstreamconfig_model_type(self, tmp_path, valid_version_plan_yaml):
         """Workstreams are properly typed as WorkstreamConfig."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -616,81 +588,71 @@ class TestMultiplePhaseParsing:
 class TestGlobPatternMatching:
     """Test glob pattern matching for branch-to-workstream mapping."""
 
-    def test_exact_branch_match(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_exact_branch_match(self, tmp_path, valid_version_plan_yaml):
         """Match exact branch name to workstream."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
-        workstream = loader.match_branch_to_workstream("feat/agent-memory")
+        workstream = loader.match_branch_to_workstream('feat/agent-memory')
 
         assert workstream is not None
-        assert workstream.name == "Agent Memory & Learning"
+        assert workstream.name == 'Agent Memory & Learning'
 
-    def test_glob_wildcard_match(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_glob_wildcard_match(self, tmp_path, valid_version_plan_yaml):
         """Match branch name using glob wildcard pattern."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
         # "feat/memory-*" pattern should match "feat/memory-consolidation"
-        workstream = loader.match_branch_to_workstream("feat/memory-consolidation")
+        workstream = loader.match_branch_to_workstream('feat/memory-consolidation')
 
         assert workstream is not None
-        assert workstream.name == "Agent Memory & Learning"
+        assert workstream.name == 'Agent Memory & Learning'
 
-    def test_glob_match_multiple_patterns(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_glob_match_multiple_patterns(self, tmp_path, valid_version_plan_yaml):
         """Match against multiple patterns for same workstream."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
         # Both should match "Kanban Workflow Engine"
-        ws1 = loader.match_branch_to_workstream("feat/kanban-phase1")
-        ws2 = loader.match_branch_to_workstream("feat/kanban-phase2")
+        ws1 = loader.match_branch_to_workstream('feat/kanban-phase1')
+        ws2 = loader.match_branch_to_workstream('feat/kanban-phase2')
 
         assert ws1 is not None
         assert ws2 is not None
-        assert ws1.name == "Kanban Workflow Engine"
-        assert ws2.name == "Kanban Workflow Engine"
+        assert ws1.name == 'Kanban Workflow Engine'
+        assert ws2.name == 'Kanban Workflow Engine'
 
-    def test_no_match_returns_none(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_no_match_returns_none(self, tmp_path, valid_version_plan_yaml):
         """Return None when no workstream matches the branch."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
-        workstream = loader.match_branch_to_workstream("feat/unknown-feature")
+        workstream = loader.match_branch_to_workstream('feat/unknown-feature')
 
         assert workstream is None
 
-    def test_main_branch_returns_none(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_main_branch_returns_none(self, tmp_path, valid_version_plan_yaml):
         """Main branch doesn't match any workstream."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
-        workstream = loader.match_branch_to_workstream("main")
+        workstream = loader.match_branch_to_workstream('main')
 
         assert workstream is None
 
@@ -698,32 +660,32 @@ class TestGlobPatternMatching:
         self, tmp_path, valid_version_plan_yaml
     ):
         """get_workstream_for_branch returns both phase and workstream."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
-        result = loader.get_workstream_for_branch("feat/qa-enforcement")
+        result = loader.get_workstream_for_branch('feat/qa-enforcement')
 
         assert result is not None
         phase, workstream = result
         assert isinstance(phase, PhaseConfig)
         assert isinstance(workstream, WorkstreamConfig)
-        assert phase.name == "Phase B"
-        assert workstream.name == "QA Enforcement"
+        assert phase.name == 'Phase B'
+        assert workstream.name == 'QA Enforcement'
 
     def test_get_workstream_for_branch_returns_none_for_unknown(
         self, tmp_path, valid_version_plan_yaml
     ):
         """get_workstream_for_branch returns None for unknown branch."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
-        result = loader.get_workstream_for_branch("feat/unknown")
+        result = loader.get_workstream_for_branch('feat/unknown')
 
         assert result is None
 
@@ -736,45 +698,39 @@ class TestGlobPatternMatching:
 class TestColorMappings:
     """Test extraction of color mappings from workstreams."""
 
-    def test_workstream_colors_extracted(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_workstream_colors_extracted(self, tmp_path, valid_version_plan_yaml):
         """Workstream colors are correctly extracted."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
 
         # Find Agent Memory workstream
         memory_ws = plan.phases[0].workstreams[0]
-        assert memory_ws.color == "#7c3aed"
+        assert memory_ws.color == '#7c3aed'
 
         # Find QA Enforcement workstream
         qa_ws = plan.phases[1].workstreams[0]
-        assert qa_ws.color == "#dc2626"
+        assert qa_ws.color == '#dc2626'
 
-    def test_get_color_for_branch(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_get_color_for_branch(self, tmp_path, valid_version_plan_yaml):
         """Get color for a branch via workstream matching."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         loader.load()
 
-        workstream = loader.match_branch_to_workstream("feat/kanban-phase1")
+        workstream = loader.match_branch_to_workstream('feat/kanban-phase1')
 
         assert workstream is not None
-        assert workstream.color == "#2563eb"
+        assert workstream.color == '#2563eb'
 
-    def test_all_workstreams_have_colors(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_all_workstreams_have_colors(self, tmp_path, valid_version_plan_yaml):
         """All workstreams in valid config have colors."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -783,7 +739,7 @@ class TestColorMappings:
             for ws in phase.workstreams:
                 # In the valid fixture, all workstreams have colors
                 assert ws.color is not None
-                assert ws.color.startswith("#")
+                assert ws.color.startswith('#')
 
 
 # =============================================================================
@@ -794,12 +750,10 @@ class TestColorMappings:
 class TestEpicExtraction:
     """Test extraction of epic numbers from workstreams."""
 
-    def test_epic_numbers_extracted(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_epic_numbers_extracted(self, tmp_path, valid_version_plan_yaml):
         """Epic numbers are correctly extracted from workstreams."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -833,8 +787,8 @@ phases:
         epic: 200
         branches: []
 """
-        config_file = tmp_path / "empty-branches.yaml"
-        config_file.write_text(empty_branches_yaml, encoding="utf-8")
+        config_file = tmp_path / 'empty-branches.yaml'
+        config_file.write_text(empty_branches_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
@@ -857,21 +811,19 @@ phases:
         epic: 200
         branches: [feat/api]
 """
-        config_file = tmp_path / "unicode.yaml"
-        config_file.write_text(unicode_yaml, encoding="utf-8")
+        config_file = tmp_path / 'unicode.yaml'
+        config_file.write_text(unicode_yaml, encoding='utf-8')
 
         loader = VersionPlanLoader(config_file)
         plan = loader.load()
 
-        assert "Phase II" in plan.description
-        assert plan.phases[0].name == "Phase Alpha"
+        assert 'Phase II' in plan.description
+        assert plan.phases[0].name == 'Phase Alpha'
 
-    def test_path_as_string_or_path_object(
-        self, tmp_path, valid_version_plan_yaml
-    ):
+    def test_path_as_string_or_path_object(self, tmp_path, valid_version_plan_yaml):
         """Loader accepts both str and Path objects."""
-        config_file = tmp_path / "version-plan.yaml"
-        config_file.write_text(valid_version_plan_yaml, encoding="utf-8")
+        config_file = tmp_path / 'version-plan.yaml'
+        config_file.write_text(valid_version_plan_yaml, encoding='utf-8')
 
         # Test with Path object
         loader1 = VersionPlanLoader(config_file)

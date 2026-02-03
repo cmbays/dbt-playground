@@ -161,7 +161,7 @@ class HeartbeatMonitor:
             HeartbeatParseError: If JSON parsing fails.
         """
         try:
-            text = self.heartbeat_path.read_text(encoding="utf-8")
+            text = self.heartbeat_path.read_text(encoding='utf-8')
         except FileNotFoundError as e:
             raise HeartbeatFileNotFoundError(str(self.heartbeat_path)) from e
 
@@ -169,13 +169,13 @@ class HeartbeatMonitor:
             if not text.strip():
                 raise HeartbeatParseError(
                     str(self.heartbeat_path),
-                    "File is empty",
+                    'File is empty',
                 )
             return json.loads(text)
         except json.JSONDecodeError as e:
             raise HeartbeatParseError(
                 str(self.heartbeat_path),
-                f"Invalid JSON: {e}",
+                f'Invalid JSON: {e}',
             ) from e
 
     def _get_mtime(self) -> float:
@@ -192,9 +192,7 @@ class HeartbeatMonitor:
         except FileNotFoundError as e:
             raise HeartbeatFileNotFoundError(str(self.heartbeat_path)) from e
 
-    def _iter_orchestrator_entries(
-        self, content: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    def _iter_orchestrator_entries(self, content: dict[str, Any]) -> list[dict[str, Any]]:
         """Get valid orchestrator entries from content.
 
         Args:
@@ -203,14 +201,12 @@ class HeartbeatMonitor:
         Returns:
             List of valid orchestrator entry dictionaries.
         """
-        orchestrators_data = content.get("orchestrators", [])
+        orchestrators_data = content.get('orchestrators', [])
         if not isinstance(orchestrators_data, list):
             return []
         return [entry for entry in orchestrators_data if isinstance(entry, dict)]
 
-    def _parse_request_type(
-        self, value: str | None, branch: str
-    ) -> RequestType | None:
+    def _parse_request_type(self, value: str | None, branch: str) -> RequestType | None:
         """Parse a request type string into RequestType enum.
 
         Args:
@@ -226,7 +222,7 @@ class HeartbeatMonitor:
             return RequestType(value)
         except ValueError as e:
             logger.debug(
-                "Invalid RequestType value %r for branch %r: %s",
+                'Invalid RequestType value %r for branch %r: %s',
                 value,
                 branch,
                 e,
@@ -244,9 +240,9 @@ class HeartbeatMonitor:
         """
         result: list[OrchestratorStatus] = []
         for entry in self._iter_orchestrator_entries(content):
-            branch = entry.get("branch", "")
-            status_str = entry.get("status", "")
-            request_type = self._parse_request_type(entry.get("request"), branch)
+            branch = entry.get('branch', '')
+            status_str = entry.get('status', '')
+            request_type = self._parse_request_type(entry.get('request'), branch)
 
             result.append(
                 OrchestratorStatus(
@@ -259,9 +255,7 @@ class HeartbeatMonitor:
 
         return result
 
-    def _parse_requests_from_content(
-        self, content: dict[str, Any]
-    ) -> list[OrchestratorRequest]:
+    def _parse_requests_from_content(self, content: dict[str, Any]) -> list[OrchestratorRequest]:
         """Parse orchestrator requests from content.
 
         Only returns requests for orchestrators that have a valid request type.
@@ -274,8 +268,8 @@ class HeartbeatMonitor:
         """
         result: list[OrchestratorRequest] = []
         for entry in self._iter_orchestrator_entries(content):
-            branch = entry.get("branch", "")
-            request_type = self._parse_request_type(entry.get("request"), branch)
+            branch = entry.get('branch', '')
+            request_type = self._parse_request_type(entry.get('request'), branch)
             if request_type is None:
                 continue
 
@@ -283,7 +277,7 @@ class HeartbeatMonitor:
                 OrchestratorRequest(
                     branch=branch,
                     request_type=request_type,
-                    message=entry.get("message", ""),
+                    message=entry.get('message', ''),
                     timestamp=None,
                 )
             )

@@ -44,14 +44,14 @@ def run_gh_command(args: list[str], check: bool = True) -> subprocess.CompletedP
     """
     try:
         result = subprocess.run(
-            ["gh"] + args,
+            ['gh'] + args,
             capture_output=True,
             text=True,
             check=check,
         )
         return result
     except subprocess.CalledProcessError as e:
-        console.print(f"[red]GitHub CLI error: {e.stderr}[/red]")
+        console.print(f'[red]GitHub CLI error: {e.stderr}[/red]')
         raise
 
 
@@ -70,17 +70,17 @@ def load_yaml(file_path: str) -> dict[str, Any]:
     """
     path = Path(file_path)
     if not path.exists():
-        raise FileNotFoundError(f"File not found: {file_path}")
+        raise FileNotFoundError(f'File not found: {file_path}')
 
     with open(path) as f:
         try:
             return yaml.safe_load(f)
         except yaml.YAMLError as e:
-            console.print(f"[red]YAML error: {e}[/red]")
+            console.print(f'[red]YAML error: {e}[/red]')
             raise
 
 
-def load_schema(schema_path: str = "docs/schemas/issue-template.schema.json") -> dict[str, Any]:
+def load_schema(schema_path: str = 'docs/schemas/issue-template.schema.json') -> dict[str, Any]:
     """Load JSON schema for validation.
 
     Args:
@@ -94,7 +94,7 @@ def load_schema(schema_path: str = "docs/schemas/issue-template.schema.json") ->
     """
     path = Path(schema_path)
     if not path.exists():
-        raise FileNotFoundError(f"Schema not found: {schema_path}")
+        raise FileNotFoundError(f'Schema not found: {schema_path}')
 
     with open(path) as f:
         return json.load(f)
@@ -110,14 +110,14 @@ def get_repo_context() -> tuple[str, str]:
         RuntimeError: If can't determine repo context
     """
     try:
-        result = run_gh_command(["repo", "view", "--json", "nameWithOwner"], check=True)
+        result = run_gh_command(['repo', 'view', '--json', 'nameWithOwner'], check=True)
         data = json.loads(result.stdout)
-        owner_repo = data.get("nameWithOwner", "")
-        if "/" not in owner_repo:
-            raise RuntimeError("Could not determine repo context")
-        return tuple(owner_repo.split("/"))
+        owner_repo = data.get('nameWithOwner', '')
+        if '/' not in owner_repo:
+            raise RuntimeError('Could not determine repo context')
+        return tuple(owner_repo.split('/'))
     except Exception as e:
-        raise RuntimeError(f"Failed to get repo context: {e}") from e
+        raise RuntimeError(f'Failed to get repo context: {e}') from e
 
 
 # === Issue Commands ===
@@ -136,30 +136,30 @@ def issue():
 
 
 @issue.command()
-@click.argument("title")
+@click.argument('title')
 @click.option(
-    "--body",
-    "-b",
-    default="",
-    help="Issue description/body",
+    '--body',
+    '-b',
+    default='',
+    help='Issue description/body',
 )
 @click.option(
-    "--label",
-    "-l",
+    '--label',
+    '-l',
     multiple=True,
-    help="Labels to apply (can use multiple times)",
+    help='Labels to apply (can use multiple times)',
 )
 @click.option(
-    "--milestone",
-    "-m",
+    '--milestone',
+    '-m',
     default=None,
-    help="Milestone to assign",
+    help='Milestone to assign',
 )
 @click.option(
-    "--assignee",
-    "-a",
+    '--assignee',
+    '-a',
     default=None,
-    help="User to assign",
+    help='User to assign',
 )
 def create(
     title: str,
@@ -177,43 +177,43 @@ def create(
           --milestone "v0.8"
     """
     try:
-        cmd = ["issue", "create", "--title", title]
+        cmd = ['issue', 'create', '--title', title]
 
         if body:
-            cmd.extend(["--body", body])
+            cmd.extend(['--body', body])
 
         for lbl in label:
-            cmd.extend(["--label", lbl])
+            cmd.extend(['--label', lbl])
 
         if milestone:
-            cmd.extend(["--milestone", milestone])
+            cmd.extend(['--milestone', milestone])
 
         if assignee:
-            cmd.extend(["--assignee", assignee])
+            cmd.extend(['--assignee', assignee])
 
         result = run_gh_command(cmd, check=True)
 
         # Parse issue number from output
         output = result.stdout.strip()
-        if "#" in output:
-            issue_num = output.split("#")[1].split()[0]
-            console.print(f"[green]✓[/green] Created issue #{issue_num}")
+        if '#' in output:
+            issue_num = output.split('#')[1].split()[0]
+            console.print(f'[green]✓[/green] Created issue #{issue_num}')
         else:
-            console.print("[green]✓[/green] Issue created")
+            console.print('[green]✓[/green] Issue created')
             console.print(output)
 
     except subprocess.CalledProcessError as e:
-        console.print("[red]✗[/red] Failed to create issue")
-        console.print(f"Error: {e.stderr}")
+        console.print('[red]✗[/red] Failed to create issue')
+        console.print(f'Error: {e.stderr}')
         sys.exit(1)
 
 
 @issue.command()
-@click.argument("template_file")
+@click.argument('template_file')
 @click.option(
-    "--dry-run",
+    '--dry-run',
     is_flag=True,
-    help="Preview without creating",
+    help='Preview without creating',
 )
 def batch(template_file: str, dry_run: bool) -> None:
     """Create multiple issues from YAML template.
@@ -230,80 +230,80 @@ def batch(template_file: str, dry_run: bool) -> None:
         try:
             validate(instance=template, schema=schema)
         except ValidationError as e:
-            console.print("[red]✗[/red] Template validation failed")
-            console.print(f"Error: {e.message}")
+            console.print('[red]✗[/red] Template validation failed')
+            console.print(f'Error: {e.message}')
             sys.exit(1)
 
         # Extract issues
-        defaults = template.get("defaults", {})
-        issues = template.get("issues", [])
+        defaults = template.get('defaults', {})
+        issues = template.get('issues', [])
 
         if not issues:
-            console.print("[yellow]⚠[/yellow] No issues found in template")
+            console.print('[yellow]⚠[/yellow] No issues found in template')
             return
 
         # Show summary
-        console.print(f"\n[cyan]Creating {len(issues)} issue(s)...[/cyan]")
+        console.print(f'\n[cyan]Creating {len(issues)} issue(s)...[/cyan]')
 
         if dry_run:
-            console.print("[yellow]DRY RUN[/yellow] - No issues will be created\n")
+            console.print('[yellow]DRY RUN[/yellow] - No issues will be created\n')
 
         # Process each issue
         for i, issue_def in enumerate(issues, 1):
-            title = issue_def.get("title", "")
-            body = issue_def.get("description", "")
-            labels = issue_def.get("labels", defaults.get("labels", []))
-            milestone = issue_def.get("milestone", defaults.get("milestone"))
-            assignee = issue_def.get("assignee", defaults.get("assignee"))
+            title = issue_def.get('title', '')
+            body = issue_def.get('description', '')
+            labels = issue_def.get('labels', defaults.get('labels', []))
+            milestone = issue_def.get('milestone', defaults.get('milestone'))
+            assignee = issue_def.get('assignee', defaults.get('assignee'))
 
             # Build label args
             label_args = []
             for lbl in labels:
-                label_args.extend(["--label", lbl])
+                label_args.extend(['--label', lbl])
 
             # Preview
-            console.print(f"\n[{i}] {title}")
+            console.print(f'\n[{i}] {title}')
             if milestone:
-                console.print(f"    Milestone: {milestone}")
+                console.print(f'    Milestone: {milestone}')
             if labels:
-                console.print(f"    Labels: {', '.join(labels)}")
+                console.print(f'    Labels: {", ".join(labels)}')
             if assignee:
-                console.print(f"    Assignee: {assignee}")
+                console.print(f'    Assignee: {assignee}')
 
             if dry_run:
                 continue
 
             # Create issue
             try:
-                cmd = ["issue", "create", "--title", title]
+                cmd = ['issue', 'create', '--title', title]
                 if body:
-                    cmd.extend(["--body", body])
+                    cmd.extend(['--body', body])
                 cmd.extend(label_args)
                 if milestone:
-                    cmd.extend(["--milestone", milestone])
+                    cmd.extend(['--milestone', milestone])
                 if assignee:
-                    cmd.extend(["--assignee", assignee])
+                    cmd.extend(['--assignee', assignee])
 
                 result = run_gh_command(cmd, check=True)
                 output = result.stdout.strip()
-                if "#" in output:
-                    issue_num = output.split("#")[1].split()[0]
-                    console.print(f"    [green]✓[/green] Created #{issue_num}")
+                if '#' in output:
+                    issue_num = output.split('#')[1].split()[0]
+                    console.print(f'    [green]✓[/green] Created #{issue_num}')
                 else:
-                    console.print("    [green]✓[/green] Created")
+                    console.print('    [green]✓[/green] Created')
 
             except subprocess.CalledProcessError as e:
-                console.print(f"    [red]✗[/red] Failed: {e.stderr}")
+                console.print(f'    [red]✗[/red] Failed: {e.stderr}')
 
-        console.print("\n[green]Done![/green]\n")
+        console.print('\n[green]Done![/green]\n')
 
     except FileNotFoundError as e:
-        console.print(f"[red]✗[/red] {e}")
+        console.print(f'[red]✗[/red] {e}')
         sys.exit(1)
 
 
-@issue.command("validate")
-@click.argument("template_file")
+@issue.command('validate')
+@click.argument('template_file')
 def validate_template(template_file: str) -> None:
     """Validate YAML template against schema.
 
@@ -316,21 +316,21 @@ def validate_template(template_file: str) -> None:
 
         try:
             validate(instance=template, schema=schema)
-            console.print("[green]✓[/green] Valid template")
-            console.print(f"  Version: {template.get('version')}")
-            console.print(f"  Issues: {len(template.get('issues', []))}")
-            defaults = template.get("defaults", {})
+            console.print('[green]✓[/green] Valid template')
+            console.print(f'  Version: {template.get("version")}')
+            console.print(f'  Issues: {len(template.get("issues", []))}')
+            defaults = template.get('defaults', {})
             if defaults:
-                console.print(f"  Defaults: {defaults}")
+                console.print(f'  Defaults: {defaults}')
 
         except ValidationError as e:
-            console.print("[red]✗[/red] Invalid template")
-            console.print(f"Error: {e.message}")
-            console.print(f"Path: {' → '.join(str(p) for p in e.path)}")
+            console.print('[red]✗[/red] Invalid template')
+            console.print(f'Error: {e.message}')
+            console.print(f'Path: {" → ".join(str(p) for p in e.path)}')
             sys.exit(1)
 
     except FileNotFoundError as e:
-        console.print(f"[red]✗[/red] {e}")
+        console.print(f'[red]✗[/red] {e}')
         sys.exit(1)
 
 
@@ -343,19 +343,19 @@ def milestone():
     pass
 
 
-@milestone.command("create")
-@click.argument("title")
+@milestone.command('create')
+@click.argument('title')
 @click.option(
-    "--due",
-    "-d",
+    '--due',
+    '-d',
     default=None,
-    help="Due date (YYYY-MM-DD)",
+    help='Due date (YYYY-MM-DD)',
 )
 @click.option(
-    "--description",
-    "-b",
+    '--description',
+    '-b',
     default=None,
-    help="Milestone description",
+    help='Milestone description',
 )
 def milestone_create(title: str, due: str | None, description: str | None) -> None:
     """Create a GitHub milestone.
@@ -367,27 +367,27 @@ def milestone_create(title: str, due: str | None, description: str | None) -> No
         owner, repo = get_repo_context()
 
         # Build API call
-        cmd = ["api", f"repos/{owner}/{repo}/milestones", "-f", f"title={title}"]
+        cmd = ['api', f'repos/{owner}/{repo}/milestones', '-f', f'title={title}']
 
         if due:
             # Convert YYYY-MM-DD to ISO 8601
-            cmd.extend(["-f", f"due_on={due}T23:59:59Z"])
+            cmd.extend(['-f', f'due_on={due}T23:59:59Z'])
 
         if description:
-            cmd.extend(["-f", f"description={description}"])
+            cmd.extend(['-f', f'description={description}'])
 
         result = run_gh_command(cmd, check=True)
         data = json.loads(result.stdout)
 
-        console.print(f"[green]✓[/green] Created milestone: {title}")
+        console.print(f'[green]✓[/green] Created milestone: {title}')
         if due:
-            console.print(f"  Due: {due}")
-        if data.get("number"):
-            console.print(f"  Number: {data['number']}")
+            console.print(f'  Due: {due}')
+        if data.get('number'):
+            console.print(f'  Number: {data["number"]}')
 
     except subprocess.CalledProcessError as e:
-        console.print("[red]✗[/red] Failed to create milestone")
-        console.print(f"Error: {e.stderr}")
+        console.print('[red]✗[/red] Failed to create milestone')
+        console.print(f'Error: {e.stderr}')
         sys.exit(1)
 
 
@@ -403,11 +403,11 @@ def list() -> None:
 
         # Fetch milestones in both states
         open_result = run_gh_command(
-            ["api", f"repos/{owner}/{repo}/milestones", "-f", "state=open"],
+            ['api', f'repos/{owner}/{repo}/milestones', '-f', 'state=open'],
             check=True,
         )
         closed_result = run_gh_command(
-            ["api", f"repos/{owner}/{repo}/milestones", "-f", "state=closed"],
+            ['api', f'repos/{owner}/{repo}/milestones', '-f', 'state=closed'],
             check=True,
         )
 
@@ -417,38 +417,38 @@ def list() -> None:
         all_milestones = open_milestones + closed_milestones
 
         if not all_milestones:
-            console.print("[yellow]⚠[/yellow] No milestones found")
+            console.print('[yellow]⚠[/yellow] No milestones found')
             return
 
         # Build table
-        table = Table(title="Milestones")
-        table.add_column("Title", style="cyan")
-        table.add_column("State", style="green")
-        table.add_column("Open", justify="right")
-        table.add_column("Closed", justify="right")
-        table.add_column("Due Date")
+        table = Table(title='Milestones')
+        table.add_column('Title', style='cyan')
+        table.add_column('State', style='green')
+        table.add_column('Open', justify='right')
+        table.add_column('Closed', justify='right')
+        table.add_column('Due Date')
 
-        for m in sorted(all_milestones, key=lambda x: x.get("title", "")):
-            title = m.get("title", "")
-            state = "open" if m.get("state") == "open" else "closed"
-            open_count = m.get("open_issues", 0)
-            closed_count = m.get("closed_issues", 0)
-            due_on = m.get("due_on", "")
+        for m in sorted(all_milestones, key=lambda x: x.get('title', '')):
+            title = m.get('title', '')
+            state = 'open' if m.get('state') == 'open' else 'closed'
+            open_count = m.get('open_issues', 0)
+            closed_count = m.get('closed_issues', 0)
+            due_on = m.get('due_on', '')
             if due_on:
-                due_on = due_on.split("T")[0]
+                due_on = due_on.split('T')[0]
 
             table.add_row(title, state, str(open_count), str(closed_count), due_on)
 
         console.print(table)
 
     except subprocess.CalledProcessError as e:
-        console.print("[red]✗[/red] Failed to list milestones")
-        console.print(f"Error: {e.stderr}")
+        console.print('[red]✗[/red] Failed to list milestones')
+        console.print(f'Error: {e.stderr}')
         sys.exit(1)
 
 
 @milestone.command()
-@click.argument("title")
+@click.argument('title')
 def status(title: str) -> None:
     """Show detailed status of a milestone.
 
@@ -459,14 +459,14 @@ def status(title: str) -> None:
         owner, repo = get_repo_context()
 
         # Fetch all milestones to find the one we want
-        cmd = ["api", f"repos/{owner}/{repo}/milestones", "--paginate"]
+        cmd = ['api', f'repos/{owner}/{repo}/milestones', '--paginate']
         result = run_gh_command(cmd, check=True)
 
         milestones = json.loads(result.stdout)
         milestone = None
 
         for m in milestones:
-            if m.get("title") == title:
+            if m.get('title') == title:
                 milestone = m
                 break
 
@@ -475,32 +475,32 @@ def status(title: str) -> None:
             sys.exit(1)
 
         # Display status
-        console.print(f"\n[cyan]{title}[/cyan]")
-        console.print("─" * 40)
+        console.print(f'\n[cyan]{title}[/cyan]')
+        console.print('─' * 40)
 
-        state = milestone.get("state", "unknown")
-        open_issues = milestone.get("open_issues", 0)
-        closed_issues = milestone.get("closed_issues", 0)
+        state = milestone.get('state', 'unknown')
+        open_issues = milestone.get('open_issues', 0)
+        closed_issues = milestone.get('closed_issues', 0)
         total = open_issues + closed_issues
-        due_on = milestone.get("due_on", "")
+        due_on = milestone.get('due_on', '')
 
-        console.print(f"State:        {state}")
-        console.print(f"Due Date:     {due_on.split('T')[0] if due_on else 'None'}")
-        console.print(f"Open Issues:  {open_issues}")
-        console.print(f"Closed Issues: {closed_issues}")
-        console.print(f"Total:        {total}")
+        console.print(f'State:        {state}')
+        console.print(f'Due Date:     {due_on.split("T")[0] if due_on else "None"}')
+        console.print(f'Open Issues:  {open_issues}')
+        console.print(f'Closed Issues: {closed_issues}')
+        console.print(f'Total:        {total}')
 
         if total > 0:
             progress = (closed_issues / total) * 100
-            console.print(f"Progress:     {progress:.0f}%")
+            console.print(f'Progress:     {progress:.0f}%')
 
         console.print()
 
     except subprocess.CalledProcessError as e:
-        console.print("[red]✗[/red] Failed to get milestone status")
-        console.print(f"Error: {e.stderr}")
+        console.print('[red]✗[/red] Failed to get milestone status')
+        console.print(f'Error: {e.stderr}')
         sys.exit(1)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     cli()

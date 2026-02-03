@@ -19,29 +19,29 @@ from enum import Enum
 class VersionStatus(str, Enum):
     """Status of a version in the version plan."""
 
-    PLANNED = "PLANNED"
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETE = "COMPLETE"
-    ARCHIVED = "ARCHIVED"
+    PLANNED = 'PLANNED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    COMPLETE = 'COMPLETE'
+    ARCHIVED = 'ARCHIVED'
 
 
 class PhaseStatus(str, Enum):
     """Status of a phase within a version."""
 
-    PLANNED = "PLANNED"
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETE = "COMPLETE"
-    BLOCKED = "BLOCKED"
+    PLANNED = 'PLANNED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    COMPLETE = 'COMPLETE'
+    BLOCKED = 'BLOCKED'
 
 
 class WorkstreamStatus(str, Enum):
     """Status of a workstream within a phase."""
 
-    PLANNED = "PLANNED"
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETE = "COMPLETE"
-    BLOCKED = "BLOCKED"
-    ARCHIVED = "ARCHIVED"
+    PLANNED = 'PLANNED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    COMPLETE = 'COMPLETE'
+    BLOCKED = 'BLOCKED'
+    ARCHIVED = 'ARCHIVED'
 
 
 class HeartbeatState(str, Enum):
@@ -54,83 +54,83 @@ class HeartbeatState(str, Enum):
     - DISCONNECTED: > 300 seconds since last update (grey)
     """
 
-    FRESH = "FRESH"
-    WARNING = "WARNING"
-    STALE = "STALE"
-    DISCONNECTED = "DISCONNECTED"
+    FRESH = 'FRESH'
+    WARNING = 'WARNING'
+    STALE = 'STALE'
+    DISCONNECTED = 'DISCONNECTED'
 
 
 class RequestType(str, Enum):
     """Types of orchestrator requests."""
 
-    WAITING = "WAITING"  # Informational - orchestrator is waiting
-    PERMISSION_NEEDED = "PERMISSION_NEEDED"  # Human approval required
-    MERGE_READY = "MERGE_READY"  # PR ready for merge
-    REVIEW_NEEDED = "REVIEW_NEEDED"  # Code review requested
-    BLOCKED = "BLOCKED"  # Dependency blocker
-    COMPLETED = "COMPLETED"  # Workstream done
+    WAITING = 'WAITING'  # Informational - orchestrator is waiting
+    PERMISSION_NEEDED = 'PERMISSION_NEEDED'  # Human approval required
+    MERGE_READY = 'MERGE_READY'  # PR ready for merge
+    REVIEW_NEEDED = 'REVIEW_NEEDED'  # Code review requested
+    BLOCKED = 'BLOCKED'  # Dependency blocker
+    COMPLETED = 'COMPLETED'  # Workstream done
 
 
 class AnomalySeverity(str, Enum):
     """Severity levels for detected anomalies."""
 
-    HIGH = "HIGH"  # CI failure, blocked
-    MEDIUM = "MEDIUM"  # Changes requested, stale heartbeat
-    LOW = "LOW"  # Dirty status, warnings
+    HIGH = 'HIGH'  # CI failure, blocked
+    MEDIUM = 'MEDIUM'  # Changes requested, stale heartbeat
+    LOW = 'LOW'  # Dirty status, warnings
 
 
 class WorktreeStatus(str, Enum):
     """Git worktree status."""
 
-    CLEAN = "clean"
-    DIRTY = "dirty"
-    DETACHED = "detached"
+    CLEAN = 'clean'
+    DIRTY = 'dirty'
+    DETACHED = 'detached'
 
 
 class PRState(str, Enum):
     """Pull request state."""
 
-    OPEN = "open"
-    CLOSED = "closed"
-    MERGED = "merged"
+    OPEN = 'open'
+    CLOSED = 'closed'
+    MERGED = 'merged'
 
 
 class CICheckStatus(str, Enum):
     """Individual CI check status."""
 
-    PASSED = "passed"
-    FAILED = "failed"
-    PENDING = "pending"
-    SKIPPED = "skipped"
+    PASSED = 'passed'
+    FAILED = 'failed'
+    PENDING = 'pending'
+    SKIPPED = 'skipped'
 
 
 class CodeRabbitReviewStatus(str, Enum):
     """CodeRabbit review status."""
 
-    APPROVED = "approved"
-    CHANGES_REQUESTED = "changes_requested"
-    COMMENTED = "commented"
-    PENDING = "pending"
+    APPROVED = 'approved'
+    CHANGES_REQUESTED = 'changes_requested'
+    COMMENTED = 'commented'
+    PENDING = 'pending'
 
 
 class AnomalyType(str, Enum):
     """Types of anomalies that can be detected."""
 
-    CI_FAILURE = "CI_FAILURE"
-    CHANGES_REQUESTED = "CHANGES_REQUESTED"
-    STALE_HEARTBEAT = "STALE_HEARTBEAT"
-    DIRTY_WORKTREE = "DIRTY_WORKTREE"
-    BLOCKED_WORKSTREAM = "BLOCKED_WORKSTREAM"
-    DISCONNECTED_ORCHESTRATOR = "DISCONNECTED_ORCHESTRATOR"
+    CI_FAILURE = 'CI_FAILURE'
+    CHANGES_REQUESTED = 'CHANGES_REQUESTED'
+    STALE_HEARTBEAT = 'STALE_HEARTBEAT'
+    DIRTY_WORKTREE = 'DIRTY_WORKTREE'
+    BLOCKED_WORKSTREAM = 'BLOCKED_WORKSTREAM'
+    DISCONNECTED_ORCHESTRATOR = 'DISCONNECTED_ORCHESTRATOR'
 
 
 class ArchiveReason(str, Enum):
     """Reasons for archiving a workstream."""
 
-    COMPLETED = "completed"
-    MERGED = "merged"
-    CLOSED = "closed"
-    MANUAL = "manual"
+    COMPLETED = 'completed'
+    MERGED = 'merged'
+    CLOSED = 'closed'
+    MANUAL = 'manual'
 
 
 # =============================================================================
@@ -211,17 +211,17 @@ REFRESH_CONFIG = RefreshConfig()
 # =============================================================================
 
 HEARTBEAT_CSS_CLASSES = {
-    HeartbeatState.FRESH: "heartbeat-fresh",
-    HeartbeatState.WARNING: "heartbeat-warning",
-    HeartbeatState.STALE: "heartbeat-stale",
-    HeartbeatState.DISCONNECTED: "heartbeat-disconnected",
+    HeartbeatState.FRESH: 'heartbeat-fresh',
+    HeartbeatState.WARNING: 'heartbeat-warning',
+    HeartbeatState.STALE: 'heartbeat-stale',
+    HeartbeatState.DISCONNECTED: 'heartbeat-disconnected',
 }
 
 ANOMALY_CSS_CLASSES = {
-    AnomalyType.CI_FAILURE: "anomaly-ci-failure",
-    AnomalyType.CHANGES_REQUESTED: "anomaly-changes-requested",
-    AnomalyType.STALE_HEARTBEAT: "anomaly-stale",
-    AnomalyType.DIRTY_WORKTREE: "anomaly-dirty",
-    AnomalyType.BLOCKED_WORKSTREAM: "anomaly-blocked",
-    AnomalyType.DISCONNECTED_ORCHESTRATOR: "anomaly-disconnected",
+    AnomalyType.CI_FAILURE: 'anomaly-ci-failure',
+    AnomalyType.CHANGES_REQUESTED: 'anomaly-changes-requested',
+    AnomalyType.STALE_HEARTBEAT: 'anomaly-stale',
+    AnomalyType.DIRTY_WORKTREE: 'anomaly-dirty',
+    AnomalyType.BLOCKED_WORKSTREAM: 'anomaly-blocked',
+    AnomalyType.DISCONNECTED_ORCHESTRATOR: 'anomaly-disconnected',
 }

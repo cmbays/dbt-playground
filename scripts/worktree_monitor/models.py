@@ -48,7 +48,7 @@ class PhaseConfig(SerializableMixin):
 
     name: str
     order: int
-    description: str = ""
+    description: str = ''
     status: PhaseStatus = PhaseStatus.PLANNED
     dependencies: list[str] = field(default_factory=list)
     workstreams: list[WorkstreamConfig] = field(default_factory=list)
@@ -61,7 +61,7 @@ class VersionPlan(SerializableMixin):
     version: int  # Schema version
     name: str  # e.g., "v0.10"
     target_date: str  # ISO date string
-    description: str = ""
+    description: str = ''
     status: VersionStatus = VersionStatus.PLANNED
     phases: list[PhaseConfig] = field(default_factory=list)
 
@@ -83,7 +83,7 @@ class WorktreeInfo(SerializableMixin):
     status: WorktreeStatus
     files_changed: int = 0
     files_staged: int = 0
-    last_commit_msg: str = ""
+    last_commit_msg: str = ''
     last_commit_date: datetime | None = None
 
 
@@ -167,7 +167,7 @@ class OrchestratorRequest(SerializableMixin):
 
     branch: str
     request_type: RequestType
-    message: str = ""
+    message: str = ''
     timestamp: datetime | None = None
 
 
@@ -296,33 +296,31 @@ class EnrichedWorktree:
         """Serialize to dict, flattening base fields for backward compatibility."""
         return {
             # Flattened base fields
-            "path": self.base.path,
-            "branch": self.base.branch,
-            "commit_hash": self.base.commit_hash,
-            "commit_short": self.base.commit_short,
-            "is_main": self.base.is_main,
-            "status": self.base.status.value,
-            "files_changed": self.base.files_changed,
-            "files_staged": self.base.files_staged,
-            "last_commit_msg": self.base.last_commit_msg,
-            "last_commit_date": (
-                self.base.last_commit_date.isoformat()
-                if self.base.last_commit_date
-                else None
+            'path': self.base.path,
+            'branch': self.base.branch,
+            'commit_hash': self.base.commit_hash,
+            'commit_short': self.base.commit_short,
+            'is_main': self.base.is_main,
+            'status': self.base.status.value,
+            'files_changed': self.base.files_changed,
+            'files_staged': self.base.files_staged,
+            'last_commit_msg': self.base.last_commit_msg,
+            'last_commit_date': (
+                self.base.last_commit_date.isoformat() if self.base.last_commit_date else None
             ),
             # Enrichment fields
-            "track_name": self.track_name,
-            "track_color": self.track_color,
-            "epic_number": self.epic_number,
-            "epic_issues": self.epic_issues.to_dict() if self.epic_issues else None,
-            "pr": self.pr.to_dict() if self.pr else None,
-            "ci_checks": self.ci_checks.to_dict() if self.ci_checks else None,
-            "coderabbit": self.coderabbit.to_dict() if self.coderabbit else None,
-            "anomalies": [a.to_dict() for a in self.anomalies],
+            'track_name': self.track_name,
+            'track_color': self.track_color,
+            'epic_number': self.epic_number,
+            'epic_issues': self.epic_issues.to_dict() if self.epic_issues else None,
+            'pr': self.pr.to_dict() if self.pr else None,
+            'ci_checks': self.ci_checks.to_dict() if self.ci_checks else None,
+            'coderabbit': self.coderabbit.to_dict() if self.coderabbit else None,
+            'anomalies': [a.to_dict() for a in self.anomalies],
         }
 
     @classmethod
-    def from_worktree_info(cls, info: "WorktreeInfo") -> "EnrichedWorktree":
+    def from_worktree_info(cls, info: 'WorktreeInfo') -> 'EnrichedWorktree':
         """Create an EnrichedWorktree from basic WorktreeInfo."""
         return cls(base=info)
 
