@@ -9,27 +9,23 @@ Created: Phase 4 Day 1
 
 import json
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 import pytest
-
-# Import will fail until implementation exists - that's expected for TDD
-from worktree_monitor.heartbeat_monitor import HeartbeatMonitor
 from worktree_monitor.constants import (
     HeartbeatState,
     HeartbeatThresholds,
     RequestType,
-    HEARTBEAT_THRESHOLDS,
 )
-from worktree_monitor.models import HeartbeatStatus, OrchestratorStatus, OrchestratorRequest
 from worktree_monitor.exceptions import (
-    HeartbeatError,
     HeartbeatFileNotFoundError,
     HeartbeatParseError,
 )
 
+# Import will fail until implementation exists - that's expected for TDD
+from worktree_monitor.heartbeat_monitor import HeartbeatMonitor
+from worktree_monitor.models import HeartbeatStatus
 
 # =============================================================================
 # Fixtures

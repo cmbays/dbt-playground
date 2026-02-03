@@ -18,12 +18,13 @@ Created: Phase 4 Day 1
 """
 
 import time
-from pathlib import Path
-from unittest.mock import patch
 
 import pytest
-import yaml
-
+from worktree_monitor.constants import (
+    PhaseStatus,
+    VersionStatus,
+    WorkstreamStatus,
+)
 from worktree_monitor.exceptions import (
     VersionPlanNotFoundError,
     VersionPlanParseError,
@@ -34,13 +35,7 @@ from worktree_monitor.models import (
     VersionPlan,
     WorkstreamConfig,
 )
-from worktree_monitor.constants import (
-    PhaseStatus,
-    VersionStatus,
-    WorkstreamStatus,
-)
 from worktree_monitor.version_plan_loader import VersionPlanLoader
-
 
 # =============================================================================
 # Test 1: Load Valid YAML Configuration

@@ -9,7 +9,7 @@ Created: Phase 4 Day 0 (Pre-Work)
 import json
 import sys
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
@@ -20,37 +20,35 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts"))
 
 from worktree_monitor.constants import (
-    HeartbeatState,
-    WorktreeStatus,
-    PRState,
-    WorkstreamStatus,
-    PhaseStatus,
-    VersionStatus,
-    CodeRabbitReviewStatus,
-    AnomalyType,
     AnomalySeverity,
+    AnomalyType,
     ArchiveReason,
-    HEARTBEAT_THRESHOLDS,
+    CodeRabbitReviewStatus,
+    HeartbeatState,
+    PhaseStatus,
+    PRState,
+    VersionStatus,
+    WorkstreamStatus,
+    WorktreeStatus,
 )
 from worktree_monitor.models import (
-    WorktreeInfo,
-    EnrichedWorktree,
-    PRInfo,
-    CIChecks,
-    EpicIssues,
-    CodeRabbitStatus,
-    CodeRabbitFeedback,
-    HeartbeatStatus,
-    OrchestratorStatus,
     Anomaly,
-    TrackSummary,
     ArchivedWorktree,
+    CIChecks,
+    CodeRabbitFeedback,
+    CodeRabbitStatus,
+    EnrichedWorktree,
+    EpicIssues,
+    HeartbeatStatus,
     MonitorOutput,
-    VersionPlan,
+    OrchestratorStatus,
     PhaseConfig,
+    PRInfo,
+    TrackSummary,
+    VersionPlan,
     WorkstreamConfig,
+    WorktreeInfo,
 )
-
 
 # =============================================================================
 # Time Fixtures
@@ -60,7 +58,7 @@ from worktree_monitor.models import (
 @pytest.fixture
 def fixed_now() -> datetime:
     """Fixed timestamp for deterministic testing."""
-    return datetime(2026, 2, 3, 12, 0, 0, tzinfo=timezone.utc)
+    return datetime(2026, 2, 3, 12, 0, 0, tzinfo=UTC)
 
 
 @pytest.fixture
@@ -68,7 +66,7 @@ def fixed_now_factory():
     """Factory for creating fixed timestamps with offsets."""
 
     def _factory(seconds_offset: int = 0) -> datetime:
-        base = datetime(2026, 2, 3, 12, 0, 0, tzinfo=timezone.utc)
+        base = datetime(2026, 2, 3, 12, 0, 0, tzinfo=UTC)
         from datetime import timedelta
 
         return base + timedelta(seconds=seconds_offset)

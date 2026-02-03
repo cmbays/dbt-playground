@@ -7,13 +7,10 @@ information and extracts status details.
 Created: Phase 4 Day 0 (TDD)
 """
 
-import subprocess
-from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-
 from worktree_monitor.constants import WorktreeStatus
 from worktree_monitor.exceptions import (
     GitCommandError,
@@ -22,7 +19,6 @@ from worktree_monitor.exceptions import (
 )
 from worktree_monitor.models import WorktreeInfo
 from worktree_monitor.worktree_discovery import WorktreeDiscovery
-
 
 # =============================================================================
 # Parsing Tests
