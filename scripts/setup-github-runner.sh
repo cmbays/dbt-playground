@@ -15,13 +15,10 @@
 set -e
 
 # Configuration
-RUNNER_VERSION="2.322.0"  # Released Dec 2024, update periodically
+RUNNER_VERSION="2.331.0"  # Released Jan 2026, update periodically
 RUNNER_DIR="$HOME/actions-runner"
-REPO_OWNER="cmbays"
-REPO_NAME="dbt-playground"
 
 echo "=== GitHub Actions Self-Hosted Runner Setup ==="
-echo "Repository: ${REPO_OWNER}/${REPO_NAME}"
 echo "Runner directory: $RUNNER_DIR"
 echo "Runner version: $RUNNER_VERSION"
 echo
@@ -55,6 +52,26 @@ if [ "$ARCH" != "arm64" ]; then
 fi
 
 echo "Prerequisites OK"
+echo
+
+# Detect repository owner and name dynamically
+echo "Detecting repository..."
+if ! REPO_INFO=$(gh repo view --json owner,name --jq '{owner: .owner.login, name: .name}' 2>/dev/null); then
+    echo "Error: Failed to detect repository via gh CLI"
+    echo "Make sure you're in a git repository directory"
+    exit 1
+fi
+
+REPO_OWNER=$(echo "$REPO_INFO" | jq -r '.owner')
+REPO_NAME=$(echo "$REPO_INFO" | jq -r '.name')
+
+if [ -z "$REPO_OWNER" ] || [ -z "$REPO_NAME" ]; then
+    echo "Error: Could not extract repository owner/name"
+    echo "Detected values: owner='$REPO_OWNER', name='$REPO_NAME'"
+    exit 1
+fi
+
+echo "Repository: ${REPO_OWNER}/${REPO_NAME}"
 echo
 
 # Check if already installed

@@ -43,6 +43,14 @@ if pgrep -f "Runner.Listener" > /dev/null 2>&1; then
     echo "Runner still running after ${TIMEOUT}s timeout"
     echo "This may indicate a job is still in progress"
     echo
+
+    # Check if running in interactive mode (TTY available)
+    if [[ ! -t 0 ]]; then
+        echo "Non-interactive mode: skipping force-stop prompt"
+        echo "To force stop, run interactively or use: pkill -KILL -f 'Runner.Listener'"
+        exit 1
+    fi
+
     read -p "Force stop? [y/N] " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
