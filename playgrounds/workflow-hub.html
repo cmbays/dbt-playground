@@ -1471,12 +1471,310 @@
       padding: 2px 0;
     }
 
+    /* ==================== Worktree Monitor ==================== */
+    #worktree-monitor-view {
+      padding: 1rem;
+    }
+
+    .monitor-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .monitor-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .heartbeat-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+      background: var(--bg-secondary);
+      font-size: 0.8125rem;
+    }
+
+    .heartbeat-indicator[data-status="fresh"] .heartbeat-dot {
+      background: var(--accent-success);
+      animation: pulse 2s infinite;
+    }
+
+    .heartbeat-indicator[data-status="stale"] .heartbeat-dot {
+      background: var(--accent-warning);
+    }
+
+    .heartbeat-indicator[data-status="inactive"] .heartbeat-dot,
+    .heartbeat-indicator[data-status="offline"] .heartbeat-dot {
+      background: var(--accent-danger);
+    }
+
+    .heartbeat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .heartbeat-label {
+      color: var(--text-secondary);
+    }
+
+    .refresh-btn {
+      padding: 0.375rem 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .refresh-btn:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .phase-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .phase-status {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .phase-section[data-status="active"] .phase-status {
+      background: rgba(37, 99, 235, 0.15);
+      color: var(--accent-primary);
+    }
+
+    .phase-section[data-status="complete"] .phase-status {
+      background: rgba(22, 163, 74, 0.15);
+      color: var(--accent-success);
+    }
+
+    .workstream-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .no-worktrees {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .worktree-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow 200ms ease, border-color 200ms ease;
+    }
+
+    .worktree-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Anomaly Highlighting */
+    .worktree-card.anomaly-ci_failed {
+      border-color: var(--accent-danger);
+      box-shadow: 0 0 12px rgba(220, 38, 38, 0.4);
+      animation: pulse-danger 2s infinite;
+    }
+
+    .worktree-card.anomaly-changes_requested {
+      border-color: var(--accent-warning);
+      box-shadow: 0 0 8px rgba(202, 138, 4, 0.3);
+    }
+
+    .worktree-card.anomaly-stale {
+      border-color: var(--accent-warning);
+      opacity: 0.8;
+    }
+
+    .worktree-card.anomaly-dirty {
+      border-left: 3px solid var(--accent-warning);
+    }
+
+    @keyframes pulse-danger {
+      0%, 100% { box-shadow: 0 0 12px rgba(220, 38, 38, 0.4); }
+      50% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.6); }
+    }
+
+    .worktree-card .wt-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .worktree-card .branch-name {
+      font-weight: 600;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      color: var(--accent-primary);
+    }
+
+    .worktree-card .wt-status-badge {
+      font-size: 0.6875rem;
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .worktree-card .wt-status-badge[data-status="clean"] {
+      background: rgba(22, 163, 74, 0.15);
+      color: var(--accent-success);
+    }
+
+    .worktree-card .wt-status-badge[data-status="dirty"] {
+      background: rgba(202, 138, 4, 0.15);
+      color: var(--accent-warning);
+    }
+
+    .worktree-card .wt-status-badge[data-status="detached"] {
+      background: rgba(124, 58, 237, 0.15);
+      color: var(--accent-purple);
+    }
+
+    .worktree-card .wt-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .worktree-card .commit-info {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      padding: 0.375rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .worktree-card .commit-msg {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .worktree-card .pr-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.75rem;
+      color: var(--accent-primary);
+      text-decoration: none;
+    }
+
+    .worktree-card .pr-link:hover {
+      text-decoration: underline;
+    }
+
+    .worktree-card .ci-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .worktree-card .ci-status .ci-label {
+      color: var(--text-muted);
+    }
+
+    .worktree-card .ci-status[data-state="success"] .ci-counts {
+      color: var(--accent-success);
+    }
+
+    .worktree-card .ci-status[data-state="failure"] .ci-counts {
+      color: var(--accent-danger);
+    }
+
+    .worktree-card .ci-status[data-state="pending"] .ci-counts {
+      color: var(--accent-warning);
+    }
+
+    .worktree-card .wt-meta {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+
+    .worktree-card .wt-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    /* Monitor Summary Stats */
+    .monitor-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .monitor-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      min-width: 120px;
+    }
+
+    .monitor-stat-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .monitor-stat-label {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .monitor-stat.anomaly .monitor-stat-value {
+      color: var(--accent-danger);
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .kanban-col { flex: 0 0 85vw; scroll-snap-align: start; }
       .kanban-board { scroll-snap-type: x mandatory; position: relative; }
       .tab-nav { margin-left: 0; margin-top: 0.5rem; }
       .header-left { flex-wrap: wrap; }
+      .workstream-grid { grid-template-columns: 1fr; }
+      .monitor-header { flex-direction: column; align-items: flex-start; }
       /* Swipe indicator */
       .kanban-board::after {
         content: '← swipe →';
@@ -1514,6 +1812,7 @@
       <nav class="tab-nav">
         <button class="tab-btn active" data-view="dashboard" onclick="switchView('dashboard')">Dashboard</button>
         <button class="tab-btn" data-view="kanban" onclick="switchView('kanban')">Kanban</button>
+        <button class="tab-btn" data-view="worktree-monitor" onclick="switchView('worktree-monitor')">Worktree Monitor</button>
       </nav>
     </div>
     <div class="header-actions">
@@ -1769,6 +2068,16 @@
       </div>
       <div class="kanban-board" id="kanban-board"></div>
     </div>
+
+    <!-- Worktree Monitor View -->
+    <div class="view" id="worktree-monitor-view">
+      <div id="worktree-monitor-container">
+        <div class="empty-state">
+          <h3>Loading Worktree Monitor...</h3>
+          <p>Connecting to worktrees.json</p>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Card Modal -->
@@ -1789,6 +2098,7 @@
     <div class="keyboard-hints">
       <kbd>R</kbd> Refresh
       <kbd>P</kbd> Pause/Resume
+      <kbd>D</kbd>/<kbd>K</kbd>/<kbd>W</kbd> Views
       <kbd>?</kbd> Help
     </div>
   </footer>
@@ -1832,6 +2142,7 @@
           <li><code>P</code> - Pause/resume polling</li>
           <li><code>D</code> - Dashboard view</li>
           <li><code>K</code> - Kanban view</li>
+          <li><code>W</code> - Worktree Monitor view</li>
           <li><code>S</code> - Sync issues (Kanban)</li>
           <li><code>?</code> - Show this help</li>
           <li><code>Esc</code> - Close modals</li>
@@ -1842,6 +2153,15 @@
           <li><strong>Drag cards</strong> between columns to change status</li>
           <li><strong>Click card</strong> to see details and actions</li>
           <li>Issues auto-sync from GitHub backlog</li>
+        </ul>
+
+        <h3>Worktree Monitor</h3>
+        <ul>
+          <li><strong>Overview</strong> - View all git worktrees and their status</li>
+          <li><strong>Heartbeat</strong> - Shows data freshness (green=fresh, yellow=stale, red=offline)</li>
+          <li><strong>Anomaly Detection</strong> - CI failures and dirty state highlighted</li>
+          <li><strong>PR Links</strong> - Quick access to associated pull requests</li>
+          <li>Polls worktrees.json every 10 seconds</li>
         </ul>
 
         <h3>Token Budget Thresholds</h3>
@@ -2742,6 +3062,9 @@ Building customer analytics models. Currently implementing dim_customer.
       document.getElementById(`${view}-view`).classList.add('active');
       document.getElementById('main').classList.toggle('kanban-active', view === 'kanban');
       if (view === 'kanban') kanban.render();
+      if (view === 'worktree-monitor' && !WorktreeMonitor.initialized) {
+        WorktreeMonitor.init();
+      }
     }
 
     // ==================== Keyboard Shortcuts ====================
@@ -2753,6 +3076,7 @@ Building customer analytics models. Currently implementing dim_customer.
         case 'p': togglePolling(); break;
         case 'd': switchView('dashboard'); break;
         case 'k': switchView('kanban'); break;
+        case 'w': switchView('worktree-monitor'); break;
         case 's': if (currentView === 'kanban') kanban.sync(); break;
         case '?': showHelp(); break;
         case 'escape': hideHelp(); hideDetailsModal(); kanban.closeModal(); break;
@@ -3044,6 +3368,295 @@ Building customer analytics models. Currently implementing dim_customer.
       await origPollIssues();
       if (currentView === 'kanban') kanban.sync();
     };
+
+    // ==================== Worktree Monitor Module ====================
+    const WorktreeMonitor = {
+      data: null,
+      initialized: false,
+      refreshInterval: null,
+      POLL_INTERVAL: 10000, // 10 seconds
+
+      async init() {
+        console.log('[WorktreeMonitor] Initializing...');
+        this.initialized = true;
+        await this.loadData();
+        this.render();
+        this.startPolling();
+      },
+
+      async loadData() {
+        try {
+          const response = await fetch('worktrees.json');
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          this.data = await response.json();
+          console.log('[WorktreeMonitor] Loaded data:', this.data);
+        } catch (error) {
+          console.error('[WorktreeMonitor] Failed to load worktrees.json:', error);
+          this.data = null;
+        }
+      },
+
+      startPolling() {
+        if (this.refreshInterval) {
+          clearInterval(this.refreshInterval);
+        }
+        this.refreshInterval = setInterval(async () => {
+          if (currentView === 'worktree-monitor') {
+            await this.loadData();
+            this.render();
+          }
+        }, this.POLL_INTERVAL);
+        console.log('[WorktreeMonitor] Polling started (every 10s)');
+      },
+
+      stopPolling() {
+        if (this.refreshInterval) {
+          clearInterval(this.refreshInterval);
+          this.refreshInterval = null;
+          console.log('[WorktreeMonitor] Polling stopped');
+        }
+      },
+
+      render() {
+        const container = document.getElementById('worktree-monitor-container');
+        if (!container) return;
+
+        if (!this.data) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <h3>Unable to load worktree data</h3>
+              <p>Ensure worktrees.json exists and the server is running.</p>
+              <button class="btn" onclick="WorktreeMonitor.loadData().then(() => WorktreeMonitor.render())">Retry</button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          ${this.renderHeader()}
+          ${this.renderStats()}
+          ${this.renderPhases()}
+        `;
+      },
+
+      renderHeader() {
+        const heartbeatStatus = this.getHeartbeatStatus();
+        return `
+          <div class="monitor-header">
+            <h2>Worktree Monitor</h2>
+            <div class="heartbeat-indicator" data-status="${heartbeatStatus.status}">
+              <span class="heartbeat-dot"></span>
+              <span class="heartbeat-label">${heartbeatStatus.label}</span>
+            </div>
+            <button class="refresh-btn" onclick="WorktreeMonitor.loadData().then(() => WorktreeMonitor.render())">
+              Refresh
+            </button>
+          </div>
+        `;
+      },
+
+      getHeartbeatStatus() {
+        if (!this.data || !this.data.timestamp) {
+          return { status: 'offline', label: 'Offline' };
+        }
+
+        const timestamp = new Date(this.data.timestamp);
+        const now = new Date();
+        const secondsAgo = Math.floor((now - timestamp) / 1000);
+
+        if (secondsAgo < 30) {
+          return { status: 'fresh', label: `Active (${secondsAgo}s ago)` };
+        } else if (secondsAgo < 120) {
+          return { status: 'stale', label: `Stale (${secondsAgo}s ago)` };
+        } else {
+          const minutesAgo = Math.floor(secondsAgo / 60);
+          return { status: 'inactive', label: `Inactive (${minutesAgo}m ago)` };
+        }
+      },
+
+      renderStats() {
+        if (!this.data || !this.data.worktrees) return '';
+
+        const worktrees = this.data.worktrees;
+        const total = worktrees.length;
+        const dirty = worktrees.filter(wt => wt.status === 'dirty').length;
+        const withPR = worktrees.filter(wt => wt.pr?.url).length;
+        const anomalies = worktrees.filter(wt =>
+          (wt.anomalies && wt.anomalies.length > 0) ||
+          (wt.ci_checks && wt.ci_checks.state === 'failure')
+        ).length;
+
+        return `
+          <div class="monitor-stats">
+            <div class="monitor-stat">
+              <div class="monitor-stat-value">${total}</div>
+              <div class="monitor-stat-label">Worktrees</div>
+            </div>
+            <div class="monitor-stat">
+              <div class="monitor-stat-value">${dirty}</div>
+              <div class="monitor-stat-label">Dirty</div>
+            </div>
+            <div class="monitor-stat">
+              <div class="monitor-stat-value">${withPR}</div>
+              <div class="monitor-stat-label">With PR</div>
+            </div>
+            ${anomalies > 0 ? `
+              <div class="monitor-stat anomaly">
+                <div class="monitor-stat-value">${anomalies}</div>
+                <div class="monitor-stat-label">Anomalies</div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      },
+
+      renderPhases() {
+        if (!this.data) return '<p>No data loaded</p>';
+
+        // If phases exist in data, render by phase
+        if (this.data.phases && this.data.phases.length > 0) {
+          return this.data.phases
+            .sort((a, b) => a.order - b.order)
+            .map(phase => this.renderPhase(phase))
+            .join('');
+        }
+
+        // Otherwise, render all worktrees in a single section
+        return `
+          <section class="phase-section" data-status="active">
+            <h3 class="phase-header">All Worktrees</h3>
+            <div class="workstream-grid">
+              ${this.renderWorktrees(this.data.worktrees || [])}
+            </div>
+          </section>
+        `;
+      },
+
+      renderPhase(phase) {
+        const phaseWorktrees = (this.data.worktrees || []).filter(wt => wt.phase_id === phase.id);
+        return `
+          <section class="phase-section" data-status="${phase.status || 'active'}">
+            <h3 class="phase-header">
+              ${phase.name}
+              <span class="phase-status">${phase.status || 'active'}</span>
+            </h3>
+            <div class="workstream-grid">
+              ${this.renderWorktrees(phaseWorktrees)}
+            </div>
+          </section>
+        `;
+      },
+
+      renderWorktrees(worktrees) {
+        if (!worktrees || worktrees.length === 0) {
+          return '<p class="no-worktrees">No active worktrees</p>';
+        }
+        return worktrees.map(wt => this.renderWorktreeCard(wt)).join('');
+      },
+
+      renderWorktreeCard(wt) {
+        const anomalyClasses = this.getAnomalyClasses(wt);
+        const ciStatus = wt.ci_checks ? this.renderCIStatus(wt.ci_checks) : '';
+
+        return `
+          <div class="worktree-card ${anomalyClasses}" data-branch="${wt.branch}">
+            <div class="wt-card-header">
+              <span class="branch-name">${wt.branch}</span>
+              <span class="wt-status-badge" data-status="${wt.status}">${wt.status}</span>
+            </div>
+            <div class="wt-card-body">
+              <div class="commit-info">
+                <code>${wt.commit_short || wt.commit_hash || 'N/A'}</code>
+              </div>
+              ${wt.last_commit_msg ? `<div class="commit-msg" title="${this.escapeHtml(wt.last_commit_msg)}">${this.escapeHtml(wt.last_commit_msg)}</div>` : ''}
+              ${wt.pr?.url ? `
+                <a href="${wt.pr.url}" class="pr-link" target="_blank" rel="noopener">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="18" r="3"></circle>
+                    <circle cx="6" cy="6" r="3"></circle>
+                    <path d="M13 6h3a2 2 0 0 1 2 2v7"></path>
+                    <line x1="6" y1="9" x2="6" y2="21"></line>
+                  </svg>
+                  PR #${wt.pr.number || '?'}
+                  ${wt.pr.state ? `<span>(${wt.pr.state})</span>` : ''}
+                </a>
+              ` : ''}
+              ${ciStatus}
+              ${this.renderMeta(wt)}
+            </div>
+          </div>
+        `;
+      },
+
+      getAnomalyClasses(wt) {
+        const classes = [];
+
+        // Check for anomalies array
+        if (wt.anomalies && Array.isArray(wt.anomalies)) {
+          wt.anomalies.forEach(a => classes.push(`anomaly-${a}`));
+        }
+
+        // Check CI status
+        if (wt.ci_checks && wt.ci_checks.state === 'failure') {
+          if (!classes.includes('anomaly-ci_failed')) {
+            classes.push('anomaly-ci_failed');
+          }
+        }
+
+        // Check for dirty status
+        if (wt.status === 'dirty' && !classes.includes('anomaly-dirty')) {
+          classes.push('anomaly-dirty');
+        }
+
+        return classes.join(' ');
+      },
+
+      renderCIStatus(ci) {
+        const state = ci.state || 'unknown';
+        const passed = ci.passed ?? 0;
+        const failed = ci.failed ?? 0;
+        const pending = ci.pending ?? 0;
+
+        return `
+          <div class="ci-status" data-state="${state}">
+            <span class="ci-label">CI:</span>
+            <span class="ci-counts">${passed} passed ${failed} failed ${pending} pending</span>
+          </div>
+        `;
+      },
+
+      renderMeta(wt) {
+        const items = [];
+
+        if (wt.files_changed !== undefined && wt.files_changed > 0) {
+          items.push(`<span class="wt-meta-item">${wt.files_changed} changed</span>`);
+        }
+
+        if (wt.files_staged !== undefined && wt.files_staged > 0) {
+          items.push(`<span class="wt-meta-item">${wt.files_staged} staged</span>`);
+        }
+
+        if (wt.is_main) {
+          items.push(`<span class="wt-meta-item">main repo</span>`);
+        }
+
+        if (items.length === 0) return '';
+
+        return `<div class="wt-meta">${items.join('')}</div>`;
+      },
+
+      escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    };
+
+    // Expose to window for onclick handlers
+    window.WorktreeMonitor = WorktreeMonitor;
 
     // ==================== PM Widgets (TASK-7, TASK-9) ====================
 

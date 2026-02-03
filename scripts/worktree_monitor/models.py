@@ -369,7 +369,7 @@ class MonitorOutput(SerializableMixin):
 
 
 # =============================================================================
-# Archive Index Model
+# Archive Models
 # =============================================================================
 
 
@@ -380,3 +380,37 @@ class ArchiveIndex(SerializableMixin):
     version: int  # Schema version
     versions: list[str]  # List of archived version names
     last_updated: datetime
+
+
+@dataclass
+class ArchiveMetrics(SerializableMixin):
+    """Metrics computed at archive time."""
+
+    worktree_count: int
+    phase_count: int
+    workstream_count: int
+    total_commits: int = 0
+    total_prs_merged: int = 0
+
+
+@dataclass
+class VersionSummary(SerializableMixin):
+    """Summary of an archived version for listing."""
+
+    version: str
+    archived_at: datetime
+    worktree_count: int
+    reason: str = ""
+
+
+@dataclass
+class VersionArchive(SerializableMixin):
+    """Complete archived version data."""
+
+    version: str
+    archived_at: datetime
+    reason: str
+    phases: list[str]
+    worktrees: list[dict]  # Serialized worktree data
+    metrics: ArchiveMetrics
+    plan_snapshot: dict | None = None  # Optional snapshot of VersionPlan

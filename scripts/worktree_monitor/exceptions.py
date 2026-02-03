@@ -267,6 +267,18 @@ class ArchiveWriteError(ArchiveError):
         self.reason = reason
 
 
+class InvalidVersionNameError(ArchiveError):
+    """Raised when version name does not match expected format."""
+
+    def __init__(self, version_name: str, expected_pattern: str = r"^v\d+\.\d+"):
+        super().__init__(
+            f"Invalid version name: '{version_name}'. Expected format matching: {expected_pattern}",
+            details={"version_name": version_name, "expected_pattern": expected_pattern},
+        )
+        self.version_name = version_name
+        self.expected_pattern = expected_pattern
+
+
 # =============================================================================
 # Heartbeat Errors
 # =============================================================================
