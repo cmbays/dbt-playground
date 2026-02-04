@@ -24,9 +24,10 @@ prd: docs/specs/PRD-029-GITHUB-INTEGRATION.md
 Create CODEOWNERS file for automatic reviewer assignment.
 
 **Acceptance Criteria**:
+
 - [x] CODEOWNERS file created at `.github/CODEOWNERS`
 - [x] All major directories have explicit owners
 - [x] PR reviewer auto-assignment works
 - [x] Documentation updated
 
-See: https://github.com/cmbays/dbt-playground/issues/161
+See: <https://github.com/cmbays/dbt-playground/issues/161>

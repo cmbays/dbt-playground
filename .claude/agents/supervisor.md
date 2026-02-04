@@ -381,6 +381,62 @@ QA gate results are exported for FS5 metrics:
 }
 ```
 
+### Sage Session Logging (Post-QA)
+
+After QA gate completes successfully (QA → Deploy transition), the Supervisor prompts for session logging to capture learnings while fresh.
+
+#### Trigger Conditions
+
+| Condition | Outcome Flag | Action |
+|-----------|--------------|--------|
+| QA gate PASS | SUCCESS | Suggest session logging |
+| QA gate WARN (bypassed) | PARTIAL | Suggest session logging with bypass note |
+| QA gate BLOCK | — | No logging prompt (work incomplete) |
+
+#### Session Logging Prompt Flow
+
+```
+[QA Gate Complete (QA → Deploy Transition)]
+    |
+    +-- If transition allowed (PASS or WARN):
+    |      Suggest: "QA phase complete. Consider logging learnings:"
+    |      Option 1: sage: log session
+    |      Option 2: uv run scripts/log-session.py -t "{track}" -o {outcome}
+    |
+    |      Where:
+    |        {track} = current track name from WORKFLOW_STATE.md (e.g., "feat/compound-learning")
+    |        {outcome} = SUCCESS if QA PASS, PARTIAL if QA WARN
+    |
+    +-- Advisory only (don't block Deploy transition)
+```
+
+#### Prompt Template
+
+```text
+super: QA phase complete for {track}.
+
+Consider capturing session learnings:
+- sage: log session
+- Or: uv run scripts/log-session.py -t "{track}" -o {outcome}
+
+(Advisory: This helps compound learning but doesn't block deployment)
+```
+
+**Variable substitution:**
+- `{track}` → Track name from WORKFLOW_STATE.md (e.g., "feat/compound-learning")
+- `{outcome}` → "SUCCESS" if QA gate PASS, "PARTIAL" if QA gate WARN/bypassed
+
+#### Integration with Deployment Complete
+
+**Timing distinction:**
+
+| Trigger | When | What It Captures | Payload |
+|---------|------|------------------|---------|
+| **Post-QA (this section)** | QA → Deploy transition | Session-level learnings, interim decisions, implementation notes | Session logs, task context |
+| **Deployment Complete** | After final merge to main | Deployment-level patterns, release telemetry, cross-session insights | Deployment metrics, PR data |
+
+**Why both are needed:** Post-QA logging captures session learnings while context is fresh, feeding the iterative planning model. Deployment Complete captures post-release patterns and telemetry that only become visible after merge. Together they form the complete compound learning loop: session → deployment → next session's planning.
+
 ### Rejection Protocol
 
 When an agent's output fails verification:
@@ -1922,6 +1978,7 @@ rating = get_rating(score)  # "excellent", "acceptable", "needs_improvement", "p
 ```
 
 **Scoring Formula**:
+
 - Base: `(completed_stages / total_stages) × 100`
 - Penalty: `-skip_penalty` per skip (default: -10)
 - Floor: 0

@@ -20,7 +20,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from rich.console import Console
@@ -28,15 +28,15 @@ from rich.table import Table
 
 console = Console()
 
-BASELINES_FILE = Path("temp/WORKFLOW_HISTORY/baselines/ratchet-history.json")
+BASELINES_FILE = Path('temp/WORKFLOW_HISTORY/baselines/ratchet-history.json')
 AUTO_INCREASE_THRESHOLD = 1.1  # 10% improvement triggers baseline update
 
 
 def load_baselines() -> dict:
     """Load baseline data from file."""
     if not BASELINES_FILE.exists():
-        console.print(f"[yellow]Warning: {BASELINES_FILE} not found[/yellow]")
-        return {"metrics": []}
+        console.print(f'[yellow]Warning: {BASELINES_FILE} not found[/yellow]')
+        return {'metrics': []}
 
     with open(BASELINES_FILE) as f:
         return json.load(f)
@@ -45,7 +45,7 @@ def load_baselines() -> dict:
 def save_baselines(data: dict) -> None:
     """Save baseline data to file."""
     BASELINES_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(BASELINES_FILE, "w") as f:
+    with open(BASELINES_FILE, 'w') as f:
         json.dump(data, f, indent=2)
 
 
@@ -55,9 +55,9 @@ def get_current_baseline(metric_name: str) -> tuple[float | None, dict | None]:
     Returns (baseline_value, metric_dict) or (None, None) if not found.
     """
     data = load_baselines()
-    for metric in data.get("metrics", []):
-        if metric.get("name") == metric_name:
-            return metric.get("current_baseline"), metric
+    for metric in data.get('metrics', []):
+        if metric.get('name') == metric_name:
+            return metric.get('current_baseline'), metric
     return None, None
 
 
@@ -65,25 +65,25 @@ def schedule_baseline_increase(metric_name: str, new_value: float, reason: str) 
     """Schedule a baseline increase (appends to immutable history)."""
     data = load_baselines()
 
-    for metric in data.get("metrics", []):
-        if metric.get("name") == metric_name:
-            old_value = metric.get("current_baseline", 0)
+    for metric in data.get('metrics', []):
+        if metric.get('name') == metric_name:
+            old_value = metric.get('current_baseline', 0)
 
             # Append to history (immutable)
             history_entry = {
-                "action": "baseline_increased",
-                "date": datetime.now(timezone.utc).isoformat(),
-                "value": new_value,
-                "previous_value": old_value,
-                "reason": reason,
+                'action': 'baseline_increased',
+                'date': datetime.now(UTC).isoformat(),
+                'value': new_value,
+                'previous_value': old_value,
+                'reason': reason,
             }
-            metric.setdefault("history", []).append(history_entry)
+            metric.setdefault('history', []).append(history_entry)
 
             # Update current baseline
-            metric["current_baseline"] = new_value
+            metric['current_baseline'] = new_value
 
             # Update last_updated
-            data["last_updated"] = datetime.now(timezone.utc).isoformat()
+            data['last_updated'] = datetime.now(UTC).isoformat()
 
             save_baselines(data)
             return True
@@ -106,25 +106,28 @@ def check_ratchet(metric_name: str, new_value: float) -> tuple[bool, str]:
         # Check for auto-increase
         if new_value >= baseline * AUTO_INCREASE_THRESHOLD:
             improvement_pct = ((new_value - baseline) / baseline) * 100
-            reason = f"Auto-increased: {improvement_pct:.1f}% improvement over previous baseline"
+            reason = f'Auto-increased: {improvement_pct:.1f}% improvement over previous baseline'
             schedule_baseline_increase(metric_name, new_value, reason)
-            return True, f"PASSED and RAISED: {new_value} >= baseline {baseline} (+{improvement_pct:.1f}%)"
+            return (
+                True,
+                f'PASSED and RAISED: {new_value} >= baseline {baseline} (+{improvement_pct:.1f}%)',
+            )
 
-        return True, f"PASSED: {new_value} >= baseline {baseline}"
+        return True, f'PASSED: {new_value} >= baseline {baseline}'
 
     else:
         deficit = baseline - new_value
-        return False, f"BLOCKED: {new_value} < baseline {baseline} (deficit: {deficit})"
+        return False, f'BLOCKED: {new_value} < baseline {baseline} (deficit: {deficit})'
 
 
 def get_current_test_count() -> int:
     """Get current test count from dbt."""
-    dbt_project_dir = Path.cwd() / "dbt_project"
+    dbt_project_dir = Path.cwd() / 'dbt_project'
     if not dbt_project_dir.exists():
         return 0
 
     result = subprocess.run(
-        ["uv", "run", "dbt", "test"],
+        ['uv', 'run', 'dbt', 'test'],
         capture_output=True,
         text=True,
         cwd=dbt_project_dir,
@@ -137,19 +140,19 @@ def get_current_test_count() -> int:
 
 def get_current_model_count() -> int:
     """Get current model count from dbt."""
-    dbt_project_dir = Path.cwd() / "dbt_project"
+    dbt_project_dir = Path.cwd() / 'dbt_project'
     if not dbt_project_dir.exists():
         return 0
 
     result = subprocess.run(
-        ["uv", "run", "dbt", "ls", "--resource-type", "model"],
+        ['uv', 'run', 'dbt', 'ls', '--resource-type', 'model'],
         capture_output=True,
         text=True,
         cwd=dbt_project_dir,
         timeout=60,
     )
 
-    return len([l for l in result.stdout.split("\n") if l.strip()])
+    return len([line for line in result.stdout.split('\n') if line.strip()])
 
 
 def check_all_metrics() -> list[tuple[str, bool, str, float, float]]:
@@ -160,32 +163,45 @@ def check_all_metrics() -> list[tuple[str, bool, str, float, float]]:
     results = []
     data = load_baselines()
 
-    for metric in data.get("metrics", []):
-        name = metric.get("name")
-        baseline = metric.get("current_baseline", 0)
+    for metric in data.get('metrics', []):
+        name = metric.get('name')
+        baseline = metric.get('current_baseline', 0)
 
         # Get current value based on metric type
-        if name == "test_count_minimum":
+        if name == 'test_count_minimum':
             current = get_current_test_count()
-        elif name == "model_count_minimum":
+        elif name == 'model_count_minimum':
             current = get_current_model_count()
-        elif name == "staging_model_count":
+        elif name == 'staging_model_count':
             # Count staging models specifically (project models only, not packages)
-            dbt_project_dir = Path.cwd() / "dbt_project"
+            dbt_project_dir = Path.cwd() / 'dbt_project'
             if dbt_project_dir.exists():
                 result = subprocess.run(
-                    ["uv", "run", "dbt", "ls", "--resource-type", "model", "--select", "healthcare_analytics.staging.*"],
+                    [
+                        'uv',
+                        'run',
+                        'dbt',
+                        'ls',
+                        '--resource-type',
+                        'model',
+                        '--select',
+                        'healthcare_analytics.staging.*',
+                    ],
                     capture_output=True,
                     text=True,
                     cwd=dbt_project_dir,
                     timeout=60,
                 )
                 # Filter to only include lines that are actual model references
-                lines = [l for l in result.stdout.split("\n") if l.strip() and l.startswith("healthcare_analytics.")]
+                lines = [
+                    line
+                    for line in result.stdout.split('\n')
+                    if line.strip() and line.startswith('healthcare_analytics.')
+                ]
                 current = len(lines)
             else:
                 current = 0
-        elif name == "test_coverage_ratio":
+        elif name == 'test_coverage_ratio':
             tests = get_current_test_count()
             models = get_current_model_count()
             current = round(tests / models, 1) if models > 0 else 0
@@ -203,32 +219,32 @@ def show_baselines() -> None:
     """Display all baselines in table format."""
     data = load_baselines()
 
-    table = Table(title="Quality Ratchet Baselines")
-    table.add_column("Metric", style="bold")
-    table.add_column("Current Baseline", justify="right")
-    table.add_column("Unit")
-    table.add_column("Last Updated")
-    table.add_column("History Count", justify="right")
+    table = Table(title='Quality Ratchet Baselines')
+    table.add_column('Metric', style='bold')
+    table.add_column('Current Baseline', justify='right')
+    table.add_column('Unit')
+    table.add_column('Last Updated')
+    table.add_column('History Count', justify='right')
 
-    for metric in data.get("metrics", []):
-        history = metric.get("history", [])
-        last_updated = history[-1].get("date", "N/A")[:10] if history else "N/A"
+    for metric in data.get('metrics', []):
+        history = metric.get('history', [])
+        last_updated = history[-1].get('date', 'N/A')[:10] if history else 'N/A'
 
         table.add_row(
-            metric.get("name", "?"),
-            str(metric.get("current_baseline", "?")),
-            metric.get("unit", "?"),
+            metric.get('name', '?'),
+            str(metric.get('current_baseline', '?')),
+            metric.get('unit', '?'),
             last_updated,
             str(len(history)),
         )
 
     console.print(table)
-    console.print(f"\n[dim]Baselines file: {BASELINES_FILE}[/dim]")
+    console.print(f'\n[dim]Baselines file: {BASELINES_FILE}[/dim]')
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Check quality metrics against ratchet baselines",
+        description='Check quality metrics against ratchet baselines',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -243,23 +259,23 @@ Examples:
         """,
     )
     parser.add_argument(
-        "--metric",
-        help="Metric name to check",
+        '--metric',
+        help='Metric name to check',
     )
     parser.add_argument(
-        "--value",
+        '--value',
         type=float,
-        help="Value to check against baseline",
+        help='Value to check against baseline',
     )
     parser.add_argument(
-        "--check-all",
-        action="store_true",
-        help="Check all metrics against current state",
+        '--check-all',
+        action='store_true',
+        help='Check all metrics against current state',
     )
     parser.add_argument(
-        "--show-baselines",
-        action="store_true",
-        help="Display all baselines",
+        '--show-baselines',
+        action='store_true',
+        help='Display all baselines',
     )
 
     args = parser.parse_args()
@@ -269,32 +285,32 @@ Examples:
         return 0
 
     if args.check_all:
-        console.print("[bold]Checking all quality metrics...[/bold]\n")
+        console.print('[bold]Checking all quality metrics...[/bold]\n')
         results = check_all_metrics()
 
         all_passed = True
         for name, passed, message, current, baseline in results:
-            status = "[green]PASS[/green]" if passed else "[red]FAIL[/red]"
-            console.print(f"  {status} {name}: {current} (baseline: {baseline})")
+            status = '[green]PASS[/green]' if passed else '[red]FAIL[/red]'
+            console.print(f'  {status} {name}: {current} (baseline: {baseline})')
             if not passed:
-                console.print(f"       [red]{message}[/red]")
+                console.print(f'       [red]{message}[/red]')
                 all_passed = False
 
         console.print()
         if all_passed:
-            console.print("[green]All quality gates passed![/green]")
+            console.print('[green]All quality gates passed![/green]')
             return 0
         else:
-            console.print("[red]Quality gate failure - deployment blocked[/red]")
+            console.print('[red]Quality gate failure - deployment blocked[/red]')
             return 1
 
     if args.metric and args.value is not None:
         passed, message = check_ratchet(args.metric, args.value)
         if passed:
-            console.print(f"[green]{message}[/green]")
+            console.print(f'[green]{message}[/green]')
             return 0
         else:
-            console.print(f"[red]{message}[/red]")
+            console.print(f'[red]{message}[/red]')
             return 1
 
     # Default: show help
@@ -302,5 +318,5 @@ Examples:
     return 0
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

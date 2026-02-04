@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Compound Learning Loop Integration** (#163)
+  - Sage session logging trigger after QA phase (Post-QA)
+  - Memory bootstrap in `/plan` command reads `memory/MEMORY_INDEX.md`
+  - Relevance filtering with topic keyword matching and score threshold (≥0.7)
+  - Metrics instrumentation emits events to `events.jsonl` for FS5
+
 ### Planned
 
 - Incremental refresh patterns for large fact tables (v0.9)

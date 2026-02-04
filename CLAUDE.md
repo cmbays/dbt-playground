@@ -263,6 +263,25 @@ uv run scripts/consolidate-memory.py
 uv run scripts/consolidate-memory.py --dry-run
 ```
 
+### Compound Learning Loop
+
+The memory system forms a closed learning loop:
+
+```
+Plan (reads MEMORY_INDEX.md) ←──────────┐
+  ↓                                      │
+Work (execute tasks)                     │
+  ↓                                      │
+Review (QA phase)                        │
+  ↓                                      │
+Compound (Sage extracts learnings) ──────┘
+```
+
+**Automatic integrations:**
+
+- **Post-QA Sage Trigger**: Supervisor prompts for session logging after QA phase completes
+- **Plan Memory Bootstrap**: `/plan` command reads `memory/MEMORY_INDEX.md` and surfaces relevant patterns (filtered by topic keywords or score ≥0.7)
+
 See `.claude/agents/sage.md` for Workflow J (logging) and Workflow K (consolidation) details.
 
 ## Git Worktrees (Parallel Development)

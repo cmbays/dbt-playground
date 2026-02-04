@@ -33,6 +33,7 @@ This PR implements the ADR-to-LEARNINGS promotion workflow as specified in PRD-0
 ### praise: Three-Layer Pattern Entry
 
 The promoted pattern entry in LEARNINGS.md is exemplary:
+
 - Clear "Validated by" ADR reference
 - Proper versioning of implementations (v0.3, v0.4, v0.5)
 - Well-structured trade-offs table
@@ -41,6 +42,7 @@ The promoted pattern entry in LEARNINGS.md is exemplary:
 ### praise: Historical ADR Quality
 
 TDD-HISTORICAL.md reconstructs decisions with appropriate context:
+
 - Each ADR has clear rationale tables
 - Implementation counts demonstrate validation
 - Status marked as "Approved (Historical)" for clarity
