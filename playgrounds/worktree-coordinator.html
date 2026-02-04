@@ -30,6 +30,7 @@
       --color-text-secondary: rgba(255, 255, 255, 0.60);
       --color-text-muted: rgba(255, 255, 255, 0.38);
       --color-text-disabled: rgba(255, 255, 255, 0.20);
+      --color-text-inverse: #000; /* For text on vibrant backgrounds */
 
       /* Borders - Subtle definition */
       --color-border-subtle: rgba(255, 255, 255, 0.08);
@@ -62,6 +63,7 @@
 
       /* Glassmorphism (Raycast-inspired) */
       --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-bg-subtle: rgba(255, 255, 255, 0.03);
       --glass-blur: blur(12px);
       --glass-border: rgba(255, 255, 255, 0.1);
 
@@ -166,13 +168,6 @@
       outline-offset: 2px;
     }
 
-    button:focus-visible,
-    a:focus-visible,
-    textarea:focus-visible {
-      outline: 2px solid var(--color-action);
-      outline-offset: 2px;
-    }
-
     /* ==================== Header (Sticky) ==================== */
     .header {
       position: sticky;
@@ -231,7 +226,7 @@
     /* Primary button - Neobrutalist attention-grabbing */
     .btn-primary {
       background: var(--color-action);
-      color: #000;
+      color: var(--color-text-inverse);
       border: var(--border-bold) currentColor;
       font-weight: 600;
       box-shadow: var(--shadow-brutal) var(--color-action-bold);
@@ -251,7 +246,7 @@
     /* Success button - Neobrutalist */
     .btn-success {
       background: var(--color-success);
-      color: #000;
+      color: var(--color-text-inverse);
       border: var(--border-bold) currentColor;
       font-weight: 600;
       box-shadow: var(--shadow-brutal) var(--color-success-bold);
@@ -424,7 +419,7 @@
     /* Bold status - modified (warning) - attention required */
     .status-modified {
       background: var(--color-warning);
-      color: #000;
+      color: var(--color-text-inverse);
       border: var(--border-bold) currentColor;
       box-shadow: var(--shadow-brutal-sm) var(--color-warning-bold);
       font-weight: 600;
@@ -597,7 +592,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--glass-bg-subtle);
     }
 
     .modal-header h2 {
@@ -732,10 +727,10 @@
       </div>
       <textarea id="git-output" placeholder="Paste the output of the command above here..." aria-label="Git worktree output"></textarea>
       <div class="input-actions">
-        <button class="btn btn-primary" onclick="parseAndDisplay()">Parse & Display</button>
-        <button class="btn btn-success" onclick="loadFromServer()" id="server-btn" title="Requires: uv run scripts/playground-server.py">Load from Server</button>
-        <button class="btn" onclick="loadSampleData()">Load Sample Data</button>
-        <button class="btn" onclick="clearData()">Clear</button>
+        <button class="btn btn-primary" onclick="parseAndDisplay()" aria-label="Parse git output and display worktrees">Parse & Display</button>
+        <button class="btn btn-success" onclick="loadFromServer()" id="server-btn" title="Requires: uv run scripts/playground-server.py" aria-label="Load worktree data from local server">Load from Server</button>
+        <button class="btn" onclick="loadSampleData()" aria-label="Load example worktree data">Load Sample Data</button>
+        <button class="btn" onclick="clearData()" aria-label="Clear all worktree data">Clear</button>
       </div>
       <p class="sample-data-note">Run <code>uv run scripts/playground-server.py</code> for auto-loading, or paste data manually.</p>
     </section>
