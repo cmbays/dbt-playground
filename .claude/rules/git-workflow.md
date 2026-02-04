@@ -82,6 +82,7 @@ git push --force-with-lease origin feature-branch
 ```
 
 **Key points**:
+
 - Use `--force-with-lease` (safer than `--force`, prevents overwriting others' work)
 - For workflow/infrastructure conflicts, keep main's version with `--ours`
 - Always rebase after merging infrastructure PRs (runner setup, CI changes, etc.)

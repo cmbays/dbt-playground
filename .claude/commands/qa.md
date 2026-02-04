@@ -174,6 +174,7 @@ temp/AGENT_REPORTS/{feature}/QA_REPORT.md
 ```
 
 Where `{feature}` is extracted from the branch name:
+
 - `feat/customer-analytics` → `customer-analytics`
 - `fix/null-handling` → `null-handling`
 
@@ -205,6 +206,7 @@ Created at: `temp/AGENT_REPORTS/{feature}/QA_REPORT.md`
 Template: `docs/templates/agent-reports/QA_REPORT.md`
 
 Contains:
+
 - Test Summary (counts by category)
 - Test Execution (commands and output)
 - Issues Found (failures with details)
@@ -262,6 +264,7 @@ QA results are recorded in WORKFLOW_STATE.md:
 ### Test Failures
 
 If tests fail, /qa still produces QA_REPORT.md but:
+
 - Documents failures in "Issues Found" section
 - Does NOT check "QA Complete" box
 - Reports clear next steps
