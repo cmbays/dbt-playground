@@ -8,29 +8,27 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Current Phase
 
-**Status**: v0.8.0 - Data Quality Quarantine Complete (2026-02-01)
+**Status**: v0.10.0 - Agent Orchestration & Dashboard System (2026-02-04)
 
 - dbt 1.11.2 + duckdb-adapter 1.10.0 working
 - 31 models total (staging, intermediate, dimensional, analytics, quarantine)
-- 425 tests passing (0 errors) - improved from 405 PASS, 2 ERROR
-- **Data Quality Quarantine System** (v0.8 Phase 5):
-  - 3 reusable macros: `add_dq_flags()`, `quarantine_filter()`, `generate_quarantine_model()`
-  - 2 quarantine tables: encounters (1 record), medications (5 records)
-  - DQ monitoring mart: `mart_dq_summary` with entity-level metrics
-  - Individual validation flags for precise debugging
-  - 6 records quarantined (0.006% rate)
-  - Documentation: ADR-004, reference guide, macro README
-- Interactive playgrounds: Workflow Hub, Workflow Chronicle, Worktree Coordinator, Mermaid Designer, Agent Visualizer
+- 425 dbt tests passing + 211 Python unit tests + 17 Playwright E2E tests
+- **v0.10 Agent Orchestration Features**:
+  - **FS1 Agent Memory**: Daily session logs, weekly consolidation, compound learning loop
+  - **FS2 Kanban Workflow**: Checklist schema, transition guards, WIP tracking
+  - **FS3 QA Enforcement**: qa-reviewer persona, QA_REPORT.md template, /qa command
+  - **FS5 Metrics Dashboard**: Agent Visualizer integration, DuckDB metrics (ADR-015)
+  - **FS7 GitHub Integration**: CODEOWNERS, task file sync, issue-ID naming
+  - **Worktree Monitor v2.0**: E2E tests, protocol-based DI, YAML config
+- Interactive playgrounds: Workflow Hub (v0.10.0), Learning Playground, Worktree Monitor
+- Security hardening: XSS prevention, Mermaid strict mode, ARIA accessibility
 - Agent context management with inter-agent reports
 - uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
 - GitHub Actions automation: PR validation, issue linking, auto-labeling, dbt CI tests
-- Issue creation CLI with YAML batch templates (`scripts/github-ops.py`)
-- Milestone tracking with CLI commands and CLAUDE.md status section
-- Enhanced PR-Issue linking with extended keyword support
-- GitHub Projects integration using built-in automation
-- ADR tracking: 14 ADRs indexed (ADR-004: quarantine pattern)
+- Self-hosted GitHub Actions runner for CI
+- ADR tracking: 15 ADRs indexed (ADR-015: DuckDB for metrics)
 
-**Next**: v0.9 - TBD (incremental models, advanced analytics, or monitoring)
+**Next**: v0.11 - Architecture Review & Documentation Level-Up
 
 ## Project Structure
 
@@ -336,14 +334,13 @@ Visual tools for learning and development. Launch via commands or explore the HT
 
 | Playground | Command | Purpose | Status |
 |------------|---------|---------|--------|
-| Workflow Hub | `/playground:hub` | Central command center, session resume | ✅ v0.6.0 |
-| Workflow Chronicle | `/playground:chronicle` | Timeline visualization, health pulse, agent tracking | ✅ v0.7.0 |
-| Worktree Coordinator | `/playground:worktrees` | Manage parallel git worktree sessions | ✅ v0.6.0 |
+| Workflow Hub | `/playground:hub` | Central command center, session resume, Agent Visualizer | ✅ v0.10.0 |
+| Learning Playground | `/playground:learning` | Interactive tutorials with reveal.js slides | ✅ v0.10.0 |
+| Worktree Monitor | `/playground:worktrees` | Git worktree status with E2E tests | ✅ v0.10.0 |
 | Mermaid Designer | `/playground:mermaid` | Create architecture diagrams visually | ✅ v0.6.0 |
-| Agent Visualizer | `/playground:agents` | View agent workflows and handoffs | ✅ v0.7.1 |
-| Schema Explorer | `/playground:schema` | Browse Synthea healthcare data | Planned v0.7.2 |
-| Lineage Explorer | `/playground:lineage` | Trace dbt data flow | Planned v0.7.2 |
-| Dashboard Builder | `/playground:dashboards` | Mock analytics layouts | Planned v0.7.3 |
+| Workflow Chronicle | `/playground:chronicle` | Timeline visualization, health pulse | ✅ v0.7.0 |
+| Schema Explorer | `/playground:schema` | Browse Synthea healthcare data | Planned |
+| Lineage Explorer | `/playground:lineage` | Trace dbt data flow | Planned |
 
 **Quick Start**: Run `/playground` to open the Workflow Hub (default entry point).
 
@@ -437,25 +434,28 @@ This project uses a self-hosted runner for CI to avoid consuming GitHub Actions 
 
 ## Milestone Status
 
-Tracking progress toward v0.8, v0.10, and v1.0 releases.
+Tracking progress toward v0.10, v0.11, and v1.0 releases.
 
 | Milestone | Target | Open | Closed | Progress |
 |-----------|--------|------|--------|----------|
-| v0.7.0 | Jan 31, 2026 | 0 | 4 | 100% (Complete) |
-| v0.8.0 | Feb 1, 2026 | 0 | 5 | 100% (Complete) |
-| v0.9 | Mar 31, 2026 | 0 | 15 | 100% (Complete) |
-| v0.10 | Apr 30, 2026 | 20 | 0 | Planned |
+| v0.7.0 | Jan 31, 2026 | 0 | 4 | 100% ✅ |
+| v0.8.0 | Feb 1, 2026 | 0 | 5 | 100% ✅ |
+| v0.9 | Mar 31, 2026 | 0 | 15 | 100% ✅ |
+| v0.10.0 | Feb 4, 2026 | 0 | 25+ | 100% ✅ |
+| v0.11 | TBD | - | - | Planned |
 | v1.0 | Jun 30, 2026 | 2 | 0 | Planned |
 
-### v0.10 Feature Sets (Agent Orchestration)
+### v0.10 Feature Sets (Complete ✅)
 
-| Feature Set | Epic | Status |
-|-------------|------|--------|
-| Agent Memory & Learning | #143 | Planned |
-| Kanban Workflow Engine | #144 | Planned |
-| QA & Testing Enforcement | #145 | Planned |
-| Metrics & Dashboard | #146 | Planned |
-| GitHub Integration | #147 | Planned |
+| Feature Set | Epic | PRs | Status |
+|-------------|------|-----|--------|
+| Agent Memory & Learning | #143 | #178, #189 | ✅ Complete |
+| Kanban Workflow Engine | #144 | #182 | ✅ Complete |
+| QA & Testing Enforcement | #145 | #184 | ✅ Complete |
+| Metrics & Dashboard | #146 | #188 | ✅ Complete |
+| GitHub Integration | #147 | #183 | ✅ Complete |
+| Worktree Monitor v2.0 | - | #200 | ✅ Complete |
+| Learning Playground | - | #191 | ✅ Complete |
 
 See `docs/specs/ROADMAP-v0.10.md` for detailed planning.
 
