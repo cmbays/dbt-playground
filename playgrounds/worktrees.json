@@ -1,0 +1,147 @@
+{
+  "timestamp": "2026-02-04T06:04:14.738437+00:00",
+  "config_version": 1,
+  "milestone": "Worktree Monitor v2.0 Development",
+  "worktree_count": 3,
+  "worktrees": [
+    {
+      "path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground",
+      "branch": "main",
+      "commit_hash": "df13263c795b50efa4ce2a091768b06d32ad11b2",
+      "commit_short": "df13263",
+      "is_main": true,
+      "status": "dirty",
+      "files_changed": 19,
+      "files_staged": 0,
+      "last_commit_msg": "feat(monitor): Day 4 review fixes and architectural improvements (#190)",
+      "last_commit_date": "2026-02-03T21:01:30-05:00",
+      "track_name": null,
+      "track_color": null,
+      "epic_number": null,
+      "epic_issues": null,
+      "pr": null,
+      "ci_checks": null,
+      "coderabbit": null,
+      "anomalies": [
+        {
+          "type": "DIRTY_WORKTREE",
+          "severity": "LOW",
+          "message": "Uncommitted changes (19 files)",
+          "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground",
+          "branch": "main"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-learning-playground",
+      "branch": "feat/learning-playground",
+      "commit_hash": "afc3eb7d9c2b3f55a8bd5d32539a04da68fe31d4",
+      "commit_short": "afc3eb7",
+      "is_main": false,
+      "status": "clean",
+      "files_changed": 0,
+      "files_staged": 0,
+      "last_commit_msg": "docs: add Learning Playground research, TDD, and ADRs",
+      "last_commit_date": "2026-02-03T20:57:53-05:00",
+      "track_name": null,
+      "track_color": null,
+      "epic_number": null,
+      "epic_issues": null,
+      "pr": null,
+      "ci_checks": null,
+      "coderabbit": null,
+      "anomalies": []
+    },
+    {
+      "path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-metrics-dashboard",
+      "branch": "feat/metrics-dashboard",
+      "commit_hash": "960ecf601fe9f4d9758601454d767e988e21b136",
+      "commit_short": "960ecf6",
+      "is_main": false,
+      "status": "dirty",
+      "files_changed": 8,
+      "files_staged": 0,
+      "last_commit_msg": "feat(metrics): initialize FS5 metrics database structure",
+      "last_commit_date": "2026-02-03T18:48:14-05:00",
+      "track_name": null,
+      "track_color": null,
+      "epic_number": null,
+      "epic_issues": null,
+      "pr": null,
+      "ci_checks": null,
+      "coderabbit": null,
+      "anomalies": [
+        {
+          "type": "DIRTY_WORKTREE",
+          "severity": "LOW",
+          "message": "Uncommitted changes (8 files)",
+          "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-metrics-dashboard",
+          "branch": "feat/metrics-dashboard"
+        }
+      ]
+    }
+  ],
+  "tracks": [
+    {
+      "name": "Worktree Monitor",
+      "epic": 0,
+      "color": "#888888",
+      "worktree_count": 0,
+      "issues_open": 0,
+      "issues_closed": 0,
+      "status": "IN_PROGRESS"
+    },
+    {
+      "name": "FS5 Metrics Dashboard",
+      "epic": 146,
+      "color": "#888888",
+      "worktree_count": 0,
+      "issues_open": 0,
+      "issues_closed": 0,
+      "status": "IN_PROGRESS"
+    },
+    {
+      "name": "Learning Playground",
+      "epic": 0,
+      "color": "#888888",
+      "worktree_count": 0,
+      "issues_open": 0,
+      "issues_closed": 0,
+      "status": "IN_PROGRESS"
+    },
+    {
+      "name": "General Development",
+      "epic": 0,
+      "color": "#888888",
+      "worktree_count": 0,
+      "issues_open": 0,
+      "issues_closed": 0,
+      "status": "IN_PROGRESS"
+    }
+  ],
+  "archived": [],
+  "heartbeat": null,
+  "anomalies": [
+    {
+      "type": "DIRTY_WORKTREE",
+      "severity": "LOW",
+      "message": "Uncommitted changes (19 files)",
+      "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground",
+      "branch": "main"
+    },
+    {
+      "type": "DIRTY_WORKTREE",
+      "severity": "LOW",
+      "message": "Uncommitted changes (8 files)",
+      "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-metrics-dashboard",
+      "branch": "feat/metrics-dashboard"
+    }
+  ],
+  "errors": [
+    {
+      "component": "HeartbeatMonitor",
+      "message": "Failed to parse heartbeat file: /Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground/temp/WORKFLOW_STATE.md. Reason: Invalid JSON: Expecting value: line 1 column 1 (char 0) | Details: {'path': '/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground/temp/WORKFLOW_STATE.md', 'reason': 'Invalid JSON: Expecting value: line 1 column 1 (char 0)'}",
+      "timestamp": "2026-02-04T06:04:14.738437+00:00"
+    }
+  ]
+}

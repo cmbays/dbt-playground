@@ -1,0 +1,41 @@
+name: "Worktree Monitor v2.0 Development"
+milestone: v0.10
+target_date: "2026-02-10"
+version: 1
+phases:
+  - id: phase-active
+    name: "Active Development"
+    order: 1
+    status: IN_PROGRESS
+    workstreams:
+      - id: ws-monitor
+        name: "Worktree Monitor"
+        epic: 0
+        description: "Worktree Monitor v2.0 orchestration dashboard"
+        branches:
+          - pattern: "feat/monitor-*"
+          - pattern: "feat/worktree-*"
+        status: IN_PROGRESS
+      - id: ws-metrics
+        name: "FS5 Metrics Dashboard"
+        epic: 146
+        description: "Metrics and dashboard system"
+        branches:
+          - pattern: "feat/metrics-*"
+        status: IN_PROGRESS
+      - id: ws-learning
+        name: "Learning Playground"
+        epic: 0
+        description: "Learning and exploration features"
+        branches:
+          - pattern: "feat/learning-*"
+        status: IN_PROGRESS
+      - id: ws-default
+        name: "General Development"
+        epic: 0
+        description: "General features and fixes"
+        branches:
+          - pattern: "feat/*"
+          - pattern: "fix/*"
+          - pattern: "refactor/*"
+        status: IN_PROGRESS
