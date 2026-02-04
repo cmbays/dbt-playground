@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -52,12 +52,12 @@ class ArchiveManager:
     for quick enumeration without scanning directories.
     """
 
-    INDEX_FILENAME = "archive-index.json"
-    MANIFEST_FILENAME = "manifest.json"
+    INDEX_FILENAME = 'archive-index.json'
+    MANIFEST_FILENAME = 'manifest.json'
     INDEX_SCHEMA_VERSION = 1
 
     # Version name pattern: v followed by major.minor (e.g., v0.10, v1.0)
-    VERSION_PATTERN = re.compile(r"^v\d+\.\d+$")
+    VERSION_PATTERN = re.compile(r'^v\d+\.\d+$')
 
     def __init__(self, archives_dir: Path):
         """Initialize with archives directory path.
@@ -75,7 +75,7 @@ class ArchiveManager:
         version_name: str,
         plan: VersionPlan,
         worktrees: list[EnrichedWorktree],
-        reason: str = "",
+        reason: str = '',
     ) -> VersionArchive:
         """Archive a complete version.
 
@@ -104,8 +104,8 @@ class ArchiveManager:
         # Check for existing archive
         if version_dir.exists():
             logger.warning(
-                f"Archive for version {version_name} already exists. "
-                "Will overwrite with new archive."
+                f'Archive for version {version_name} already exists. '
+                'Will overwrite with new archive.'
             )
 
         # Create version directory
@@ -121,7 +121,7 @@ class ArchiveManager:
         worktree_data = [wt.to_dict() for wt in worktrees]
 
         # Create archive timestamp
-        archived_at = datetime.now(timezone.utc)
+        archived_at = datetime.now(UTC)
 
         # Create VersionArchive object
         archive = VersionArchive(
@@ -141,7 +141,7 @@ class ArchiveManager:
         # Update index
         self._update_index(version_name)
 
-        logger.info(f"Archived version {version_name} with {len(worktrees)} worktrees")
+        logger.info(f'Archived version {version_name} with {len(worktrees)} worktrees')
         return archive
 
     def list_versions(self) -> list[VersionSummary]:
@@ -159,18 +159,18 @@ class ArchiveManager:
             return []
 
         try:
-            index_data = json.loads(index_path.read_text(encoding="utf-8"))
+            index_data = json.loads(index_path.read_text(encoding='utf-8'))
         except json.JSONDecodeError as e:
             raise ArchiveCorruptedError(
                 str(index_path),
-                f"Invalid JSON in archive index: {e}",
+                f'Invalid JSON in archive index: {e}',
             ) from e
 
         summaries = []
-        for version_name in index_data.get("versions", []):
+        for version_name in index_data.get('versions', []):
             # Skip invalid/corrupted version names to prevent path traversal
             if not self.VERSION_PATTERN.match(version_name):
-                logger.warning(f"Skipping invalid version name in index: {version_name}")
+                logger.warning(f'Skipping invalid version name in index: {version_name}')
                 continue
             archive = self.get_version(version_name)
             if archive:
@@ -199,7 +199,7 @@ class ArchiveManager:
         """
         # Validate version_name to prevent path traversal attacks
         if not self.VERSION_PATTERN.match(version_name):
-            logger.warning(f"Invalid version name rejected: {version_name}")
+            logger.warning(f'Invalid version name rejected: {version_name}')
             return None
 
         version_dir = self.archives_dir / version_name
@@ -209,38 +209,38 @@ class ArchiveManager:
             return None
 
         try:
-            manifest_data = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest_data = json.loads(manifest_path.read_text(encoding='utf-8'))
         except json.JSONDecodeError as e:
             raise ArchiveCorruptedError(
                 str(manifest_path),
-                f"Invalid JSON in manifest: {e}",
+                f'Invalid JSON in manifest: {e}',
             ) from e
 
         # Parse datetime
-        archived_at_str = manifest_data.get("archived_at")
+        archived_at_str = manifest_data.get('archived_at')
         if archived_at_str:
             archived_at = datetime.fromisoformat(archived_at_str)
         else:
-            archived_at = datetime.now(timezone.utc)
+            archived_at = datetime.now(UTC)
 
         # Parse metrics
-        metrics_data = manifest_data.get("metrics", {})
+        metrics_data = manifest_data.get('metrics', {})
         metrics = ArchiveMetrics(
-            worktree_count=metrics_data.get("worktree_count", 0),
-            phase_count=metrics_data.get("phase_count", 0),
-            workstream_count=metrics_data.get("workstream_count", 0),
-            total_commits=metrics_data.get("total_commits", 0),
-            total_prs_merged=metrics_data.get("total_prs_merged", 0),
+            worktree_count=metrics_data.get('worktree_count', 0),
+            phase_count=metrics_data.get('phase_count', 0),
+            workstream_count=metrics_data.get('workstream_count', 0),
+            total_commits=metrics_data.get('total_commits', 0),
+            total_prs_merged=metrics_data.get('total_prs_merged', 0),
         )
 
         return VersionArchive(
-            version=manifest_data.get("version", version_name),
+            version=manifest_data.get('version', version_name),
             archived_at=archived_at,
-            reason=manifest_data.get("reason", ""),
-            phases=manifest_data.get("phases", []),
-            worktrees=manifest_data.get("worktrees", []),
+            reason=manifest_data.get('reason', ''),
+            phases=manifest_data.get('phases', []),
+            worktrees=manifest_data.get('worktrees', []),
             metrics=metrics,
-            plan_snapshot=manifest_data.get("plan_snapshot"),
+            plan_snapshot=manifest_data.get('plan_snapshot'),
         )
 
     def _compute_metrics(
@@ -259,10 +259,7 @@ class ArchiveManager:
         workstream_count = sum(len(phase.workstreams) for phase in plan.phases)
 
         # Count PRs that are merged
-        prs_merged = sum(
-            1 for wt in worktrees
-            if wt.pr and wt.pr.state.value == "merged"
-        )
+        prs_merged = sum(1 for wt in worktrees if wt.pr and wt.pr.state.value == 'merged')
 
         return ArchiveMetrics(
             worktree_count=len(worktrees),
@@ -286,26 +283,26 @@ class ArchiveManager:
         # Load existing index or create new
         if index_path.exists():
             try:
-                index_data = json.loads(index_path.read_text(encoding="utf-8"))
+                index_data = json.loads(index_path.read_text(encoding='utf-8'))
             except json.JSONDecodeError:
                 # Corrupted index, start fresh
-                logger.warning("Corrupted archive index, creating new one")
+                logger.warning('Corrupted archive index, creating new one')
                 index_data = {
-                    "version": self.INDEX_SCHEMA_VERSION,
-                    "versions": [],
+                    'version': self.INDEX_SCHEMA_VERSION,
+                    'versions': [],
                 }
         else:
             index_data = {
-                "version": self.INDEX_SCHEMA_VERSION,
-                "versions": [],
+                'version': self.INDEX_SCHEMA_VERSION,
+                'versions': [],
             }
 
         # Add version if not already present
-        if version_name not in index_data["versions"]:
-            index_data["versions"].append(version_name)
+        if version_name not in index_data['versions']:
+            index_data['versions'].append(version_name)
 
         # Update timestamp
-        index_data["last_updated"] = datetime.now(timezone.utc).isoformat()
+        index_data['last_updated'] = datetime.now(UTC).isoformat()
 
         # Write atomically
         self._atomic_write_json(index_path, index_data)
@@ -326,12 +323,12 @@ class ArchiveManager:
         dir_path = path.parent
         try:
             fd, temp_path = tempfile.mkstemp(
-                suffix=".tmp",
-                prefix=path.stem + "_",
+                suffix='.tmp',
+                prefix=path.stem + '_',
                 dir=dir_path,
             )
             try:
-                with os.fdopen(fd, "w", encoding="utf-8") as f:
+                with os.fdopen(fd, 'w', encoding='utf-8') as f:
                     json.dump(data, f, indent=2, default=str)
 
                 # Atomic replace (works consistently across platforms)
@@ -343,6 +340,6 @@ class ArchiveManager:
                     os.unlink(temp_path)
                 raise
         except PermissionError as e:
-            raise ArchiveWriteError(str(path), f"Permission denied: {e}") from e
+            raise ArchiveWriteError(str(path), f'Permission denied: {e}') from e
         except OSError as e:
-            raise ArchiveWriteError(str(path), f"IO error: {e}") from e
+            raise ArchiveWriteError(str(path), f'IO error: {e}') from e

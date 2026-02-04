@@ -9,6 +9,7 @@ Created: Phase 4 Day 5 (Review Fixes)
 from datetime import datetime
 from typing import Protocol, runtime_checkable
 
+from .constants import HeartbeatState
 from .models import (
     CIChecks,
     HeartbeatStatus,
@@ -19,7 +20,6 @@ from .models import (
     WorkstreamConfig,
     WorktreeInfo,
 )
-from .constants import HeartbeatState
 
 
 @runtime_checkable
@@ -34,9 +34,7 @@ class VersionPlanLoaderProtocol(Protocol):
         """Reload if source has changed, return None if unchanged."""
         ...
 
-    def get_workstream_for_branch(
-        self, branch: str
-    ) -> tuple[PhaseConfig, WorkstreamConfig] | None:
+    def get_workstream_for_branch(self, branch: str) -> tuple[PhaseConfig, WorkstreamConfig] | None:
         """Match a branch to its workstream configuration."""
         ...
 

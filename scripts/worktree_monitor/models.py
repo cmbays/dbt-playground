@@ -397,7 +397,7 @@ class VersionSummary(SerializableMixin):
     version: str
     archived_at: datetime
     worktree_count: int
-    reason: str = ""
+    reason: str = ''
 
 
 @dataclass

@@ -785,6 +785,12 @@ class WorktreeMonitor:
         if wt_dict.get("last_commit_date"):
             last_commit_date = datetime.fromisoformat(wt_dict["last_commit_date"])
 
+        # Parse status with fallback to CLEAN for invalid values
+        try:
+            status = WorktreeStatus(wt_dict.get("status", "clean"))
+        except ValueError:
+            status = WorktreeStatus.CLEAN
+
         # Reconstruct WorktreeInfo
         worktree_info = WorktreeInfo(
             path=wt_dict["path"],
@@ -792,7 +798,7 @@ class WorktreeMonitor:
             commit_hash=wt_dict["commit_hash"],
             commit_short=wt_dict["commit_short"],
             is_main=wt_dict.get("is_main", False),
-            status=WorktreeStatus(wt_dict.get("status", "unknown")),
+            status=status,
             files_changed=wt_dict.get("files_changed", 0),
             files_staged=wt_dict.get("files_staged", 0),
             last_commit_msg=wt_dict.get("last_commit_msg", ""),
