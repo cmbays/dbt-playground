@@ -12,12 +12,13 @@ Design principles:
 Created: Phase 4 Day 4
 """
 
+import contextlib
 import json
 import logging
 import os
 import tempfile
-import time
 import threading
+import time
 import uuid
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -28,12 +29,9 @@ from typing import Any
 from .anomaly_detector import AnomalyDetector
 from .archive_manager import ArchiveManager
 from .constants import (
-    AnomalySeverity,
-    AnomalyType,
     ArchiveReason,
     CodeRabbitReviewStatus,
     HeartbeatState,
-    WorkstreamStatus,
     WorktreeStatus,
 )
 from .exceptions import (
@@ -51,8 +49,8 @@ from .exceptions import (
 from .github_adapter import GitHubAdapter
 from .heartbeat_monitor import HeartbeatMonitor
 from .models import (
-    Anomaly,
     ArchivedWorktree,
+    CIChecks,
     CodeRabbitStatus,
     ComponentFailureInfo,
     EnrichedWorktree,
@@ -60,7 +58,6 @@ from .models import (
     MonitorOutput,
     PhaseConfig,
     PRInfo,
-    CIChecks,
     TrackSummary,
     VersionPlan,
     WorkstreamConfig,
@@ -371,9 +368,11 @@ class WorktreeMonitor:
                 if stop_event and stop_event.is_set():
                     break
                 # Also check max runtime during sleep
-                if max_runtime_seconds is not None:
-                    if time.monotonic() - start_time >= max_runtime_seconds:
-                        break
+                if (
+                    max_runtime_seconds is not None
+                    and time.monotonic() - start_time >= max_runtime_seconds
+                ):
+                    break
                 time.sleep(1)
 
     # -------------------------------------------------------------------------
@@ -497,9 +496,7 @@ class WorktreeMonitor:
             return False
         if worktree.is_main:
             return False
-        if self._rate_limited_until and now < self._rate_limited_until:
-            return False
-        return True
+        return not (self._rate_limited_until and now < self._rate_limited_until)
 
     def _match_workstream(
         self,
@@ -879,10 +876,8 @@ class WorktreeMonitor:
                     json.dump(data, f, indent=2, default=str)
                 os.replace(temp_path, path)
             except (OSError, TypeError, ValueError):
-                try:
+                with contextlib.suppress(FileNotFoundError):
                     os.unlink(temp_path)
-                except FileNotFoundError:
-                    pass  # Already cleaned up or never created
                 raise
         except PermissionError as e:
             raise MonitorWriteError(str(path), f"Permission denied: {e}") from e
