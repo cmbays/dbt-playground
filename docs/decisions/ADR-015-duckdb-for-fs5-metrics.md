@@ -41,11 +41,13 @@ However, during FS5 implementation planning, the team identified an alternative 
 ### Architecture Change
 
 **Before (SQLite approach)**:
+
 ```
 JSONL Files → Sync Script (ETL) → SQLite → Dashboard
 ```
 
 **After (DuckDB approach)**:
+
 ```
 JSONL Files → DuckDB Views (direct query) → Dashboard
 ```
