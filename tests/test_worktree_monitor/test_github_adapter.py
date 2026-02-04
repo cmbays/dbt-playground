@@ -650,3 +650,53 @@ class TestCacheClearing:
             # Second call (should make new API call)
             adapter.get_pr_state("feat/qa-enforcement")
             assert mock_run.call_count == 2
+
+
+# =============================================================================
+# Repository Name Validation Tests (HIGH-08)
+# =============================================================================
+
+
+class TestRepoNameValidation:
+    """Test repository name validation in GitHubAdapter constructor."""
+
+    def test_valid_repo_names_accepted(self):
+        """Test that valid repository names are accepted."""
+        valid_repos = [
+            "owner/repo",
+            "my-org/my-repo",
+            "My_Org/My_Repo",
+            "org123/repo456",
+            "a/b",
+            "org.name/repo.name",
+            "my-org_123/repo-name_456",
+        ]
+        for repo in valid_repos:
+            adapter = GitHubAdapter(repo=repo)
+            assert adapter.repo == repo
+
+    def test_invalid_repo_names_rejected(self):
+        """Test that invalid repository names raise ValueError."""
+        invalid_repos = [
+            "no-slash",
+            "",
+            "/repo",
+            "owner/",
+            "owner//repo",
+            "owner/repo/extra",
+            "owner/repo with space",
+            "owner/repo@special",
+            "owner/repo!invalid",
+        ]
+        for repo in invalid_repos:
+            with pytest.raises(ValueError) as exc_info:
+                GitHubAdapter(repo=repo)
+            assert "Invalid repository format" in str(exc_info.value)
+
+    def test_error_message_includes_repo(self):
+        """Test that ValueError message includes the invalid repo name."""
+        invalid_repo = "bad repo name"
+        with pytest.raises(ValueError) as exc_info:
+            GitHubAdapter(repo=invalid_repo)
+        assert invalid_repo in str(exc_info.value)
+        assert "owner/repo" in str(exc_info.value)
