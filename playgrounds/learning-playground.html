@@ -1,0 +1,2332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Playground - dbt-playground</title>
+
+  <!-- reveal.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/white.css">
+
+  <style>
+    /* ==========================================================================
+       CSS Variables - Learning Playground Theme
+       Priority: Visual delight, polished experience
+       ========================================================================== */
+    :root {
+      /* Primary palette - Warm, inviting learning environment */
+      --lp-bg-primary: #fdfcfb;
+      --lp-bg-secondary: #f7f5f3;
+      --lp-bg-card: #ffffff;
+      --lp-bg-code: #1e1e2e;
+
+      /* Accent colors - Educational, trustworthy */
+      --lp-accent-primary: #6366f1;
+      --lp-accent-secondary: #8b5cf6;
+      --lp-accent-success: #22c55e;
+      --lp-accent-warning: #f59e0b;
+      --lp-accent-danger: #ef4444;
+
+      /* Text colors */
+      --lp-text-primary: #1a1a2e;
+      --lp-text-secondary: #4a5568;
+      --lp-text-muted: #718096;
+
+      /* Typography */
+      --lp-font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --lp-font-body: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      --lp-font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Monaco, monospace;
+
+      /* Spacing scale */
+      --lp-space-xs: 0.25rem;
+      --lp-space-sm: 0.5rem;
+      --lp-space-md: 1rem;
+      --lp-space-lg: 1.5rem;
+      --lp-space-xl: 2rem;
+      --lp-space-2xl: 3rem;
+
+      /* Animation */
+      --lp-transition-fast: 150ms ease;
+      --lp-transition-normal: 300ms ease;
+      --lp-transition-slow: 500ms ease;
+
+      /* Shadows - Soft, layered */
+      --lp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --lp-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --lp-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+      /* Border radius - Friendly, approachable */
+      --lp-radius-sm: 0.375rem;
+      --lp-radius-md: 0.5rem;
+      --lp-radius-lg: 0.75rem;
+      --lp-radius-xl: 1rem;
+
+      /* Border */
+      --lp-border-color: #e2e8f0;
+    }
+
+    /* Dark mode - Cozy, not harsh */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --lp-bg-primary: #1a1a2e;
+        --lp-bg-secondary: #16162a;
+        --lp-bg-card: #222240;
+        --lp-bg-code: #0d0d1a;
+        --lp-text-primary: #f0f0f5;
+        --lp-text-secondary: #a0aec0;
+        --lp-text-muted: #718096;
+        --lp-border-color: #2d3748;
+        --lp-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+        --lp-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    /* ==========================================================================
+       Base Styles
+       ========================================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: var(--lp-font-body);
+      background: var(--lp-bg-primary);
+      color: var(--lp-text-primary);
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       App Container Layout
+       ========================================================================== */
+    .app-container {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ==========================================================================
+       Library Panel (Left Sidebar)
+       ========================================================================== */
+    .library-panel {
+      width: 280px;
+      min-width: 280px;
+      background: var(--lp-bg-secondary);
+      border-right: 1px solid var(--lp-border-color);
+      display: flex;
+      flex-direction: column;
+      transition: var(--lp-transition-normal);
+      z-index: 100;
+    }
+
+    .library-panel.collapsed {
+      width: 48px;
+      min-width: 48px;
+    }
+
+    .library-panel.collapsed .library-content,
+    .library-panel.collapsed .library-header-title,
+    .library-panel.collapsed .content-source-toggle,
+    .library-panel.collapsed .tag-filter-section {
+      display: none;
+    }
+
+    .library-header {
+      padding: var(--lp-space-md);
+      border-bottom: 1px solid var(--lp-border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--lp-space-sm);
+    }
+
+    .library-header-title {
+      font-family: var(--lp-font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--lp-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-sm);
+    }
+
+    .collapse-btn {
+      background: transparent;
+      border: none;
+      padding: var(--lp-space-xs);
+      cursor: pointer;
+      color: var(--lp-text-muted);
+      border-radius: var(--lp-radius-sm);
+      transition: var(--lp-transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .collapse-btn:hover {
+      background: var(--lp-bg-card);
+      color: var(--lp-text-primary);
+    }
+
+    .library-panel.collapsed .collapse-btn svg {
+      transform: rotate(180deg);
+    }
+
+    /* Content Source Toggle */
+    .content-source-toggle {
+      padding: var(--lp-space-sm) var(--lp-space-md);
+      border-bottom: 1px solid var(--lp-border-color);
+    }
+
+    .source-toggle-group {
+      display: flex;
+      background: var(--lp-bg-card);
+      border-radius: var(--lp-radius-md);
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .source-toggle-btn {
+      flex: 1;
+      padding: var(--lp-space-xs) var(--lp-space-sm);
+      border: none;
+      background: transparent;
+      color: var(--lp-text-muted);
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: var(--lp-radius-sm);
+      cursor: pointer;
+      transition: var(--lp-transition-fast);
+    }
+
+    .source-toggle-btn:hover {
+      color: var(--lp-text-primary);
+    }
+
+    .source-toggle-btn.active {
+      background: var(--lp-accent-primary);
+      color: white;
+      box-shadow: var(--lp-shadow-sm);
+    }
+
+    /* Library Content */
+    .library-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--lp-space-sm);
+    }
+
+    .deck-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--lp-space-xs);
+    }
+
+    .deck-item {
+      padding: var(--lp-space-sm) var(--lp-space-md);
+      background: var(--lp-bg-card);
+      border: 1px solid transparent;
+      border-radius: var(--lp-radius-md);
+      cursor: pointer;
+      transition: var(--lp-transition-fast);
+    }
+
+    .deck-item:hover {
+      border-color: var(--lp-border-color);
+      box-shadow: var(--lp-shadow-sm);
+    }
+
+    .deck-item.active {
+      border-color: var(--lp-accent-primary);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+    }
+
+    .deck-item-title {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--lp-text-primary);
+      margin-bottom: 2px;
+    }
+
+    .deck-item-meta {
+      font-size: 0.6875rem;
+      color: var(--lp-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-sm);
+    }
+
+    .deck-item-tags {
+      display: flex;
+      gap: 4px;
+      margin-top: var(--lp-space-xs);
+    }
+
+    .deck-tag {
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      background: var(--lp-bg-secondary);
+      border-radius: var(--lp-radius-sm);
+      color: var(--lp-text-muted);
+    }
+
+    /* ==========================================================================
+       Main Content Area
+       ========================================================================== */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      padding: var(--lp-space-sm) var(--lp-space-lg);
+      background: var(--lp-bg-card);
+      border-bottom: 1px solid var(--lp-border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 50;
+    }
+
+    .deck-title {
+      font-family: var(--lp-font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--lp-text-primary);
+    }
+
+    .top-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-sm);
+    }
+
+    .btn {
+      padding: var(--lp-space-xs) var(--lp-space-md);
+      border: 1px solid var(--lp-border-color);
+      border-radius: var(--lp-radius-md);
+      background: var(--lp-bg-card);
+      color: var(--lp-text-primary);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-xs);
+      transition: var(--lp-transition-fast);
+    }
+
+    .btn:hover {
+      background: var(--lp-bg-secondary);
+    }
+
+    .btn-icon {
+      padding: var(--lp-space-xs);
+      border: none;
+      background: transparent;
+    }
+
+    /* ==========================================================================
+       Slide Viewer (reveal.js container)
+       ========================================================================== */
+    .slide-viewer {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Override reveal.js styles for integration */
+    .reveal-container {
+      height: 100%;
+      width: 100%;
+    }
+
+    .reveal {
+      height: 100%;
+      cursor: default !important;
+    }
+
+    .reveal * {
+      cursor: inherit;
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal .slides section {
+      padding: var(--lp-space-2xl);
+      /* Allow scrolling for overflow content */
+      overflow-y: auto;
+      max-height: 100%;
+    }
+
+    /* Ensure content-heavy slides don't clip */
+    .reveal .slides section > * {
+      max-width: 100%;
+    }
+
+    /* Slide Typography */
+    .reveal h1 {
+      font-family: var(--lp-font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--lp-accent-primary), var(--lp-accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: var(--lp-space-lg);
+    }
+
+    .reveal h2 {
+      font-family: var(--lp-font-display);
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--lp-accent-primary);
+      margin-bottom: var(--lp-space-lg);
+    }
+
+    .reveal h3 {
+      font-family: var(--lp-font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--lp-text-primary);
+      margin-bottom: var(--lp-space-md);
+    }
+
+    .reveal p {
+      font-family: var(--lp-font-body);
+      font-size: 1.125rem;
+      line-height: 1.7;
+      color: var(--lp-text-secondary);
+      max-width: 65ch;
+      margin-bottom: var(--lp-space-md);
+    }
+
+    .reveal ul, .reveal ol {
+      font-size: 1.0625rem;
+      line-height: 1.8;
+      color: var(--lp-text-secondary);
+      margin-left: var(--lp-space-lg);
+      margin-bottom: var(--lp-space-md);
+    }
+
+    .reveal li {
+      margin-bottom: var(--lp-space-xs);
+    }
+
+    .reveal code {
+      font-family: var(--lp-font-mono);
+      font-size: 0.9em;
+      background: var(--lp-bg-secondary);
+      padding: 2px 6px;
+      border-radius: var(--lp-radius-sm);
+      color: var(--lp-accent-primary);
+    }
+
+    .reveal pre {
+      font-family: var(--lp-font-mono);
+      font-size: 0.875rem;
+      background: var(--lp-bg-code);
+      color: #e2e8f0;
+      padding: var(--lp-space-md);
+      border-radius: var(--lp-radius-lg);
+      overflow-x: auto;
+      box-shadow: var(--lp-shadow-md);
+    }
+
+    .reveal blockquote {
+      border-left: 4px solid var(--lp-accent-primary);
+      padding-left: var(--lp-space-md);
+      margin: var(--lp-space-lg) 0;
+      font-style: italic;
+      color: var(--lp-text-muted);
+    }
+
+    /* Reveal.js controls customization */
+    .reveal .controls {
+      color: var(--lp-accent-primary);
+    }
+
+    .reveal .progress {
+      background: var(--lp-bg-secondary);
+      height: 4px;
+    }
+
+    .reveal .progress span {
+      background: linear-gradient(90deg, var(--lp-accent-primary), var(--lp-accent-secondary));
+    }
+
+    /* ==========================================================================
+       Widget Styles
+       ========================================================================== */
+    .widget-placeholder {
+      margin: var(--lp-space-lg) 0;
+    }
+
+    .lp-widget {
+      background: var(--lp-bg-card);
+      border: 1px solid var(--lp-border-color);
+      border-radius: var(--lp-radius-lg);
+      padding: var(--lp-space-lg);
+      box-shadow: var(--lp-shadow-md);
+      transition: var(--lp-transition-normal);
+    }
+
+    .lp-widget:hover {
+      box-shadow: var(--lp-shadow-lg);
+    }
+
+    /* Fallback widget */
+    .lp-widget-fallback {
+      background: var(--lp-bg-secondary);
+      border-color: var(--lp-accent-warning);
+    }
+
+    .lp-widget-fallback-header {
+      font-family: var(--lp-font-mono);
+      font-size: 0.8125rem;
+      color: var(--lp-accent-warning);
+      margin-bottom: var(--lp-space-sm);
+    }
+
+    .lp-widget-fallback-config {
+      font-family: var(--lp-font-mono);
+      font-size: 0.75rem;
+      background: var(--lp-bg-card);
+      padding: var(--lp-space-sm);
+      border-radius: var(--lp-radius-sm);
+      overflow-x: auto;
+      color: var(--lp-text-muted);
+    }
+
+    /* Error widget */
+    .lp-widget-error {
+      background: rgba(239, 68, 68, 0.05);
+      border-color: var(--lp-accent-danger);
+    }
+
+    .lp-widget-error-header {
+      font-family: var(--lp-font-mono);
+      font-size: 0.8125rem;
+      color: var(--lp-accent-danger);
+      margin-bottom: var(--lp-space-sm);
+    }
+
+    .lp-widget-error-message {
+      font-family: var(--lp-font-mono);
+      font-size: 0.75rem;
+      color: var(--lp-accent-danger);
+    }
+
+    /* Diagram widget */
+    .lp-widget-diagram {
+      text-align: center;
+      padding: var(--lp-space-xl);
+    }
+
+    .lp-diagram-container svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .lp-diagram-node-hover {
+      filter: brightness(1.1);
+    }
+
+    /* Quiz widget */
+    .lp-widget-quiz {
+      max-width: 600px;
+    }
+
+    .lp-quiz-question {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--lp-text-primary);
+      margin-bottom: var(--lp-space-lg);
+    }
+
+    .lp-quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--lp-space-sm);
+      margin-bottom: var(--lp-space-lg);
+    }
+
+    .lp-quiz-option {
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-md);
+      padding: var(--lp-space-md);
+      border: 2px solid var(--lp-border-color);
+      border-radius: var(--lp-radius-md);
+      cursor: pointer;
+      transition: var(--lp-transition-fast);
+    }
+
+    .lp-quiz-option:hover {
+      border-color: var(--lp-accent-primary);
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .lp-quiz-option.selected {
+      border-color: var(--lp-accent-primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .lp-quiz-option.correct {
+      border-color: var(--lp-accent-success);
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .lp-quiz-option.incorrect {
+      border-color: var(--lp-accent-danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .lp-quiz-option-marker {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--lp-bg-secondary);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--lp-text-muted);
+    }
+
+    .lp-quiz-option.selected .lp-quiz-option-marker {
+      background: var(--lp-accent-primary);
+      color: white;
+    }
+
+    .lp-quiz-option-text {
+      font-size: 1rem;
+      color: var(--lp-text-primary);
+    }
+
+    .lp-quiz-feedback {
+      padding: var(--lp-space-md);
+      background: rgba(34, 197, 94, 0.1);
+      border-radius: var(--lp-radius-md);
+      border-left: 4px solid var(--lp-accent-success);
+      font-size: 0.9375rem;
+      color: var(--lp-text-secondary);
+      margin-bottom: var(--lp-space-md);
+    }
+
+    .lp-quiz-submit {
+      padding: var(--lp-space-sm) var(--lp-space-lg);
+      background: var(--lp-accent-primary);
+      color: white;
+      border: none;
+      border-radius: var(--lp-radius-md);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--lp-transition-fast);
+    }
+
+    .lp-quiz-submit:hover:not(:disabled) {
+      background: var(--lp-accent-secondary);
+    }
+
+    .lp-quiz-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Code widget */
+    .lp-widget-code {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .lp-code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--lp-space-sm) var(--lp-space-md);
+      background: var(--lp-bg-code);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .lp-code-language {
+      font-family: var(--lp-font-mono);
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+    }
+
+    .lp-code-copy {
+      padding: var(--lp-space-xs) var(--lp-space-sm);
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: var(--lp-radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: var(--lp-transition-fast);
+    }
+
+    .lp-code-copy:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .lp-code-content {
+      background: var(--lp-bg-code);
+      padding: var(--lp-space-md);
+      margin: 0;
+      overflow-x: auto;
+    }
+
+    .lp-code-line {
+      display: flex;
+      line-height: 1.6;
+    }
+
+    .lp-code-line-highlight {
+      background: rgba(99, 102, 241, 0.2);
+      margin: 0 calc(-1 * var(--lp-space-md));
+      padding: 0 var(--lp-space-md);
+    }
+
+    .lp-code-line-number {
+      width: 3ch;
+      text-align: right;
+      color: rgba(255, 255, 255, 0.3);
+      margin-right: var(--lp-space-md);
+      user-select: none;
+    }
+
+    .lp-code-line-content {
+      color: #e2e8f0;
+    }
+
+    /* Expandable widget */
+    .lp-widget-expandable {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .lp-expandable-header {
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-sm);
+      width: 100%;
+      padding: var(--lp-space-md) var(--lp-space-lg);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      transition: var(--lp-transition-fast);
+    }
+
+    .lp-expandable-header:hover {
+      background: var(--lp-bg-secondary);
+    }
+
+    .lp-expandable-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--lp-bg-secondary);
+      border-radius: var(--lp-radius-sm);
+      font-weight: 600;
+      color: var(--lp-accent-primary);
+      transition: var(--lp-transition-fast);
+    }
+
+    .lp-widget-expandable.expanded .lp-expandable-icon {
+      background: var(--lp-accent-primary);
+      color: white;
+    }
+
+    .lp-expandable-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--lp-text-primary);
+    }
+
+    .lp-expandable-content {
+      padding: 0 var(--lp-space-lg) var(--lp-space-lg);
+      font-size: 0.9375rem;
+      color: var(--lp-text-secondary);
+      line-height: 1.7;
+    }
+
+    .lp-expandable-content p {
+      margin-bottom: var(--lp-space-sm);
+    }
+
+    /* ==========================================================================
+       Bottom Bar
+       ========================================================================== */
+    .bottom-bar {
+      padding: var(--lp-space-sm) var(--lp-space-lg);
+      background: var(--lp-bg-card);
+      border-top: 1px solid var(--lp-border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--lp-text-muted);
+      z-index: 50;
+    }
+
+    .slide-progress {
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-md);
+    }
+
+    .slide-counter {
+      font-family: var(--lp-font-mono);
+    }
+
+    .keyboard-hints {
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-md);
+    }
+
+    .keyboard-hints kbd {
+      background: var(--lp-bg-secondary);
+      padding: 2px 6px;
+      border-radius: var(--lp-radius-sm);
+      font-family: var(--lp-font-mono);
+      font-size: 0.6875rem;
+    }
+
+    .version-info {
+      display: flex;
+      align-items: center;
+      gap: var(--lp-space-sm);
+    }
+
+    .health-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--lp-accent-success);
+    }
+
+    /* ==========================================================================
+       Loading State
+       ========================================================================== */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--lp-bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      transition: opacity var(--lp-transition-slow);
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-spinner {
+      text-align: center;
+    }
+
+    .loading-spinner-icon {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--lp-border-color);
+      border-top-color: var(--lp-accent-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto var(--lp-space-md);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 0.875rem;
+      color: var(--lp-text-muted);
+    }
+
+    /* ==========================================================================
+       Responsive Design
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .library-panel {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        z-index: 200;
+        box-shadow: var(--lp-shadow-lg);
+      }
+
+      .library-panel.open {
+        transform: translateX(0);
+      }
+
+      .library-panel.collapsed {
+        width: 280px;
+        min-width: 280px;
+        transform: translateX(-100%);
+      }
+
+      .keyboard-hints {
+        display: none;
+      }
+
+      .reveal h1 {
+        font-size: 1.75rem;
+      }
+
+      .reveal h2 {
+        font-size: 1.25rem;
+      }
+
+      .reveal p {
+        font-size: 1rem;
+      }
+    }
+
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: none;
+      padding: var(--lp-space-xs);
+      background: transparent;
+      border: none;
+      color: var(--lp-text-primary);
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: flex;
+      }
+    }
+
+    /* ==========================================================================
+       Tag Filter Section
+       ========================================================================== */
+    .tag-filter-section {
+      padding: var(--lp-space-sm) var(--lp-space-md);
+      border-bottom: 1px solid var(--lp-border-color);
+    }
+
+    .tag-filter-label {
+      font-size: 0.6875rem;
+      color: var(--lp-text-muted);
+      margin-bottom: var(--lp-space-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tag-chip {
+      font-size: 0.6875rem;
+      padding: 3px 8px;
+      background: var(--lp-bg-card);
+      border: 1px solid var(--lp-border-color);
+      border-radius: var(--lp-radius-sm);
+      color: var(--lp-text-muted);
+      cursor: pointer;
+      transition: var(--lp-transition-fast);
+    }
+
+    .tag-chip:hover {
+      border-color: var(--lp-accent-primary);
+      color: var(--lp-text-primary);
+    }
+
+    .tag-chip.active {
+      background: var(--lp-accent-primary);
+      border-color: var(--lp-accent-primary);
+      color: white;
+    }
+
+    /* ==========================================================================
+       Landing View
+       ========================================================================== */
+    .landing-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: var(--lp-space-2xl);
+    }
+
+    .landing-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: var(--lp-space-lg);
+      color: var(--lp-accent-primary);
+      opacity: 0.6;
+    }
+
+    .landing-title {
+      font-family: var(--lp-font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--lp-text-primary);
+      margin-bottom: var(--lp-space-sm);
+    }
+
+    .landing-description {
+      font-size: 1rem;
+      color: var(--lp-text-muted);
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Library Panel -->
+    <aside class="library-panel" id="library-panel">
+      <div class="library-header">
+        <span class="library-header-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          Library
+        </span>
+        <button class="collapse-btn" id="collapse-btn" title="Toggle sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <div class="content-source-toggle">
+        <div class="source-toggle-group">
+          <button class="source-toggle-btn active" data-source="for_chris">Learning Docs</button>
+          <button class="source-toggle-btn" data-source="memory">Memory</button>
+        </div>
+      </div>
+
+      <div class="tag-filter-section" id="tag-filter-section">
+        <div class="tag-filter-label">Filter by tag</div>
+        <div class="tag-filter-chips" id="tag-filter-chips">
+          <!-- Tags populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="library-content">
+        <div class="deck-list" id="deck-list">
+          <!-- Deck items populated by JavaScript -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <header class="top-bar">
+        <div style="display: flex; align-items: center; gap: var(--lp-space-sm);">
+          <button class="mobile-menu-btn" id="mobile-menu-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <h1 class="deck-title" id="deck-title">Three-Layer dbt Architecture</h1>
+        </div>
+        <div class="top-bar-actions">
+          <button class="btn btn-icon" id="overview-btn" title="Overview (Esc)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </button>
+          <button class="btn btn-icon" id="fullscreen-btn" title="Fullscreen (F)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Slide Viewer -->
+      <div class="slide-viewer">
+        <div class="loading-overlay" id="loading-overlay">
+          <div class="loading-spinner">
+            <div class="loading-spinner-icon"></div>
+            <div class="loading-text">Loading presentation...</div>
+          </div>
+        </div>
+
+        <div class="reveal-container">
+          <div class="reveal" id="reveal">
+            <div class="slides" id="slides">
+              <!-- Slides populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <footer class="bottom-bar">
+        <div class="slide-progress">
+          <span class="slide-counter" id="slide-counter">1 / 5</span>
+        </div>
+        <div class="keyboard-hints">
+          <span><kbd>Arrow</kbd> Navigate</span>
+          <span><kbd>Esc</kbd> Overview</span>
+          <span><kbd>F</kbd> Fullscreen</span>
+        </div>
+        <div class="version-info">
+          <span class="health-indicator"></span>
+          <span>v0.9</span>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- reveal.js -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+
+  <script>
+    // ==========================================================================
+    // Utility Functions
+    // ==========================================================================
+
+    /**
+     * Escape HTML to prevent XSS
+     */
+    function escapeHtml(text) {
+      if (typeof text !== 'string') return String(text);
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /**
+     * Simple markdown to HTML conversion
+     */
+    function simpleMarkdown(text) {
+      if (!text) return '';
+      return text
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/^\- (.*$)/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^(.+)$/gm, (match) => {
+          if (match.startsWith('<')) return match;
+          return `<p>${match}</p>`;
+        });
+    }
+
+    // ==========================================================================
+    // Content Parser
+    // ==========================================================================
+
+    class ContentParser {
+      constructor() {
+        this.widgetPattern = /```widget:(\w+)\n([\s\S]*?)```/g;
+        this.tooltipPattern = /<!--tooltip:\s*"([^"]+)"-->/g;
+      }
+
+      parse(markdown) {
+        const widgets = [];
+        let widgetIndex = 0;
+
+        // Step 1: Extract widget blocks and replace with placeholders
+        let processed = markdown.replace(this.widgetPattern, (match, type, content) => {
+          const id = `widget-${widgetIndex++}`;
+          widgets.push({
+            id,
+            type,
+            config: this.parseYAML(content)
+          });
+          return `<div class="widget-placeholder" data-widget-id="${id}"></div>`;
+        });
+
+        // Step 2: Process inline tooltips
+        processed = processed.replace(this.tooltipPattern, (match, text) => {
+          return `<span class="lp-tooltip" data-tooltip="${escapeHtml(text)}"></span>`;
+        });
+
+        // Step 3: Split into slides (using --- or ## headers)
+        const slideDelimiter = /\n---\n/;
+        const slideContents = processed.split(slideDelimiter);
+
+        return { slides: slideContents, widgets };
+      }
+
+      parseYAML(content) {
+        const lines = content.trim().split('\n');
+        const result = {};
+        let currentKey = null;
+        let multilineValue = [];
+        let inMultiline = false;
+
+        for (const line of lines) {
+          if (!inMultiline && line.match(/^[\w-]+:/)) {
+            // Save previous multiline value
+            if (currentKey && multilineValue.length) {
+              result[currentKey] = multilineValue.join('\n');
+            }
+
+            const colonIndex = line.indexOf(':');
+            const key = line.substring(0, colonIndex).trim();
+            const value = line.substring(colonIndex + 1).trim();
+
+            currentKey = key;
+
+            if (value === '|') {
+              inMultiline = true;
+              multilineValue = [];
+            } else if (value.startsWith('[') && value.endsWith(']')) {
+              // Parse array
+              result[key] = value.slice(1, -1).split(',').map(v => this.parseValue(v.trim()));
+              currentKey = null;
+            } else if (value) {
+              result[key] = this.parseValue(value);
+              currentKey = null;
+            } else {
+              // Empty value, might be followed by list
+              result[key] = [];
+              currentKey = key;
+            }
+          } else if (line.match(/^\s+-\s+/)) {
+            // List item
+            const item = line.replace(/^\s+-\s+/, '').trim();
+            if (currentKey && Array.isArray(result[currentKey])) {
+              result[currentKey].push(this.parseValue(item));
+            }
+          } else if (inMultiline) {
+            // Multiline content
+            if (line.startsWith('  ')) {
+              multilineValue.push(line.substring(2));
+            } else if (line.trim() === '') {
+              multilineValue.push('');
+            } else {
+              // End of multiline
+              inMultiline = false;
+              if (currentKey) {
+                result[currentKey] = multilineValue.join('\n');
+              }
+              currentKey = null;
+            }
+          }
+        }
+
+        // Handle remaining multiline content
+        if (currentKey && multilineValue.length) {
+          result[currentKey] = multilineValue.join('\n');
+        }
+
+        return result;
+      }
+
+      parseValue(value) {
+        if (value === 'true') return true;
+        if (value === 'false') return false;
+        if (!isNaN(value) && value !== '') return Number(value);
+        // Remove quotes
+        return value.replace(/^["']|["']$/g, '');
+      }
+    }
+
+    // ==========================================================================
+    // Widget Registry
+    // ==========================================================================
+
+    const WidgetRegistry = {
+      widgets: new Map(),
+      widgetStates: new Map(),
+
+      register(type, handler) {
+        if (this.widgets.has(type)) {
+          console.warn(`Widget type "${type}" already registered, overwriting`);
+        }
+        this.widgets.set(type, handler);
+      },
+
+      async render(type, config, container) {
+        const handler = this.widgets.get(type);
+
+        if (!handler) {
+          console.warn(`Unknown widget type: ${type}`);
+          return this.renderFallback(type, config, container);
+        }
+
+        try {
+          const widgetId = container.dataset.widgetId;
+          const savedState = this.widgetStates.get(widgetId);
+          if (savedState && handler.setState) {
+            handler.setState(container, savedState);
+          }
+
+          await handler.render(config, container);
+          container.dataset.rendered = 'true';
+        } catch (error) {
+          console.error(`Widget render error (${type}):`, error);
+          this.renderError(type, error, container);
+        }
+      },
+
+      destroy(type, container) {
+        const handler = this.widgets.get(type);
+
+        if (handler?.getState) {
+          const widgetId = container.dataset.widgetId;
+          const state = handler.getState(container);
+          if (state) {
+            this.widgetStates.set(widgetId, state);
+          }
+        }
+
+        if (handler?.destroy) {
+          handler.destroy(container);
+        }
+
+        container.innerHTML = '';
+        container.dataset.rendered = 'false';
+      },
+
+      renderFallback(type, config, container) {
+        container.innerHTML = `
+          <div class="lp-widget lp-widget-fallback">
+            <div class="lp-widget-fallback-header">
+              Unknown widget: ${escapeHtml(type)}
+            </div>
+            <pre class="lp-widget-fallback-config">${escapeHtml(JSON.stringify(config, null, 2))}</pre>
+          </div>
+        `;
+      },
+
+      renderError(type, error, container) {
+        container.innerHTML = `
+          <div class="lp-widget lp-widget-error">
+            <div class="lp-widget-error-header">
+              Widget error: ${escapeHtml(type)}
+            </div>
+            <pre class="lp-widget-error-message">${escapeHtml(error.message)}</pre>
+          </div>
+        `;
+      },
+
+      getRegisteredTypes() {
+        return Array.from(this.widgets.keys());
+      }
+    };
+
+    // ==========================================================================
+    // Widget Implementations
+    // ==========================================================================
+
+    // Diagram Widget
+    const DiagramWidget = {
+      type: 'diagram',
+      mermaidLoaded: false,
+
+      async render(config, container) {
+        if (config.type === 'mermaid') {
+          await this.renderMermaid(config, container);
+        } else {
+          container.innerHTML = `<pre>Unsupported diagram type: ${escapeHtml(config.type)}</pre>`;
+        }
+      },
+
+      async renderMermaid(config, container) {
+        if (!this.mermaidLoaded) {
+          await this.loadMermaid();
+        }
+
+        const id = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+        try {
+          const { svg } = await mermaid.render(id, config.content);
+
+          container.innerHTML = `
+            <div class="lp-widget lp-widget-diagram">
+              <div class="lp-diagram-container">${svg}</div>
+            </div>
+          `;
+
+          if (config.interactive) {
+            this.attachInteractivity(container, config);
+          }
+        } catch (error) {
+          container.innerHTML = `
+            <div class="lp-widget lp-widget-error">
+              <div class="lp-widget-error-header">Mermaid Error</div>
+              <pre class="lp-widget-error-message">${escapeHtml(error.message)}</pre>
+            </div>
+          `;
+        }
+      },
+
+      async loadMermaid() {
+        return new Promise((resolve, reject) => {
+          if (window.mermaid) {
+            this.mermaidLoaded = true;
+            resolve();
+            return;
+          }
+
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+          script.onload = () => {
+            mermaid.initialize({
+              startOnLoad: false,
+              theme: 'neutral',
+              securityLevel: 'loose'
+            });
+            this.mermaidLoaded = true;
+            resolve();
+          };
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      },
+
+      attachInteractivity(container, config) {
+        const nodes = container.querySelectorAll('.node');
+        nodes.forEach(node => {
+          node.style.cursor = 'pointer';
+          node.addEventListener('mouseenter', () => {
+            node.classList.add('lp-diagram-node-hover');
+          });
+          node.addEventListener('mouseleave', () => {
+            node.classList.remove('lp-diagram-node-hover');
+          });
+        });
+      },
+
+      destroy(container) {
+        const nodes = container.querySelectorAll('.node');
+        nodes.forEach(node => {
+          node.replaceWith(node.cloneNode(true));
+        });
+      }
+    };
+
+    WidgetRegistry.register('diagram', DiagramWidget);
+
+    // Quiz Widget
+    const QuizWidget = {
+      type: 'quiz',
+
+      render(config, container) {
+        const { question, options, correct, feedback } = config;
+
+        const optionsHtml = options.map((opt, i) => {
+          const isCorrect = i === correct;
+          const label = String(opt).replace(' (correct)', '');
+          return `
+            <div class="lp-quiz-option" data-index="${i}" data-correct="${isCorrect}">
+              <span class="lp-quiz-option-marker">${String.fromCharCode(65 + i)}</span>
+              <span class="lp-quiz-option-text">${escapeHtml(label)}</span>
+            </div>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <div class="lp-widget lp-widget-quiz">
+            <div class="lp-quiz-question">${escapeHtml(question)}</div>
+            <div class="lp-quiz-options">${optionsHtml}</div>
+            <div class="lp-quiz-feedback" hidden>${escapeHtml(feedback || 'Correct!')}</div>
+            <button class="lp-quiz-submit" disabled>Check Answer</button>
+          </div>
+        `;
+
+        this.attachListeners(container);
+      },
+
+      attachListeners(container) {
+        const options = container.querySelectorAll('.lp-quiz-option');
+        const submitBtn = container.querySelector('.lp-quiz-submit');
+        const feedbackEl = container.querySelector('.lp-quiz-feedback');
+        let selectedIndex = null;
+
+        options.forEach(opt => {
+          opt.addEventListener('click', () => {
+            options.forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+            selectedIndex = parseInt(opt.dataset.index);
+            submitBtn.disabled = false;
+          });
+        });
+
+        submitBtn.addEventListener('click', () => {
+          if (selectedIndex === null) return;
+
+          options.forEach(opt => {
+            const isCorrect = opt.dataset.correct === 'true';
+            const isSelected = parseInt(opt.dataset.index) === selectedIndex;
+
+            if (isCorrect) {
+              opt.classList.add('correct');
+            } else if (isSelected) {
+              opt.classList.add('incorrect');
+            }
+            opt.style.pointerEvents = 'none';
+          });
+
+          feedbackEl.hidden = false;
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Answered';
+        });
+      },
+
+      getState(container) {
+        const selected = container.querySelector('.lp-quiz-option.selected');
+        const submitBtn = container.querySelector('.lp-quiz-submit');
+        const answered = submitBtn?.disabled && submitBtn?.textContent === 'Answered';
+
+        return {
+          selectedIndex: selected ? parseInt(selected.dataset.index) : null,
+          answered
+        };
+      },
+
+      setState(container, state) {
+        container.dataset.savedState = JSON.stringify(state);
+      },
+
+      destroy(container) {}
+    };
+
+    WidgetRegistry.register('quiz', QuizWidget);
+
+    // Code Widget
+    const CodeWidget = {
+      type: 'code',
+
+      render(config, container) {
+        const { content, language = 'sql', highlight = [], showLineNumbers = true } = config;
+
+        const lines = content.trim().split('\n');
+        const highlightLines = Array.isArray(highlight) ? highlight : [];
+
+        const numberedLines = lines.map((line, i) => {
+          const lineNum = i + 1;
+          const isHighlighted = highlightLines.includes(lineNum);
+          const highlightClass = isHighlighted ? 'lp-code-line-highlight' : '';
+          const lineNumHtml = showLineNumbers
+            ? `<span class="lp-code-line-number">${lineNum}</span>`
+            : '';
+
+          return `
+            <div class="lp-code-line ${highlightClass}">
+              ${lineNumHtml}
+              <span class="lp-code-line-content">${escapeHtml(line)}</span>
+            </div>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <div class="lp-widget lp-widget-code">
+            <div class="lp-code-header">
+              <span class="lp-code-language">${escapeHtml(language)}</span>
+              <button class="lp-code-copy" title="Copy code">Copy</button>
+            </div>
+            <pre class="lp-code-content" data-language="${escapeHtml(language)}">${numberedLines}</pre>
+          </div>
+        `;
+
+        this.attachListeners(container, content);
+      },
+
+      attachListeners(container, content) {
+        const copyBtn = container.querySelector('.lp-code-copy');
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(content);
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => {
+              copyBtn.textContent = 'Copy';
+            }, 2000);
+          } catch (err) {
+            copyBtn.textContent = 'Failed';
+          }
+        });
+      }
+    };
+
+    WidgetRegistry.register('code', CodeWidget);
+
+    // Expandable Widget
+    const ExpandableWidget = {
+      type: 'expandable',
+
+      render(config, container) {
+        const { title, content, expanded = false } = config;
+
+        container.innerHTML = `
+          <div class="lp-widget lp-widget-expandable ${expanded ? 'expanded' : ''}">
+            <button class="lp-expandable-header">
+              <span class="lp-expandable-icon">${expanded ? '-' : '+'}</span>
+              <span class="lp-expandable-title">${escapeHtml(title)}</span>
+            </button>
+            <div class="lp-expandable-content" ${expanded ? '' : 'hidden'}>
+              ${simpleMarkdown(content)}
+            </div>
+          </div>
+        `;
+
+        this.attachListeners(container);
+      },
+
+      attachListeners(container) {
+        const header = container.querySelector('.lp-expandable-header');
+        const content = container.querySelector('.lp-expandable-content');
+        const icon = container.querySelector('.lp-expandable-icon');
+        const widget = container.querySelector('.lp-widget-expandable');
+
+        header.addEventListener('click', () => {
+          const isExpanded = widget.classList.toggle('expanded');
+          content.hidden = !isExpanded;
+          icon.textContent = isExpanded ? '-' : '+';
+        });
+      },
+
+      getState(container) {
+        const widget = container.querySelector('.lp-widget-expandable');
+        return { expanded: widget?.classList.contains('expanded') ?? false };
+      }
+    };
+
+    WidgetRegistry.register('expandable', ExpandableWidget);
+
+    // ==========================================================================
+    // Slide Generator
+    // ==========================================================================
+
+    class SlideGenerator {
+      constructor(parser) {
+        this.parser = parser;
+      }
+
+      generate(markdown) {
+        const { slides, widgets } = this.parser.parse(markdown);
+
+        // Store widget data globally for rendering
+        window.widgetData = {};
+        widgets.forEach(w => {
+          window.widgetData[w.id] = { type: w.type, config: w.config };
+        });
+
+        // Convert slides to reveal.js sections
+        return slides.map(content => {
+          // Convert remaining markdown to HTML
+          const html = simpleMarkdown(content.trim());
+          return `<section>${html}</section>`;
+        }).join('\n');
+      }
+    }
+
+    // ==========================================================================
+    // Library Manager
+    // ==========================================================================
+
+    class LibraryManager {
+      constructor() {
+        this.contentSources = {
+          'for_chris': {
+            label: 'Learning Docs',
+            decks: []
+          },
+          'memory': {
+            label: 'Claude Memory',
+            decks: []
+          }
+        };
+        this.currentSource = 'for_chris';
+        this.currentDeck = null;
+        this.activeTagFilter = null;
+        this.onDeckChange = null;
+      }
+
+      setDecks(source, decks) {
+        this.contentSources[source].decks = decks;
+      }
+
+      getDecks(source = this.currentSource) {
+        return this.contentSources[source]?.decks || [];
+      }
+
+      getFilteredDecks(source = this.currentSource) {
+        const decks = this.getDecks(source);
+        if (!this.activeTagFilter) {
+          return decks;
+        }
+        return decks.filter(d => d.tags && d.tags.includes(this.activeTagFilter));
+      }
+
+      getAllTags(source = this.currentSource) {
+        const decks = this.getDecks(source);
+        const tagSet = new Set();
+        decks.forEach(deck => {
+          if (deck.tags) {
+            deck.tags.forEach(tag => tagSet.add(tag));
+          }
+        });
+        return Array.from(tagSet).sort();
+      }
+
+      setTagFilter(tag) {
+        this.activeTagFilter = tag;
+      }
+
+      clearTagFilter() {
+        this.activeTagFilter = null;
+      }
+
+      setSource(source) {
+        this.currentSource = source;
+        this.activeTagFilter = null;  // Clear filter when changing source
+        this.currentDeck = null;      // Clear current deck when changing source
+      }
+
+      selectDeck(deckId) {
+        const decks = this.getDecks();
+        this.currentDeck = decks.find(d => d.id === deckId);
+        if (this.onDeckChange && this.currentDeck) {
+          this.onDeckChange(this.currentDeck);
+        }
+        return this.currentDeck;
+      }
+
+      getCurrentDeck() {
+        return this.currentDeck;
+      }
+
+      getSourceLabel(source = this.currentSource) {
+        return this.contentSources[source]?.label || source;
+      }
+    }
+
+    // ==========================================================================
+    // Sample Decks (Embedded for Demo)
+    // ==========================================================================
+
+    const SAMPLE_DECKS = {
+      for_chris: [
+        {
+          id: 'three-layer-architecture',
+          title: 'Three-Layer dbt Architecture',
+          description: 'Understanding the Bronze-Silver-Gold pattern',
+          tags: ['dbt', 'architecture', 'beginner'],
+          slideCount: 5,
+          content: `# Three-Layer dbt Architecture
+
+Understanding the Bronze-Silver-Gold pattern for data transformation.
+
+This deck covers the foundational architecture for organizing your dbt models.
+
+---
+
+## The Three Layers
+
+Data flows through three transformation stages, each with a specific purpose:
+
+- **Bronze (Staging)**: Raw data, minimal transformations
+- **Silver (Intermediate)**: Business logic, joins, enrichments
+- **Gold (Marts)**: Aggregated, analytics-ready data
+
+Each layer builds on the previous, creating a clear data lineage.
+
+---
+
+## Data Flow Visualization
+
+\`\`\`widget:diagram
+type: mermaid
+interactive: true
+content: |
+  graph LR
+    A[Sources] --> B[stg_]
+    B --> C[int_]
+    C --> D[fct_/dim_]
+    style A fill:#f9f,stroke:#333
+    style D fill:#9f9,stroke:#333
+\`\`\`
+
+The data flows from raw sources through staging, intermediate, and finally to marts.
+
+---
+
+## Layer Details
+
+\`\`\`widget:expandable
+title: "Bronze Layer (Staging)"
+expanded: false
+content: |
+  Staging models are **1:1 with source tables**.
+
+  They handle:
+  - Column renaming to consistent conventions
+  - Basic type casting
+  - Filtering out test/invalid records
+  - Adding metadata columns
+
+  Prefix: \`stg_\`
+\`\`\`
+
+\`\`\`widget:expandable
+title: "Silver Layer (Intermediate)"
+expanded: false
+content: |
+  Intermediate models apply **business logic**.
+
+  They handle:
+  - Joining related staging models
+  - Business calculations
+  - Data enrichment
+  - Pivoting and unpivoting
+
+  Prefix: \`int_\`
+\`\`\`
+
+---
+
+## Knowledge Check
+
+\`\`\`widget:quiz
+question: "Which layer contains the business logic transformations?"
+options:
+  - "Bronze (staging)"
+  - "Silver (intermediate)"
+  - "Gold (marts)"
+correct: 1
+feedback: |
+  The Silver/Intermediate layer is where business transformations happen.
+  Bronze is for raw data, Gold is for analytics-ready aggregations.
+\`\`\`
+`
+        },
+        {
+          id: 'dbt-testing-basics',
+          title: 'dbt Testing Fundamentals',
+          description: 'Write tests that catch data quality issues',
+          tags: ['dbt', 'testing', 'beginner'],
+          slideCount: 4,
+          content: `# dbt Testing Fundamentals
+
+Writing tests that catch data quality issues before they reach production.
+
+---
+
+## Why Test Data?
+
+Data issues are silent killers. They do not throw errors - they just give wrong answers.
+
+- Bad decisions from incorrect metrics
+- Customer-facing bugs from missing data
+- Compliance violations from data quality issues
+
+dbt tests are your safety net.
+
+---
+
+## Test Types
+
+\`\`\`widget:code
+language: yaml
+highlight: [3, 4, 5]
+showLineNumbers: true
+content: |
+  models:
+    - name: stg_customers
+      columns:
+        - name: customer_id
+          tests:
+            - unique
+            - not_null
+        - name: status
+          tests:
+            - accepted_values:
+                values: ['active', 'inactive', 'pending']
+\`\`\`
+
+---
+
+## Test Placement
+
+\`\`\`widget:diagram
+type: mermaid
+interactive: true
+content: |
+  graph TB
+    A[Source Tests] --> B[Staging Tests]
+    B --> C[Intermediate Tests]
+    C --> D[Mart Tests]
+    style A fill:#ffcc00
+    style D fill:#00cc00
+\`\`\`
+
+Test at every layer, with increasing rigor toward marts.
+
+---
+
+## Quick Quiz
+
+\`\`\`widget:quiz
+question: "Which test type ensures no duplicate values in a column?"
+options:
+  - "not_null"
+  - "unique"
+  - "accepted_values"
+  - "relationships"
+correct: 1
+feedback: |
+  The unique test ensures each value in the column appears only once.
+  This is essential for primary keys and natural keys.
+\`\`\`
+`
+        },
+        {
+          id: 'ref-and-source',
+          title: 'ref() and source() Functions',
+          description: 'Building proper model dependencies',
+          tags: ['dbt', 'basics', 'beginner'],
+          slideCount: 3,
+          content: `# ref() and source() Functions
+
+The building blocks of dbt model dependencies.
+
+---
+
+## source() Function
+
+Use \`source()\` to reference raw data tables:
+
+\`\`\`widget:code
+language: sql
+showLineNumbers: true
+content: |
+  -- In staging models
+  select
+      id,
+      name,
+      created_at
+  from {{ source('stripe', 'payments') }}
+\`\`\`
+
+Sources must be defined in a YAML file first.
+
+---
+
+## ref() Function
+
+Use \`ref()\` to reference other dbt models:
+
+\`\`\`widget:code
+language: sql
+highlight: [6]
+showLineNumbers: true
+content: |
+  -- In downstream models
+  select
+      p.payment_id,
+      p.amount,
+      c.customer_name
+  from {{ ref('stg_payments') }} p
+  left join {{ ref('stg_customers') }} c
+      on p.customer_id = c.customer_id
+\`\`\`
+
+dbt uses ref() to build the DAG automatically.
+`
+        }
+      ],
+      memory: [
+        {
+          id: 'session-2026-02-01',
+          title: 'Session: 2026-02-01',
+          description: 'Data quality quarantine implementation',
+          tags: ['session', 'dq', 'quarantine'],
+          slideCount: 2,
+          content: `# Session Log: 2026-02-01
+
+Data Quality Quarantine System implementation session.
+
+---
+
+## Key Accomplishments
+
+- Implemented quarantine macro system
+- Created DQ monitoring mart
+- Added 6 records to quarantine tables
+
+\`\`\`widget:expandable
+title: "Session Details"
+expanded: false
+content: |
+  **Duration**: 3 hours
+  **Outcome**: SUCCESS
+
+  Created reusable macros for quarantine pattern:
+  - add_dq_flags()
+  - quarantine_filter()
+  - generate_quarantine_model()
+\`\`\`
+`
+        }
+      ]
+    };
+
+    // ==========================================================================
+    // Application Initialization
+    // ==========================================================================
+
+    let revealInstance = null;
+    const parser = new ContentParser();
+    const slideGenerator = new SlideGenerator(parser);
+    const libraryManager = new LibraryManager();
+
+    // Load sample decks
+    libraryManager.setDecks('for_chris', SAMPLE_DECKS.for_chris);
+    libraryManager.setDecks('memory', SAMPLE_DECKS.memory);
+
+    /**
+     * Initialize the application
+     */
+    async function initApp() {
+      try {
+        // Set up UI event handlers
+        setupEventHandlers();
+
+        // Render tag filters
+        renderTagFilters();
+
+        // Render initial deck list
+        renderDeckList();
+
+        // Select first deck
+        const firstDeck = libraryManager.getFilteredDecks()[0];
+        if (firstDeck) {
+          await loadDeck(firstDeck);
+        }
+
+        // Hide loading overlay
+        document.getElementById('loading-overlay').classList.add('hidden');
+      } catch (error) {
+        console.error('Failed to initialize app:', error);
+        document.getElementById('loading-overlay').innerHTML = `
+          <div class="loading-spinner">
+            <div style="color: var(--lp-accent-danger);">Failed to load</div>
+            <div class="loading-text">${escapeHtml(error.message)}</div>
+          </div>
+        `;
+      }
+    }
+
+    /**
+     * Set up event handlers
+     */
+    function setupEventHandlers() {
+      // Sidebar collapse toggle
+      document.getElementById('collapse-btn').addEventListener('click', () => {
+        document.getElementById('library-panel').classList.toggle('collapsed');
+      });
+
+      // Mobile menu
+      document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+        document.getElementById('library-panel').classList.toggle('open');
+      });
+
+      // Content source toggle
+      document.querySelectorAll('.source-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('.source-toggle-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          libraryManager.setSource(e.target.dataset.source);
+          renderTagFilters();
+          renderDeckList();
+          showLandingView();  // Show landing page when switching sources
+        });
+      });
+
+      // Overview button
+      document.getElementById('overview-btn').addEventListener('click', () => {
+        if (revealInstance) {
+          revealInstance.toggleOverview();
+        }
+      });
+
+      // Fullscreen button
+      document.getElementById('fullscreen-btn').addEventListener('click', () => {
+        const container = document.querySelector('.slide-viewer');
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          container.requestFullscreen?.();
+        }
+      });
+    }
+
+    /**
+     * Render tag filter chips
+     */
+    function renderTagFilters() {
+      const container = document.getElementById('tag-filter-chips');
+      const tags = libraryManager.getAllTags();
+      const activeFilter = libraryManager.activeTagFilter;
+
+      if (tags.length === 0) {
+        container.innerHTML = '<span style="font-size: 0.6875rem; color: var(--lp-text-muted);">No tags available</span>';
+        return;
+      }
+
+      container.innerHTML = `
+        <span class="tag-chip ${!activeFilter ? 'active' : ''}" data-tag="">All</span>
+        ${tags.map(tag => `
+          <span class="tag-chip ${activeFilter === tag ? 'active' : ''}" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</span>
+        `).join('')}
+      `;
+
+      // Add click handlers
+      container.querySelectorAll('.tag-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const tag = chip.dataset.tag;
+          if (tag === '') {
+            libraryManager.clearTagFilter();
+          } else {
+            libraryManager.setTagFilter(tag);
+          }
+          renderTagFilters();
+          renderDeckList();
+        });
+      });
+    }
+
+    /**
+     * Show landing view when no deck is selected
+     */
+    function showLandingView() {
+      const sourceLabel = libraryManager.getSourceLabel();
+
+      document.getElementById('deck-title').textContent = 'Learning Playground';
+
+      // Clear current reveal instance
+      if (revealInstance) {
+        revealInstance.destroy();
+        revealInstance = null;
+      }
+
+      document.getElementById('slides').innerHTML = `
+        <section>
+          <div class="landing-view">
+            <svg class="landing-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              <path d="M8 7h8"></path>
+              <path d="M8 11h8"></path>
+              <path d="M8 15h4"></path>
+            </svg>
+            <div class="landing-title">${escapeHtml(sourceLabel)}</div>
+            <div class="landing-description">Select a deck from the sidebar to begin learning.</div>
+          </div>
+        </section>
+      `;
+
+      // Initialize reveal for the landing page
+      revealInstance = new Reveal(document.getElementById('reveal'), {
+        hash: false,
+        history: false,
+        progress: false,
+        controls: false,
+        center: true,
+        transition: 'none',
+        hideInactiveCursor: false
+      });
+
+      revealInstance.initialize();
+      document.getElementById('slide-counter').textContent = '- / -';
+    }
+
+    /**
+     * Render deck list in sidebar
+     */
+    function renderDeckList() {
+      const deckList = document.getElementById('deck-list');
+      const decks = libraryManager.getFilteredDecks();
+      const currentDeck = libraryManager.getCurrentDeck();
+
+      if (decks.length === 0) {
+        deckList.innerHTML = `
+          <div style="padding: var(--lp-space-md); text-align: center; color: var(--lp-text-muted); font-size: 0.875rem;">
+            No decks match the selected filter.
+          </div>
+        `;
+        return;
+      }
+
+      deckList.innerHTML = decks.map(deck => `
+        <div class="deck-item ${currentDeck?.id === deck.id ? 'active' : ''}" data-deck-id="${deck.id}">
+          <div class="deck-item-title">${escapeHtml(deck.title)}</div>
+          <div class="deck-item-meta">
+            <span>${deck.slideCount} slides</span>
+          </div>
+          <div class="deck-item-tags">
+            ${deck.tags.slice(0, 3).map(tag => `<span class="deck-tag">${escapeHtml(tag)}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      // Add click handlers
+      deckList.querySelectorAll('.deck-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          const deckId = item.dataset.deckId;
+          const deck = libraryManager.selectDeck(deckId);
+          if (deck) {
+            await loadDeck(deck);
+            renderDeckList(); // Update active state
+          }
+        });
+      });
+    }
+
+    /**
+     * Load and display a deck
+     */
+    async function loadDeck(deck) {
+      // Update title
+      document.getElementById('deck-title').textContent = deck.title;
+
+      // Generate slides
+      const slidesHtml = slideGenerator.generate(deck.content);
+      document.getElementById('slides').innerHTML = slidesHtml;
+
+      // Initialize or re-initialize reveal.js
+      if (revealInstance) {
+        revealInstance.destroy();
+      }
+
+      revealInstance = new Reveal(document.getElementById('reveal'), {
+        hash: true,
+        history: false,
+        progress: true,
+        controls: true,
+        center: false,  // Disable centering to allow content to flow naturally
+        transition: 'slide',
+        width: '100%',
+        height: '100%',
+        margin: 0.05,
+        minScale: 0.5,
+        maxScale: 1.5,
+        // Enable scroll for overflow content
+        scrollActivationWidth: null,
+        disableLayout: false,
+        // Keep cursor visible at all times
+        hideInactiveCursor: false
+      });
+
+      await revealInstance.initialize();
+
+      // Reset to first slide when loading a new deck
+      revealInstance.slide(0, 0, 0);
+
+      // Set up slide change handler
+      revealInstance.on('slidechanged', event => {
+        updateSlideCounter();
+        renderWidgetsInSlide(event.currentSlide);
+
+        if (event.previousSlide) {
+          destroyWidgetsInSlide(event.previousSlide);
+        }
+      });
+
+      // Render widgets in first slide
+      revealInstance.on('ready', event => {
+        updateSlideCounter();
+        renderWidgetsInSlide(event.currentSlide);
+      });
+
+      // Close mobile menu when deck loads
+      document.getElementById('library-panel').classList.remove('open');
+    }
+
+    /**
+     * Update slide counter display
+     */
+    function updateSlideCounter() {
+      if (!revealInstance) return;
+
+      const indices = revealInstance.getIndices();
+      const total = revealInstance.getTotalSlides();
+      document.getElementById('slide-counter').textContent = `${indices.h + 1} / ${total}`;
+    }
+
+    /**
+     * Render widgets in a slide
+     */
+    function renderWidgetsInSlide(slide) {
+      if (!slide) return;
+
+      const placeholders = slide.querySelectorAll('.widget-placeholder:not([data-rendered="true"])');
+
+      placeholders.forEach(async placeholder => {
+        const widgetId = placeholder.dataset.widgetId;
+        const widgetData = window.widgetData?.[widgetId];
+
+        if (widgetData) {
+          await WidgetRegistry.render(widgetData.type, widgetData.config, placeholder);
+        }
+      });
+    }
+
+    /**
+     * Destroy widgets in a slide
+     */
+    function destroyWidgetsInSlide(slide) {
+      if (!slide) return;
+
+      const placeholders = slide.querySelectorAll('.widget-placeholder[data-rendered="true"]');
+
+      placeholders.forEach(placeholder => {
+        const widgetId = placeholder.dataset.widgetId;
+        const widgetData = window.widgetData?.[widgetId];
+
+        if (widgetData) {
+          WidgetRegistry.destroy(widgetData.type, placeholder);
+        }
+      });
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
