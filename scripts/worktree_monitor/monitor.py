@@ -21,7 +21,7 @@ import threading
 import uuid
 from collections import deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -183,7 +183,7 @@ class WorktreeMonitor:
             in MonitorOutput.errors as ComponentFailureInfo objects.
         """
         if now is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         errors: list[ComponentFailureInfo] = []
 
@@ -318,6 +318,7 @@ class WorktreeMonitor:
         output_path: Path,
         interval_seconds: int = 10,
         stop_event: threading.Event | None = None,
+        max_runtime_seconds: int | None = None,
     ) -> None:
         """Run continuous polling mode.
 
@@ -325,20 +326,35 @@ class WorktreeMonitor:
 
         Args:
             output_path: Path to write worktrees.json.
-            interval_seconds: Seconds between collections (default 10).
-            stop_event: Optional event to signal stop. If None, runs until interrupted.
+            interval_seconds: Seconds between collections (default 10, minimum 1).
+            stop_event: Event to signal stop. Required if max_runtime_seconds is None.
+            max_runtime_seconds: Maximum runtime in seconds. If None, stop_event is required.
 
         Raises:
-            ValueError: If interval_seconds < 1.
+            ValueError: If interval_seconds < 1 or neither stop_event nor max_runtime_seconds provided.
             MonitorWriteError: If too many consecutive write failures occur.
         """
         if interval_seconds < 1:
             raise ValueError(f"interval_seconds must be >= 1, got {interval_seconds}")
 
+        if stop_event is None and max_runtime_seconds is None:
+            raise ValueError(
+                "Either stop_event or max_runtime_seconds must be provided "
+                "to prevent infinite polling"
+            )
+
         MAX_CONSECUTIVE_FAILURES = 10
         consecutive_failures = 0
+        start_time = time.monotonic()
 
         while not (stop_event and stop_event.is_set()):
+            # Check max runtime
+            if max_runtime_seconds is not None:
+                elapsed = time.monotonic() - start_time
+                if elapsed >= max_runtime_seconds:
+                    logger.info(f"Max runtime ({max_runtime_seconds}s) reached. Stopping.")
+                    break
+
             try:
                 output = self.collect()
                 self.write_output(output, output_path)
@@ -347,19 +363,17 @@ class WorktreeMonitor:
                 consecutive_failures += 1
                 logger.error(f"Write failed ({consecutive_failures}/{MAX_CONSECUTIVE_FAILURES}): {e}")
                 if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
-                    logger.critical("Too many consecutive failures. Monitor stopping.")
-                    raise
-            except Exception as e:
-                consecutive_failures += 1
-                logger.error(f"Collection failed ({consecutive_failures}/{MAX_CONSECUTIVE_FAILURES}): {e}")
-                if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
-                    logger.critical("Too many consecutive failures. Monitor stopping.")
+                    logger.critical("Too many consecutive write failures. Monitor stopping.")
                     raise
 
             # Sleep in small increments for responsive stop
             for _ in range(interval_seconds):
                 if stop_event and stop_event.is_set():
                     break
+                # Also check max runtime during sleep
+                if max_runtime_seconds is not None:
+                    if time.monotonic() - start_time >= max_runtime_seconds:
+                        break
                 time.sleep(1)
 
     # -------------------------------------------------------------------------

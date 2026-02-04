@@ -1262,7 +1262,7 @@ class TestRunPolling:
         output_path = tmp_path / "worktrees.json"
 
         with pytest.raises(ValueError) as exc_info:
-            monitor.run_polling(output_path, interval_seconds=0)
+            monitor.run_polling(output_path, interval_seconds=0, max_runtime_seconds=10)
 
         assert "interval_seconds must be >= 1" in str(exc_info.value)
         assert "got 0" in str(exc_info.value)
@@ -1283,10 +1283,32 @@ class TestRunPolling:
         output_path = tmp_path / "worktrees.json"
 
         with pytest.raises(ValueError) as exc_info:
-            monitor.run_polling(output_path, interval_seconds=-1)
+            monitor.run_polling(output_path, interval_seconds=-1, max_runtime_seconds=10)
 
         assert "interval_seconds must be >= 1" in str(exc_info.value)
         assert "got -1" in str(exc_info.value)
+
+    def test_run_polling_requires_stop_mechanism(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        tmp_path,
+    ):
+        """run_polling requires either stop_event or max_runtime_seconds."""
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+        )
+        output_path = tmp_path / "worktrees.json"
+
+        with pytest.raises(ValueError) as exc_info:
+            # Neither stop_event nor max_runtime_seconds provided
+            monitor.run_polling(output_path, interval_seconds=10)
+
+        assert "stop_event" in str(exc_info.value)
+        assert "max_runtime_seconds" in str(exc_info.value)
 
     def test_run_polling_respects_stop_event(
         self,
@@ -1389,7 +1411,8 @@ class TestRunPolling:
         ):
             with pytest.raises(MonitorWriteError) as exc_info:
                 # This should fail after 10 consecutive failures
-                monitor.run_polling(output_path, interval_seconds=1, stop_event=None)
+                # Use max_runtime_seconds to prevent infinite loop (required by API)
+                monitor.run_polling(output_path, interval_seconds=1, max_runtime_seconds=60)
 
             assert "Simulated disk full" in exc_info.value.reason
 
@@ -1442,6 +1465,33 @@ class TestRunPolling:
 
         # Verify multiple calls were made (showing recovery)
         assert call_count[0] >= 2, "Discovery should have been called multiple times"
+
+    def test_run_polling_stops_at_max_runtime(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        tmp_path,
+    ):
+        """run_polling stops automatically when max_runtime_seconds is reached."""
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+        )
+        output_path = tmp_path / "worktrees.json"
+
+        # Run with short max runtime (2 seconds) and 1 second interval
+        start_time = time.monotonic()
+        monitor.run_polling(output_path, interval_seconds=1, max_runtime_seconds=2)
+        elapsed = time.monotonic() - start_time
+
+        # Should have stopped around 2 seconds (allow some tolerance)
+        assert elapsed >= 2.0, "Should run for at least max_runtime_seconds"
+        assert elapsed < 5.0, "Should stop near max_runtime_seconds, not run forever"
+
+        # Output file should exist
+        assert output_path.exists()
 
 
 # =============================================================================
