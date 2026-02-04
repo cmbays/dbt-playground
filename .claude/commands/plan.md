@@ -14,8 +14,79 @@ When this command is invoked:
 
 1. **Understand Current State**
    - Read relevant documentation (CLAUDE.md, PROJECT_STRUCTURE.md, ARCHITECTURE.md)
+   - Read [TECH_STACK.md](../../docs/reference/TECH_STACK.md) for technology constraints
    - Identify related existing files and patterns
    - Note any constraints or dependencies
+
+1.1 **Interrogation Phase** (Mandatory for `feat`, optional for others)
+
+   Before making assumptions, systematically ask clarifying questions. This surfaces hidden requirements and prevents rework.
+
+   **Enforcement by Task Type**:
+
+   | Type | Interrogation |
+   |------|--------------|
+   | `feat` | **Mandatory** - Must complete before planning |
+   | `fix` | Optional - Ask if scope unclear |
+   | `docs` | Optional - Ask if audience unclear |
+   | `chore` | Skip - Proceed directly |
+
+   **Question Categories**:
+
+   *Users & Scope*:
+   - Who will use this feature? (humans, agents, both)
+   - What's explicitly IN scope for this task?
+   - What's explicitly OUT of scope? (prevents scope creep)
+   - Is this a complete feature or a vertical slice of something larger?
+
+   *Data & Dependencies*:
+   - What data/inputs does this need?
+   - What existing code/models does this depend on?
+   - What will depend on this once complete?
+   - Are there external dependencies (APIs, libraries, services)?
+
+   *Error Handling & Edge Cases*:
+   - What can go wrong? (list failure modes)
+   - How should errors be handled? (fail fast, graceful degradation, retry)
+   - What are the edge cases? (empty data, invalid input, timeout)
+   - Is there a rollback strategy needed?
+
+   *Technical Constraints*:
+   - Performance requirements? (response time, data volume)
+   - Security considerations? (auth, input validation, PII)
+   - Compatibility requirements? (mobile, dark mode, accessibility)
+
+   **Interrogation Output**:
+
+   Document answers in the plan file under "## Requirements Clarification":
+
+   ```markdown
+   ## Requirements Clarification
+
+   ### Users & Scope
+   - **Users**: [who uses this]
+   - **In Scope**: [explicit inclusions]
+   - **Out of Scope**: [explicit exclusions]
+
+   ### Data & Dependencies
+   - **Inputs**: [data/inputs needed]
+   - **Depends On**: [existing code/models]
+   - **Depended On By**: [downstream consumers]
+
+   ### Error Handling
+   - **Failure Modes**: [what can go wrong]
+   - **Strategy**: [how to handle]
+
+   ### Constraints
+   - **Performance**: [requirements]
+   - **Security**: [considerations]
+   ```
+
+   **Skip Conditions**:
+
+   - User says "skip interrogation" or "proceed"
+   - Task type is `chore`
+   - All questions already answered in task description
 
 1.5 **Bootstrap from Session Memory** (when available)
 
@@ -156,6 +227,27 @@ Target: v[X.Y]
 
 ## Summary
 [1-2 sentence description]
+
+## Requirements Clarification
+
+### Users & Scope
+- **Users**: [who uses this - humans, agents, both]
+- **In Scope**: [explicit inclusions]
+- **Out of Scope**: [explicit exclusions]
+
+### Data & Dependencies
+- **Inputs**: [data/inputs needed]
+- **Depends On**: [existing code/models]
+- **Depended On By**: [downstream consumers]
+
+### Error Handling
+- **Failure Modes**: [what can go wrong]
+- **Strategy**: [fail fast / graceful degradation / retry]
+
+### Constraints
+- **Performance**: [requirements if any]
+- **Security**: [considerations if any]
+- **Compatibility**: [mobile, dark mode, accessibility]
 
 ## Prerequisites
 - [ ] Dependency 1

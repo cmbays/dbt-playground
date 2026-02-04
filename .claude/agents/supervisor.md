@@ -2151,3 +2151,4 @@ kanban:
 - **Schema**: `docs/schemas/workflow-checklist.schema.json`
 - **PRD**: `docs/specs/PRD-026-KANBAN-WORKFLOW-PHASE1.md`
 - **Module**: `kanban/` directory
+- **Deploy Checklist**: `docs/standards/DEPLOY_CHECKLIST.md` - PR merge requirements

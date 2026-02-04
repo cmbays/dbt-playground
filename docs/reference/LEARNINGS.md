@@ -32,6 +32,14 @@
 - [Decision Frameworks](#decision-frameworks)
   - [When to Create New Files vs. Edit Existing](#when-to-create-new-files-vs-edit-existing)
   - [Workflow Phase Selection](#workflow-phase-selection)
+- [Task Decomposition](#task-decomposition)
+  - [Epic-Task-Subtask Hierarchy](#epic-task-subtask-hierarchy)
+  - [Task Types](#task-types)
+  - [AI Agent Task Sizing](#ai-agent-task-sizing)
+  - [Vertical Slice Development](#pattern-vertical-slice-development)
+  - [Spike Then Story](#pattern-spike-then-story)
+  - [Documentation Task Pattern](#pattern-documentation-task-pattern)
+  - [Parallelization Strategy](#parallelization-strategy)
 - [Common Pitfalls](#common-pitfalls)
   - [File Path Assumptions](#file-path-assumptions)
   - [Context Loss in Agent Handoffs](#context-loss-in-agent-handoffs)
@@ -542,6 +550,227 @@ _Patterns for maintaining accurate, useful documentation._
 
 - `docs/WORKFLOW_EXCEPTIONS.md` - Approved shortcuts
 - CLAUDE.md: Standard Workflow section
+
+---
+
+## Task Decomposition
+
+Patterns for breaking down work to optimize for project management, AI agent context windows, parallelization, and visibility across GitHub and Workflow Hub.
+
+### Epic-Task-Subtask Hierarchy
+
+```
+Epic (1-3 days for AI projects, quarterly for traditional)
+├── PRD Task → docs/specs/PRD-XXX.md (linked to Epic)
+├── TDD Task → docs/specs/TDD-XXX.md (linked to Epic)
+├── ADR Task → docs/decisions/ADR-XXX.md (if needed)
+├── Implementation Task 1 → PR #1
+│   ├── Sub-task: checklist item 1
+│   ├── Sub-task: checklist item 2
+│   └── Sub-task: checklist item 3
+├── Implementation Task 2 → PR #2 (parallelizable)
+└── QA/Doc Task → PR #3
+```
+
+**Key Principles**:
+
+| Principle | Implementation |
+|-----------|---------------|
+| **DRY** | Epic contains high-level info; tasks link back to Epic |
+| **1 Task = 1 PR** | Each implementation task produces one pull request |
+| **Sub-tasks = Checklist** | Sub-tasks appear as checklist items in PR description |
+| **Docs as Tasks** | PRD, TDD, ADR are separate tasks linked to Epic |
+
+### Task Types
+
+| Type | Purpose | Sizing | Example |
+|------|---------|--------|---------|
+| **SPIKE** | Time-boxed research for uncertainty | 2-4h max | "Investigate auth options" |
+| **Feature** | New functionality via vertical slices | S-M (see below) | "Add patient search" |
+| **Bug** | Fix for defect with regression test | XS-S | "Fix null handling in dim_customers" |
+| **Chore** | Bundled maintenance tasks | XS-S | "Update dependencies, fix linting" |
+| **Doc** | Ensure documentation complete and linked | XS-S | "Update CLAUDE.md for v0.10" |
+
+### AI Agent Task Sizing
+
+Traditional time estimates don't apply to AI agents. Size tasks by **context window usage** and **commit-ready boundaries**.
+
+| Size | Context Usage | Scope | Parallelizable |
+|------|---------------|-------|----------------|
+| **XS** | ~10% | Single file, simple change | Yes |
+| **S** | ~25% | One model + tests, one component | Yes |
+| **M** | ~50% | Feature slice (2-4 files) | Sometimes |
+| **L** | ~75% | Multi-file feature | **Split it** |
+| **XL** | >75% | Too large | **Must split** |
+
+**Sizing Rules**:
+
+1. **Max 50% context rule**: If task would use >50% context window, split into smaller tasks
+2. **Commit-ready boundary**: Each task ends at a point where work can be committed
+3. **Resumable state**: If context is lost, artifacts allow easy pickup
+4. **Natural stopping points**: Align with logical completion (not arbitrary time)
+
+**Context-Efficient Task Examples**:
+
+```
+# Good - fits in context, commit-ready
+- "Add stg_synthea__patients model with tests"
+- "Create TECH_STACK.md document"
+- "Fix mobile responsiveness in workflow-hub"
+
+# Bad - too large, will overflow context
+- "Implement entire authentication system"
+- "Refactor all playgrounds to new design system"
+- "Build complete Kanban board feature"
+```
+
+### Pattern: Vertical Slice Development
+
+**Context**: Building features incrementally with working software at each step.
+
+**Pattern**: Each task delivers a thin, complete slice through all layers.
+
+```
+Slice 1: Basic patient list (model + view + minimal styling)
+    ↓
+Slice 2: Add search/filter (enhance model + add UI)
+    ↓
+Slice 3: Add pagination (enhance model + add UI)
+    ↓
+Slice 4: Polish and edge cases
+```
+
+**Benefits**:
+
+- Working software after each task
+- Easy to parallelize independent slices
+- Natural demo points for feedback
+- Reduces risk of integration issues
+
+**Anti-pattern**: Horizontal slicing (all models, then all views, then all tests) - leads to big-bang integration.
+
+### Pattern: Spike Then Story
+
+**Context**: Uncertainty about approach, technology, or feasibility.
+
+**Pattern**: Create time-boxed research task before implementation tasks.
+
+```
+SPIKE: Investigate DuckDB vs SQLite for metrics (2h max)
+├── Output: Decision documented in ADR or task comment
+├── Outcome A: "Use DuckDB" → Create implementation tasks
+└── Outcome B: "Use SQLite" → Create different implementation tasks
+```
+
+**Spike Task Template**:
+
+```markdown
+## Spike: [Topic]
+
+**Time Box**: [2-4 hours max]
+**Question**: [What we need to answer]
+
+### Research Areas
+- [ ] Option A: [description]
+- [ ] Option B: [description]
+- [ ] Constraints: [performance, security, etc.]
+
+### Output
+- [ ] Document findings in [location]
+- [ ] Recommendation with rationale
+- [ ] If ADR needed, create ADR task
+```
+
+**Key Rules**:
+
+- Always time-boxed (2-4 hours typical)
+- Output is decision/documentation, not code
+- Creates follow-up implementation tasks based on findings
+
+### Pattern: Documentation Task Pattern
+
+**Context**: PRDs, TDDs, and ADRs need tracking but aren't code tasks.
+
+**Pattern**: Create documentation as separate tasks linked to Epic.
+
+```
+Epic: #100 - Add Patient Analytics
+
+Tasks:
+├── #101 - PRD: Patient Analytics Requirements
+│   └── Output: docs/specs/PRD-025-PATIENT-ANALYTICS.md
+├── #102 - TDD: Patient Analytics Technical Design
+│   └── Output: docs/specs/TDD-025-PATIENT-ANALYTICS.md
+├── #103 - Implement patient_summary model
+├── #104 - Implement analytics dashboard
+└── #105 - QA and documentation update
+```
+
+**Benefits**:
+
+- Documentation is tracked and reviewed
+- Clear dependency: TDD blocked by PRD
+- Implementation blocked by TDD (when needed)
+- Easy to see what documentation exists for an Epic
+
+### Parallelization Strategy
+
+**Context**: Multiple AI agent teams can work simultaneously across worktrees.
+
+**Pattern**: Structure tasks to enable parallel execution.
+
+```
+Epic: #100 - Add Patient Analytics
+│
+├── Sequential (dependency chain):
+│   PRD (#101) → TDD (#102) → Core Model (#103)
+│
+└── Parallel (after core ready):
+    ├── Worktree A: Dashboard UI (#104)
+    ├── Worktree B: API endpoints (#105)
+    └── Worktree C: Documentation (#106)
+```
+
+**Parallelization Checklist**:
+
+- [ ] Identify tasks with no interdependencies
+- [ ] Create separate branches for each parallel track
+- [ ] Use git worktrees for simultaneous agent sessions
+- [ ] Define merge order to avoid conflicts
+- [ ] Use Workflow Hub to monitor all tracks
+
+**Conflict Prevention**:
+
+| Strategy | Implementation |
+|----------|---------------|
+| **File ownership** | Each parallel task owns specific files |
+| **Interface contracts** | Define API/schema before parallel work |
+| **Feature flags** | Isolate incomplete features |
+| **Merge order** | Infrastructure → Core → Features → Polish |
+
+### Workflow Hub Integration
+
+Task decomposition surfaces in Workflow Hub through:
+
+| Source | Location | Visibility |
+|--------|----------|------------|
+| GitHub Issues | API | Epic/Task/Sub-task hierarchy |
+| PR Status | API | Implementation progress |
+| WORKFLOW_STATE.md | temp/ per worktree | Active track, phase, blockers |
+| Session logs | memory/*.md | Agent activity history |
+| PM_SESSIONS.json | temp/ | Planning session state |
+
+**Dual Source of Truth**:
+
+```
+Committed (GitHub)          In-Progress (temp files)
+─────────────────          ─────────────────────────
+Issues, PRs, commits   +   WORKFLOW_STATE.md
+Closed tasks               Session logs
+Merged code                Current phase
+                           Blockers
+                           Parallel track status
+```
 
 ---
 
