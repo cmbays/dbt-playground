@@ -45,7 +45,7 @@ Multi-agent coordination requires solving:
 
 ### File Structure (Per Session)
 
-```
+```text
 temp/vibe_coding/DEBUG_REPORTS/{session}/
 ├── session_manifest.md             # Tracks all participating agents
 ├── agent_primary_findings.md       # Primary agent's findings (Step 1-4)

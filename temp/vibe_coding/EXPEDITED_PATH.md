@@ -34,6 +34,7 @@ A bug qualifies for the expedited path if it meets ALL of the following:
 The following bug types typically qualify for expedited handling:
 
 #### 1. Off-by-One Errors
+
 ```javascript
 // BUG: Loop ends one iteration early
 for (let i = 0; i < items.length - 1; i++)  // Wrong
@@ -41,6 +42,7 @@ for (let i = 0; i < items.length; i++)      // Fixed
 ```
 
 #### 2. Typos in Strings/Messages
+
 ```python
 # BUG: Misspelled word in user-facing message
 print("Sucessfully saved")   # Wrong
@@ -48,6 +50,7 @@ print("Successfully saved")  # Fixed
 ```
 
 #### 3. Missing Newlines/Formatting
+
 ```sql
 -- BUG: Missing newline before FROM
 select column1, column2from table  -- Wrong
@@ -56,6 +59,7 @@ from table                         -- Fixed
 ```
 
 #### 4. Simple Config Mismatches
+
 ```yaml
 # BUG: Wrong environment value
 environment: producton   # Wrong (typo)
@@ -63,6 +67,7 @@ environment: production  # Fixed
 ```
 
 #### 5. Obvious Null/Undefined Handling
+
 ```javascript
 // BUG: Missing null check on optional property
 const name = user.profile.name;           // Crashes if profile is null
@@ -70,6 +75,7 @@ const name = user.profile?.name ?? '';    // Fixed
 ```
 
 #### 6. Import/Require Path Errors
+
 ```python
 # BUG: Wrong import path
 from utils.hlpers import sanitize   # Wrong (typo in path)
@@ -77,6 +83,7 @@ from utils.helpers import sanitize  # Fixed
 ```
 
 #### 7. Hardcoded Magic Numbers/Strings
+
 ```javascript
 // BUG: Hardcoded timeout should use constant
 setTimeout(callback, 5000);           // Hardcoded
@@ -84,6 +91,7 @@ setTimeout(callback, TIMEOUT_MS);     // Fixed (uses constant)
 ```
 
 #### 8. Incorrect Boolean Logic
+
 ```python
 # BUG: Wrong boolean operator
 if user.is_admin and user.is_active:   # Wrong logic
@@ -91,6 +99,7 @@ if user.is_admin or user.is_active:    # Fixed (or was intended)
 ```
 
 #### 9. Missing Return Statement
+
 ```javascript
 // BUG: Function doesn't return the value
 function double(x) {
@@ -102,6 +111,7 @@ function double(x) {
 ```
 
 #### 10. Incorrect Variable Reference
+
 ```python
 # BUG: Using wrong variable name
 total = price * quanity   # Wrong (typo: quanity vs quantity)
@@ -254,7 +264,7 @@ Bug appears in production only
 
 ### Disqualifier Decision Flow
 
-```
+```text
 Is it a single file?
 ├── No → FULL PROTOCOL
 └── Yes → Does it require database changes?
@@ -278,7 +288,7 @@ Is it a single file?
 
 Use this single-line format for expedited fixes:
 
-```
+```text
 EXPEDITED: [YYYY-MM-DD] [filename]:[line] - [category] - [description] - verified
 ```
 
@@ -295,7 +305,7 @@ EXPEDITED: [YYYY-MM-DD] [filename]:[line] - [category] - [description] - verifie
 
 ### Examples
 
-```
+```text
 EXPEDITED: 2026-02-04 models/user.py:127 - null-check - added optional chaining for profile.name - verified
 EXPEDITED: 2026-02-04 config/settings.yaml:15 - typo - "producton" to "production" - verified
 EXPEDITED: 2026-02-04 utils/math.js:42 - off-by-one - loop index < length not <= length - verified
@@ -353,7 +363,7 @@ Total: 3 expedited fixes, ~10 minutes
 
 ### Log Format Template
 
-```
+```text
 EXPEDITED: [YYYY-MM-DD] [file]:[line] - [category] - [description] - verified
 ```
 

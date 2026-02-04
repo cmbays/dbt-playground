@@ -13,7 +13,7 @@ When multiple agents debug the same codebase concurrently, they need:
 
 ## Folder Structure
 
-```
+```text
 DEBUG_REPORTS/
 ├── README.md                          # This file
 ├── DEBUG_SESSION_REPORT.md            # Template for debug sessions
@@ -30,6 +30,7 @@ DEBUG_REPORTS/
 Format: `session-YYYY-MM-DD-HHmmss`
 
 Examples:
+
 - `session-2026-02-04-143022` (Feb 4, 2026 at 2:30:22 PM)
 - `session-2026-02-04-091545` (Feb 4, 2026 at 9:15:45 AM)
 
@@ -40,6 +41,7 @@ Examples:
 Format: `agent_[name]_findings.md`
 
 Examples:
+
 - `agent_alpha_findings.md`
 - `agent_beta_findings.md`
 - `agent_debugger1_findings.md`
@@ -176,7 +178,7 @@ Bug: "Orders page crashes for some users"
 
 ### Session Structure
 
-```
+```text
 session-2026-02-04-143022/
 ├── agent_frontend_findings.md    # UI team investigation
 ├── agent_backend_findings.md     # API team investigation
@@ -196,7 +198,7 @@ session-2026-02-04-143022/
 
 ### With AGENT_REPORTS
 
-```
+```text
 temp/
 ├── AGENT_REPORTS/           # Feature development workflow
 │   └── [feature]/
@@ -210,7 +212,7 @@ temp/
 
 DEBUG_REPORTS is for **bug investigation**, not feature development.
 
-### With LESSONS.md
+### With LEARNINGS.md
 
 After every resolved debug session:
 
@@ -222,7 +224,7 @@ After every resolved debug session:
 
 Update project progress after significant debug sessions:
 
-```
+```text
 [2026-02-04] Debug session session-2026-02-04-143022 resolved
 - Bug: Orders page crash
 - Root cause: Missing NOT NULL constraint

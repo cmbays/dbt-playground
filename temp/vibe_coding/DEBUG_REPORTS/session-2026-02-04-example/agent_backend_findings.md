@@ -60,6 +60,7 @@ Response includes `items: null`
 **What I checked**: Orders API handler
 
 **What I found**:
+
 ```javascript
 // api/orders.js:45
 async function getOrder(id) {
@@ -77,6 +78,7 @@ async function getOrder(id) {
 **What I checked**: What happens when order is canceled
 
 **What I found**:
+
 ```javascript
 // api/orders.js:78
 async function cancelOrder(id) {

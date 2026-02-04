@@ -61,7 +61,8 @@ Uncaught TypeError: Cannot read properties of null (reading 'length')
 **What I checked**: Error stack trace in browser dev tools
 
 **What I found**:
-```
+
+```text
 TypeError: Cannot read properties of null (reading 'length')
     at renderOrderItems (orders.js:142:28)
     at displayOrder (orders.js:89:5)
@@ -76,6 +77,7 @@ TypeError: Cannot read properties of null (reading 'length')
 **What I checked**: Where items comes from
 
 **What I found**:
+
 ```javascript
 // orders.js:89
 const items = order.items;  // No null check
@@ -91,6 +93,7 @@ renderOrderItems(items);    // Passes null to function
 **What I checked**: Network tab for canceled order API response
 
 **What I found**:
+
 ```json
 {
   "id": 123,

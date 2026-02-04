@@ -40,7 +40,7 @@
 
 ### Root Cause Chain
 
-```
+```text
 1. cancelOrder() sets items = null in database
          |
          v
@@ -154,12 +154,14 @@ curl http://localhost:3000/api/orders/456
 **Pattern Name**: Consistent Return Types
 
 **Anti-Pattern**:
+
 ```javascript
 // BAD: Return type varies based on state
 return order.status === 'canceled' ? null : order.items;
 ```
 
 **Correct Pattern**:
+
 ```javascript
 // GOOD: Always return consistent type
 return order.items ?? [];  // Always array

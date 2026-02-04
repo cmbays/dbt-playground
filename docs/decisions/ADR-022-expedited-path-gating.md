@@ -86,7 +86,7 @@ If all 4 criteria are met:
 
 ### Decision Tree
 
-```
+```text
 Is bug in single file?
 ├── No → Full 7-step protocol
 └── Yes → Does fix change API contracts?

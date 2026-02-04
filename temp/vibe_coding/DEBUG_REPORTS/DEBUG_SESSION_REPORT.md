@@ -148,7 +148,7 @@
 
 ### Implementation Notes
 
-```
+```text
 [code snippet or pseudocode showing fix approach]
 ```
 

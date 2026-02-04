@@ -148,7 +148,7 @@ For each service touched:
 
 Create a unified timeline showing events across all services:
 
-```
+```text
 CROSS-SERVICE TIMELINE
 
 Trace ID: abc123-def456-789
@@ -446,7 +446,7 @@ The standard Step 4 asks "Root cause or symptom?" For distributed systems, we ad
 
 In distributed systems, distinguishing root cause from symptom is harder because failures cascade:
 
-```
+```text
 Root Cause:          Symptom 1:           Symptom 2:           Symptom 3:
 ┌─────────────┐      ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
 │ Inventory   │      │ Order       │      │ API Gateway │      │ User sees   │
