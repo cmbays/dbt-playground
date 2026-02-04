@@ -1442,3 +1442,216 @@ class TestRunPolling:
 
         # Verify multiple calls were made (showing recovery)
         assert call_count[0] >= 2, "Discovery should have been called multiple times"
+
+
+# =============================================================================
+# Test 9: Parallel Enrichment (HIGH-11)
+# =============================================================================
+
+
+class TestParallelEnrichment:
+    """Tests for parallel worktree enrichment."""
+
+    def test_parallel_enrichment_returns_same_count(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        fixed_now,
+    ):
+        """Parallel enrichment returns same number of worktrees."""
+        # Setup: 5 worktrees
+        worktrees = [
+            WorktreeInfo(
+                path=f"/path/wt{i}",
+                branch=f"feat/test-{i}",
+                commit_hash=f"abc{i}def1234567890abcdef1234567890abcd",
+                commit_short=f"abc{i}def",
+                is_main=(i == 0),
+                status=WorktreeStatus.CLEAN,
+                files_changed=0,
+                files_staged=0,
+            )
+            for i in range(5)
+        ]
+        mock_worktree_discovery.list_worktrees.return_value = worktrees
+
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+        )
+
+        output = monitor.collect(now=fixed_now)
+        assert output.worktree_count == 5
+        assert len(output.worktrees) == 5
+
+    def test_parallel_enrichment_preserves_order(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        fixed_now,
+    ):
+        """Parallel enrichment preserves worktree order."""
+        worktrees = [
+            WorktreeInfo(
+                path=f"/path/wt{i}",
+                branch=f"branch-{i}",
+                commit_hash=f"hash{i}1234567890abcdef1234567890abcdef12",
+                commit_short=f"hash{i}",
+                is_main=False,
+                status=WorktreeStatus.CLEAN,
+                files_changed=0,
+                files_staged=0,
+            )
+            for i in range(3)
+        ]
+        mock_worktree_discovery.list_worktrees.return_value = worktrees
+
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+        )
+
+        output = monitor.collect(now=fixed_now)
+
+        # Verify order preserved
+        for i, wt in enumerate(output.worktrees):
+            assert wt.branch == f"branch-{i}"
+
+    def test_parallel_enrichment_handles_individual_failures(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        fixed_now,
+    ):
+        """Parallel enrichment handles per-worktree failures gracefully."""
+        worktrees = [
+            WorktreeInfo(
+                path=f"/path/wt{i}",
+                branch=f"feat/test-{i}",
+                commit_hash=f"abc{i}1234567890abcdef1234567890abcdef12",
+                commit_short=f"abc{i}",
+                is_main=False,
+                status=WorktreeStatus.CLEAN,
+                files_changed=0,
+                files_staged=0,
+            )
+            for i in range(3)
+        ]
+        mock_worktree_discovery.list_worktrees.return_value = worktrees
+
+        # Make GitHub fail for second worktree only
+        def flaky_pr_state(branch):
+            if "test-1" in branch:
+                raise GitHubAPIError("API error", 500, "Internal error")
+            return None
+
+        mock_github_adapter.get_pr_state.side_effect = flaky_pr_state
+
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+        )
+
+        output = monitor.collect(now=fixed_now)
+
+        # All worktrees should be returned despite one failure
+        assert len(output.worktrees) == 3
+
+    def test_sequential_fallback_when_github_disabled(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        fixed_now,
+    ):
+        """Uses sequential processing when GitHub disabled."""
+        worktrees = [
+            WorktreeInfo(
+                path="/path/wt1",
+                branch="feat/test",
+                commit_hash="abc1234567890abcdef1234567890abcdef123",
+                commit_short="abc1234",
+                is_main=False,
+                status=WorktreeStatus.CLEAN,
+                files_changed=0,
+                files_staged=0,
+            )
+        ]
+        mock_worktree_discovery.list_worktrees.return_value = worktrees
+
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+            github_enrichment_enabled=False,  # Disabled
+        )
+
+        output = monitor.collect(now=fixed_now)
+
+        # Should still work
+        assert len(output.worktrees) == 1
+        # GitHub should not be called
+        mock_github_adapter.get_pr_state.assert_not_called()
+
+
+# =============================================================================
+# Test 10: Archived Versions Collection (HIGH-03)
+# =============================================================================
+
+
+class TestArchivedVersionsCollection:
+    """Tests for archived versions collection."""
+
+    def test_collect_archived_with_no_archive_manager(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        fixed_now,
+    ):
+        """Returns empty list when archive_manager is None."""
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+            archive_manager=None,  # No archive manager
+        )
+
+        output = monitor.collect(now=fixed_now)
+        assert output.archived == []
+
+    def test_collect_archived_handles_corrupted_archive(
+        self,
+        mock_version_plan_loader,
+        mock_worktree_discovery,
+        mock_github_adapter,
+        fixed_now,
+    ):
+        """Handles corrupted archives gracefully."""
+        from unittest.mock import MagicMock
+
+        mock_archive_manager = MagicMock()
+        mock_archive_manager.list_versions.side_effect = ArchiveCorruptedError(
+            "v0.1", "Corrupted data"
+        )
+
+        monitor = WorktreeMonitor(
+            version_plan_loader=mock_version_plan_loader,
+            worktree_discovery=mock_worktree_discovery,
+            github_adapter=mock_github_adapter,
+            archive_manager=mock_archive_manager,
+        )
+
+        output = monitor.collect(now=fixed_now)
+
+        # Should return empty archived list
+        assert output.archived == []
+        # Should record error
+        assert len(output.errors) >= 1
+        assert any("ArchiveManager" in e.component for e in output.errors)

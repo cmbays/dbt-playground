@@ -18,7 +18,9 @@ import os
 import tempfile
 import time
 import threading
+import uuid
 from collections import deque
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -28,6 +30,7 @@ from .archive_manager import ArchiveManager
 from .constants import (
     AnomalySeverity,
     AnomalyType,
+    ArchiveReason,
     CodeRabbitReviewStatus,
     HeartbeatState,
     WorkstreamStatus,
@@ -109,6 +112,9 @@ class WorktreeMonitor:
     # Rate limit cooldown period
     RATE_LIMIT_COOLDOWN_MINUTES = 5
 
+    # Maximum workers for parallel GitHub enrichment
+    MAX_GITHUB_WORKERS = 5
+
     def __init__(
         self,
         version_plan_loader: VersionPlanLoader,
@@ -187,11 +193,8 @@ class WorktreeMonitor:
         # 2. Discover worktrees
         worktrees_raw = self._collect_worktrees(now, errors)
 
-        # 3. Enrich worktrees
-        worktrees = [
-            self._enrich_worktree(wt, plan, now)
-            for wt in worktrees_raw
-        ]
+        # 3. Enrich worktrees (parallel for performance)
+        worktrees = self._enrich_worktrees_parallel(worktrees_raw, plan, now)
 
         # 4. Collect heartbeat
         heartbeat = self._collect_heartbeat(now, errors)
@@ -545,6 +548,60 @@ class WorktreeMonitor:
 
         return pr_info, ci_checks, coderabbit
 
+    def _enrich_worktrees_parallel(
+        self,
+        worktrees_raw: list[WorktreeInfo],
+        plan: VersionPlan | None,
+        now: datetime,
+    ) -> list[EnrichedWorktree]:
+        """Enrich worktrees in parallel using thread pool.
+
+        Uses ThreadPoolExecutor for parallel GitHub API calls.
+        Falls back to sequential processing on any error.
+
+        Args:
+            worktrees_raw: List of discovered worktrees.
+            plan: VersionPlan for workstream matching.
+            now: Current timestamp.
+
+        Returns:
+            List of EnrichedWorktree in same order as input.
+        """
+        if not worktrees_raw:
+            return []
+
+        # If GitHub enrichment disabled, just do sequential (fast)
+        if not self._github_enrichment_enabled:
+            return [self._enrich_worktree(wt, plan, now) for wt in worktrees_raw]
+
+        # Use thread pool for parallel enrichment
+        results: dict[int, EnrichedWorktree] = {}
+
+        try:
+            with ThreadPoolExecutor(max_workers=self.MAX_GITHUB_WORKERS) as executor:
+                # Submit all tasks with their index to preserve order
+                future_to_idx = {
+                    executor.submit(self._enrich_worktree, wt, plan, now): idx
+                    for idx, wt in enumerate(worktrees_raw)
+                }
+
+                # Collect results as they complete
+                for future in as_completed(future_to_idx):
+                    idx = future_to_idx[future]
+                    try:
+                        results[idx] = future.result()
+                    except Exception as e:
+                        # On error, create a basic enriched worktree without GitHub data
+                        logger.warning(f"Enrichment failed for worktree {idx}: {e}")
+                        results[idx] = EnrichedWorktree.from_worktree_info(worktrees_raw[idx])
+        except Exception as e:
+            # Fallback to sequential on thread pool error
+            logger.warning(f"Parallel enrichment failed, falling back to sequential: {e}")
+            return [self._enrich_worktree(wt, plan, now) for wt in worktrees_raw]
+
+        # Return in original order
+        return [results[i] for i in range(len(worktrees_raw))]
+
     # -------------------------------------------------------------------------
     # Private: Heartbeat Collection
     # -------------------------------------------------------------------------
@@ -646,33 +703,110 @@ class WorktreeMonitor:
     ) -> list[ArchivedWorktree]:
         """Collect archived version data.
 
-        Note: The MonitorOutput.archived field uses ArchivedWorktree format,
-        but we get VersionSummary from ArchiveManager. For MVP, we return
-        an empty list; full implementation would transform summaries.
-
         Args:
             now: Current timestamp.
             errors: List to append errors to.
 
         Returns:
-            List of ArchivedWorktree (empty for MVP).
+            List of ArchivedWorktree from archive manager.
         """
         if self._archive_manager is None:
             return []
 
+        archived: list[ArchivedWorktree] = []
         try:
-            # Get version summaries from archive manager
-            _summaries = self._archive_manager.list_versions()
-            # TODO: Transform VersionSummary objects into ArchivedWorktree format
-            # For MVP, return empty list as the UI primarily needs version existence
-            return []
+            summaries = self._archive_manager.list_versions()
+            for summary in summaries:
+                try:
+                    version_archive = self._archive_manager.get_version(summary.version)
+                    if version_archive and version_archive.worktrees:
+                        # Convert each worktree dict to ArchivedWorktree
+                        for wt_dict in version_archive.worktrees:
+                            try:
+                                archived_wt = self._dict_to_archived_worktree(
+                                    wt_dict,
+                                    version_archive.archived_at,
+                                    version_archive.reason,
+                                    version_archive.version,
+                                )
+                                archived.append(archived_wt)
+                            except (KeyError, ValueError) as e:
+                                # Skip malformed worktree data
+                                logger.warning(
+                                    f"Skipping malformed worktree in {summary.version}: {e}"
+                                )
+                except ArchiveCorruptedError as e:
+                    # Log but continue with other versions
+                    logger.warning(f"Skipping corrupted archive {summary.version}: {e}")
         except ArchiveCorruptedError as e:
             errors.append(ComponentFailureInfo(
                 component="ArchiveManager",
                 message=str(e),
                 timestamp=now,
             ))
-            return []
+
+        return archived
+
+    def _dict_to_archived_worktree(
+        self,
+        wt_dict: dict[str, Any],
+        archived_at: datetime,
+        reason: str,
+        version: str,
+    ) -> ArchivedWorktree:
+        """Convert a serialized worktree dict to ArchivedWorktree.
+
+        Args:
+            wt_dict: Serialized worktree data from archive.
+            archived_at: When the version was archived.
+            reason: Reason for archiving.
+            version: Version name (e.g., "v0.10").
+
+        Returns:
+            ArchivedWorktree instance.
+
+        Raises:
+            KeyError: If required fields are missing.
+            ValueError: If field values are invalid.
+        """
+        # Parse last_commit_date if present
+        last_commit_date = None
+        if wt_dict.get("last_commit_date"):
+            last_commit_date = datetime.fromisoformat(wt_dict["last_commit_date"])
+
+        # Reconstruct WorktreeInfo
+        worktree_info = WorktreeInfo(
+            path=wt_dict["path"],
+            branch=wt_dict["branch"],
+            commit_hash=wt_dict["commit_hash"],
+            commit_short=wt_dict["commit_short"],
+            is_main=wt_dict.get("is_main", False),
+            status=WorktreeStatus(wt_dict.get("status", "unknown")),
+            files_changed=wt_dict.get("files_changed", 0),
+            files_staged=wt_dict.get("files_staged", 0),
+            last_commit_msg=wt_dict.get("last_commit_msg", ""),
+            last_commit_date=last_commit_date,
+        )
+
+        # Create EnrichedWorktree
+        enriched = EnrichedWorktree.from_worktree_info(worktree_info)
+        enriched.track_name = wt_dict.get("track_name")
+        enriched.track_color = wt_dict.get("track_color")
+        enriched.epic_number = wt_dict.get("epic_number")
+
+        # Map reason string to ArchiveReason enum
+        try:
+            archive_reason = ArchiveReason(reason) if reason else ArchiveReason.MANUAL
+        except ValueError:
+            archive_reason = ArchiveReason.MANUAL
+
+        return ArchivedWorktree(
+            id=str(uuid.uuid4()),
+            worktree=enriched,
+            archived_at=archived_at,
+            reason=archive_reason,
+            version=version,
+        )
 
     # -------------------------------------------------------------------------
     # Private: Serialization
