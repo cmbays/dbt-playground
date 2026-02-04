@@ -42,9 +42,9 @@ We need a persistence strategy that enables multi-agent coordination while remai
 ### Directory Structure
 
 ```
-temp/DEBUG_REPORTS/
+temp/vibe_coding/DEBUG_REPORTS/
 ├── 2026-02-04_14-30_null-pointer-exception/
-│   ├── session_metadata.json        # Session ID, agents, timestamps
+│   ├── session_manifest.md          # Session ID, agents, timestamps
 │   ├── agent_1_findings.md          # First agent's debug findings
 │   ├── agent_2_findings.md          # Second agent's findings
 │   ├── merge_resolution.md          # Merged resolution (if multi-agent)
@@ -70,23 +70,39 @@ temp/DEBUG_REPORTS/
 - **Bug slug**: Human-readable identifier (max 50 chars, kebab-case)
 - **Uniqueness**: Timestamp + slug combination is unique
 
-### Session Metadata Schema
+### Session Manifest Format
 
-```json
-{
-  "session_id": "debug_2026-02-04_14-30_abc123",
-  "bug_slug": "null-pointer-exception",
-  "created_at": "2026-02-04T14:30:00Z",
-  "updated_at": "2026-02-04T16:45:00Z",
-  "status": "active|resolved|abandoned",
-  "agents": [
-    {"id": "agent_1", "joined_at": "2026-02-04T14:30:00Z", "role": "primary"},
-    {"id": "agent_2", "joined_at": "2026-02-04T15:00:00Z", "role": "secondary"}
-  ],
-  "related_files": ["src/api/handler.py", "tests/test_handler.py"],
-  "classification": "root_cause|symptom|unknown",
-  "expedited": false
-}
+```markdown
+# Debug Session Manifest
+
+**Session ID**: session-2026-02-04-143000
+**Status**: ACTIVE | RESOLVED | ABANDONED
+**Created**: 2026-02-04 14:30:00 UTC
+**Updated**: 2026-02-04 16:45:00 UTC
+
+---
+
+## Bug Reference
+
+**Source**: {issue or report reference}
+**Description**: {brief bug description}
+
+---
+
+## Participating Agents
+
+| Agent | Findings File | Status | Focus Area |
+|-------|---------------|--------|------------|
+| primary | agent_primary_findings.md | COMPLETE | {area} |
+| secondary | agent_secondary_findings.md | IN_PROGRESS | {area} |
+
+---
+
+## Session Outcome
+
+**Classification**: ROOT_CAUSE | SYMPTOM | UNKNOWN
+**Expedited**: Yes | No
+**Related Files**: src/api/handler.py, tests/test_handler.py
 ```
 
 ## Rationale
@@ -141,7 +157,7 @@ temp/DEBUG_REPORTS/
 | Manual cleanup | Add cleanup script (`scripts/cleanup-debug-sessions.py --older-than 30d`) |
 | No query | Add indexing script for Tier 2+ (`scripts/index-debug-sessions.py`) |
 | Race conditions | Include random suffix in session ID if collision detected |
-| Disk space | Evidence folder size limits in session_metadata.json |
+| Disk space | Evidence folder size limits in session_manifest.md |
 
 ## Alternatives Considered
 

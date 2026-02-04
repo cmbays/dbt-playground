@@ -3,7 +3,7 @@ audience: [multi-agent, architect, pm]
 priority: high
 size: small
 dependencies: []
-last_updated: 2026-02-01
+last_updated: 2026-02-04
 status: active
 tags: [reference, decisions, adr, architecture]
 ---

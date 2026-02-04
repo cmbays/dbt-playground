@@ -268,7 +268,7 @@ Add to evidence collection:
 - [ADR-019: Debug Session Persistence](ADR-019-debug-session-persistence.md) - Evidence storage
 - [ADR-020: Multi-Agent Coordination](ADR-020-multi-agent-coordination.md) - Multi-agent findings
 - [WAVE3_PATHWAY_STRATEGY.md](../../temp/vibe_coding/WAVE3_PATHWAY_STRATEGY.md) - Tier 2/3 observability
-- [WAVE3_ARCH_REPORT.md](../../temp/vibe_coding/WAVE3_ARCH_REPORT.md) - Gap analysis
+- [WAVE3_PATHWAY_STRATEGY.md](../../temp/vibe_coding/WAVE3_PATHWAY_STRATEGY.md) - Gap analysis
 - [x_post_backend.txt](../../temp/vibe_coding/x_post_backend.txt) - Original protocol
 
 ---

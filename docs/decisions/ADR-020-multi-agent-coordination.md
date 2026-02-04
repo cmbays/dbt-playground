@@ -46,8 +46,8 @@ Multi-agent coordination requires solving:
 ### File Structure (Per Session)
 
 ```
-temp/DEBUG_REPORTS/{session}/
-├── session_metadata.json           # Tracks all participating agents
+temp/vibe_coding/DEBUG_REPORTS/{session}/
+├── session_manifest.md             # Tracks all participating agents
 ├── agent_primary_findings.md       # Primary agent's findings (Step 1-4)
 ├── agent_secondary_findings.md     # Secondary agent's findings
 ├── agent_specialist_findings.md    # Specialist (e.g., security) findings
@@ -133,7 +133,7 @@ Each `agent_{role}_findings.md` follows this structure:
 
 ### Coordination Protocol
 
-1. **Session Join**: Agent writes entry to `session_metadata.json` agents array
+1. **Session Join**: Agent writes entry to `session_manifest.md` agents section
 2. **Isolation**: Each agent writes ONLY to their own findings file
 3. **No Cross-Write**: Agents do not modify each other's findings files
 4. **Merge Trigger**: When all agents complete Step 5 OR lead agent initiates
@@ -181,7 +181,7 @@ Each `agent_{role}_findings.md` follows this structure:
 
 - **Manual merge required**: Lead agent must synthesize findings
 - **Post-session cleanup needed**: Multiple files per session
-- **Coordination overhead**: Agents must check session_metadata for others
+- **Coordination overhead**: Agents must check session_manifest for others
 - **Lead bottleneck**: Merge waits for lead agent availability
 
 ### Mitigation
@@ -215,7 +215,7 @@ Each `agent_{role}_findings.md` follows this structure:
 
 ## Implementation Notes
 
-1. **Join protocol**: Agent checks `session_metadata.json`, adds self to agents array
+1. **Join protocol**: Agent checks `session_manifest.md`, adds self to agents section
 2. **Naming convention**: `agent_{role}_findings.md` where role is human-readable
 3. **Completion signal**: Agent sets `status: complete` in their metadata entry
 4. **Merge trigger**: Lead polls for all agents complete OR manual trigger
@@ -226,7 +226,7 @@ Each `agent_{role}_findings.md` follows this structure:
 
 - [ADR-019: Debug Session Persistence](ADR-019-debug-session-persistence.md) - Session folder structure
 - [ADR-008: Inter-Agent Report Pattern](../specs/TDD-HISTORICAL.md#adr-8-inter-agent-report-pattern) - Report conventions
-- [WAVE3_EXEC_BRIEF.md](../../temp/vibe_coding/WAVE3_EXECUTIVE_BRIEF.md) - Multi-agent gap analysis
+- [WAVE3_EXECUTIVE_BRIEF.md](../../temp/vibe_coding/WAVE3_EXECUTIVE_BRIEF.md) - Multi-agent gap analysis
 - [x_post_backend.txt](../../temp/vibe_coding/x_post_backend.txt) - Original single-agent protocol
 
 ---
