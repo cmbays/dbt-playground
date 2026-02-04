@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
   <style>
     /* ==================== Design System Tokens ====================
        Philosophy: "Linear calm + Raycast polish + Neobrutalist delight"
@@ -95,6 +95,7 @@
       --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
 
       /* Type Scale */
+      --text-2xs: 0.625rem;
       --text-xs: 0.75rem;
       --text-sm: 0.875rem;
       --text-base: 1rem;
@@ -104,7 +105,9 @@
       --text-3xl: 1.875rem;
 
       /* Spacing */
+      --space-px: 0.125rem;
       --space-1: 0.25rem;
+      --space-1-5: 0.375rem;
       --space-2: 0.5rem;
       --space-3: 0.75rem;
       --space-4: 1rem;
@@ -323,15 +326,15 @@
     .polling-controls {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 0.8125rem;
+      gap: var(--space-3);
+      font-size: var(--text-sm);
       color: var(--text-muted);
     }
 
     .polling-status {
       display: flex;
       align-items: center;
-      gap: 0.375rem;
+      gap: var(--space-1-5);
     }
 
     .polling-dot {
@@ -377,13 +380,13 @@
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .blocked-list {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: var(--space-3);
     }
 
     .blocked-card {
@@ -397,35 +400,35 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     .blocked-branch {
       font-weight: 600;
       font-family: var(--font-mono);
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
     }
 
     .blocked-duration {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       color: var(--accent-danger);
       font-weight: 500;
     }
 
     .blocking-reason {
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       color: var(--text-secondary);
-      margin-bottom: 0.75rem;
-      padding: 0.5rem;
+      margin-bottom: var(--space-3);
+      padding: var(--space-2);
       background: var(--bg-secondary);
       border-radius: 4px;
     }
 
     .blocked-panel-empty {
       text-align: center;
-      padding: 0.5rem;
+      padding: var(--space-2);
       color: var(--text-muted);
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
     }
 
     .blocked-panel.hidden {
@@ -532,7 +535,7 @@
     }
 
     .session-updated {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
     }
 
@@ -547,7 +550,7 @@
       flex: 1;
       text-align: center;
       padding: var(--space-1) var(--space-1);
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       font-weight: 500;
       border-radius: var(--radius-sm);
       background: var(--color-bg-elevated);
@@ -609,7 +612,7 @@
     }
 
     .budget-text {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
       display: flex;
       justify-content: space-between;
@@ -617,8 +620,8 @@
     }
 
     .budget-update-btn {
-      font-size: 0.625rem;
-      padding: 0.125rem 0.375rem;
+      font-size: var(--text-2xs);
+      padding: var(--space-px) var(--space-1-5);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       border-radius: 3px;
@@ -634,12 +637,12 @@
     .assigned-issues {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.375rem;
+      gap: var(--space-1-5);
     }
 
     .issue-tag {
-      font-size: 0.6875rem;
-      padding: 0.125rem 0.375rem;
+      font-size: var(--text-xs);
+      padding: var(--space-px) var(--space-1-5);
       background: var(--bg-tertiary);
       border-radius: 3px;
       color: var(--text-secondary);
@@ -661,11 +664,11 @@
     }
 
     .priority-header {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       font-weight: 600;
-      padding: 0.375rem 0.5rem;
+      padding: var(--space-1-5) var(--space-2);
       border-radius: 4px;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -689,15 +692,15 @@
     .issue-list {
       display: flex;
       flex-direction: column;
-      gap: 0.375rem;
+      gap: var(--space-1-5);
     }
 
     .issue-row {
       display: flex;
-      gap: 0.5rem;
-      padding: 0.5rem;
+      gap: var(--space-2);
+      padding: var(--space-2);
       border-radius: 4px;
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       cursor: pointer;
       transition: background 150ms ease;
     }
@@ -723,12 +726,12 @@
 
     .issue-labels {
       display: flex;
-      gap: 0.25rem;
+      gap: var(--space-1);
     }
 
     .issue-label {
-      font-size: 0.625rem;
-      padding: 0.125rem 0.375rem;
+      font-size: var(--text-2xs);
+      padding: var(--space-px) var(--space-1-5);
       border-radius: 999px;
       background: var(--bg-tertiary);
       color: var(--text-muted);
@@ -736,12 +739,12 @@
 
     .expand-btn {
       width: 100%;
-      padding: 0.5rem;
+      padding: var(--space-2);
       background: var(--bg-secondary);
       border: 1px dashed var(--border-color);
       border-radius: 4px;
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       cursor: pointer;
       transition: all 150ms ease;
     }
@@ -755,7 +758,7 @@
     .playground-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 0.75rem;
+      gap: var(--space-3);
     }
 
     .playground-link {
@@ -788,19 +791,19 @@
 
     .playground-icon {
       font-size: 1.5rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     .playground-name {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       font-weight: 500;
       text-align: center;
     }
 
     .playground-status {
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       color: var(--text-muted);
-      margin-top: 0.25rem;
+      margin-top: var(--space-1);
     }
 
     /* Manual Paste Panel (Fallback) */
@@ -817,25 +820,25 @@
     }
 
     .fallback-panel h3 {
-      font-size: 0.875rem;
-      margin-bottom: 0.75rem;
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-3);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .fallback-panel textarea {
       width: 100%;
       min-height: 100px;
-      padding: 0.75rem;
+      padding: var(--space-3);
       border: 1px solid var(--border-color);
       border-radius: 6px;
       background: var(--bg-primary);
       color: var(--text-primary);
       font-family: var(--font-mono);
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       resize: vertical;
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
     }
 
     .fallback-panel textarea:focus {
@@ -845,13 +848,13 @@
 
     .fallback-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .fallback-hint {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
-      margin-top: 0.5rem;
+      margin-top: var(--space-2);
     }
 
     /* ==================== Status Badges (Tiered Neobrutalist) ==================== */
@@ -1004,9 +1007,9 @@
     .server-status {
       display: flex;
       align-items: center;
-      gap: 0.375rem;
-      font-size: 0.75rem;
-      padding: 0.5rem 1rem;
+      gap: var(--space-1-5);
+      font-size: var(--text-xs);
+      padding: var(--space-2) var(--space-4);
       background: var(--bg-secondary);
       border-radius: 6px;
     }
@@ -1029,20 +1032,20 @@
     .footer {
       background: var(--bg-secondary);
       border-top: 1px solid var(--border-color);
-      padding: 0.75rem 1.5rem;
+      padding: var(--space-3) var(--space-6);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       color: var(--text-muted);
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .footer-status {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .footer-status.success {
@@ -1055,14 +1058,14 @@
 
     .keyboard-hints {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
     }
 
     .keyboard-hints kbd {
       background: var(--bg-tertiary);
-      padding: 0.125rem 0.375rem;
+      padding: var(--space-px) var(--space-1-5);
       border-radius: 3px;
-      margin-right: 0.25rem;
+      margin-right: var(--space-1);
     }
 
     /* ==================== Modal (Glass) ==================== */
@@ -1149,7 +1152,7 @@
       font-weight: 600;
       margin-top: var(--space-4);
       color: var(--color-text-primary);
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     .modal-body h3:first-child {
@@ -1157,9 +1160,9 @@
     }
 
     .modal-body p, .modal-body ul {
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       color: var(--text-secondary);
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
     }
 
     .modal-body ul {
@@ -1167,15 +1170,15 @@
     }
 
     .modal-body li {
-      margin-bottom: 0.25rem;
+      margin-bottom: var(--space-1);
     }
 
     .modal-body code {
       background: var(--bg-tertiary);
-      padding: 0.125rem 0.375rem;
+      padding: var(--space-px) var(--space-1-5);
       border-radius: 3px;
       font-family: var(--font-mono);
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
     }
 
     /* Session Details Modal */
@@ -1188,7 +1191,7 @@
       padding: 1rem;
       border-radius: 6px;
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       overflow-x: auto;
       white-space: pre-wrap;
       max-height: 300px;
@@ -1200,11 +1203,11 @@
     }
 
     .details-section h4 {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     .details-blocking-reason {
@@ -1218,7 +1221,7 @@
 
     .details-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-2);
       margin-top: 1rem;
       padding-top: 1rem;
       border-top: 1px solid var(--border-color);
@@ -1238,18 +1241,18 @@
     .resume-item {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: var(--space-1);
     }
 
     .resume-label {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     .resume-value {
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       font-weight: 500;
     }
 
@@ -1262,17 +1265,17 @@
     .worktree-legend {
       display: flex;
       gap: 1rem;
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-color);
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: var(--space-1);
     }
 
     .legend-dot {
@@ -1282,7 +1285,7 @@
     }
 
     .worktree-parent {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
       margin-left: auto;
     }
@@ -1293,8 +1296,8 @@
 
     /* Handoff Button */
     .handoff-btn {
-      font-size: 0.625rem;
-      padding: 0.25rem 0.5rem;
+      font-size: var(--text-2xs);
+      padding: var(--space-1) var(--space-2);
       background: var(--accent-warning);
       border: none;
       border-radius: 3px;
@@ -1373,18 +1376,18 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.5rem 1rem;
+      padding: var(--space-2) var(--space-4);
       background: var(--bg-secondary);
       border-bottom: 1px solid var(--border-color);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       color: var(--text-secondary);
     }
     .kanban-toolbar button {
-      padding: 0.25rem 0.5rem;
+      padding: var(--space-1) var(--space-2);
       background: var(--bg-tertiary);
       border: 1px solid var(--border-color);
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       cursor: pointer;
     }
     .kanban-toolbar button:hover { background: var(--border-color); }
@@ -1425,7 +1428,7 @@
       font-weight: 500;
     }
     .kanban-col-header .hidden-count {
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       color: var(--color-text-muted);
       margin-left: var(--space-1);
     }
@@ -1497,14 +1500,14 @@
     }
     .kanban-card-meta {
       display: flex;
-      gap: 0.375rem;
-      margin-top: 0.5rem;
+      gap: var(--space-1-5);
+      margin-top: var(--space-2);
       flex-wrap: wrap;
     }
     .kanban-card-meta .tag {
-      padding: 0.125rem 0.375rem;
+      padding: var(--space-px) var(--space-1-5);
       border-radius: 4px;
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       background: var(--bg-tertiary);
     }
     .kanban-card-meta .priority { font-weight: 600; }
@@ -1515,31 +1518,31 @@
       text-align: center;
       padding: 2rem 1rem;
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       border: 2px dashed var(--border-color);
       border-radius: 6px;
     }
     .show-more {
       text-align: center;
-      padding: 0.5rem;
-      font-size: 0.75rem;
+      padding: var(--space-2);
+      font-size: var(--text-xs);
       color: var(--text-secondary);
       cursor: pointer;
       border: 1px dashed var(--border-color);
       border-radius: 4px;
-      margin-top: 0.25rem;
+      margin-top: var(--space-1);
     }
     .show-more:hover { background: var(--bg-tertiary); }
 
     /* Card Modal */
     .card-modal-title { font-size: 1rem; margin-bottom: 1rem; }
-    .card-modal-row { display: flex; gap: 1rem; margin-bottom: 0.75rem; font-size: 0.875rem; }
+    .card-modal-row { display: flex; gap: 1rem; margin-bottom: var(--space-3); font-size: var(--text-sm); }
     .card-modal-row label { color: var(--text-muted); min-width: 60px; }
-    .card-modal-actions { display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; }
+    .card-modal-actions { display: flex; gap: var(--space-2); margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; }
     .card-modal-actions button, .card-modal-actions a {
-      padding: 0.5rem 0.75rem;
+      padding: var(--space-2) var(--space-3);
       border-radius: 6px;
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       cursor: pointer;
       text-decoration: none;
       border: none;
@@ -1607,7 +1610,7 @@
       line-height: 1.2;
     }
     #pm-overview-container .pm-status-label {
-      font-size: 0.5625rem;
+      font-size: var(--text-2xs);
       text-transform: uppercase;
       color: var(--text-muted);
       margin-top: 2px;
@@ -1621,7 +1624,7 @@
     }
     #pm-overview-container .pm-active-work h4,
     #pm-overview-container .pm-blocked-tasks h4 {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       font-weight: 600;
       margin-bottom: 6px;
       color: var(--text-secondary);
@@ -1636,7 +1639,7 @@
       align-items: center;
       gap: 6px;
       padding: 4px 0;
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       border-bottom: 1px solid var(--border-color);
     }
     #pm-overview-container .pm-task-list li:last-child {
@@ -1644,7 +1647,7 @@
     }
     #pm-overview-container .pm-task-id {
       font-family: var(--font-mono);
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       color: var(--accent-primary);
       font-weight: 500;
       min-width: 50px;
@@ -1657,8 +1660,8 @@
       color: var(--text-secondary);
     }
     #pm-overview-container .pm-task-status {
-      font-size: 0.5rem;
-      padding: 2px 5px;
+      font-size: var(--text-2xs);
+      padding: var(--space-px) var(--space-1);
       border-radius: 3px;
       font-weight: 500;
       text-transform: uppercase;
@@ -1695,7 +1698,7 @@
       color: white;
       border-radius: 4px;
       text-decoration: none;
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       font-weight: 500;
       transition: opacity 150ms ease;
     }
@@ -1709,14 +1712,14 @@
     }
     #pm-overview-container .pm-widget-error p {
       margin: 4px 0;
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
     }
     #pm-overview-container .pm-widget-error code {
       background: var(--bg-tertiary);
       padding: 2px 6px;
       border-radius: 3px;
       font-family: var(--font-mono);
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
     }
     #pm-overview-container .pm-widget-error button {
       margin-top: 10px;
@@ -1725,7 +1728,7 @@
       color: white;
       border: none;
       border-radius: 4px;
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       cursor: pointer;
     }
 
@@ -1755,19 +1758,19 @@
       margin-bottom: 4px;
     }
     #pm-sessions-container .pm-session-status {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
     }
     #pm-sessions-container .pm-session-status.healthy { color: var(--accent-success); }
     #pm-sessions-container .pm-session-status.warning { color: var(--accent-warning); }
     #pm-sessions-container .pm-session-status.stale { color: var(--accent-danger); }
     #pm-sessions-container .pm-session-branch {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       font-weight: 600;
       color: var(--accent-primary);
     }
     #pm-sessions-container .pm-pr-link {
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       color: var(--text-muted);
       text-decoration: none;
       background: var(--bg-secondary);
@@ -1778,7 +1781,7 @@
       color: var(--accent-primary);
     }
     #pm-sessions-container .pm-session-details {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-secondary);
     }
     #pm-sessions-container .pm-session-meta {
@@ -1788,11 +1791,11 @@
       margin-bottom: 3px;
     }
     #pm-sessions-container .pm-heartbeat-time {
-      font-size: 0.5625rem;
+      font-size: var(--text-2xs);
       color: var(--text-muted);
     }
     #pm-sessions-container .pm-claimed-tasks {
-      font-size: 0.625rem;
+      font-size: var(--text-2xs);
       margin-top: 4px;
       padding-top: 4px;
       border-top: 1px solid var(--border-color);
@@ -1807,7 +1810,7 @@
       border-radius: 6px;
     }
     #pm-sessions-container .pm-stale-sessions h4 {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       font-weight: 600;
       color: var(--accent-danger);
       margin-bottom: 4px;
@@ -1816,7 +1819,7 @@
       list-style: none;
       padding: 0;
       margin: 0;
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-secondary);
     }
     #pm-sessions-container .pm-stale-sessions li {
@@ -1845,11 +1848,11 @@
     .heartbeat-indicator {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.375rem 0.75rem;
+      gap: var(--space-2);
+      padding: var(--space-1-5) var(--space-3);
       border-radius: 6px;
       background: var(--bg-secondary);
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
     }
 
     .heartbeat-indicator[data-status="fresh"] .heartbeat-dot {
@@ -1878,12 +1881,12 @@
     }
 
     .refresh-btn {
-      padding: 0.375rem 0.75rem;
+      padding: var(--space-1-5) var(--space-3);
       border: 1px solid var(--border-color);
       border-radius: 6px;
       background: var(--bg-card);
       color: var(--text-primary);
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       cursor: pointer;
       transition: all 150ms ease;
     }
@@ -1899,16 +1902,16 @@
     .phase-header {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: var(--space-3);
       margin-bottom: 1rem;
       font-size: 1rem;
       font-weight: 600;
     }
 
     .phase-status {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       font-weight: 500;
-      padding: 0.125rem 0.5rem;
+      padding: var(--space-px) var(--space-2);
       border-radius: 4px;
       background: var(--bg-tertiary);
       color: var(--text-secondary);
@@ -1933,7 +1936,7 @@
 
     .no-worktrees {
       color: var(--text-muted);
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       padding: 1rem;
       background: var(--bg-secondary);
       border-radius: 6px;
@@ -1983,7 +1986,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
     }
 
     .worktree-card .branch-name {
@@ -2025,20 +2028,20 @@
     .worktree-card .wt-card-body {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .worktree-card .commit-info {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       color: var(--text-secondary);
       background: var(--bg-secondary);
-      padding: 0.375rem 0.5rem;
+      padding: var(--space-1-5) var(--space-2);
       border-radius: 4px;
     }
 
     .worktree-card .commit-msg {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       color: var(--text-secondary);
       white-space: nowrap;
       overflow: hidden;
@@ -2048,8 +2051,8 @@
     .worktree-card .pr-link {
       display: inline-flex;
       align-items: center;
-      gap: 0.375rem;
-      font-size: 0.75rem;
+      gap: var(--space-1-5);
+      font-size: var(--text-xs);
       color: var(--accent-primary);
       text-decoration: none;
     }
@@ -2061,8 +2064,8 @@
     .worktree-card .ci-status {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
+      gap: var(--space-2);
+      font-size: var(--text-xs);
     }
 
     .worktree-card .ci-status .ci-label {
@@ -2083,15 +2086,15 @@
 
     .worktree-card .wt-meta {
       display: flex;
-      gap: 0.75rem;
-      font-size: 0.6875rem;
+      gap: var(--space-3);
+      font-size: var(--text-xs);
       color: var(--text-muted);
     }
 
     .worktree-card .wt-meta-item {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: var(--space-1);
     }
 
     /* Monitor Summary Stats */
@@ -2106,7 +2109,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 0.75rem 1rem;
+      padding: var(--space-3) var(--space-4);
       min-width: 120px;
     }
 
@@ -2117,7 +2120,7 @@
     }
 
     .monitor-stat-label {
-      font-size: 0.6875rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
       text-transform: uppercase;
     }
@@ -2145,14 +2148,14 @@
     .agents-glance-row {
       display: flex;
       gap: 2rem;
-      padding: 0.75rem 1rem;
+      padding: var(--space-3) var(--space-4);
       border-bottom: 1px solid var(--border-color);
     }
 
     .agents-glance-item {
       display: flex;
       align-items: baseline;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .agents-glance-value {
@@ -2162,7 +2165,7 @@
     }
 
     .agents-glance-label {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
       text-transform: uppercase;
     }
@@ -2244,16 +2247,16 @@
     }
 
     .agents-frontmatter-card h4 {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
     }
 
     .agents-fm-row {
       display: flex;
       justify-content: space-between;
-      padding: 0.375rem 0;
+      padding: var(--space-1-5) 0;
       border-bottom: 1px solid var(--border-color);
     }
 
@@ -2263,12 +2266,12 @@
 
     .agents-fm-label {
       color: var(--text-muted);
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
     }
 
     .agents-fm-value {
       font-weight: 500;
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       color: var(--text-primary);
     }
 
@@ -2298,17 +2301,17 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     .agents-track-name {
       font-weight: 600;
-      font-size: 0.9375rem;
+      font-size: var(--text-base);
     }
 
     .agents-track-status {
-      font-size: 0.6875rem;
-      padding: 0.125rem 0.5rem;
+      font-size: var(--text-xs);
+      padding: var(--space-px) var(--space-2);
       border-radius: 999px;
       background: var(--accent-primary);
       color: white;
@@ -2320,13 +2323,13 @@
     }
 
     .agents-track-phase {
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       color: var(--text-secondary);
-      margin-bottom: 0.25rem;
+      margin-bottom: var(--space-1);
     }
 
     .agents-track-branch {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       color: var(--text-muted);
       font-family: var(--font-mono);
     }
@@ -2334,8 +2337,8 @@
     /* Diagram Tab */
     .agents-diagram-toolbar {
       display: flex;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
       border-bottom: 1px solid var(--border-color);
       background: var(--bg-secondary);
     }
@@ -2579,7 +2582,7 @@
     @media (max-width: 768px) {
       .kanban-col { flex: 0 0 85vw; scroll-snap-align: start; }
       .kanban-board { scroll-snap-type: x mandatory; position: relative; }
-      .tab-nav { margin-left: 0; margin-top: 0.5rem; }
+      .tab-nav { margin-left: 0; margin-top: var(--space-2); }
       .header-left { flex-wrap: wrap; }
       .workstream-grid { grid-template-columns: 1fr; }
       .monitor-header { flex-direction: column; align-items: flex-start; }
@@ -2592,9 +2595,9 @@
         transform: translateX(-50%);
         background: var(--bg-tertiary);
         color: var(--text-muted);
-        padding: 0.25rem 0.75rem;
+        padding: var(--space-1) var(--space-3);
         border-radius: 999px;
-        font-size: 0.625rem;
+        font-size: var(--text-2xs);
         opacity: 0.8;
         pointer-events: none;
         animation: fadeOut 3s forwards 2s;
@@ -2687,7 +2690,7 @@
         </svg>
         Server Unavailable - Manual Input Mode
       </h3>
-      <p class="fallback-hint" style="margin-bottom: 0.75rem;">Run <code>uv run scripts/playground-server.py</code> for auto-polling, or paste SESSION_STATE content manually:</p>
+      <p class="fallback-hint" style="margin-bottom: var(--space-3);">Run <code>uv run scripts/playground-server.py</code> for auto-polling, or paste SESSION_STATE content manually:</p>
       <textarea id="manual-input" placeholder="Paste SESSION_STATE.md content here..."></textarea>
       <div class="fallback-actions">
         <button class="btn btn-primary" onclick="parseManualInput()">Parse State</button>
@@ -2709,7 +2712,7 @@
             </svg>
             PM Overview
           </span>
-          <span id="pm-task-count" style="font-size: 0.75rem; color: var(--text-muted);">Loading...</span>
+          <span id="pm-task-count" style="font-size: var(--text-xs); color: var(--text-muted);">Loading...</span>
         </div>
         <div class="card-body" id="pm-overview-container">
           <div class="empty-state">
@@ -2731,7 +2734,7 @@
             </svg>
             PM Sessions
           </span>
-          <span id="pm-session-count" style="font-size: 0.75rem; color: var(--text-muted);">0 active</span>
+          <span id="pm-session-count" style="font-size: var(--text-xs); color: var(--text-muted);">0 active</span>
         </div>
         <div class="card-body" id="pm-sessions-container">
           <div class="empty-state">
@@ -2789,7 +2792,7 @@
             </svg>
             GitHub Backlog
           </span>
-          <span id="backlog-count" style="font-size: 0.75rem; color: var(--text-muted);">0 issues</span>
+          <span id="backlog-count" style="font-size: var(--text-xs); color: var(--text-muted);">0 issues</span>
         </div>
         <div class="card-body backlog-panel" id="backlog-container">
           <div class="empty-state">
@@ -3007,7 +3010,7 @@
         <p id="agents-load-modal-desc" style="margin-bottom: 1rem; color: var(--text-secondary);">
           Paste the contents of <code>temp/WORKFLOW_STATE.md</code> below:
         </p>
-        <textarea id="agents-paste-content" placeholder="Paste WORKFLOW_STATE.md content here..." aria-label="Workflow state content" style="width: 100%; height: 300px; font-family: var(--font-mono); font-size: 0.875rem; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
+        <textarea id="agents-paste-content" placeholder="Paste WORKFLOW_STATE.md content here..." aria-label="Workflow state content" style="width: 100%; height: 300px; font-family: var(--font-mono); font-size: var(--text-sm); padding: var(--space-3); border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
       </div>
       <div class="modal-footer">
         <button class="btn" onclick="AgentVisualizer.closeLoadModal()">Cancel</button>
@@ -3040,11 +3043,11 @@
   </footer>
 
   <!-- Help Modal -->
-  <div class="modal-overlay" id="help-modal">
+  <div class="modal-overlay" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="modal">
       <div class="modal-header">
-        <h2>Workflow Hub v0.7.1 Help</h2>
-        <button class="modal-close" onclick="hideHelp()">&times;</button>
+        <h2 id="help-modal-title">Workflow Hub Help</h2>
+        <button class="modal-close" onclick="hideHelp()" aria-label="Close help">&times;</button>
       </div>
       <div class="modal-body">
         <h3>What is this?</h3>
@@ -3247,11 +3250,11 @@
   </div>
 
   <!-- Session Details Modal -->
-  <div class="modal-overlay" id="details-modal">
+  <div class="modal-overlay" id="details-modal" role="dialog" aria-modal="true" aria-labelledby="details-title">
     <div class="modal details-modal">
       <div class="modal-header">
         <h2 id="details-title">Session Details</h2>
-        <button class="modal-close" onclick="hideDetailsModal()">&times;</button>
+        <button class="modal-close" onclick="hideDetailsModal()" aria-label="Close details">&times;</button>
       </div>
       <div class="modal-body" id="details-body">
         <!-- Populated dynamically -->
@@ -3842,10 +3845,10 @@
         const dotColor = wt.isMain ? 'var(--accent-primary)' : (parentWarning ? 'var(--accent-warning)' : 'var(--accent-success)');
 
         return `
-          <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0; font-size: 0.8125rem;">
+          <div style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1-5) 0; font-size: var(--text-sm);">
             <span class="legend-dot" style="background: ${dotColor}"></span>
             <span style="font-weight: 500; flex: 1;">${escapeHtml(wt.name)}</span>
-            <span style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.6875rem;">${escapeHtml(wt.branch || '')}</span>
+            <span style="color: var(--text-muted); font-family: var(--font-mono); font-size: var(--text-xs);">${escapeHtml(wt.branch || '')}</span>
             ${wt.parentBranch && wt.parentBranch !== 'main' ? `<span class="worktree-parent warning">← ${escapeHtml(wt.parentBranch)}</span>` : ''}
           </div>
         `;
@@ -3889,12 +3892,12 @@
 
         <div class="details-section">
           <h4>What You Need To Do</h4>
-          <p style="font-size: 0.875rem; color: var(--text-primary);">
+          <p style="font-size: var(--text-sm); color: var(--text-primary);">
             ${session.blocked
               ? 'Review the blocking reason above and provide the requested input or approval to unblock this session.'
               : 'This session is not blocked. Check the current focus below for context.'}
           </p>
-          ${duration ? `<p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">Waiting for: ${duration}</p>` : ''}
+          ${duration ? `<p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: var(--space-2);">Waiting for: ${duration}</p>` : ''}
         </div>
 
         <div class="details-section">
@@ -5668,7 +5671,7 @@ Building customer analytics models. Currently implementing dim_customer.
         pmSessionsContainer.innerHTML = `
           <div class="empty-state">
             <p>No active sessions</p>
-            <p style="font-size: 0.6875rem; color: var(--text-muted); margin-top: 6px;">
+            <p style="font-size: var(--text-xs); color: var(--text-muted); margin-top: 6px;">
               Sessions register when Supervisor starts
             </p>
           </div>
