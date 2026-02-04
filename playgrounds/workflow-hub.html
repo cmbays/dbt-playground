@@ -3446,11 +3446,11 @@ Building customer analytics models. Currently implementing dim_customer.
         return `
           <div class="monitor-header">
             <h2>Worktree Monitor</h2>
-            <div class="heartbeat-indicator" data-status="${heartbeatStatus.status}">
+            <div class="heartbeat-indicator" data-testid="heartbeat-indicator" data-status="${heartbeatStatus.status}">
               <span class="heartbeat-dot"></span>
               <span class="heartbeat-label">${heartbeatStatus.label}</span>
             </div>
-            <button class="refresh-btn" onclick="WorktreeMonitor.loadData().then(() => WorktreeMonitor.render())">
+            <button class="refresh-btn" data-testid="refresh-button" onclick="WorktreeMonitor.loadData().then(() => WorktreeMonitor.render())">
               Refresh
             </button>
           </div>
@@ -3489,21 +3489,21 @@ Building customer analytics models. Currently implementing dim_customer.
         ).length;
 
         return `
-          <div class="monitor-stats">
-            <div class="monitor-stat">
+          <div class="monitor-stats" data-testid="monitor-summary">
+            <div class="monitor-stat" data-testid="stat-total">
               <div class="monitor-stat-value">${total}</div>
               <div class="monitor-stat-label">Worktrees</div>
             </div>
-            <div class="monitor-stat">
+            <div class="monitor-stat" data-testid="stat-dirty">
               <div class="monitor-stat-value">${dirty}</div>
               <div class="monitor-stat-label">Dirty</div>
             </div>
-            <div class="monitor-stat">
+            <div class="monitor-stat" data-testid="stat-with-pr">
               <div class="monitor-stat-value">${withPR}</div>
               <div class="monitor-stat-label">With PR</div>
             </div>
             ${anomalies > 0 ? `
-              <div class="monitor-stat anomaly">
+              <div class="monitor-stat anomaly" data-testid="stat-anomalies">
                 <div class="monitor-stat-value">${anomalies}</div>
                 <div class="monitor-stat-label">Anomalies</div>
               </div>
@@ -3525,7 +3525,7 @@ Building customer analytics models. Currently implementing dim_customer.
 
         // Otherwise, render all worktrees in a single section
         return `
-          <section class="phase-section" data-status="active">
+          <section class="phase-section" data-testid="phase-section" data-status="active">
             <h3 class="phase-header">All Worktrees</h3>
             <div class="workstream-grid">
               ${this.renderWorktrees(this.data.worktrees || [])}
@@ -3537,7 +3537,7 @@ Building customer analytics models. Currently implementing dim_customer.
       renderPhase(phase) {
         const phaseWorktrees = (this.data.worktrees || []).filter(wt => wt.phase_id === phase.id);
         return `
-          <section class="phase-section" data-status="${phase.status || 'active'}">
+          <section class="phase-section" data-testid="phase-section" data-status="${phase.status || 'active'}">
             <h3 class="phase-header">
               ${phase.name}
               <span class="phase-status">${phase.status || 'active'}</span>
@@ -3562,7 +3562,7 @@ Building customer analytics models. Currently implementing dim_customer.
 
         const escapedBranch = this.escapeHtml(wt.branch || '');
         return `
-          <div class="worktree-card ${anomalyClasses}" data-branch="${escapedBranch}">
+          <div class="worktree-card ${anomalyClasses}" data-testid="worktree-card" data-branch="${escapedBranch}">
             <div class="wt-card-header">
               <span class="branch-name">${escapedBranch}</span>
               <span class="wt-status-badge" data-status="${wt.status}">${wt.status}</span>
