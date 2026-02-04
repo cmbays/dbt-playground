@@ -27,8 +27,8 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 
 | Metric | Count |
 |--------|-------|
-| Total ADRs | 18 |
-| Approved | 16 |
+| Total ADRs | 22 |
+| Approved | 20 |
 | Approved (Historical) | 3 |
 | Proposed | 0 |
 | Superseded | 2 |
@@ -58,6 +58,10 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-16 | reveal.js for Learning Playground | Approved | [ADR-016](ADR-016-RENDERING-FRAMEWORK.md) | Architect | 2026-02-03 | playgrounds, ui, learning | - |
 | ADR-17 | Markdown Extension Syntax | Approved | [ADR-017](ADR-017-MARKDOWN-EXTENSION-SYNTAX.md) | Architect | 2026-02-03 | syntax, markdown, widgets | - |
 | ADR-18 | Widget Component System | Approved | [ADR-018](ADR-018-WIDGET-COMPONENT-SYSTEM.md) | Architect | 2026-02-03 | architecture, widgets, components | - |
+| ADR-19 | Debug Session Persistence Strategy | Approved | [ADR-019](../decisions/ADR-019-debug-session-persistence.md) | Architect, Planner | 2026-02-04 | architecture, debugging, wave3, persistence | - |
+| ADR-20 | Multi-Agent Coordination Protocol | Approved | [ADR-020](../decisions/ADR-020-multi-agent-coordination.md) | Architect, Planner | 2026-02-04 | architecture, debugging, wave3, coordination | - |
+| ADR-21 | Distributed Systems Debug Scope | Approved | [ADR-021](../decisions/ADR-021-distributed-systems-debug.md) | Architect, Planner | 2026-02-04 | architecture, debugging, distributed-systems | - |
+| ADR-22 | Expedited Path Gating | Approved | [ADR-022](../decisions/ADR-022-expedited-path-gating.md) | Architect, Planner | 2026-02-04 | architecture, debugging, workflow, efficiency | - |
 
 ---
 
@@ -105,6 +109,15 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-16 | reveal.js for slide rendering | CDN dependency vs building from scratch |
 | ADR-17 | Fenced code blocks for widgets | Markdown readability vs DSL expressiveness |
 | ADR-18 | Registry-based widget system | Extensibility vs Web Components standards |
+
+### Debugging & Wave 3
+
+| ADR | Decision | Key Trade-off |
+|-----|----------|---------------|
+| ADR-19 | Timestamp-based DEBUG_REPORTS folders | Simplicity vs query capability |
+| ADR-20 | Separate files per agent with merge resolution | No conflicts vs manual merge step |
+| ADR-21 | Cross-service tracing for distributed bugs | Production-ready vs complexity increase |
+| ADR-22 | 4-criteria gating for expedited path | Rigor preservation vs developer velocity |
 
 ---
 
