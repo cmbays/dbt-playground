@@ -269,12 +269,58 @@ Additional planning artifacts in `temp/2026_02_01_Discussion/`:
 
 ---
 
+## Parallel Track: Vibe Coding Documentation Gap Closure
+
+**Status**: Queued for post-Phase-B execution
+**Epic**: #198 (Vibe Coding Gap Analysis)
+**Timing**: After FS5 (Metrics) or concurrent with Phase B development
+
+### Purpose
+
+Close documentation and frontend design gaps identified from "Vibe Coding" X post analysis. This is complementary to v0.10 agent orchestration work and strengthens documentation foundations.
+
+### Task Breakdown (4 Sprints)
+
+| Priority | Sprint | Tasks | Effort | Issues |
+|----------|--------|-------|--------|--------|
+| P1 | Sprint 1 | TECH_STACK.md, DEPLOY_CHECKLIST.md | 3-5h | #201, #202 |
+| P2 | Sprint 2 | Playground Audit, FRONTEND_GUIDELINES.md | 6-9h | #205, #203 |
+| P2 | Sprint 3 | Task Decomposition, /plan Enhancement | 5-7h | #204, #206 |
+| P3 | Sprint 4 | Learning Playground | 8-12h | #207 |
+
+**Total Effort**: 23-31 hours
+
+### Key Dependencies
+
+- **After Phase A/B**: No blocking dependencies; can run in parallel
+- **Supports FS2 Kanban**: Task Decomposition (#204) directly supports workflow discipline
+- **Supports FS3 QA**: DEPLOY_CHECKLIST (#202) documents quality gates
+
+### Interview-Based Approach
+
+Each task includes a **structured interview** (20-45 min) to capture user perspective on function, design, and intent before implementation. See [VIBE-CODING-GAP-ANALYSIS.md](./VIBE-CODING-GAP-ANALYSIS.md) Part 5 for interview framework and sample questions.
+
+### Deliverables
+
+| Task | Document | Type | Impact |
+|------|----------|------|--------|
+| #201 | TECH_STACK.md | Reference | Version strategy, dependency documentation |
+| #202 | DEPLOY_CHECKLIST.md | Standard | Pre-deploy quality gates |
+| #203 | FRONTEND_GUIDELINES.md | Reference | Design consistency (6+ playgrounds) |
+| #204 | LEARNINGS.md additions | Pattern | Task decomposition methodology |
+| #205 | PLAYGROUND_AUDIT.md | Artifact | Design audit and remediation roadmap |
+| #206 | /plan command enhancement | Tool | Better requirement interrogation |
+| #207 | learning-hub.html | Playground | Interactive concept learning |
+
+---
+
 ## Related Documents
 
 - [UPDATED_IDEAS.md](../../temp/2026_02_01_Discussion/UPDATED_IDEAS.md) - Original feature organization
 - [HOLISTIC_REVIEW.md](../../temp/2026_02_01_Discussion/HOLISTIC_REVIEW.md) - Cross-cutting analysis
 - [v0.8 Roadmap](./ROADMAP-v0.8.md) - Current milestone (data quality)
 - [FUTURE_FEATURES.md](./FUTURE_FEATURES.md) - Deferred features backlog
+- [VIBE-CODING-GAP-ANALYSIS.md](./VIBE-CODING-GAP-ANALYSIS.md) - Detailed analysis and interview questions
 
 ---
 
@@ -282,4 +328,5 @@ Additional planning artifacts in `temp/2026_02_01_Discussion/`:
 
 | Date | Change |
 |------|--------|
+| 2026-02-04 | Added Vibe Coding Documentation Gap Closure track (7 issues: #201-#207) |
 | 2026-02-01 | Initial v0.10 roadmap created from planning session |
