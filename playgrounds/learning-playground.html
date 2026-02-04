@@ -133,7 +133,8 @@
 
     .library-panel.collapsed .library-content,
     .library-panel.collapsed .library-header-title,
-    .library-panel.collapsed .content-source-toggle {
+    .library-panel.collapsed .content-source-toggle,
+    .library-panel.collapsed .tag-filter-section {
       display: none;
     }
 
@@ -353,6 +354,11 @@
 
     .reveal {
       height: 100%;
+      cursor: default !important;
+    }
+
+    .reveal * {
+      cursor: inherit;
     }
 
     .reveal .slides {
@@ -361,6 +367,14 @@
 
     .reveal .slides section {
       padding: var(--lp-space-2xl);
+      /* Allow scrolling for overflow content */
+      overflow-y: auto;
+      max-height: 100%;
+    }
+
+    /* Ensure content-heavy slides don't clip */
+    .reveal .slides section > * {
+      max-width: 100%;
     }
 
     /* Slide Typography */
@@ -912,6 +926,85 @@
         display: flex;
       }
     }
+
+    /* ==========================================================================
+       Tag Filter Section
+       ========================================================================== */
+    .tag-filter-section {
+      padding: var(--lp-space-sm) var(--lp-space-md);
+      border-bottom: 1px solid var(--lp-border-color);
+    }
+
+    .tag-filter-label {
+      font-size: 0.6875rem;
+      color: var(--lp-text-muted);
+      margin-bottom: var(--lp-space-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tag-filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tag-chip {
+      font-size: 0.6875rem;
+      padding: 3px 8px;
+      background: var(--lp-bg-card);
+      border: 1px solid var(--lp-border-color);
+      border-radius: var(--lp-radius-sm);
+      color: var(--lp-text-muted);
+      cursor: pointer;
+      transition: var(--lp-transition-fast);
+    }
+
+    .tag-chip:hover {
+      border-color: var(--lp-accent-primary);
+      color: var(--lp-text-primary);
+    }
+
+    .tag-chip.active {
+      background: var(--lp-accent-primary);
+      border-color: var(--lp-accent-primary);
+      color: white;
+    }
+
+    /* ==========================================================================
+       Landing View
+       ========================================================================== */
+    .landing-view {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: var(--lp-space-2xl);
+    }
+
+    .landing-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: var(--lp-space-lg);
+      color: var(--lp-accent-primary);
+      opacity: 0.6;
+    }
+
+    .landing-title {
+      font-family: var(--lp-font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--lp-text-primary);
+      margin-bottom: var(--lp-space-sm);
+    }
+
+    .landing-description {
+      font-size: 1rem;
+      color: var(--lp-text-muted);
+      max-width: 400px;
+    }
   </style>
 </head>
 <body>
@@ -937,6 +1030,13 @@
         <div class="source-toggle-group">
           <button class="source-toggle-btn active" data-source="for_chris">Learning Docs</button>
           <button class="source-toggle-btn" data-source="memory">Memory</button>
+        </div>
+      </div>
+
+      <div class="tag-filter-section" id="tag-filter-section">
+        <div class="tag-filter-label">Filter by tag</div>
+        <div class="tag-filter-chips" id="tag-filter-chips">
+          <!-- Tags populated by JavaScript -->
         </div>
       </div>
 
@@ -1573,6 +1673,7 @@
         };
         this.currentSource = 'for_chris';
         this.currentDeck = null;
+        this.activeTagFilter = null;
         this.onDeckChange = null;
       }
 
@@ -1584,8 +1685,37 @@
         return this.contentSources[source]?.decks || [];
       }
 
+      getFilteredDecks(source = this.currentSource) {
+        const decks = this.getDecks(source);
+        if (!this.activeTagFilter) {
+          return decks;
+        }
+        return decks.filter(d => d.tags && d.tags.includes(this.activeTagFilter));
+      }
+
+      getAllTags(source = this.currentSource) {
+        const decks = this.getDecks(source);
+        const tagSet = new Set();
+        decks.forEach(deck => {
+          if (deck.tags) {
+            deck.tags.forEach(tag => tagSet.add(tag));
+          }
+        });
+        return Array.from(tagSet).sort();
+      }
+
+      setTagFilter(tag) {
+        this.activeTagFilter = tag;
+      }
+
+      clearTagFilter() {
+        this.activeTagFilter = null;
+      }
+
       setSource(source) {
         this.currentSource = source;
+        this.activeTagFilter = null;  // Clear filter when changing source
+        this.currentDeck = null;      // Clear current deck when changing source
       }
 
       selectDeck(deckId) {
@@ -1599,6 +1729,10 @@
 
       getCurrentDeck() {
         return this.currentDeck;
+      }
+
+      getSourceLabel(source = this.currentSource) {
+        return this.contentSources[source]?.label || source;
       }
     }
 
@@ -1648,7 +1782,7 @@ content: |
     style D fill:#9f9,stroke:#333
 \`\`\`
 
-Click any node to explore that layer in detail.
+The data flows from raw sources through staging, intermediate, and finally to marts.
 
 ---
 
@@ -1893,11 +2027,14 @@ content: |
         // Set up UI event handlers
         setupEventHandlers();
 
+        // Render tag filters
+        renderTagFilters();
+
         // Render initial deck list
         renderDeckList();
 
         // Select first deck
-        const firstDeck = libraryManager.getDecks()[0];
+        const firstDeck = libraryManager.getFilteredDecks()[0];
         if (firstDeck) {
           await loadDeck(firstDeck);
         }
@@ -1935,7 +2072,9 @@ content: |
           document.querySelectorAll('.source-toggle-btn').forEach(b => b.classList.remove('active'));
           e.target.classList.add('active');
           libraryManager.setSource(e.target.dataset.source);
+          renderTagFilters();
           renderDeckList();
+          showLandingView();  // Show landing page when switching sources
         });
       });
 
@@ -1958,12 +2097,101 @@ content: |
     }
 
     /**
+     * Render tag filter chips
+     */
+    function renderTagFilters() {
+      const container = document.getElementById('tag-filter-chips');
+      const tags = libraryManager.getAllTags();
+      const activeFilter = libraryManager.activeTagFilter;
+
+      if (tags.length === 0) {
+        container.innerHTML = '<span style="font-size: 0.6875rem; color: var(--lp-text-muted);">No tags available</span>';
+        return;
+      }
+
+      container.innerHTML = `
+        <span class="tag-chip ${!activeFilter ? 'active' : ''}" data-tag="">All</span>
+        ${tags.map(tag => `
+          <span class="tag-chip ${activeFilter === tag ? 'active' : ''}" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</span>
+        `).join('')}
+      `;
+
+      // Add click handlers
+      container.querySelectorAll('.tag-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const tag = chip.dataset.tag;
+          if (tag === '') {
+            libraryManager.clearTagFilter();
+          } else {
+            libraryManager.setTagFilter(tag);
+          }
+          renderTagFilters();
+          renderDeckList();
+        });
+      });
+    }
+
+    /**
+     * Show landing view when no deck is selected
+     */
+    function showLandingView() {
+      const sourceLabel = libraryManager.getSourceLabel();
+
+      document.getElementById('deck-title').textContent = 'Learning Playground';
+
+      // Clear current reveal instance
+      if (revealInstance) {
+        revealInstance.destroy();
+        revealInstance = null;
+      }
+
+      document.getElementById('slides').innerHTML = `
+        <section>
+          <div class="landing-view">
+            <svg class="landing-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              <path d="M8 7h8"></path>
+              <path d="M8 11h8"></path>
+              <path d="M8 15h4"></path>
+            </svg>
+            <div class="landing-title">${escapeHtml(sourceLabel)}</div>
+            <div class="landing-description">Select a deck from the sidebar to begin learning.</div>
+          </div>
+        </section>
+      `;
+
+      // Initialize reveal for the landing page
+      revealInstance = new Reveal(document.getElementById('reveal'), {
+        hash: false,
+        history: false,
+        progress: false,
+        controls: false,
+        center: true,
+        transition: 'none',
+        hideInactiveCursor: false
+      });
+
+      revealInstance.initialize();
+      document.getElementById('slide-counter').textContent = '- / -';
+    }
+
+    /**
      * Render deck list in sidebar
      */
     function renderDeckList() {
       const deckList = document.getElementById('deck-list');
-      const decks = libraryManager.getDecks();
+      const decks = libraryManager.getFilteredDecks();
       const currentDeck = libraryManager.getCurrentDeck();
+
+      if (decks.length === 0) {
+        deckList.innerHTML = `
+          <div style="padding: var(--lp-space-md); text-align: center; color: var(--lp-text-muted); font-size: 0.875rem;">
+            No decks match the selected filter.
+          </div>
+        `;
+        return;
+      }
 
       deckList.innerHTML = decks.map(deck => `
         <div class="deck-item ${currentDeck?.id === deck.id ? 'active' : ''}" data-deck-id="${deck.id}">
@@ -2011,16 +2239,24 @@ content: |
         history: false,
         progress: true,
         controls: true,
-        center: true,
+        center: false,  // Disable centering to allow content to flow naturally
         transition: 'slide',
-        width: 1280,
-        height: 720,
-        margin: 0.1,
-        minScale: 0.2,
-        maxScale: 2.0
+        width: '100%',
+        height: '100%',
+        margin: 0.05,
+        minScale: 0.5,
+        maxScale: 1.5,
+        // Enable scroll for overflow content
+        scrollActivationWidth: null,
+        disableLayout: false,
+        // Keep cursor visible at all times
+        hideInactiveCursor: false
       });
 
       await revealInstance.initialize();
+
+      // Reset to first slide when loading a new deck
+      revealInstance.slide(0, 0, 0);
 
       // Set up slide change handler
       revealInstance.on('slidechanged', event => {
