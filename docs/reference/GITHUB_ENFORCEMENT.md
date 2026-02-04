@@ -290,7 +290,7 @@ For the PR Labeler to work, these labels must exist in the repository:
 
 **GitHub Project Setup**:
 
-1. Navigate to: https://github.com/users/cmbays/projects
+1. Navigate to: <https://github.com/users/cmbays/projects>
 2. Create new "Board" project named "v0.8 Roadmap"
 3. Add Status field with options: Backlog, In Progress, In Review, Done
 4. Configure built-in automation:

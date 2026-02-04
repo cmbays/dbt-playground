@@ -9,27 +9,23 @@ Created: Phase 4 Day 1
 
 import json
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 import pytest
-
-# Import will fail until implementation exists - that's expected for TDD
-from worktree_monitor.heartbeat_monitor import HeartbeatMonitor
 from worktree_monitor.constants import (
     HeartbeatState,
     HeartbeatThresholds,
     RequestType,
-    HEARTBEAT_THRESHOLDS,
 )
-from worktree_monitor.models import HeartbeatStatus, OrchestratorStatus, OrchestratorRequest
 from worktree_monitor.exceptions import (
-    HeartbeatError,
     HeartbeatFileNotFoundError,
     HeartbeatParseError,
 )
 
+# Import will fail until implementation exists - that's expected for TDD
+from worktree_monitor.heartbeat_monitor import HeartbeatMonitor
+from worktree_monitor.models import HeartbeatStatus
 
 # =============================================================================
 # Fixtures
@@ -39,7 +35,7 @@ from worktree_monitor.exceptions import (
 @pytest.fixture
 def tmp_heartbeat_file(tmp_path) -> Path:
     """Create a temporary heartbeat file."""
-    heartbeat_file = tmp_path / "worktree-heartbeat.json"
+    heartbeat_file = tmp_path / 'worktree-heartbeat.json'
     return heartbeat_file
 
 
@@ -47,14 +43,10 @@ def tmp_heartbeat_file(tmp_path) -> Path:
 def sample_heartbeat_content() -> dict:
     """Sample valid heartbeat file content."""
     return {
-        "last_update": "2026-02-03T12:00:00Z",
-        "orchestrators": [
-            {
-                "branch": "feat/qa-enforcement",
-                "status": "IN_PROGRESS",
-                "request": "WAITING"
-            }
-        ]
+        'last_update': '2026-02-03T12:00:00Z',
+        'orchestrators': [
+            {'branch': 'feat/qa-enforcement', 'status': 'IN_PROGRESS', 'request': 'WAITING'}
+        ],
     }
 
 
@@ -118,8 +110,8 @@ class TestCalculateStaleness:
         """Test that staleness uses file mtime, not content timestamp."""
         # Content says update was 5 minutes ago
         content = {
-            "last_update": (fixed_now - timedelta(minutes=5)).isoformat(),
-            "orchestrators": []
+            'last_update': (fixed_now - timedelta(minutes=5)).isoformat(),
+            'orchestrators': [],
         }
         tmp_heartbeat_file.write_text(json.dumps(content))
 
@@ -181,7 +173,7 @@ class TestBoundaryConditions:
 
     def test_exactly_30_seconds_is_warning(self, tmp_heartbeat_file, fixed_now):
         """Test that exactly 30 seconds is WARNING (not FRESH)."""
-        tmp_heartbeat_file.write_text(json.dumps({"orchestrators": []}))
+        tmp_heartbeat_file.write_text(json.dumps({'orchestrators': []}))
         mtime = (fixed_now - timedelta(seconds=30)).timestamp()
         os.utime(tmp_heartbeat_file, (mtime, mtime))
 
@@ -192,7 +184,7 @@ class TestBoundaryConditions:
 
     def test_exactly_60_seconds_is_stale(self, tmp_heartbeat_file, fixed_now):
         """Test that exactly 60 seconds is STALE (not WARNING)."""
-        tmp_heartbeat_file.write_text(json.dumps({"orchestrators": []}))
+        tmp_heartbeat_file.write_text(json.dumps({'orchestrators': []}))
         mtime = (fixed_now - timedelta(seconds=60)).timestamp()
         os.utime(tmp_heartbeat_file, (mtime, mtime))
 
@@ -203,7 +195,7 @@ class TestBoundaryConditions:
 
     def test_exactly_300_seconds_is_disconnected(self, tmp_heartbeat_file, fixed_now):
         """Test that exactly 300 seconds is DISCONNECTED (not STALE)."""
-        tmp_heartbeat_file.write_text(json.dumps({"orchestrators": []}))
+        tmp_heartbeat_file.write_text(json.dumps({'orchestrators': []}))
         mtime = (fixed_now - timedelta(seconds=300)).timestamp()
         os.utime(tmp_heartbeat_file, (mtime, mtime))
 
@@ -214,7 +206,7 @@ class TestBoundaryConditions:
 
     def test_just_under_30_is_fresh(self, tmp_heartbeat_file, fixed_now):
         """Test that 29.9 seconds is FRESH."""
-        tmp_heartbeat_file.write_text(json.dumps({"orchestrators": []}))
+        tmp_heartbeat_file.write_text(json.dumps({'orchestrators': []}))
         mtime = (fixed_now - timedelta(seconds=29.9)).timestamp()
         os.utime(tmp_heartbeat_file, (mtime, mtime))
 
@@ -234,7 +226,7 @@ class TestMissingHeartbeatFile:
 
     def test_missing_file_raises_heartbeat_file_not_found(self, tmp_path):
         """Test that missing file raises HeartbeatFileNotFoundError."""
-        nonexistent = tmp_path / "nonexistent.json"
+        nonexistent = tmp_path / 'nonexistent.json'
         monitor = HeartbeatMonitor(nonexistent)
 
         with pytest.raises(HeartbeatFileNotFoundError) as exc_info:
@@ -244,7 +236,7 @@ class TestMissingHeartbeatFile:
 
     def test_missing_file_get_state_raises(self, tmp_path):
         """Test that get_state with missing file raises error."""
-        nonexistent = tmp_path / "nonexistent.json"
+        nonexistent = tmp_path / 'nonexistent.json'
         monitor = HeartbeatMonitor(nonexistent)
 
         with pytest.raises(HeartbeatFileNotFoundError):
@@ -252,7 +244,7 @@ class TestMissingHeartbeatFile:
 
     def test_missing_file_get_seconds_raises(self, tmp_path):
         """Test that get_seconds_since_update with missing file raises error."""
-        nonexistent = tmp_path / "nonexistent.json"
+        nonexistent = tmp_path / 'nonexistent.json'
         monitor = HeartbeatMonitor(nonexistent)
 
         with pytest.raises(HeartbeatFileNotFoundError):
@@ -270,14 +262,10 @@ class TestParseOrchestratorRequests:
     def test_parse_single_request(self, tmp_heartbeat_file):
         """Test parsing a single orchestrator request."""
         content = {
-            "last_update": "2026-02-03T12:00:00Z",
-            "orchestrators": [
-                {
-                    "branch": "feat/qa-enforcement",
-                    "status": "IN_PROGRESS",
-                    "request": "WAITING"
-                }
-            ]
+            'last_update': '2026-02-03T12:00:00Z',
+            'orchestrators': [
+                {'branch': 'feat/qa-enforcement', 'status': 'IN_PROGRESS', 'request': 'WAITING'}
+            ],
         }
         tmp_heartbeat_file.write_text(json.dumps(content))
 
@@ -285,18 +273,18 @@ class TestParseOrchestratorRequests:
         requests = monitor.parse_orchestrator_requests()
 
         assert len(requests) == 1
-        assert requests[0].branch == "feat/qa-enforcement"
+        assert requests[0].branch == 'feat/qa-enforcement'
         assert requests[0].request_type == RequestType.WAITING
 
     def test_parse_multiple_requests(self, tmp_heartbeat_file):
         """Test parsing multiple orchestrator requests."""
         content = {
-            "last_update": "2026-02-03T12:00:00Z",
-            "orchestrators": [
-                {"branch": "feat/qa", "status": "IN_PROGRESS", "request": "WAITING"},
-                {"branch": "feat/memory", "status": "REVIEW", "request": "MERGE_READY"},
-                {"branch": "feat/kanban", "status": "BLOCKED", "request": "BLOCKED"},
-            ]
+            'last_update': '2026-02-03T12:00:00Z',
+            'orchestrators': [
+                {'branch': 'feat/qa', 'status': 'IN_PROGRESS', 'request': 'WAITING'},
+                {'branch': 'feat/memory', 'status': 'REVIEW', 'request': 'MERGE_READY'},
+                {'branch': 'feat/kanban', 'status': 'BLOCKED', 'request': 'BLOCKED'},
+            ],
         }
         tmp_heartbeat_file.write_text(json.dumps(content))
 
@@ -310,10 +298,7 @@ class TestParseOrchestratorRequests:
 
     def test_parse_empty_orchestrators(self, tmp_heartbeat_file):
         """Test parsing with no orchestrators."""
-        content = {
-            "last_update": "2026-02-03T12:00:00Z",
-            "orchestrators": []
-        }
+        content = {'last_update': '2026-02-03T12:00:00Z', 'orchestrators': []}
         tmp_heartbeat_file.write_text(json.dumps(content))
 
         monitor = HeartbeatMonitor(tmp_heartbeat_file)
@@ -324,11 +309,11 @@ class TestParseOrchestratorRequests:
     def test_parse_orchestrator_without_request_field(self, tmp_heartbeat_file):
         """Test parsing orchestrator entry without request field."""
         content = {
-            "last_update": "2026-02-03T12:00:00Z",
-            "orchestrators": [
-                {"branch": "feat/qa", "status": "IN_PROGRESS"}
+            'last_update': '2026-02-03T12:00:00Z',
+            'orchestrators': [
+                {'branch': 'feat/qa', 'status': 'IN_PROGRESS'}
                 # Note: no "request" field
-            ]
+            ],
         }
         tmp_heartbeat_file.write_text(json.dumps(content))
 
@@ -349,18 +334,18 @@ class TestCorruptedHeartbeatFile:
 
     def test_invalid_json_raises_parse_error(self, tmp_heartbeat_file):
         """Test that invalid JSON raises HeartbeatParseError."""
-        tmp_heartbeat_file.write_text("{ invalid json }")
+        tmp_heartbeat_file.write_text('{ invalid json }')
 
         monitor = HeartbeatMonitor(tmp_heartbeat_file)
 
         with pytest.raises(HeartbeatParseError) as exc_info:
             monitor.parse_orchestrator_requests()
 
-        assert "parse" in str(exc_info.value).lower()
+        assert 'parse' in str(exc_info.value).lower()
 
     def test_missing_orchestrators_key_returns_empty(self, tmp_heartbeat_file):
         """Test that missing orchestrators key returns empty list."""
-        tmp_heartbeat_file.write_text(json.dumps({"last_update": "2026-02-03T12:00:00Z"}))
+        tmp_heartbeat_file.write_text(json.dumps({'last_update': '2026-02-03T12:00:00Z'}))
 
         monitor = HeartbeatMonitor(tmp_heartbeat_file)
         requests = monitor.parse_orchestrator_requests()
@@ -369,7 +354,7 @@ class TestCorruptedHeartbeatFile:
 
     def test_empty_file_raises_parse_error(self, tmp_heartbeat_file):
         """Test that empty file raises HeartbeatParseError."""
-        tmp_heartbeat_file.write_text("")
+        tmp_heartbeat_file.write_text('')
 
         monitor = HeartbeatMonitor(tmp_heartbeat_file)
 
@@ -378,10 +363,9 @@ class TestCorruptedHeartbeatFile:
 
     def test_orchestrators_not_list_returns_empty(self, tmp_heartbeat_file):
         """Test that non-list orchestrators returns empty list gracefully."""
-        tmp_heartbeat_file.write_text(json.dumps({
-            "last_update": "2026-02-03T12:00:00Z",
-            "orchestrators": "not a list"
-        }))
+        tmp_heartbeat_file.write_text(
+            json.dumps({'last_update': '2026-02-03T12:00:00Z', 'orchestrators': 'not a list'})
+        )
 
         monitor = HeartbeatMonitor(tmp_heartbeat_file)
         requests = monitor.parse_orchestrator_requests()
@@ -392,11 +376,11 @@ class TestCorruptedHeartbeatFile:
     def test_invalid_request_type_skipped(self, tmp_heartbeat_file):
         """Test that invalid request type is skipped gracefully."""
         content = {
-            "last_update": "2026-02-03T12:00:00Z",
-            "orchestrators": [
-                {"branch": "feat/qa", "status": "IN_PROGRESS", "request": "INVALID_TYPE"},
-                {"branch": "feat/memory", "status": "DONE", "request": "COMPLETED"},
-            ]
+            'last_update': '2026-02-03T12:00:00Z',
+            'orchestrators': [
+                {'branch': 'feat/qa', 'status': 'IN_PROGRESS', 'request': 'INVALID_TYPE'},
+                {'branch': 'feat/memory', 'status': 'DONE', 'request': 'COMPLETED'},
+            ],
         }
         tmp_heartbeat_file.write_text(json.dumps(content))
 
@@ -454,7 +438,7 @@ class TestGetStatus:
         status = monitor.get_status(now=fixed_now)
 
         assert len(status.active_orchestrators) == 1
-        assert status.active_orchestrators[0].branch == "feat/qa-enforcement"
+        assert status.active_orchestrators[0].branch == 'feat/qa-enforcement'
 
     def test_get_status_includes_requests(self, heartbeat_file_fresh, fixed_now):
         """Test that get_status includes orchestrator requests."""
@@ -475,7 +459,7 @@ class TestCustomThresholds:
 
     def test_custom_thresholds_respected(self, tmp_heartbeat_file, fixed_now):
         """Test that custom thresholds are used for state calculation."""
-        tmp_heartbeat_file.write_text(json.dumps({"orchestrators": []}))
+        tmp_heartbeat_file.write_text(json.dumps({'orchestrators': []}))
         # Set mtime to 20 seconds ago
         mtime = (fixed_now - timedelta(seconds=20)).timestamp()
         os.utime(tmp_heartbeat_file, (mtime, mtime))
@@ -512,9 +496,7 @@ class TestRaceConditionPrevention:
 
         # Create a heartbeat file
         content = {
-            "orchestrators": [
-                {"branch": "feat/test", "status": "ACTIVE", "request": "WAITING"}
-            ]
+            'orchestrators': [{'branch': 'feat/test', 'status': 'ACTIVE', 'request': 'WAITING'}]
         }
         tmp_heartbeat_file.write_text(json.dumps(content))
         mtime = (fixed_now - timedelta(seconds=5)).timestamp()
@@ -539,7 +521,7 @@ class TestTimezoneHandling:
 
     def test_mtime_converted_to_utc(self, tmp_heartbeat_file, fixed_now):
         """Test that mtime is properly converted to UTC datetime."""
-        tmp_heartbeat_file.write_text(json.dumps({"orchestrators": []}))
+        tmp_heartbeat_file.write_text(json.dumps({'orchestrators': []}))
         mtime = (fixed_now - timedelta(seconds=10)).timestamp()
         os.utime(tmp_heartbeat_file, (mtime, mtime))
 

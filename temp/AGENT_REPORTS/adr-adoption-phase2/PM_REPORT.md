@@ -58,6 +58,7 @@ Based on review of CHANGELOG and git history (v0.3-v0.6), the following decision
 **Status**: Ready for promotion to LEARNINGS.md
 
 **Evidence of 2+ implementations**:
+
 1. v0.3: 9 staging models following the pattern
 2. v0.4: 2 intermediate + 5 dimension + 4 fact models
 3. v0.5: 7 analytics models extending the pattern

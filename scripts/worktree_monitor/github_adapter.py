@@ -9,6 +9,7 @@ Created: Phase 4 Day 3
 
 import json
 import random
+import re
 import subprocess
 import time
 from dataclasses import dataclass
@@ -38,6 +39,9 @@ class GitHubAdapter:
 
     All methods use in-memory caching with configurable TTL.
     """
+
+    # Repository name validation pattern (owner/repo format)
+    REPO_NAME_PATTERN = re.compile(r'^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')
 
     # Cache TTL defaults (in seconds)
     DEFAULT_CACHE_TTL = 60
@@ -71,7 +75,15 @@ class GitHubAdapter:
         Args:
             repo: Repository in 'owner/repo' format
             cache_ttl: Cache TTL in seconds (defaults to DEFAULT_CACHE_TTL)
+
+        Raises:
+            ValueError: If repo format is invalid
         """
+        if not self.REPO_NAME_PATTERN.match(repo):
+            raise ValueError(
+                f"Invalid repository format: '{repo}'. "
+                "Expected 'owner/repo' with alphanumeric, underscore, dot, or hyphen characters."
+            )
         self.repo = repo
         self.cache_ttl = cache_ttl if cache_ttl is not None else self.DEFAULT_CACHE_TTL
         self._cache: dict[str, CacheEntry] = {}

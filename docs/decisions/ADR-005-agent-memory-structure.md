@@ -23,6 +23,7 @@ v0.10 introduces an agent memory system (Epic #143) with two types of data:
 2. **Consolidated patterns** - Promoted learnings with 2+ occurrences across sessions
 
 We need to decide:
+
 - Where to place the `memory/` directory (root vs `.claude/memory/`)
 - What to track in git vs. ignore
 
@@ -43,6 +44,7 @@ dbt-playground/
 ```
 
 **Git tracking strategy:**
+
 ```gitignore
 # Ignore private session logs
 memory/sessions/
@@ -58,40 +60,46 @@ memory/sessions/
 ### Option 1: Root-level `memory/` (SELECTED)
 
 **Pros:**
-- ✅ Simpler `.gitignore` (sessions ignored, rest tracked by default)
-- ✅ Shorter paths (`memory/patterns/` vs `.claude/memory/patterns/`)
-- ✅ Better discoverability (visible in `ls`, easier to reference)
-- ✅ Conceptual clarity: memory is **project knowledge**, not agent configuration
-- ✅ Easier backup/migration (portable, not coupled to `.claude/`)
-- ✅ Separation of concerns: config (`.claude/`) vs. state (`memory/`)
+
+- Simpler `.gitignore` (sessions ignored, rest tracked by default)
+- Shorter paths (`memory/patterns/` vs `.claude/memory/patterns/`)
+- Better discoverability (visible in `ls`, easier to reference)
+- Conceptual clarity: memory is **project knowledge**, not agent configuration
+- Easier backup/migration (portable, not coupled to `.claude/`)
+- Separation of concerns: config (`.claude/`) vs. state (`memory/`)
 
 **Cons:**
-- ❌ +1 root directory (minor clutter)
-- ❌ Less obvious it's agent-related (mitigated by documentation)
+
+- +1 root directory (minor clutter)
+- Less obvious it's agent-related (mitigated by documentation)
 
 ### Option 2: Nested `.claude/memory/`
 
 **Pros:**
-- ✅ All agent-related stuff in one place
-- ✅ Cleaner root directory
+
+- All agent-related stuff in one place
+- Cleaner root directory
 
 **Cons:**
-- ❌ Complex `.gitignore` (must whitelist within ignored `.claude/*`)
-- ❌ 20% longer paths (48 chars vs 40 chars)
-- ❌ Reduced discoverability (hidden in `.claude/`)
-- ❌ Conceptually conflates agent config with agent output
-- ❌ Harder to backup/migrate separately
+
+- Complex `.gitignore` (must whitelist within ignored `.claude/*`)
+- 20% longer paths (48 chars vs 40 chars)
+- Reduced discoverability (hidden in `.claude/`)
+- Conceptually conflates agent config with agent output
+- Harder to backup/migrate separately
 
 ## Rationale
 
 ### 1. Memory is Data, Not Configuration
 
 **Agent configuration** (static, defines behavior):
+
 - `.claude/agents/supervisor.md` - How agents behave
 - `.claude/commands/commit.md` - What agents can do
 - `.claude/hooks/pre-commit.sh` - When agents act
 
 **Memory** (dynamic, project knowledge):
+
 - `memory/patterns/dbt-patterns.md` - What we learned
 - `memory/codebase/key-models.md` - What this project does
 - `memory/sessions/2026-02-02.md` - How we solved problems
@@ -126,11 +134,13 @@ This shows the intent to **separate memory from agent config**, even if nested.
 ### 4. Team Discoverability
 
 **Root-level:**
+
 - "Check the `memory/` folder for patterns"
 - New developers see it in `ls`
 - Clear signal: "This is important project knowledge"
 
 **Nested:**
+
 - "Check `.claude/memory/patterns/`..." (developers skip .claude/)
 - Hidden in tool internals
 - Less likely to be referenced
@@ -191,6 +201,7 @@ memory/
 ### Workflow Integration
 
 **Daily (Sage Workflow J - Issue #151):**
+
 ```markdown
 # memory/sessions/2026-02-02.md
 ## 14:30 - Add fct_customer_metrics
@@ -199,6 +210,7 @@ memory/
 ```
 
 **Weekly (Sage Workflow K - Issue #153):**
+
 ```markdown
 # Sage detects pattern (3 occurrences)
 # Creates PR promoting to memory/patterns/dbt-patterns.md:
@@ -209,6 +221,7 @@ memory/
 ```
 
 **Session Start (Issue #163):**
+
 ```markdown
 # Agent reads memory/MEMORY_INDEX.md
 # Surfaces relevant patterns based on task type

@@ -22,6 +22,7 @@ Traditional approaches to handle data quality violations:
 - **Manual fixes**: Not scalable, requires human intervention
 
 The project needed a systematic approach to:
+
 - Detect violations at the earliest layer (staging)
 - Preserve evidence for investigation
 - Filter bad data from downstream analytics
@@ -57,6 +58,7 @@ The project needed a systematic approach to:
 ### Why Macros Over Inline SQL
 
 **Individual validation flags** enable debugging:
+
 ```sql
 -- Macro approach: See which rule failed
 select
@@ -78,6 +80,7 @@ from stg_encounters
 **Consistency across entities**: One macro definition ensures all models follow the same pattern.
 
 **Extensibility**: Adding quarantine to a new entity requires ~10 lines:
+
 ```sql
 with_dq_flags as (
     {{ add_dq_flags(source_cte='renamed', validations={...}) }}
@@ -87,6 +90,7 @@ with_dq_flags as (
 ### Why Not dbt Tests Alone
 
 dbt tests are binary (pass/fail) and don't support:
+
 - Partial failures (some records valid, some invalid)
 - Filtering bad data from downstream models
 - Aggregating validation failures for analysis
@@ -94,6 +98,7 @@ dbt tests are binary (pass/fail) and don't support:
 ### Why Not External Tool
 
 Tools like Great Expectations or Soda provide rich DQ features but:
+
 - Add external dependencies
 - Require separate deployment/maintenance
 - Don't integrate natively with dbt DAG
@@ -117,16 +122,19 @@ STAGING (+DQ Flags)
 ### Macro Design
 
 **`add_dq_flags()`**:
+
 - Input: source CTE name, dict of {validation_name: sql_condition}
 - Output: SELECT with original columns + individual flags + is_dq_valid + failed_dq_tests[]
 - Helper macros: `_all_validations_pass()`, `_collect_failed_tests()`
 
 **`quarantine_filter()`**:
+
 - Input: enabled (bool), field_name (string)
 - Output: `WHERE is_dq_valid = true`
 - Toggleable for debugging
 
 **`generate_quarantine_model()`**:
+
 - Input: source_model (string), description (string)
 - Output: Complete SQL selecting `WHERE is_dq_valid = false`
 - Auto-applies quarantine tags
@@ -134,6 +142,7 @@ STAGING (+DQ Flags)
 ### Validation Strategy
 
 **Staging layer validations**:
+
 - Timestamp/date sequence rules (end >= start)
 - Future date checks (start <= current)
 - Historical plausibility (dates after 1900)
@@ -172,17 +181,20 @@ STAGING (+DQ Flags)
 ## Metrics
 
 ### Before Implementation
+
 - Models: 28
 - Tests: 405 PASS, 2 ERROR, 3 WARN
 - Quarantined records: None (invisible)
 
 ### After Implementation
+
 - Models: 31 (+3 quarantine tables)
 - Tests: 423 PASS, 0 ERROR, 2 WARN (+18 tests)
 - Quarantined records: 6 (1 encounter, 5 medications)
 - Quarantine rate: 0.006% (6 / 96,335 total records)
 
 ### Code Metrics
+
 - Macros created: 3 (~70 lines total)
 - Files created: 8
 - Files modified: 8
@@ -204,6 +216,7 @@ from renamed
 ```
 
 **Why not chosen**:
+
 - No individual validation flags (harder debugging)
 - No `failed_dq_tests` array (can't aggregate failure reasons)
 - Duplicated logic across models
@@ -214,6 +227,7 @@ from renamed
 **Approach**: Use dbt_expectations tests with custom failure handling.
 
 **Why not chosen**:
+
 - Tests are post-materialization (too late to filter)
 - No built-in quarantine table generation
 - Can't filter based on test results in downstream models
@@ -222,6 +236,7 @@ from renamed
 ### External DQ Tools (Great Expectations, Soda, Monte Carlo)
 
 **Why not chosen**:
+
 - External dependencies and setup complexity
 - Separate deployment pipeline
 - Not deeply integrated with dbt DAG
@@ -232,26 +247,31 @@ from renamed
 ### Files Created
 
 **Macros** (`macros/data_quality/`):
+
 - `add_dq_flags.sql` - Core validation macro
 - `quarantine_filter.sql` - WHERE clause generator
 - `generate_quarantine_model.sql` - Quarantine table generator
 - `README.md` - Usage documentation
 
 **Models** (`models/intermediate/quarantine/`):
+
 - `int_dq_quarantine__encounters.sql`
 - `int_dq_quarantine__medications.sql`
 - `_quarantine__models.yml` - Schema documentation
 
 **Analytics** (`models/marts/analytics/`):
+
 - `mart_dq_summary.sql` - DQ monitoring table
 
 ### Files Modified
 
 **Staging models**:
+
 - `stg_synthea__encounters.sql` - Added `with_dq_flags` CTE
 - `stg_synthea__medications.sql` - Added `with_dq_flags` CTE
 
 **Downstream models**:
+
 - `fct_encounters.sql` - Applied `{{ quarantine_filter() }}`
 - `fct_clinical_events.sql` - Applied filter + valid_encounters CTE
 - `int_encounters__enriched.sql` - Applied filter
@@ -259,6 +279,7 @@ from renamed
 ### Usage Pattern
 
 **Step 1**: Add DQ flags to staging
+
 ```sql
 with_dq_flags as (
     {{ add_dq_flags(
@@ -272,12 +293,14 @@ with_dq_flags as (
 ```
 
 **Step 2**: Create quarantine table
+
 ```sql
 {{ config(materialized='table', tags=['quarantine', 'data_quality']) }}
 {{ generate_quarantine_model(source_model='stg_my_entity') }}
 ```
 
 **Step 3**: Filter in downstream
+
 ```sql
 with entities as (
     select * from {{ ref('stg_my_entity') }}
@@ -290,6 +313,7 @@ with entities as (
 This implementation uses DuckDB-specific syntax:
 
 **Array construction**:
+
 ```sql
 -- DuckDB
 list_value(case when not valid then 'rule_name' else null end, ...)
@@ -302,6 +326,7 @@ ARRAY_CONSTRUCT(case when not valid then 'rule_name' else null end, ...)
 ```
 
 **Conditional aggregation**:
+
 ```sql
 -- DuckDB
 count(*) filter (where is_dq_valid = false)
@@ -319,9 +344,10 @@ For multi-database portability, these would need adapter-specific implementation
 **Recommendation**: Alert if `quarantine_rate_pct > 1%`
 
 **Current state** (v0.8):
+
 - Encounters: 0.00% (1 / 53,346)
 - Medications: 0.01% (5 / 42,989)
-- Both well below threshold ✅
+- Both well below threshold
 
 ### Metrics to Track
 
@@ -333,12 +359,14 @@ For multi-database portability, these would need adapter-specific implementation
 ### Example Queries
 
 **Quarantine summary**:
+
 ```sql
 select * from {{ ref('mart_dq_summary') }}
 order by quarantine_rate_pct desc
 ```
 
 **Failed validation distribution**:
+
 ```sql
 select
     unnest(failed_dq_tests) as failed_validation,
@@ -349,6 +377,7 @@ order by 2 desc
 ```
 
 **Quarantine details**:
+
 ```sql
 select
     encounter_id,

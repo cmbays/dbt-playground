@@ -12,22 +12,22 @@ checking mtime to avoid race conditions where the file is updated
 between reading mtime and reading content.
 """
 
-from datetime import datetime, timezone
-from pathlib import Path
 import json
 import logging
+from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
-logger = logging.getLogger(__name__)
-
-from .models import HeartbeatStatus, OrchestratorStatus, OrchestratorRequest
 from .constants import (
-    HeartbeatState,
-    RequestType,
     HEARTBEAT_THRESHOLDS,
+    HeartbeatState,
     HeartbeatThresholds,
+    RequestType,
 )
-from .exceptions import HeartbeatError, HeartbeatFileNotFoundError, HeartbeatParseError
+from .exceptions import HeartbeatFileNotFoundError, HeartbeatParseError
+from .models import HeartbeatStatus, OrchestratorRequest, OrchestratorStatus
+
+logger = logging.getLogger(__name__)
 
 
 class HeartbeatMonitor:
@@ -74,14 +74,14 @@ class HeartbeatMonitor:
             HeartbeatParseError: If heartbeat file cannot be parsed.
         """
         if now is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         # CRITICAL: Read content BEFORE mtime to avoid race condition
         content = self._read_content()
         mtime = self._get_mtime()
 
         # Calculate staleness
-        last_update = datetime.fromtimestamp(mtime, tz=timezone.utc)
+        last_update = datetime.fromtimestamp(mtime, tz=UTC)
         seconds_since_update = (now - last_update).total_seconds()
         state = self.thresholds.get_state(seconds_since_update)
 
@@ -111,7 +111,7 @@ class HeartbeatMonitor:
             HeartbeatFileNotFoundError: If heartbeat file doesn't exist.
         """
         if now is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         seconds = self.get_seconds_since_update(now=now)
         return self.thresholds.get_state(seconds)
@@ -130,10 +130,10 @@ class HeartbeatMonitor:
             HeartbeatFileNotFoundError: If heartbeat file doesn't exist.
         """
         if now is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
 
         mtime = self._get_mtime()
-        last_update = datetime.fromtimestamp(mtime, tz=timezone.utc)
+        last_update = datetime.fromtimestamp(mtime, tz=UTC)
         return (now - last_update).total_seconds()
 
     def parse_orchestrator_requests(self) -> list[OrchestratorRequest]:
@@ -161,21 +161,21 @@ class HeartbeatMonitor:
             HeartbeatParseError: If JSON parsing fails.
         """
         try:
-            text = self.heartbeat_path.read_text(encoding="utf-8")
-        except FileNotFoundError:
-            raise HeartbeatFileNotFoundError(str(self.heartbeat_path))
+            text = self.heartbeat_path.read_text(encoding='utf-8')
+        except FileNotFoundError as e:
+            raise HeartbeatFileNotFoundError(str(self.heartbeat_path)) from e
 
         try:
             if not text.strip():
                 raise HeartbeatParseError(
                     str(self.heartbeat_path),
-                    "File is empty",
+                    'File is empty',
                 )
             return json.loads(text)
         except json.JSONDecodeError as e:
             raise HeartbeatParseError(
                 str(self.heartbeat_path),
-                f"Invalid JSON: {e}",
+                f'Invalid JSON: {e}',
             ) from e
 
     def _get_mtime(self) -> float:
@@ -189,12 +189,10 @@ class HeartbeatMonitor:
         """
         try:
             return self.heartbeat_path.stat().st_mtime
-        except FileNotFoundError:
-            raise HeartbeatFileNotFoundError(str(self.heartbeat_path))
+        except FileNotFoundError as e:
+            raise HeartbeatFileNotFoundError(str(self.heartbeat_path)) from e
 
-    def _iter_orchestrator_entries(
-        self, content: dict[str, Any]
-    ) -> list[dict[str, Any]]:
+    def _iter_orchestrator_entries(self, content: dict[str, Any]) -> list[dict[str, Any]]:
         """Get valid orchestrator entries from content.
 
         Args:
@@ -203,14 +201,12 @@ class HeartbeatMonitor:
         Returns:
             List of valid orchestrator entry dictionaries.
         """
-        orchestrators_data = content.get("orchestrators", [])
+        orchestrators_data = content.get('orchestrators', [])
         if not isinstance(orchestrators_data, list):
             return []
         return [entry for entry in orchestrators_data if isinstance(entry, dict)]
 
-    def _parse_request_type(
-        self, value: str | None, branch: str
-    ) -> RequestType | None:
+    def _parse_request_type(self, value: str | None, branch: str) -> RequestType | None:
         """Parse a request type string into RequestType enum.
 
         Args:
@@ -226,7 +222,7 @@ class HeartbeatMonitor:
             return RequestType(value)
         except ValueError as e:
             logger.debug(
-                "Invalid RequestType value %r for branch %r: %s",
+                'Invalid RequestType value %r for branch %r: %s',
                 value,
                 branch,
                 e,
@@ -244,9 +240,9 @@ class HeartbeatMonitor:
         """
         result: list[OrchestratorStatus] = []
         for entry in self._iter_orchestrator_entries(content):
-            branch = entry.get("branch", "")
-            status_str = entry.get("status", "")
-            request_type = self._parse_request_type(entry.get("request"), branch)
+            branch = entry.get('branch', '')
+            status_str = entry.get('status', '')
+            request_type = self._parse_request_type(entry.get('request'), branch)
 
             result.append(
                 OrchestratorStatus(
@@ -259,9 +255,7 @@ class HeartbeatMonitor:
 
         return result
 
-    def _parse_requests_from_content(
-        self, content: dict[str, Any]
-    ) -> list[OrchestratorRequest]:
+    def _parse_requests_from_content(self, content: dict[str, Any]) -> list[OrchestratorRequest]:
         """Parse orchestrator requests from content.
 
         Only returns requests for orchestrators that have a valid request type.
@@ -274,8 +268,8 @@ class HeartbeatMonitor:
         """
         result: list[OrchestratorRequest] = []
         for entry in self._iter_orchestrator_entries(content):
-            branch = entry.get("branch", "")
-            request_type = self._parse_request_type(entry.get("request"), branch)
+            branch = entry.get('branch', '')
+            request_type = self._parse_request_type(entry.get('request'), branch)
             if request_type is None:
                 continue
 
@@ -283,7 +277,7 @@ class HeartbeatMonitor:
                 OrchestratorRequest(
                     branch=branch,
                     request_type=request_type,
-                    message=entry.get("message", ""),
+                    message=entry.get('message', ''),
                     timestamp=None,
                 )
             )
