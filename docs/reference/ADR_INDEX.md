@@ -27,8 +27,8 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 
 | Metric | Count |
 |--------|-------|
-| Total ADRs | 14 |
-| Approved | 12 |
+| Total ADRs | 18 |
+| Approved | 16 |
 | Approved (Historical) | 3 |
 | Proposed | 0 |
 | Superseded | 2 |
@@ -54,6 +54,10 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-12 | Native HTML5 Drag-and-Drop | Approved | [TDD-023](../specs/TDD-023-HUB-KANBAN.md#adr-12-native-html5-drag-and-drop) | Architect | 2026-01-31 | ui, kanban | - |
 | ADR-13 | localStorage Board State Schema | Approved | [TDD-023](../specs/TDD-023-HUB-KANBAN.md#adr-13-localstorage-board-state-schema) | Architect | 2026-01-31 | storage, kanban | - |
 | ADR-14 | Data Quality Quarantine with Macros | Approved | [ADR-004](../decisions/ADR-004-data-quality-quarantine.md) | Architect, Code Reviewer, Developer | 2026-02-01 | data-quality, testing, macros | - |
+| ADR-15 | DuckDB for FS5 Metrics Database | Approved | [ADR-015](../decisions/ADR-015-duckdb-for-fs5-metrics.md) | Architect, Supervisor | 2026-02-03 | infrastructure, database, metrics, fs5 | - |
+| ADR-16 | reveal.js for Learning Playground | Approved | [ADR-016](ADR-016-RENDERING-FRAMEWORK.md) | Architect | 2026-02-03 | playgrounds, ui, learning | - |
+| ADR-17 | Markdown Extension Syntax | Approved | [ADR-017](ADR-017-MARKDOWN-EXTENSION-SYNTAX.md) | Architect | 2026-02-03 | syntax, markdown, widgets | - |
+| ADR-18 | Widget Component System | Approved | [ADR-018](ADR-018-WIDGET-COMPONENT-SYSTEM.md) | Architect | 2026-02-03 | architecture, widgets, components | - |
 
 ---
 
@@ -66,6 +70,7 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-1 | DuckDB over PostgreSQL | Zero setup vs production similarity |
 | ADR-10 | SQLite for cross-session state | Zero infrastructure vs multi-machine |
 | ADR-13 | localStorage for board state | Instant/offline vs cross-device sync |
+| ADR-15 | DuckDB for FS5 metrics | Direct JSONL query vs trigger support |
 
 ### Architecture & Patterns
 
@@ -92,6 +97,14 @@ This index provides quick discovery of Architecture Decision Records (ADRs) acro
 | ADR-8 | Inter-agent report pattern | Context fidelity vs directory structure |
 | ADR-9 | Backlog.md for task management | Git-tracked vs real-time sync complexity |
 | ADR-11 | dbt for PM analytics | Unified tooling vs model maintenance |
+
+### Learning Playground
+
+| ADR | Decision | Key Trade-off |
+|-----|----------|---------------|
+| ADR-16 | reveal.js for slide rendering | CDN dependency vs building from scratch |
+| ADR-17 | Fenced code blocks for widgets | Markdown readability vs DSL expressiveness |
+| ADR-18 | Registry-based widget system | Extensibility vs Web Components standards |
 
 ---
 
