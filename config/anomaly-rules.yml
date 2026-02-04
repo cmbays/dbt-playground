@@ -1,0 +1,101 @@
+# Anomaly Detection Rules Configuration
+# Version: 1.0.0
+# PRD-027: FS5 Metrics & Dashboard - Anomaly Detection Rules Engine
+#
+# This file defines the 8 anomaly detection rules for workflow monitoring.
+# Rules can be enabled/disabled and configured individually.
+
+version: "1.0"
+
+# Global settings
+global:
+  enabled: true
+  alert_cooldown_minutes: 5  # Do not re-alert for same anomaly within cooldown
+
+rules:
+  # Rule 1: Stuck Session
+  stuck_session:
+    enabled: true
+    severity: WARNING
+    description: "No events for extended period during active phases"
+    threshold_minutes: 30
+    active_phases:
+      - BUILD
+      - VERIFY
+    auto_resolve: true
+    auto_resolve_on: "any_event"
+
+  # Rule 2: QA Skipping
+  qa_skipping:
+    enabled: true
+    severity: CRITICAL
+    description: "DEPLOY phase entered without completing VERIFY"
+    auto_resolve: false
+    required_phase_before_deploy: VERIFY
+
+  # Rule 3: Phase Timeout
+  phase_timeout:
+    enabled: true
+    severity: WARNING
+    description: "Phase duration exceeds baseline by multiplier"
+    multiplier: 2.0
+    auto_resolve: true
+    auto_resolve_on: "phase_exit"
+    baselines:  # Minutes
+      UNDERSTAND: 30
+      PLAN: 60
+      BUILD: 120
+      VERIFY: 60
+      DEPLOY: 30
+
+  # Rule 4: Review Avoidance
+  review_avoidance:
+    enabled: true
+    severity: CRITICAL
+    description: "PR merged without required approvals"
+    required_approvals: 1
+    auto_resolve: false
+
+  # Rule 5: Test Regression
+  test_regression:
+    enabled: true
+    severity: ERROR
+    description: "Previously passing test now fails"
+    auto_resolve: true
+    auto_resolve_on: "test_passes"
+
+  # Rule 6: Artifact Missing
+  artifact_missing:
+    enabled: true
+    severity: WARNING
+    description: "Phase completed without expected artifact"
+    auto_resolve: true
+    auto_resolve_on: "artifact_created"
+    expected_artifacts:
+      PLAN:
+        - "*_PLAN.md"
+        - "TDD-*.md"
+      BUILD:
+        - "*.py"
+        - "*.sql"
+      VERIFY:
+        - "*_TESTING.md"
+        - "QA_REPORT.md"
+
+  # Rule 7: Agent Loop
+  agent_loop:
+    enabled: true
+    severity: WARNING
+    description: "Same agent invoked repeatedly without progress"
+    max_consecutive: 5
+    auto_resolve: true
+    auto_resolve_on: "different_agent"
+
+  # Rule 8: Orphan Branch
+  orphan_branch:
+    enabled: true
+    severity: INFO
+    description: "Branch with no commits for extended period"
+    threshold_days: 3
+    auto_resolve: true
+    auto_resolve_on: "commit_pushed"

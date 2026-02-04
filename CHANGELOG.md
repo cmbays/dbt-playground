@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **FS5 Metrics & Dashboard System** (#146)
+  - DuckDB-based metrics database (replaces SQLite per ADR-015)
+  - Direct JSONL querying via `read_json_auto()` views
+  - Adherence scoring service with 0-120 scale formula
+  - Anomaly detection rules engine (8 rules)
+  - Dashboard widgets for Workflow Hub integration
+  - **Agent Visualizer Integration** (#172)
+    - New "Agents" tab in Workflow Hub
+    - Mermaid-powered workflow diagram
+    - State inspector for tracks and phases
+    - Collapsible execution timeline
+    - Keyboard shortcut (A) for quick access
+
+### Changed
+
+- **PRD-027 v1.1** (2026-02-03)
+  - Updated to use DuckDB instead of SQLite per ADR-015
+  - Changed FR-011 from sync script to JSONL views
+  - Updated performance requirements for view-based queries
+
+### Added
+
 - **Compound Learning Loop Integration** (#163)
   - Sage session logging trigger after QA phase (Post-QA)
   - Memory bootstrap in `/plan` command reads `memory/MEMORY_INDEX.md`

@@ -15,9 +15,10 @@ from pathlib import Path
 
 import pytest
 
-# Add scripts directory to path for imports
+# Add project root and scripts directory to path for imports
 PROJECT_ROOT = Path(__file__).parent.parent
 SCRIPTS_DIR = PROJECT_ROOT / 'scripts'
+sys.path.insert(0, str(PROJECT_ROOT))  # For fs5, kanban modules
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 # Fixed date for deterministic tests (avoids timezone issues)
