@@ -35,12 +35,16 @@ This is a dbt learning project for data transformation best practices, agent orc
 ```text
 dbt-playground/
 ├── CLAUDE.md              # This file
-├── docs/reference/        # Architecture, coding standards
+├── docs/reference/        # Architecture, coding standards, tech stack
 ├── temp/                  # Work-in-progress
 └── .claude/               # Agent config (agents/, commands/, rules/)
 ```
 
 See `docs/reference/PROJECT_STRUCTURE.md` for complete structure.
+
+**Key Reference Docs**:
+- [TECH_STACK.md](docs/reference/TECH_STACK.md) - All technology versions and rationale
+- [ARCHITECTURE.md](docs/reference/ARCHITECTURE.md) - System design
 
 ## Standard Workflow
 

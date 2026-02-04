@@ -1,0 +1,52 @@
+# Dependabot configuration for automated dependency updates
+# Ref: docs/reference/TECH_STACK.md
+#
+# NOTE: This project uses uv (not pip) for Python dependency management.
+# Dependabot doesn't have native uv support yet, but the "pip" ecosystem
+# can parse pyproject.toml and suggest updates. After merging a Dependabot PR:
+#   1. Run `uv lock` to regenerate uv.lock
+#   2. Run `uv sync` to install updated dependencies
+#   3. Test before merging
+
+version: 2
+updates:
+  # Python dependencies via pyproject.toml (we use uv, not pip)
+  # Dependabot proposes updates; we apply them with `uv lock && uv sync`
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "python"
+      - "uv"
+    commit-message:
+      prefix: "chore(deps)"
+    open-pull-requests-limit: 5
+
+  # Node.js dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "chore(deps)"
+    open-pull-requests-limit: 5
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(deps)"
+    open-pull-requests-limit: 3
