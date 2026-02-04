@@ -18,27 +18,54 @@ When this command is invoked:
    - Note any constraints or dependencies
 
 1.5 **Bootstrap from Session Memory** (when available)
+
+   **File Check:**
    - Check if `memory/MEMORY_INDEX.md` exists
-   - If present, extract relevant context:
-     - "Recurring Patterns" section - proven patterns to consider
-     - "Promotion Candidates" section - patterns nearing proven status
-   - Display relevant learnings to inform planning:
+   - If missing: Display advisory and skip gracefully
+     ```
+     [Memory Bootstrap] No memory index found (memory/MEMORY_INDEX.md missing). Skipping.
+     ```
+
+   **Section Validation:**
+   - Required sections: "Recurring Patterns", "Promotion Candidates", "Topics Index"
+   - If any section is missing or empty:
+     ```
+     [Memory Bootstrap] Memory index incomplete (missing: {section names}). Skipping.
+     ```
+   - If parse error occurs: Fall back to no-memory behavior silently
+
+   **Relevance Filtering:**
+   - Extract keywords from current task description (file types, tech stack, function/class names)
+   - Read "Topics Index" section from MEMORY_INDEX.md
+   - Filter "Recurring Patterns" and "Promotion Candidates" to only show items where:
+     - Topic keywords match current task keywords (case-insensitive), OR
+     - Pattern score >= 0.7 (high-confidence patterns shown regardless of topic match)
+   - If no relevant patterns found after filtering: Skip display
+
+   **Display Format** (only if relevant patterns found):
 
    ```
    [Memory Bootstrap]
-   Recent learnings that may inform this plan:
+   Relevant learnings for this task (filtered by topic match):
 
    Recurring Patterns:
-   - [pattern summary] (score: X.XX)
+   - [pattern summary] (score: X.XX, topics: topic1, topic2)
 
    Promotion Candidates:
    - [ ] [candidate description]
 
    Consider these patterns when designing the implementation approach.
+   (Advisory context only - not requirements)
    ```
 
-   - Note: This is advisory context, not requirements
-   - Skip this step if memory/MEMORY_INDEX.md doesn't exist
+   **Error Handling Summary:**
+   | Condition | Behavior |
+   |-----------|----------|
+   | File missing | Advisory message, skip gracefully |
+   | File empty | Advisory message, skip gracefully |
+   | Section missing | Advisory message listing missing sections, skip |
+   | Parse error | Silent fallback to no-memory behavior |
+   | No relevant patterns | Skip display (no message needed) |
 
 2. **Create Implementation Plan**
    - Create `temp/v[X.Y]_PLAN.md` with:
