@@ -107,7 +107,7 @@ When this command is invoked:
 
    **Metrics Instrumentation:**
 
-   Emit events to `memory/events.jsonl` for FS5 metrics aggregation:
+   Emit events to `events.jsonl` at repo root for FS5 metrics aggregation:
 
    | Event Type | When | Payload Schema |
    |------------|------|----------------|
@@ -120,6 +120,15 @@ When this command is invoked:
    ```json
    {"event": "memory_bootstrap_success", "timestamp": "2026-02-04T01:00:00Z", "plan_id": "plan-feat-x", "pattern_count": 2, "topics_matched": ["sql", "incremental"], "file_path": "memory/MEMORY_INDEX.md"}
    ```
+
+   *Event file locations:*
+
+   | File | Consumer | Purpose |
+   |------|----------|---------|
+   | `events.jsonl` (repo root) | FS5 metrics dashboard | Primary aggregation target for all agent events |
+   | `memory/events.jsonl` | Sage consolidation | Session logging events for weekly pattern extraction |
+
+   Memory bootstrap events are written to `events.jsonl` at repo root. Session logging events (from `sage: log session`) continue to write to `memory/events.jsonl` for backward compatibility with Sage Workflow K.
 
    This enables FS5 to track adoption rates, missing-section frequency, and matching effectiveness.
 
