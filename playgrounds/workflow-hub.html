@@ -4,50 +4,143 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workflow Hub - dbt-playground</title>
+
+  <!-- Google Fonts: Inter + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
-    /* CSS Variables */
+    /* ==================== Design System Tokens ====================
+       Philosophy: "Linear calm + Raycast polish + Neobrutalist delight"
+       - Base layer: Monochrome, opacity hierarchy, extreme restraint
+       - Attention layer: Bold borders, vibrant status colors, springy animations
+       ==================== */
     :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f5f5f5;
-      --bg-tertiary: #e8e8e8;
-      --bg-card: #ffffff;
-      --text-primary: #1a1a1a;
-      --text-secondary: #666666;
-      --text-muted: #999999;
-      --accent-primary: #2563eb;
-      --accent-success: #16a34a;
-      --accent-warning: #ca8a04;
-      --accent-danger: #dc2626;
-      --accent-purple: #7c3aed;
-      --border-color: #e5e5e5;
-      --shadow: 0 1px 3px rgba(0,0,0,0.1);
-      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
-      /* Kanban column colors */
+      /* === BASE LAYER (Monochrome) === */
+
+      /* Background - Near-black foundation */
+      --color-bg-primary: #09090b;
+      --color-bg-secondary: #0f0f11;
+      --color-bg-elevated: #18181b;
+      --color-bg-surface: #1c1c1f;
+
+      /* Text - Opacity-based hierarchy */
+      --color-text-primary: rgba(255, 255, 255, 0.87);
+      --color-text-secondary: rgba(255, 255, 255, 0.60);
+      --color-text-muted: rgba(255, 255, 255, 0.38);
+      --color-text-disabled: rgba(255, 255, 255, 0.20);
+
+      /* Borders - Subtle definition */
+      --color-border-subtle: rgba(255, 255, 255, 0.08);
+      --color-border-default: rgba(255, 255, 255, 0.12);
+      --color-border-strong: rgba(255, 255, 255, 0.20);
+
+      /* === ATTENTION LAYER (Status-Driven) === */
+
+      /* Action - Cyan (primary CTAs, interactive focus) */
+      --color-action: #22d3ee;
+      --color-action-hover: #06b6d4;
+      --color-action-bold: #00e5ff;
+
+      /* Success - Green (completions, confirmations) */
+      --color-success: #34d399;
+      --color-success-hover: #10b981;
+      --color-success-bold: #00ff88;
+
+      /* Error - Red (failures, destructive actions) */
+      --color-error: #f87171;
+      --color-error-hover: #ef4444;
+      --color-error-bold: #ff4444;
+
+      /* Warning - Amber (cautions, pending states) */
+      --color-warning: #fbbf24;
+      --color-warning-hover: #f59e0b;
+      --color-warning-bold: #ffcc00;
+
+      /* === EFFECTS === */
+
+      /* Glassmorphism (Raycast-inspired) */
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-blur: blur(12px);
+      --glass-border: rgba(255, 255, 255, 0.1);
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+
+      /* Neobrutalist Effects */
+      --border-bold: 2px solid;
+      --border-brutal: 3px solid;
+      --shadow-brutal: 4px 4px 0px;
+      --shadow-brutal-sm: 2px 2px 0px;
+
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-normal: 200ms ease;
+      --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      --transition-smooth: 200ms ease-out;
+
+      /* Radii */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+
+      /* === TYPOGRAPHY === */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+
+      /* Type Scale */
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-3xl: 1.875rem;
+
+      /* Spacing */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-12: 3rem;
+
+      /* === LEGACY ALIASES (for gradual migration) === */
+      /* These map old variable names to new tokens */
+      --bg-primary: var(--color-bg-primary);
+      --bg-secondary: var(--color-bg-secondary);
+      --bg-tertiary: var(--color-bg-elevated);
+      --bg-card: var(--color-bg-elevated);
+      --text-primary: var(--color-text-primary);
+      --text-secondary: var(--color-text-secondary);
+      --text-muted: var(--color-text-muted);
+      --accent-primary: var(--color-action);
+      --accent-success: var(--color-success);
+      --accent-warning: var(--color-warning);
+      --accent-danger: var(--color-error);
+      --accent-purple: #a855f7;
+      --border-color: var(--color-border-default);
+      --shadow: var(--shadow-sm);
+      --font-family: var(--font-sans);
+
+      /* Kanban column colors (semantic naming preserved) */
       --col-backlog: #6b7280;
       --col-grooming: #3b82f6;
-      --col-ready: #22c55e;
-      --col-in-progress: #06b6d4;
-      --col-in-review: #8b5cf6;
-      --col-blocked: #ef4444;
+      --col-ready: var(--color-success);
+      --col-in-progress: var(--color-action);
+      --col-in-review: #a855f7;
+      --col-blocked: var(--color-error);
       --col-done: #374151;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #262626;
-        --bg-tertiary: #333333;
-        --bg-card: #262626;
-        --text-primary: #f5f5f5;
-        --text-secondary: #a3a3a3;
-        --text-muted: #737373;
-        --border-color: #404040;
-        --shadow: 0 1px 3px rgba(0,0,0,0.3);
-      }
-    }
-
+    /* ==================== Base Styles ==================== */
     * {
       margin: 0;
       padding: 0;
@@ -55,94 +148,175 @@
     }
 
     body {
-      font-family: var(--font-family);
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
       line-height: 1.5;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
 
     /* Header */
+    /* ==================== Header (Sticky) ==================== */
     .header {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--color-bg-secondary);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border-default);
+      padding: var(--space-4) var(--space-6);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: var(--space-4);
     }
 
     .header h1 {
-      font-size: 1.25rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
+      letter-spacing: -0.02em;
     }
 
     .version-badge {
-      background: var(--accent-primary);
-      color: white;
-      padding: 0.125rem 0.5rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 500;
+      background: var(--color-action);
+      color: #000;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-xs);
+      font-weight: 600;
     }
 
     .header-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-2);
       align-items: center;
     }
 
-    .btn {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      cursor: pointer;
+    /* ==================== Breadcrumb Navigation ==================== */
+    .breadcrumb {
       display: flex;
       align-items: center;
-      gap: 0.375rem;
-      transition: all 150ms ease;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-6);
+      background: var(--color-bg-primary);
+      border-bottom: 1px solid var(--color-border-subtle);
+      font-size: var(--text-sm);
+    }
+
+    .breadcrumb-item {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .breadcrumb-item:hover {
+      color: var(--color-text-primary);
+    }
+
+    .breadcrumb-item.active {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+
+    .breadcrumb-separator {
+      color: var(--color-text-disabled);
+      font-size: var(--text-xs);
+    }
+
+    /* ==================== Buttons ==================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text-primary);
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
       text-decoration: none;
     }
 
     .btn:hover {
-      background: var(--bg-tertiary);
+      background: var(--color-bg-surface);
+      border-color: var(--color-border-strong);
     }
 
+    .btn:focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: 2px;
+    }
+
+    /* Primary button - Neobrutalist attention-grabbing */
     .btn-primary {
-      background: var(--accent-primary);
-      border-color: var(--accent-primary);
-      color: white;
+      background: var(--color-action);
+      color: #000;
+      border: var(--border-bold) currentColor;
+      font-weight: 600;
+      box-shadow: var(--shadow-brutal) var(--color-action-bold);
+      transition: all var(--transition-spring);
     }
 
     .btn-primary:hover {
-      opacity: 0.9;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--color-action-bold);
     }
 
+    .btn-primary:active {
+      transform: translate(0, 0);
+      box-shadow: 2px 2px 0px var(--color-action-bold);
+    }
+
+    /* Success button */
     .btn-success {
-      background: var(--accent-success);
-      border-color: var(--accent-success);
-      color: white;
+      background: var(--color-success);
+      color: #000;
+      border: var(--border-bold) currentColor;
+      font-weight: 600;
+      box-shadow: var(--shadow-brutal) var(--color-success-bold);
+      transition: all var(--transition-spring);
+    }
+
+    .btn-success:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--color-success-bold);
     }
 
     .btn-sm {
-      padding: 0.375rem 0.75rem;
-      font-size: 0.75rem;
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--text-xs);
     }
 
     /* Polling Controls */
@@ -189,17 +363,11 @@
 
     /* Blocked Sessions Panel */
     .blocked-panel {
-      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-      border: 2px solid var(--accent-danger);
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .blocked-panel {
-        background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
-      }
+      background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
+      border: 2px solid var(--color-error);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-6);
     }
 
     .blocked-panel h2 {
@@ -275,73 +443,91 @@
       grid-column: 1 / -1;
     }
 
-    /* Card Styles */
+    /* ==================== Card Styles (Glass) ==================== */
     .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      box-shadow: var(--shadow);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
       overflow: hidden;
     }
 
     .card-header {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border-color);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-border-subtle);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--bg-secondary);
+      background: rgba(255, 255, 255, 0.03);
     }
 
     .card-title {
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
+      color: var(--color-text-primary);
     }
 
     .card-body {
-      padding: 1rem;
+      padding: var(--space-4);
     }
 
-    /* Session Cards */
+    /* ==================== Session Cards (Glass) ==================== */
     .sessions-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
+      gap: var(--space-4);
     }
 
     .session-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 1rem;
-      box-shadow: var(--shadow);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      transition: all var(--transition-fast);
+    }
+
+    .session-card:hover {
+      border-color: var(--color-border-strong);
+      box-shadow: var(--shadow-md);
     }
 
     .session-card.stale {
       opacity: 0.7;
-      border-color: var(--accent-warning);
+      border-color: var(--color-warning);
+    }
+
+    /* Card status indicators */
+    .session-card[data-status="blocked"] {
+      border-left: 3px solid var(--color-error);
+    }
+
+    .session-card[data-status="active"] {
+      border-left: 3px solid var(--color-success);
     }
 
     .session-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
     }
 
     .session-branch {
       font-weight: 600;
       font-family: var(--font-mono);
-      font-size: 0.875rem;
-      color: var(--accent-primary);
+      font-size: var(--text-sm);
+      color: var(--color-action);
     }
 
     .session-worktree {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       font-family: var(--font-mono);
     }
 
@@ -350,71 +536,76 @@
       color: var(--text-muted);
     }
 
-    /* Workflow Stage Indicator */
+    /* ==================== Workflow Stage Indicator (Segmented) ==================== */
     .workflow-stages {
       display: flex;
-      gap: 4px;
-      margin-bottom: 0.5rem;
+      gap: 2px;
+      margin-bottom: var(--space-2);
     }
 
     .stage {
       flex: 1;
       text-align: center;
-      padding: 0.25rem 0.125rem;
+      padding: var(--space-1) var(--space-1);
       font-size: 0.625rem;
       font-weight: 500;
-      border-radius: 3px;
-      background: var(--bg-tertiary);
-      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg-elevated);
+      color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.02em;
+      border: 1px solid var(--color-border-default);
+      transition: all var(--transition-fast);
     }
 
     .stage.complete {
-      background: var(--accent-success);
-      color: white;
+      background: var(--color-success);
+      color: #000;
+      border-color: var(--color-success);
     }
 
     .stage.current {
-      background: var(--accent-primary);
-      color: white;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+      background: var(--color-action);
+      color: #000;
+      border-color: var(--color-action);
+      box-shadow: var(--shadow-brutal-sm) var(--color-action-bold);
     }
 
     .stage-progress {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.75rem;
+      font-size: var(--text-xs);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
     }
 
-    /* Token Budget */
+    /* ==================== Token Budget (Segmented Progress) ==================== */
     .token-budget {
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--space-3);
     }
 
     .budget-bar {
-      height: 6px;
-      background: var(--bg-tertiary);
-      border-radius: 3px;
+      height: 8px;
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-sm);
       overflow: hidden;
-      margin-bottom: 0.25rem;
+      margin-bottom: var(--space-1);
+      border: 1px solid var(--color-border-default);
     }
 
     .budget-fill {
       height: 100%;
-      transition: width 300ms ease;
+      transition: width var(--transition-spring);
     }
 
     .budget-fill.healthy {
-      background: var(--accent-success);
+      background: var(--color-success);
     }
 
     .budget-fill.warning {
-      background: var(--accent-warning);
+      background: var(--color-warning);
     }
 
     .budget-fill.critical {
-      background: var(--accent-danger);
+      background: var(--color-error);
     }
 
     .budget-text {
@@ -481,33 +672,18 @@
     }
 
     .priority-header.p0 {
-      background: #fee2e2;
-      color: #b91c1c;
+      background: #450a0a;
+      color: #fca5a5;
     }
 
     .priority-header.p1 {
-      background: #fef3c7;
-      color: #92400e;
+      background: #78350f;
+      color: #fcd34d;
     }
 
     .priority-header.p2 {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .priority-header.p0 {
-        background: #450a0a;
-        color: #fca5a5;
-      }
-      .priority-header.p1 {
-        background: #78350f;
-        color: #fcd34d;
-      }
-      .priority-header.p2 {
-        background: #1e3a8a;
-        color: #93c5fd;
-      }
+      background: #1e3a8a;
+      color: #93c5fd;
     }
 
     .issue-list {
@@ -678,41 +854,153 @@
       margin-top: 0.5rem;
     }
 
-    /* Status Badges */
+    /* ==================== Status Badges (Tiered Neobrutalist) ==================== */
     .status-badge {
-      padding: 0.25rem 0.625rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
       font-weight: 500;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
     }
 
-    .status-active {
-      background: #dcfce7;
-      color: #166534;
+    /* Subtle tier - non-attention-grabbing (active, healthy, P1, P2) */
+    .status-active,
+    .status-healthy {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--color-success);
+      border: 1px solid currentColor;
     }
 
-    @media (prefers-color-scheme: dark) {
-      .status-active {
-        background: #166534;
-        color: #dcfce7;
+    .priority-p1,
+    .priority-p2 {
+      background: var(--color-bg-elevated);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--color-border-default);
+    }
+
+    /* Attention tier - neobrutalist treatment (blocked, stale, warning, P0) */
+    .status-blocked,
+    .status-stale,
+    .status-warning {
+      background: var(--color-error);
+      color: #000;
+      border: var(--border-bold) currentColor;
+      box-shadow: var(--shadow-brutal-sm) var(--color-error-bold);
+      font-weight: 600;
+    }
+
+    .priority-p0 {
+      background: var(--color-error);
+      color: #000;
+      border: var(--border-bold) currentColor;
+      box-shadow: var(--shadow-brutal) var(--color-error-bold);
+      font-weight: 600;
+      animation: pulse-glow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: var(--shadow-brutal) var(--color-error-bold);
+      }
+      50% {
+        box-shadow: var(--shadow-brutal) var(--color-error-bold), 0 0 12px var(--color-error);
       }
     }
 
-    /* Empty State */
+    .status-in-progress {
+      background: rgba(34, 211, 238, 0.15);
+      color: var(--color-action);
+      border: 1px solid currentColor;
+    }
+
+    /* ==================== Empty State (Illustrated) ==================== */
     .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      padding: 2rem;
-      color: var(--text-muted);
+      padding: var(--space-12) var(--space-6);
+      color: var(--color-text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
     }
 
     .empty-state h3 {
-      font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-      color: var(--text-secondary);
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      color: var(--color-text-secondary);
     }
 
-    /* Server Status */
+    .empty-state p {
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      max-width: 300px;
+      margin-bottom: var(--space-4);
+    }
+
+    .empty-state .btn {
+      margin-top: var(--space-2);
+    }
+
+    /* ==================== Skeleton Loading ==================== */
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        var(--color-bg-elevated) 25%,
+        var(--color-bg-surface) 50%,
+        var(--color-bg-elevated) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-text {
+      height: 1em;
+      margin-bottom: var(--space-2);
+    }
+
+    .skeleton-title {
+      height: 1.5em;
+      width: 60%;
+      margin-bottom: var(--space-3);
+    }
+
+    .skeleton-card {
+      height: 80px;
+      border-radius: var(--radius-md);
+    }
+
+    /* ==================== Focus States ==================== */
+    :focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: 2px;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: 2px;
+    }
+
+    /* ==================== Server Status ==================== */
     .server-status {
       display: flex;
       align-items: center;
@@ -777,12 +1065,14 @@
       margin-right: 0.25rem;
     }
 
-    /* Help Modal */
+    /* ==================== Modal (Glass) ==================== */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -793,25 +1083,42 @@
     }
 
     .modal {
-      background: var(--bg-card);
-      border-radius: 12px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
       max-width: 600px;
       width: 90%;
       max-height: 80vh;
       overflow: auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      box-shadow: var(--shadow-lg);
+      animation: modal-in var(--transition-spring);
+    }
+
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .modal-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--border-color);
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--glass-border);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .modal-header h2 {
-      font-size: 1.125rem;
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--color-text-primary);
     }
 
     .modal-close {
@@ -819,22 +1126,29 @@
       border: none;
       font-size: 1.5rem;
       cursor: pointer;
-      color: var(--text-muted);
+      color: var(--color-text-muted);
       line-height: 1;
+      transition: color var(--transition-fast);
     }
 
     .modal-close:hover {
-      color: var(--text-primary);
+      color: var(--color-text-primary);
+    }
+
+    .modal-close:focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: 2px;
     }
 
     .modal-body {
-      padding: 1.5rem;
+      padding: var(--space-6);
     }
 
     .modal-body h3 {
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       font-weight: 600;
-      margin-top: 1.25rem;
+      margin-top: var(--space-4);
+      color: var(--color-text-primary);
       margin-bottom: 0.5rem;
     }
 
@@ -894,19 +1208,12 @@
     }
 
     .details-blocking-reason {
-      background: #fee2e2;
-      border: 1px solid var(--accent-danger);
-      border-radius: 6px;
-      padding: 1rem;
-      color: #b91c1c;
+      background: #450a0a;
+      border: 1px solid var(--color-error);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      color: #fca5a5;
       font-weight: 500;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .details-blocking-reason {
-        background: #450a0a;
-        color: #fca5a5;
-      }
     }
 
     .details-actions {
@@ -1010,29 +1317,49 @@
       }
     }
 
-    /* ==================== Tab Navigation ==================== */
+    /* ==================== Tab Navigation (Glassmorphism) ==================== */
     .tab-nav {
       display: flex;
-      gap: 0.25rem;
-      margin-left: 1rem;
+      gap: var(--space-1);
+      margin-left: var(--space-4);
+      padding: var(--space-1);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
     }
+
     .tab-btn {
       display: flex;
       align-items: center;
-      gap: 0.375rem;
-      padding: 0.375rem 0.75rem;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
       border: none;
       background: transparent;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 500;
       cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.15s;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-spring);
     }
-    .tab-btn:hover { background: var(--bg-tertiary); }
+
+    .tab-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--color-text-primary);
+    }
+
+    .tab-btn:focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: -2px;
+    }
+
     .tab-btn.active {
-      background: var(--accent-primary);
-      color: white;
+      background: var(--color-action);
+      color: #000;
+      font-weight: 600;
     }
 
     /* ==================== View Containers ==================== */
@@ -1069,34 +1396,38 @@
       overflow-x: auto;
       flex: 1;
     }
+    /* ==================== Kanban Columns (Glass) ==================== */
     .kanban-col {
       flex: 0 0 280px;
       display: flex;
       flex-direction: column;
-      background: var(--bg-secondary);
-      border-radius: 8px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
       max-height: calc(100vh - 180px);
     }
     .kanban-col-header {
-      padding: 0.75rem;
+      padding: var(--space-3);
       font-weight: 600;
-      font-size: 0.875rem;
-      border-bottom: 1px solid var(--border-color);
+      font-size: var(--text-sm);
+      border-bottom: 1px solid var(--color-border-subtle);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     .kanban-col-header .count {
-      background: var(--bg-tertiary);
-      padding: 0.125rem 0.5rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
+      background: var(--color-bg-surface);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
       font-weight: 500;
     }
     .kanban-col-header .hidden-count {
       font-size: 0.625rem;
-      color: var(--text-muted);
-      margin-left: 0.25rem;
+      color: var(--color-text-muted);
+      margin-left: var(--space-1);
     }
     /* Column color classes */
     .kanban-col[data-col="backlog"] .kanban-col-header { border-top: 3px solid var(--col-backlog); }
@@ -1109,42 +1440,56 @@
     .kanban-col-body {
       flex: 1;
       overflow-y: auto;
-      padding: 0.5rem;
+      padding: var(--space-2);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
-    .kanban-col.drag-over { background: rgba(37, 99, 235, 0.05); }
+    .kanban-col.drag-over {
+      background: rgba(34, 211, 238, 0.05);
+    }
     .kanban-col.drag-over .kanban-col-body {
-      outline: 2px dashed var(--accent-primary);
+      outline: 2px dashed var(--color-action);
       outline-offset: -4px;
     }
 
-    /* Kanban Card */
+    /* ==================== Kanban Cards (Glass) ==================== */
     .kanban-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-left: 3px solid var(--accent-primary);
-      border-radius: 6px;
-      padding: 0.625rem;
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border-default);
+      border-left: 3px solid var(--color-action);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
       cursor: grab;
-      transition: box-shadow 0.15s, opacity 0.15s;
+      transition: transform var(--transition-spring), box-shadow var(--transition-spring);
     }
-    .kanban-card:hover { box-shadow: var(--shadow); }
-    .kanban-card.dragging { opacity: 0.5; }
-    .kanban-card.blocked { border-left-color: var(--accent-danger); background: rgba(220, 38, 38, 0.03); }
+    .kanban-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .kanban-card.dragging {
+      transform: scale(1.02);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+      opacity: 0.9;
+    }
+    .kanban-card.blocked {
+      border-left-color: var(--color-error);
+      background: rgba(248, 113, 113, 0.05);
+    }
     .kanban-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.375rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      margin-bottom: var(--space-2);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
     .kanban-card-title {
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       font-weight: 500;
       line-height: 1.4;
+      color: var(--color-text-primary);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -1202,23 +1547,43 @@
     .card-modal-actions .primary { background: var(--accent-primary); color: white; }
     .card-modal-actions .secondary { background: var(--bg-tertiary); color: var(--text-primary); }
 
-    /* Toast */
+    /* ==================== Toast (Neobrutalist) ==================== */
     .toast {
       position: fixed;
-      bottom: 1.5rem;
+      bottom: var(--space-6);
       left: 50%;
       transform: translateX(-50%);
-      background: var(--accent-success);
-      color: white;
-      padding: 0.75rem 1.25rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
+      background: var(--color-bg-elevated);
+      color: var(--color-text-primary);
+      padding: var(--space-3) var(--space-4);
+      border: var(--border-bold) var(--color-action);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: 500;
       z-index: 200;
-      animation: fadeInUp 0.3s;
+      box-shadow: var(--shadow-brutal) var(--color-action-bold);
+      animation: toast-in var(--transition-spring);
     }
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .toast.success {
+      border-color: var(--color-success);
+      box-shadow: var(--shadow-brutal) var(--color-success-bold);
+    }
+
+    .toast.error {
+      border-color: var(--color-error);
+      box-shadow: var(--shadow-brutal) var(--color-error-bold);
+    }
+
+    @keyframes toast-in {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
     }
 
     /* PM Overview Widget Styles (TASK-7) */
@@ -1299,30 +1664,16 @@
       text-transform: uppercase;
     }
     #pm-overview-container .pm-task-status.BUILD {
-      background: #fef3c7;
-      color: #92400e;
+      background: #78350f;
+      color: #fcd34d;
     }
     #pm-overview-container .pm-task-status.VERIFY {
-      background: #d1fae5;
-      color: #065f46;
+      background: #065f46;
+      color: #6ee7b7;
     }
     #pm-overview-container .pm-task-status.BLOCKED {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-    @media (prefers-color-scheme: dark) {
-      #pm-overview-container .pm-task-status.BUILD {
-        background: #78350f;
-        color: #fcd34d;
-      }
-      #pm-overview-container .pm-task-status.VERIFY {
-        background: #065f46;
-        color: #6ee7b7;
-      }
-      #pm-overview-container .pm-task-status.BLOCKED {
-        background: #7f1d1d;
-        color: #fca5a5;
-      }
+      background: #7f1d1d;
+      color: #fca5a5;
     }
     #pm-overview-container .pm-blocked-tasks {
       background: rgba(239, 68, 68, 0.05);
@@ -1638,30 +1989,37 @@
     .worktree-card .branch-name {
       font-weight: 600;
       font-family: var(--font-mono);
-      font-size: 0.875rem;
-      color: var(--accent-primary);
+      font-size: var(--text-sm);
+      color: var(--color-action);
     }
 
     .worktree-card .wt-status-badge {
-      font-size: 0.6875rem;
-      padding: 0.125rem 0.5rem;
-      border-radius: 4px;
+      font-size: var(--text-xs);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
       font-weight: 500;
     }
 
+    /* Clean status - subtle green */
     .worktree-card .wt-status-badge[data-status="clean"] {
-      background: rgba(22, 163, 74, 0.15);
-      color: var(--accent-success);
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--color-success);
+      border: 1px solid currentColor;
     }
 
+    /* Dirty status - attention-grabbing neobrutalist */
     .worktree-card .wt-status-badge[data-status="dirty"] {
-      background: rgba(202, 138, 4, 0.15);
-      color: var(--accent-warning);
+      background: var(--color-warning);
+      color: #000;
+      border: var(--border-bold) currentColor;
+      box-shadow: var(--shadow-brutal-sm) var(--color-warning-bold);
     }
 
+    /* Detached status - warning but subtle */
     .worktree-card .wt-status-badge[data-status="detached"] {
-      background: rgba(124, 58, 237, 0.15);
-      color: var(--accent-purple);
+      background: rgba(168, 85, 247, 0.15);
+      color: #a855f7;
+      border: 1px solid currentColor;
     }
 
     .worktree-card .wt-card-body {
@@ -1811,41 +2169,55 @@
 
     .agents-sub-nav {
       display: flex;
-      gap: 0.25rem;
-      padding: 0.5rem 1rem;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-4);
       align-items: center;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      margin: var(--space-2);
+      width: fit-content;
     }
 
     .agents-sub-tab {
       display: flex;
       align-items: center;
-      gap: 0.375rem;
-      padding: 0.5rem 1rem;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
       border: none;
       background: transparent;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
       font-weight: 500;
       cursor: pointer;
-      border-radius: 6px;
-      transition: all 0.15s ease;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-spring);
     }
 
-    .agents-sub-tab:hover {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
+    .agents-sub-tab:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--color-text-primary);
+    }
+
+    .agents-sub-tab:focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: -2px;
     }
 
     .agents-sub-tab.active {
-      background: var(--accent-primary);
-      color: white;
+      background: var(--color-action);
+      color: #000;
+      font-weight: 600;
     }
 
     .agents-tab-content {
       display: none;
       flex: 1;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border-default);
       border-top: none;
       border-radius: 0 0 8px 8px;
       overflow: auto;
@@ -1983,26 +2355,26 @@
       max-height: 100%;
     }
 
-    /* Timeline Tab */
+    /* ==================== Timeline Tab (Connected Dots) ==================== */
     .agents-timeline {
-      padding: 1.5rem;
+      padding: var(--space-6);
       position: relative;
+      padding-left: calc(var(--space-8) + var(--space-6));
     }
 
     .agents-timeline::before {
       content: '';
       position: absolute;
-      left: 2.25rem;
-      top: 1.5rem;
-      bottom: 1.5rem;
+      left: calc(var(--space-6) + 0.5rem);
+      top: var(--space-6);
+      bottom: var(--space-6);
       width: 2px;
-      background: var(--border-color);
+      background: linear-gradient(to bottom, var(--color-action), var(--color-border-default));
     }
 
     .agents-timeline-item {
       position: relative;
-      padding-left: 3rem;
-      padding-bottom: 1.5rem;
+      padding-bottom: var(--space-6);
     }
 
     .agents-timeline-item:last-child {
@@ -2012,35 +2384,195 @@
     .agents-timeline-item::before {
       content: '';
       position: absolute;
-      left: 1.5rem;
-      top: 0.25rem;
+      left: calc(-1 * var(--space-8) + 0.25rem);
+      top: var(--space-1);
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: var(--accent-primary);
-      border: 2px solid var(--bg-card);
+      background: var(--color-action);
+      box-shadow: 0 0 8px var(--color-action);
     }
 
     .agents-timeline-item.complete::before {
-      background: var(--accent-success);
+      background: var(--color-success);
+      box-shadow: 0 0 8px var(--color-success);
+    }
+
+    .agents-timeline-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
     }
 
     .agents-timeline-time {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.125rem;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-1);
     }
 
     .agents-timeline-event {
-      font-size: 0.9375rem;
+      font-size: var(--text-base);
       font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.25rem;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
     }
 
     .agents-timeline-detail {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+    }
+
+    /* ==================== Command Palette (Cmd+K) ==================== */
+    .command-palette-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+
+    .command-palette-overlay.active {
+      display: flex;
+    }
+
+    .command-palette {
+      width: 90%;
+      max-width: 560px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: command-palette-in var(--transition-spring);
+    }
+
+    @keyframes command-palette-in {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .command-palette-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .command-palette-icon {
+      color: var(--color-text-muted);
+    }
+
+    .command-palette-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      color: var(--color-text-primary);
+    }
+
+    .command-palette-input::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    .command-palette-kbd {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-sm);
+      padding: var(--space-1) var(--space-2);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .command-palette-results {
+      max-height: 320px;
+      overflow-y: auto;
+      padding: var(--space-2);
+    }
+
+    .command-palette-group {
+      margin-bottom: var(--space-2);
+    }
+
+    .command-palette-group-title {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: var(--space-2) var(--space-3);
+    }
+
+    .command-palette-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .command-palette-item:hover,
+    .command-palette-item.selected {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .command-palette-item-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--color-text-muted);
+    }
+
+    .command-palette-item-content {
+      flex: 1;
+    }
+
+    .command-palette-item-title {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    .command-palette-item-description {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .command-palette-item-shortcut {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .command-palette-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-4);
+      padding: var(--space-3);
+      border-top: 1px solid var(--glass-border);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
 
     /* Responsive */
@@ -2120,6 +2652,13 @@
       </button>
     </div>
   </header>
+
+  <!-- Breadcrumb Navigation -->
+  <nav class="breadcrumb" id="breadcrumb" role="navigation" aria-label="Breadcrumb">
+    <a href="#" class="breadcrumb-item" onclick="switchView('dashboard'); return false;">Home</a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-item active" id="breadcrumb-current">Dashboard</span>
+  </nav>
 
   <main class="main" id="main">
     <!-- Dashboard View -->
@@ -2583,6 +3122,126 @@
           <li><strong>Worktree Coordinator</strong> - Full worktree management</li>
           <li><strong>Mermaid Designer</strong> - Create architecture diagrams</li>
         </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette (Cmd+K) -->
+  <div class="command-palette-overlay" id="command-palette" role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
+    <div class="command-palette">
+      <div class="command-palette-input-wrapper">
+        <svg class="command-palette-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          class="command-palette-input"
+          id="command-palette-input"
+          placeholder="Type a command or search..."
+          autocomplete="off"
+          aria-label="Command palette search"
+        >
+        <kbd class="command-palette-kbd">esc</kbd>
+      </div>
+      <div class="command-palette-results" id="command-palette-results">
+        <div class="command-palette-group">
+          <div class="command-palette-group-title">Navigation</div>
+          <div class="command-palette-item" data-action="nav-dashboard">
+            <svg class="command-palette-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <div class="command-palette-item-content">
+              <div class="command-palette-item-title">Dashboard</div>
+              <div class="command-palette-item-description">Overview of sessions and status</div>
+            </div>
+            <span class="command-palette-item-shortcut">D</span>
+          </div>
+          <div class="command-palette-item" data-action="nav-kanban">
+            <svg class="command-palette-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+              <line x1="15" y1="3" x2="15" y2="21"></line>
+            </svg>
+            <div class="command-palette-item-content">
+              <div class="command-palette-item-title">Kanban</div>
+              <div class="command-palette-item-description">Task board with drag-drop</div>
+            </div>
+            <span class="command-palette-item-shortcut">K</span>
+          </div>
+          <div class="command-palette-item" data-action="nav-worktree">
+            <svg class="command-palette-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="6" y1="3" x2="6" y2="15"></line>
+              <circle cx="18" cy="6" r="3"></circle>
+              <circle cx="6" cy="18" r="3"></circle>
+              <path d="M18 9a9 9 0 0 1-9 9"></path>
+            </svg>
+            <div class="command-palette-item-content">
+              <div class="command-palette-item-title">Worktree Monitor</div>
+              <div class="command-palette-item-description">Git worktree status</div>
+            </div>
+            <span class="command-palette-item-shortcut">W</span>
+          </div>
+          <div class="command-palette-item" data-action="nav-agents">
+            <svg class="command-palette-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <div class="command-palette-item-content">
+              <div class="command-palette-item-title">Agents</div>
+              <div class="command-palette-item-description">Agent visualizer and timeline</div>
+            </div>
+            <span class="command-palette-item-shortcut">A</span>
+          </div>
+        </div>
+        <div class="command-palette-group">
+          <div class="command-palette-group-title">Quick Actions</div>
+          <div class="command-palette-item" data-action="refresh">
+            <svg class="command-palette-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <div class="command-palette-item-content">
+              <div class="command-palette-item-title">Refresh Data</div>
+              <div class="command-palette-item-description">Fetch latest session data</div>
+            </div>
+            <span class="command-palette-item-shortcut">R</span>
+          </div>
+          <div class="command-palette-item" data-action="toggle-polling">
+            <svg class="command-palette-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="10 8 16 12 10 16 10 8"></polygon>
+            </svg>
+            <div class="command-palette-item-content">
+              <div class="command-palette-item-title">Toggle Polling</div>
+              <div class="command-palette-item-description">Pause or resume auto-refresh</div>
+            </div>
+            <span class="command-palette-item-shortcut">P</span>
+          </div>
+          <div class="command-palette-item" data-action="help">
+            <svg class="command-palette-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div class="command-palette-item-content">
+              <div class="command-palette-item-title">Help</div>
+              <div class="command-palette-item-description">View keyboard shortcuts and features</div>
+            </div>
+            <span class="command-palette-item-shortcut">?</span>
+          </div>
+        </div>
+      </div>
+      <div class="command-palette-hint">
+        <span>↑↓ Navigate</span>
+        <span>↵ Select</span>
+        <span>esc Close</span>
       </div>
     </div>
   </div>
@@ -3493,12 +4152,46 @@ Building customer analytics models. Currently implementing dim_customer.
     // ==================== View Switching ====================
     let currentView = 'dashboard';
 
+    const viewNames = {
+      'dashboard': 'Dashboard',
+      'kanban': 'Kanban',
+      'worktree-monitor': 'Worktree Monitor',
+      'agents': 'Agents'
+    };
+
+    function updateBreadcrumb(view, subView = null) {
+      const breadcrumb = document.getElementById('breadcrumb');
+      const currentEl = document.getElementById('breadcrumb-current');
+
+      if (subView) {
+        // Show: Home > View > SubView
+        breadcrumb.innerHTML = `
+          <a href="#" class="breadcrumb-item" onclick="switchView('dashboard'); return false;">Home</a>
+          <span class="breadcrumb-separator">›</span>
+          <a href="#" class="breadcrumb-item" onclick="switchView('${view}'); return false;">${viewNames[view] || view}</a>
+          <span class="breadcrumb-separator">›</span>
+          <span class="breadcrumb-item active">${subView}</span>
+        `;
+      } else {
+        // Show: Home > View
+        breadcrumb.innerHTML = `
+          <a href="#" class="breadcrumb-item" onclick="switchView('dashboard'); return false;">Home</a>
+          <span class="breadcrumb-separator">›</span>
+          <span class="breadcrumb-item active">${viewNames[view] || view}</span>
+        `;
+      }
+    }
+
     function switchView(view) {
       currentView = view;
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById(`${view}-view`).classList.add('active');
       document.getElementById('main').classList.toggle('kanban-active', view === 'kanban');
+
+      // Update breadcrumb
+      updateBreadcrumb(view);
+
       if (view === 'kanban') kanban.render();
       if (view === 'worktree-monitor' && !WorktreeMonitor.initialized) {
         WorktreeMonitor.init();
@@ -3508,9 +4201,144 @@ Building customer analytics models. Currently implementing dim_customer.
       }
     }
 
+    // ==================== Command Palette ====================
+    const CommandPalette = {
+      overlay: document.getElementById('command-palette'),
+      input: document.getElementById('command-palette-input'),
+      results: document.getElementById('command-palette-results'),
+      selectedIndex: 0,
+      items: [],
+
+      open() {
+        this.overlay.classList.add('active');
+        this.input.value = '';
+        this.input.focus();
+        this.selectedIndex = 0;
+        this.updateSelection();
+        this.items = Array.from(this.results.querySelectorAll('.command-palette-item'));
+      },
+
+      close() {
+        this.overlay.classList.remove('active');
+        this.input.blur();
+      },
+
+      toggle() {
+        if (this.overlay.classList.contains('active')) {
+          this.close();
+        } else {
+          this.open();
+        }
+      },
+
+      updateSelection() {
+        const items = this.results.querySelectorAll('.command-palette-item');
+        items.forEach((item, i) => {
+          item.classList.toggle('selected', i === this.selectedIndex);
+        });
+      },
+
+      selectNext() {
+        const items = this.results.querySelectorAll('.command-palette-item:not([hidden])');
+        this.selectedIndex = Math.min(this.selectedIndex + 1, items.length - 1);
+        this.updateSelection();
+      },
+
+      selectPrev() {
+        this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
+        this.updateSelection();
+      },
+
+      execute() {
+        const items = this.results.querySelectorAll('.command-palette-item:not([hidden])');
+        const selected = items[this.selectedIndex];
+        if (selected) {
+          const action = selected.dataset.action;
+          this.close();
+          this.runAction(action);
+        }
+      },
+
+      runAction(action) {
+        switch (action) {
+          case 'nav-dashboard': switchView('dashboard'); break;
+          case 'nav-kanban': switchView('kanban'); break;
+          case 'nav-worktree': switchView('worktree-monitor'); break;
+          case 'nav-agents': switchView('agents'); break;
+          case 'refresh': refreshNow(); break;
+          case 'toggle-polling': togglePolling(); break;
+          case 'help': showHelp(); break;
+        }
+      },
+
+      filter(query) {
+        const items = this.results.querySelectorAll('.command-palette-item');
+        const lowerQuery = query.toLowerCase();
+        items.forEach(item => {
+          const title = item.querySelector('.command-palette-item-title').textContent.toLowerCase();
+          const desc = item.querySelector('.command-palette-item-description').textContent.toLowerCase();
+          const matches = title.includes(lowerQuery) || desc.includes(lowerQuery);
+          item.hidden = !matches;
+        });
+        this.selectedIndex = 0;
+        this.updateSelection();
+      }
+    };
+
+    // Command palette input events
+    CommandPalette.input.addEventListener('input', (e) => {
+      CommandPalette.filter(e.target.value);
+    });
+
+    CommandPalette.input.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          CommandPalette.selectNext();
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          CommandPalette.selectPrev();
+          break;
+        case 'Enter':
+          e.preventDefault();
+          CommandPalette.execute();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          CommandPalette.close();
+          break;
+      }
+    });
+
+    // Click on command palette items
+    CommandPalette.results.addEventListener('click', (e) => {
+      const item = e.target.closest('.command-palette-item');
+      if (item) {
+        CommandPalette.close();
+        CommandPalette.runAction(item.dataset.action);
+      }
+    });
+
+    // Close on overlay click
+    CommandPalette.overlay.addEventListener('click', (e) => {
+      if (e.target === CommandPalette.overlay) {
+        CommandPalette.close();
+      }
+    });
+
     // ==================== Keyboard Shortcuts ====================
     document.addEventListener('keydown', (e) => {
+      // Cmd+K / Ctrl+K to open command palette
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        CommandPalette.toggle();
+        return;
+      }
+
+      // Skip other shortcuts if in input or command palette is open
       if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      if (CommandPalette.overlay.classList.contains('active')) return;
 
       switch (e.key.toLowerCase()) {
         case 'r': refreshNow(); break;
@@ -3857,6 +4685,14 @@ Building customer analytics models. Currently implementing dim_customer.
           t.classList.toggle('active', t.dataset.tab === tab));
         document.querySelectorAll('.agents-tab-content').forEach(c =>
           c.classList.toggle('active', c.id === `agents-tab-${tab}`));
+
+        // Update breadcrumb with sub-view
+        const subViewNames = {
+          'inspector': 'Inspector',
+          'diagram': 'Diagram',
+          'timeline': 'Timeline'
+        };
+        updateBreadcrumb('agents', subViewNames[tab]);
 
         // Render diagram when switching to diagram tab (ensures fresh render)
         if (tab === 'diagram' && this.data) {
