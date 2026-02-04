@@ -20,8 +20,8 @@ export default defineConfig({
     ['html', { outputFolder: './playwright-report', open: 'never' }]
   ],
   use: {
-    // Base URL for tests - serves the playgrounds directory
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
+    // Base URL for tests
+    baseURL: 'http://127.0.0.1:5173',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -36,12 +36,12 @@ export default defineConfig({
   ],
   timeout: 60000,
 
-  // Web server to serve the playgrounds
+  // Web server to serve the project root (run from project root, not tests/e2e)
   webServer: {
-    command: 'npx serve playgrounds -p 5173 --single',
-    port: 5173,
-    timeout: 30000,
+    command: 'npx serve . -l 5173',
+    url: 'http://127.0.0.1:5173',
+    timeout: 60000,
     reuseExistingServer: !process.env.CI,
-    cwd: process.cwd().replace('/tests/e2e', ''),
+    cwd: '../..',  // Go up from tests/e2e to project root
   },
 });
