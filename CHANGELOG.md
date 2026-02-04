@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Adherence scoring service with 0-120 scale formula
   - Anomaly detection rules engine (8 rules)
   - Dashboard widgets for Workflow Hub integration
+  - **Agent Visualizer Integration** (#172)
+    - New "Agents" tab in Workflow Hub
+    - Mermaid-powered workflow diagram
+    - State inspector for tracks and phases
+    - Collapsible execution timeline
+    - Keyboard shortcut (A) for quick access
 
 ### Changed
 
