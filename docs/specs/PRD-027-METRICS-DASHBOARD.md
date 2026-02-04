@@ -1,11 +1,11 @@
 # PRD: Metrics & Dashboard System (Feature Set 5)
 
 **Document ID**: PRD-005
-**Version**: 1.0
-**Date**: 2026-02-01
+**Version**: 1.1
+**Date**: 2026-02-03
 **Author**: Product Manager (Planning Team)
-**Status**: Draft
-**Milestone**: v0.9
+**Status**: Approved
+**Milestone**: v0.10
 
 ---
 
@@ -174,7 +174,9 @@ Where:
 
 #### FR-002: Store Adherence Scores
 
-The system shall persist adherence scores in SQLite for historical analysis.
+The system shall persist adherence scores in DuckDB for historical analysis.
+
+> **Note**: Per [ADR-015](../decisions/ADR-015-duckdb-for-fs5-metrics.md), DuckDB was selected over SQLite because it's already in the project (`dbt-duckdb`) and can query JSONL files directly.
 
 **Required Fields**:
 
@@ -280,20 +282,21 @@ The system shall continue storing events in `temp/WORKFLOW_HISTORY/events.jsonl`
 - Human-readable format
 - Simple event capture
 
-#### FR-011: Sync Events to SQLite
+#### FR-011: Query Events via DuckDB Views
 
-The system shall sync events to SQLite for:
+The system shall query events directly from JSONL files using DuckDB views:
 
-- Complex queries
-- Aggregations
-- Dashboard data
-- Historical analysis
+- Complex queries via SQL
+- Aggregations via DuckDB analytics
+- Dashboard data via pre-generated JSON
+- Historical analysis via unified event view
 
-**Sync Mechanism**:
+**Query Mechanism**:
 
-- Incremental sync (process new events only)
-- Full resync option (rebuild from events)
-- Idempotent (safe to re-run)
+- DuckDB `read_json_auto()` for direct JSONL access
+- Views transform events to canonical format
+- No sync script required (real-time data)
+- Optional: Export to JSON for dashboard consumption
 
 #### FR-012: Capture Test Results
 
@@ -314,15 +317,15 @@ The system shall capture test results from dbt runs:
 | Requirement | Target | Rationale |
 |-------------|--------|-----------|
 | Dashboard load time | <2 seconds | Responsive user experience |
-| SQLite query time | <100ms | Fast dashboard updates |
-| Event sync time | <1 second per 1000 events | Efficient incremental sync |
+| DuckDB query time | <100ms | Fast dashboard updates |
+| View query time | <500ms for unified events | Direct JSONL querying |
 | Anomaly detection time | <500ms | Near-real-time alerting |
 
 ### 4.2 Storage
 
 | Requirement | Target | Rationale |
 |-------------|--------|-----------|
-| SQLite database size | <50MB | Reasonable disk usage |
+| DuckDB database size | <50MB | Reasonable disk usage |
 | Events.jsonl growth | ~1MB/month | Sustainable growth |
 | Archive policy | 30 days active, then archive | Balance history vs. size |
 
@@ -331,7 +334,7 @@ The system shall capture test results from dbt runs:
 | Requirement | Description |
 |-------------|-------------|
 | SQL access | All metrics queryable via standard SQL |
-| DuckDB compatibility | SQLite ATTACH-able from DuckDB |
+| dbt compatibility | Same DuckDB engine as dbt models |
 | Export | JSON export for external analysis |
 
 ### 4.4 Reliability
@@ -340,7 +343,7 @@ The system shall capture test results from dbt runs:
 |-------------|-------------|
 | Offline operation | All features work without network |
 | Graceful degradation | Dashboard works even if metrics incomplete |
-| Data integrity | No data loss on crash (SQLite WAL mode) |
+| Data integrity | No data loss on crash (DuckDB MVCC) |
 
 ### 4.5 Extensibility
 
@@ -383,7 +386,7 @@ The system shall capture test results from dbt runs:
    - Introduce violation (e.g., skip VERIFY)
    - Anomaly detected within 1 minute
    - Alert displayed in dashboard
-   - Alert logged to SQLite
+   - Alert logged to DuckDB
 
 ---
 
@@ -422,7 +425,7 @@ The following are explicitly out of scope for v0.9:
 
 | Dependency | Description | Risk |
 |------------|-------------|------|
-| SQLite | Persistence layer | None (standard library) |
+| DuckDB | Persistence layer (via dbt-duckdb) | None (already installed) |
 | GitHub API | PR metrics | Low (rate limits) |
 | Rich library | Console output | None (already installed) |
 
@@ -515,6 +518,13 @@ The following are explicitly out of scope for v0.9:
 
 3. **Q**: Should dashboard auto-refresh or manual refresh?
    **A**: Auto-refresh every 30 seconds with manual refresh button.
+
+### D. Changelog
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0 | 2026-02-01 | Initial PRD creation |
+| 1.1 | 2026-02-03 | Updated to use DuckDB instead of SQLite per ADR-015. Changed FR-011 from sync script to JSONL views. |
 
 ---
 
