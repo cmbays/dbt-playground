@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed**
+**Accepted**
 
 ## Context
 
@@ -248,4 +248,4 @@ Reveal.initialize({
 
 - **Decision Level**: Low (single-feature, external dependency)
 - **Approver**: Architect
-- **Date**: 2026-02-03
+- **Date**: 2026-02-04

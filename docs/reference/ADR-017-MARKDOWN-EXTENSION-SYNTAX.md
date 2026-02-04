@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed**
+**Accepted**
 
 ## Context
 
@@ -430,4 +430,4 @@ commands:
 
 - **Decision Level**: Medium (cross-cutting content format)
 - **Approver**: Architect
-- **Date**: 2026-02-03
+- **Date**: 2026-02-04

@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed**
+**Accepted**
 
 ## Context
 
@@ -732,4 +732,4 @@ class WidgetTestHarness {
 
 - **Decision Level**: Medium (cross-cutting architecture pattern)
 - **Approver**: Architect
-- **Date**: 2026-02-03
+- **Date**: 2026-02-04

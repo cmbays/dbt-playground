@@ -4,9 +4,9 @@
 
 **Source PRD**: (Inline requirements from PM)
 **Author**: Technical Architect
-**Status**: Draft
+**Status**: Approved
 **Created**: 2026-02-03
-**Updated**: 2026-02-03
+**Updated**: 2026-02-04
 
 ### Summary
 
@@ -27,9 +27,9 @@ This TDD includes three significant architecture decisions documented as standal
 
 | ADR | Title | Status | Location |
 |-----|-------|--------|----------|
-| ADR-16 | Rendering Framework Selection | Proposed | [ADR-016](../reference/ADR-016-RENDERING-FRAMEWORK.md) |
-| ADR-17 | Markdown Extension Syntax | Proposed | [ADR-017](../reference/ADR-017-MARKDOWN-EXTENSION-SYNTAX.md) |
-| ADR-18 | Widget Component System | Proposed | [ADR-018](../reference/ADR-018-WIDGET-COMPONENT-SYSTEM.md) |
+| ADR-16 | Rendering Framework Selection | **Accepted** | [ADR-016](../reference/ADR-016-RENDERING-FRAMEWORK.md) |
+| ADR-17 | Markdown Extension Syntax | **Accepted** | [ADR-017](../reference/ADR-017-MARKDOWN-EXTENSION-SYNTAX.md) |
+| ADR-18 | Widget Component System | **Accepted** | [ADR-018](../reference/ADR-018-WIDGET-COMPONENT-SYSTEM.md) |
 
 **Decision Summary**:
 
