@@ -186,14 +186,12 @@ Task(subagent_type="security-reviewer", prompt="Review for vulnerabilities")
 4. **Convergence Phase**: Review both solutions and create hybrid/best-of-breed
 
 **Benefits**:
-
 - Reduces single-point-of-failure in design decisions
 - Surfaces alternative approaches
 - Higher quality through competitive pressure
 
 **Example workflow** (FS1 Agent Memory):
-
-- Planning team -> Review team -> Gap analysis -> Competing implementation -> Final convergence
+- Planning team → Review team → Gap analysis → Competing implementation → Final convergence
 
 ### Key Personas
 
@@ -253,7 +251,6 @@ uv run scripts/log-session.py -t "Task description" -i TASK-42
 ### Pattern Detection
 
 Weekly consolidation scans logs for recurring patterns:
-
 - Patterns with 2+ occurrences are identified (appeared at least twice)
 - Multi-factor scoring: frequency (40%), recency (30%), consistency (30%)
 - Promotion candidates can be added to LEARNINGS.md
@@ -265,6 +262,25 @@ uv run scripts/consolidate-memory.py
 # Preview without writing
 uv run scripts/consolidate-memory.py --dry-run
 ```
+
+### Compound Learning Loop
+
+The memory system forms a closed learning loop:
+
+```
+Plan (reads MEMORY_INDEX.md) ←──────────┐
+  ↓                                      │
+Work (execute tasks)                     │
+  ↓                                      │
+Review (QA phase)                        │
+  ↓                                      │
+Compound (Sage extracts learnings) ──────┘
+```
+
+**Automatic integrations:**
+
+- **Post-QA Sage Trigger**: Supervisor prompts for session logging after QA phase completes
+- **Plan Memory Bootstrap**: `/plan` command reads `memory/MEMORY_INDEX.md` and surfaces relevant patterns (filtered by topic keywords or score ≥0.7)
 
 See `.claude/agents/sage.md` for Workflow J (logging) and Workflow K (consolidation) details.
 
