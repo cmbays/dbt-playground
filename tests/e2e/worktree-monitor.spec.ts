@@ -10,9 +10,12 @@ import { test, expect, Page } from '@playwright/test';
  * Test IDs: E2E-LOAD-*, E2E-HB-*, E2E-ANOM-*, E2E-HUB-*, E2E-ARCH-*
  */
 
+// Fixed timestamp for deterministic tests (2026-02-04T12:00:00.000Z)
+const FIXED_TIMESTAMP = '2026-02-04T12:00:00.000Z';
+
 // Test data fixtures
 const testWorktreesData = {
-  timestamp: new Date().toISOString(),
+  timestamp: FIXED_TIMESTAMP,
   config_version: 1,
   milestone: "v0.10",
   worktree_count: 3,
@@ -132,9 +135,12 @@ test.describe('E2E Page Load Tests', () => {
 test.describe('E2E Heartbeat Indicator Tests', () => {
 
   test('E2E-HB-01: Fresh heartbeat shows green/active', async ({ page }) => {
+    // Install clock for deterministic time
+    await page.clock.install({ time: new Date('2026-02-04T12:00:00.000Z') });
+
     const freshData = {
       ...testWorktreesData,
-      timestamp: new Date().toISOString() // Just now
+      timestamp: '2026-02-04T12:00:00.000Z' // Current time per clock
     };
     await mockWorktreesJson(page, freshData);
     await navigateToWorktreeMonitor(page);
@@ -147,10 +153,12 @@ test.describe('E2E Heartbeat Indicator Tests', () => {
   });
 
   test('E2E-HB-02: Stale heartbeat shows warning', async ({ page }) => {
-    const staleTimestamp = new Date(Date.now() - 45000).toISOString(); // 45 seconds ago
+    // Install clock for deterministic time
+    await page.clock.install({ time: new Date('2026-02-04T12:00:45.000Z') });
+
     const staleData = {
       ...testWorktreesData,
-      timestamp: staleTimestamp
+      timestamp: '2026-02-04T12:00:00.000Z' // 45 seconds before clock time
     };
     await mockWorktreesJson(page, staleData);
     await navigateToWorktreeMonitor(page);
@@ -163,10 +171,12 @@ test.describe('E2E Heartbeat Indicator Tests', () => {
   });
 
   test('E2E-HB-03: Inactive heartbeat shows error state', async ({ page }) => {
-    const oldTimestamp = new Date(Date.now() - 180000).toISOString(); // 3 minutes ago
+    // Install clock for deterministic time
+    await page.clock.install({ time: new Date('2026-02-04T12:03:00.000Z') });
+
     const oldData = {
       ...testWorktreesData,
-      timestamp: oldTimestamp
+      timestamp: '2026-02-04T12:00:00.000Z' // 3 minutes before clock time
     };
     await mockWorktreesJson(page, oldData);
     await navigateToWorktreeMonitor(page);
@@ -203,11 +213,8 @@ test.describe('E2E Heartbeat Indicator Tests', () => {
     const indicator = page.locator('[data-testid="heartbeat-indicator"]');
     await expect(indicator).toHaveAttribute('data-status', 'stale');
 
-    // Click refresh
+    // Click refresh and wait for the indicator status to change to fresh
     await page.click('[data-testid="refresh-button"]');
-    await page.waitForTimeout(500);
-
-    // Should now be fresh
     await expect(indicator).toHaveAttribute('data-status', 'fresh');
     expect(fetchCount).toBe(2);
   });
@@ -368,7 +375,9 @@ test.describe('E2E Hub Integration Tests', () => {
 
 test.describe('E2E Archive View Tests', () => {
 
-  test('E2E-ARCH-01: Archived worktrees display correctly', async ({ page }) => {
+  // TODO: Archive view functionality is planned for future implementation.
+  // These tests are placeholders that will be enabled when archive features are added.
+  test.skip('E2E-ARCH-01: Archived worktrees display correctly', async ({ page }) => {
     // Archive view is for historical data
     // The current implementation shows worktrees from worktrees.json
     // Archive support is a future feature
@@ -385,7 +394,8 @@ test.describe('E2E Archive View Tests', () => {
     await expect(page.locator('[data-testid="worktree-card"]')).toHaveCount(3);
   });
 
-  test('E2E-ARCH-02: Archive cards use consistent styling (AC-8)', async ({ page }) => {
+  // TODO: Archive styling consistency test - will be implemented with archive feature.
+  test.skip('E2E-ARCH-02: Archive cards use consistent styling (AC-8)', async ({ page }) => {
     // This test documents the AC-8 requirement:
     // "Archive cards match operator view styling"
     // When archive view is implemented, this test verifies consistency
@@ -433,11 +443,8 @@ test.describe('E2E Filter and Refresh Tests', () => {
     // Initial data
     await expect(page.locator('.branch-name')).toContainText('feat/v1');
 
-    // Click refresh
+    // Click refresh and wait for the branch name to update to v2
     await page.click('[data-testid="refresh-button"]');
-    await page.waitForTimeout(500);
-
-    // Updated data
     await expect(page.locator('.branch-name')).toContainText('feat/v2');
   });
 

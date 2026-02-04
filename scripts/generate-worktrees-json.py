@@ -18,29 +18,37 @@ Usage:
 
     # Specify output file
     uv run scripts/generate-worktrees-json.py -o playgrounds/worktrees.json
+
+    # Polling with max runtime (for CI/automated runs)
+    uv run scripts/generate-worktrees-json.py --poll --max-runtime 300
 """
 
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 import time
 from datetime import UTC, datetime
 from pathlib import Path
+from subprocess import CalledProcessError
 
 # Add scripts directory to path for local imports
 SCRIPT_DIR = Path(__file__).parent
 PROJECT_ROOT = SCRIPT_DIR.parent
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from worktree_monitor import (
-    WorktreeMonitor,
-    VersionPlanLoader,
-    WorktreeDiscovery,
+from worktree_monitor import (  # noqa: E402
+    ArchiveManager,
     GitHubAdapter,
     HeartbeatMonitor,
-    ArchiveManager,
+    VersionPlanLoader,
+    WorktreeDiscovery,
+    WorktreeMonitor,
+)
+from worktree_monitor.exceptions import (  # noqa: E402
+    ConfigError,
+    GitError,
+    WorktreeMonitorError,
 )
 
 # Default paths
@@ -84,7 +92,10 @@ def create_default_config() -> Path:
             ],
         }
         import yaml
-        config_path.write_text(yaml.dump(default_config, default_flow_style=False), encoding="utf-8")
+
+        config_path.write_text(
+            yaml.dump(default_config, default_flow_style=False), encoding="utf-8"
+        )
         print(f"Created default config: {config_path}")
 
     return config_path
@@ -129,13 +140,16 @@ def generate_json(monitor: WorktreeMonitor, output_path: Path) -> bool:
     """
     try:
         output = monitor.collect()
-
-        # Write using atomic write
         monitor.write_output(output, output_path)
-
         return True
-    except Exception as e:
-        print(f"Error collecting data: {e}", file=sys.stderr)
+    except WorktreeMonitorError as e:
+        print(f"Monitor error collecting data: {e}", file=sys.stderr)
+        return False
+    except CalledProcessError as e:
+        print(f"Git command failed: {e}", file=sys.stderr)
+        return False
+    except OSError as e:
+        print(f"File system error: {e}", file=sys.stderr)
         return False
 
 
@@ -143,14 +157,32 @@ def run_polling(
     monitor: WorktreeMonitor,
     output_path: Path,
     interval: int,
+    max_runtime: int | None = None,
+    max_iterations: int | None = None,
 ) -> None:
-    """Run continuous polling loop."""
+    """Run continuous polling loop.
+
+    Args:
+        monitor: The WorktreeMonitor instance.
+        output_path: Path to write JSON output.
+        interval: Polling interval in seconds.
+        max_runtime: Maximum runtime in seconds (None for unlimited).
+        max_iterations: Maximum number of iterations (None for unlimited).
+    """
     print(f"Starting polling mode (interval: {interval}s)")
     print(f"Output: {output_path}")
+    if max_runtime:
+        print(f"Max runtime: {max_runtime}s")
+    if max_iterations:
+        print(f"Max iterations: {max_iterations}")
     print("Press Ctrl+C to stop...")
+
+    loop_start = time.monotonic()
+    iteration_count = 0
 
     try:
         while True:
+            iteration_count += 1
             start = time.monotonic()
             success = generate_json(monitor, output_path)
             elapsed = time.monotonic() - start
@@ -158,6 +190,17 @@ def run_polling(
             status = "OK" if success else "FAILED"
             timestamp = datetime.now(UTC).strftime("%H:%M:%S")
             print(f"[{timestamp}] {status} ({elapsed:.2f}s)")
+
+            # Check max iterations limit
+            if max_iterations is not None and iteration_count >= max_iterations:
+                print(f"\nMax iterations ({max_iterations}) reached. Stopping.")
+                break
+
+            # Check max runtime limit
+            total_elapsed = time.monotonic() - loop_start
+            if max_runtime is not None and total_elapsed >= max_runtime:
+                print(f"\nMax runtime ({max_runtime}s) reached. Stopping.")
+                break
 
             # Sleep for remaining interval
             sleep_time = max(0, interval - elapsed)
@@ -174,13 +217,15 @@ def main() -> int:
         epilog=__doc__,
     )
     parser.add_argument(
-        "-o", "--output",
+        "-o",
+        "--output",
         type=Path,
         default=DEFAULT_OUTPUT,
         help=f"Output JSON file path (default: {DEFAULT_OUTPUT})",
     )
     parser.add_argument(
-        "-c", "--config",
+        "-c",
+        "--config",
         type=Path,
         default=DEFAULT_CONFIG,
         help=f"Version plan YAML config (default: {DEFAULT_CONFIG})",
@@ -214,7 +259,20 @@ def main() -> int:
         help="Polling interval in seconds (default: 10)",
     )
     parser.add_argument(
-        "-v", "--verbose",
+        "--max-runtime",
+        type=int,
+        default=None,
+        help="Maximum runtime in seconds for polling mode (default: unlimited)",
+    )
+    parser.add_argument(
+        "--max-iterations",
+        type=int,
+        default=None,
+        help="Maximum iterations for polling mode (default: unlimited)",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
         action="store_true",
         help="Enable verbose output",
     )
@@ -231,12 +289,30 @@ def main() -> int:
             archives_dir=args.archives_dir,
             repo=args.repo,
         )
-    except Exception as e:
-        print(f"Failed to initialize monitor: {e}", file=sys.stderr)
+    except ConfigError as e:
+        print(f"Configuration error: {e}", file=sys.stderr)
+        return 1
+    except GitError as e:
+        print(f"Git error during initialization: {e}", file=sys.stderr)
+        return 1
+    except CalledProcessError as e:
+        print(f"Git command failed during initialization: {e}", file=sys.stderr)
+        return 1
+    except OSError as e:
+        print(f"File system error during initialization: {e}", file=sys.stderr)
+        return 1
+    except ValueError as e:
+        print(f"Invalid configuration value: {e}", file=sys.stderr)
         return 1
 
     if args.poll:
-        run_polling(monitor, args.output, args.interval)
+        run_polling(
+            monitor,
+            args.output,
+            args.interval,
+            max_runtime=args.max_runtime,
+            max_iterations=args.max_iterations,
+        )
         return 0
     else:
         # One-shot generation

@@ -1,4 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as path from 'path';
+
+// Compute absolute path to project root from this config file location
+const PROJECT_ROOT = path.resolve(__dirname, '../..');
 
 /**
  * Playwright configuration for Worktree Monitor E2E tests.
@@ -20,8 +24,8 @@ export default defineConfig({
     ['html', { outputFolder: './playwright-report', open: 'never' }]
   ],
   use: {
-    // Base URL for tests
-    baseURL: 'http://127.0.0.1:5173',
+    // Base URL for tests - serves the playgrounds directory
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -36,12 +40,12 @@ export default defineConfig({
   ],
   timeout: 60000,
 
-  // Web server to serve the project root (run from project root, not tests/e2e)
+  // Web server to serve the playgrounds
   webServer: {
-    command: 'npx serve . -l 5173',
-    url: 'http://127.0.0.1:5173',
-    timeout: 60000,
+    command: 'npx serve playgrounds -p 5173 --single',
+    port: 5173,
+    timeout: 30000,
     reuseExistingServer: !process.env.CI,
-    cwd: '../..',  // Go up from tests/e2e to project root
+    cwd: PROJECT_ROOT,
   },
 });

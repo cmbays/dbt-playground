@@ -74,8 +74,8 @@ class MonitorWriteError(MonitorError):
 
     def __init__(self, path: str, reason: str):
         super().__init__(
-            f'Failed to write monitor output: {path}. Reason: {reason}',
-            details={'path': path, 'reason': reason},
+            f"Failed to write monitor output: {path}. Reason: {reason}",
+            details={"path": path, "reason": reason},
         )
         self.path = path
         self.reason = reason
@@ -219,7 +219,7 @@ class WorktreeMonitor:
         return MonitorOutput(
             timestamp=now,
             config_version=plan.version if plan else 0,
-            milestone=plan.name if plan else 'Unknown',
+            milestone=plan.name if plan else "Unknown",
             worktree_count=len(worktrees),
             worktrees=worktrees,
             tracks=tracks,
@@ -301,13 +301,13 @@ class WorktreeMonitor:
             pass
 
         return {
-            'version_plan_loaded': self._cached_plan is not None,
-            'heartbeat_state': heartbeat_state,
-            'worktree_count': worktree_count,
-            'last_collection': (
+            "version_plan_loaded": self._cached_plan is not None,
+            "heartbeat_state": heartbeat_state,
+            "worktree_count": worktree_count,
+            "last_collection": (
                 self._last_collection.isoformat() if self._last_collection else None
             ),
-            'errors': list(self._recent_errors),
+            "errors": list(self._recent_errors),
         }
 
     def run_polling(
@@ -332,12 +332,12 @@ class WorktreeMonitor:
             MonitorWriteError: If too many consecutive write failures occur.
         """
         if interval_seconds < 1:
-            raise ValueError(f'interval_seconds must be >= 1, got {interval_seconds}')
+            raise ValueError(f"interval_seconds must be >= 1, got {interval_seconds}")
 
         if stop_event is None and max_runtime_seconds is None:
             raise ValueError(
-                'Either stop_event or max_runtime_seconds must be provided '
-                'to prevent infinite polling'
+                "Either stop_event or max_runtime_seconds must be provided "
+                "to prevent infinite polling"
             )
 
         MAX_CONSECUTIVE_FAILURES = 10
@@ -349,7 +349,7 @@ class WorktreeMonitor:
             if max_runtime_seconds is not None:
                 elapsed = time.monotonic() - start_time
                 if elapsed >= max_runtime_seconds:
-                    logger.info(f'Max runtime ({max_runtime_seconds}s) reached. Stopping.')
+                    logger.info(f"Max runtime ({max_runtime_seconds}s) reached. Stopping.")
                     break
 
             try:
@@ -358,11 +358,9 @@ class WorktreeMonitor:
                 consecutive_failures = 0  # Reset on success
             except MonitorWriteError as e:
                 consecutive_failures += 1
-                logger.error(
-                    f'Write failed ({consecutive_failures}/{MAX_CONSECUTIVE_FAILURES}): {e}'
-                )
+                logger.error(f"Write failed ({consecutive_failures}/{MAX_CONSECUTIVE_FAILURES}): {e}")
                 if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
-                    logger.critical('Too many consecutive write failures. Monitor stopping.')
+                    logger.critical("Too many consecutive write failures. Monitor stopping.")
                     raise
 
             # Sleep in small increments for responsive stop
@@ -400,7 +398,7 @@ class WorktreeMonitor:
             new_plan = self._version_plan_loader.reload_if_changed()
             if new_plan is not None:
                 self._cached_plan = new_plan
-                logger.info('Version plan reloaded')
+                logger.info("Version plan reloaded")
             elif self._cached_plan is None:
                 # First load
                 self._cached_plan = self._version_plan_loader.load()
@@ -410,13 +408,11 @@ class WorktreeMonitor:
             VersionPlanParseError,
             VersionPlanValidationError,
         ) as e:
-            errors.append(
-                ComponentFailureInfo(
-                    component='VersionPlanLoader',
-                    message=str(e),
-                    timestamp=now,
-                )
-            )
+            errors.append(ComponentFailureInfo(
+                component="VersionPlanLoader",
+                message=str(e),
+                timestamp=now,
+            ))
             return self._cached_plan  # Use stale cache
 
     # -------------------------------------------------------------------------
@@ -443,13 +439,11 @@ class WorktreeMonitor:
                 worktrees = [wt for wt in worktrees if not wt.is_main]
             return worktrees
         except GitWorktreeError as e:
-            errors.append(
-                ComponentFailureInfo(
-                    component='WorktreeDiscovery',
-                    message=str(e),
-                    timestamp=now,
-                )
-            )
+            errors.append(ComponentFailureInfo(
+                component="WorktreeDiscovery",
+                message=str(e),
+                timestamp=now,
+            ))
             return []
 
     def _enrich_worktree(
@@ -549,17 +543,19 @@ class WorktreeMonitor:
                 cr_str = self._github_adapter.get_coderabbit_status(pr_info.number)
                 if cr_str:
                     try:
-                        coderabbit = CodeRabbitStatus(status=CodeRabbitReviewStatus(cr_str))
+                        coderabbit = CodeRabbitStatus(
+                            status=CodeRabbitReviewStatus(cr_str)
+                        )
                     except ValueError:
                         # Unknown status string, log and continue
-                        logger.warning(
-                            f"Unknown CodeRabbit status '{cr_str}' for PR - please update enum"
-                        )
+                        logger.warning(f"Unknown CodeRabbit status '{cr_str}' for PR - please update enum")
         except RateLimitError as e:
-            logger.warning(f'GitHub rate limit hit: {e}')
-            self._rate_limited_until = now + timedelta(minutes=self.RATE_LIMIT_COOLDOWN_MINUTES)
+            logger.warning(f"GitHub rate limit hit: {e}")
+            self._rate_limited_until = now + timedelta(
+                minutes=self.RATE_LIMIT_COOLDOWN_MINUTES
+            )
         except GitHubAPIError as e:
-            logger.debug(f'GitHub API error for {branch}: {e}')
+            logger.debug(f"GitHub API error for {branch}: {e}")
 
         return pr_info, ci_checks, coderabbit
 
@@ -607,11 +603,11 @@ class WorktreeMonitor:
                         results[idx] = future.result()
                     except Exception as e:
                         # On error, create a basic enriched worktree without GitHub data
-                        logger.warning(f'Enrichment failed for worktree {idx}: {e}')
+                        logger.warning(f"Enrichment failed for worktree {idx}: {e}")
                         results[idx] = EnrichedWorktree.from_worktree_info(worktrees_raw[idx])
         except Exception as e:
             # Fallback to sequential on thread pool error
-            logger.warning(f'Parallel enrichment failed, falling back to sequential: {e}')
+            logger.warning(f"Parallel enrichment failed, falling back to sequential: {e}")
             return [self._enrich_worktree(wt, plan, now) for wt in worktrees_raw]
 
         # Return in original order
@@ -650,13 +646,11 @@ class WorktreeMonitor:
                 requests=[],
             )
         except HeartbeatParseError as e:
-            errors.append(
-                ComponentFailureInfo(
-                    component='HeartbeatMonitor',
-                    message=str(e),
-                    timestamp=now,
-                )
-            )
+            errors.append(ComponentFailureInfo(
+                component="HeartbeatMonitor",
+                message=str(e),
+                timestamp=now,
+            ))
             return None
 
     # -------------------------------------------------------------------------
@@ -684,7 +678,10 @@ class WorktreeMonitor:
         for phase in plan.phases:
             for ws in phase.workstreams:
                 # Count worktrees for this workstream
-                wt_count = sum(1 for wt in worktrees if wt.track_name == ws.name)
+                wt_count = sum(
+                    1 for wt in worktrees
+                    if wt.track_name == ws.name
+                )
 
                 # Aggregate issue counts
                 open_issues = 0
@@ -694,17 +691,15 @@ class WorktreeMonitor:
                         open_issues += wt.epic_issues.open
                         closed_issues += wt.epic_issues.closed
 
-                summaries.append(
-                    TrackSummary(
-                        name=ws.name,
-                        epic=ws.epic,
-                        color=ws.color or '#888888',
-                        worktree_count=wt_count,
-                        issues_open=open_issues,
-                        issues_closed=closed_issues,
-                        status=ws.status,
-                    )
-                )
+                summaries.append(TrackSummary(
+                    name=ws.name,
+                    epic=ws.epic,
+                    color=ws.color or "#888888",
+                    worktree_count=wt_count,
+                    issues_open=open_issues,
+                    issues_closed=closed_issues,
+                    status=ws.status,
+                ))
 
         return summaries
 
@@ -749,19 +744,17 @@ class WorktreeMonitor:
                             except (KeyError, ValueError) as e:
                                 # Skip malformed worktree data
                                 logger.warning(
-                                    f'Skipping malformed worktree in {summary.version}: {e}'
+                                    f"Skipping malformed worktree in {summary.version}: {e}"
                                 )
                 except ArchiveCorruptedError as e:
                     # Log but continue with other versions
-                    logger.warning(f'Skipping corrupted archive {summary.version}: {e}')
+                    logger.warning(f"Skipping corrupted archive {summary.version}: {e}")
         except ArchiveCorruptedError as e:
-            errors.append(
-                ComponentFailureInfo(
-                    component='ArchiveManager',
-                    message=str(e),
-                    timestamp=now,
-                )
-            )
+            errors.append(ComponentFailureInfo(
+                component="ArchiveManager",
+                message=str(e),
+                timestamp=now,
+            ))
 
         return archived
 
@@ -789,28 +782,34 @@ class WorktreeMonitor:
         """
         # Parse last_commit_date if present
         last_commit_date = None
-        if wt_dict.get('last_commit_date'):
-            last_commit_date = datetime.fromisoformat(wt_dict['last_commit_date'])
+        if wt_dict.get("last_commit_date"):
+            last_commit_date = datetime.fromisoformat(wt_dict["last_commit_date"])
+
+        # Parse status with fallback to CLEAN for invalid values
+        try:
+            status = WorktreeStatus(wt_dict.get("status", "clean"))
+        except ValueError:
+            status = WorktreeStatus.CLEAN
 
         # Reconstruct WorktreeInfo
         worktree_info = WorktreeInfo(
-            path=wt_dict['path'],
-            branch=wt_dict['branch'],
-            commit_hash=wt_dict['commit_hash'],
-            commit_short=wt_dict['commit_short'],
-            is_main=wt_dict.get('is_main', False),
-            status=WorktreeStatus(wt_dict.get('status', 'unknown')),
-            files_changed=wt_dict.get('files_changed', 0),
-            files_staged=wt_dict.get('files_staged', 0),
-            last_commit_msg=wt_dict.get('last_commit_msg', ''),
+            path=wt_dict["path"],
+            branch=wt_dict["branch"],
+            commit_hash=wt_dict["commit_hash"],
+            commit_short=wt_dict["commit_short"],
+            is_main=wt_dict.get("is_main", False),
+            status=status,
+            files_changed=wt_dict.get("files_changed", 0),
+            files_staged=wt_dict.get("files_staged", 0),
+            last_commit_msg=wt_dict.get("last_commit_msg", ""),
             last_commit_date=last_commit_date,
         )
 
         # Create EnrichedWorktree
         enriched = EnrichedWorktree.from_worktree_info(worktree_info)
-        enriched.track_name = wt_dict.get('track_name')
-        enriched.track_color = wt_dict.get('track_color')
-        enriched.epic_number = wt_dict.get('epic_number')
+        enriched.track_name = wt_dict.get("track_name")
+        enriched.track_color = wt_dict.get("track_color")
+        enriched.epic_number = wt_dict.get("epic_number")
 
         # Map reason string to ArchiveReason enum
         try:
@@ -843,16 +842,16 @@ class WorktreeMonitor:
             Dictionary ready for JSON serialization.
         """
         return {
-            'timestamp': output.timestamp.isoformat(),
-            'config_version': output.config_version,
-            'milestone': output.milestone,
-            'worktree_count': output.worktree_count,
-            'worktrees': [wt.to_dict() for wt in output.worktrees],
-            'tracks': [t.to_dict() for t in output.tracks],
-            'archived': [a.to_dict() for a in output.archived],
-            'heartbeat': output.heartbeat.to_dict() if output.heartbeat else None,
-            'anomalies': [a.to_dict() for a in output.anomalies],
-            'errors': [e.to_dict() for e in output.errors],
+            "timestamp": output.timestamp.isoformat(),
+            "config_version": output.config_version,
+            "milestone": output.milestone,
+            "worktree_count": output.worktree_count,
+            "worktrees": [wt.to_dict() for wt in output.worktrees],
+            "tracks": [t.to_dict() for t in output.tracks],
+            "archived": [a.to_dict() for a in output.archived],
+            "heartbeat": output.heartbeat.to_dict() if output.heartbeat else None,
+            "anomalies": [a.to_dict() for a in output.anomalies],
+            "errors": [e.to_dict() for e in output.errors],
         }
 
     # -------------------------------------------------------------------------
@@ -874,12 +873,12 @@ class WorktreeMonitor:
         dir_path = path.parent
         try:
             fd, temp_path = tempfile.mkstemp(
-                suffix='.tmp',
-                prefix=path.stem + '_',
+                suffix=".tmp",
+                prefix=path.stem + "_",
                 dir=dir_path,
             )
             try:
-                with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                with os.fdopen(fd, "w", encoding="utf-8") as f:
                     json.dump(data, f, indent=2, default=str)
                 os.replace(temp_path, path)
             except (OSError, TypeError, ValueError):
@@ -887,6 +886,6 @@ class WorktreeMonitor:
                     os.unlink(temp_path)
                 raise
         except PermissionError as e:
-            raise MonitorWriteError(str(path), f'Permission denied: {e}') from e
+            raise MonitorWriteError(str(path), f"Permission denied: {e}") from e
         except OSError as e:
-            raise MonitorWriteError(str(path), f'IO error: {e}') from e
+            raise MonitorWriteError(str(path), f"IO error: {e}") from e

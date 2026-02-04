@@ -5,7 +5,7 @@
   "worktree_count": 3,
   "worktrees": [
     {
-      "path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground",
+      "path": "/workspace/dbt-playground",
       "branch": "main",
       "commit_hash": "df13263c795b50efa4ce2a091768b06d32ad11b2",
       "commit_short": "df13263",
@@ -27,13 +27,13 @@
           "type": "DIRTY_WORKTREE",
           "severity": "LOW",
           "message": "Uncommitted changes (19 files)",
-          "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground",
+          "worktree_path": "/workspace/dbt-playground",
           "branch": "main"
         }
       ]
     },
     {
-      "path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-learning-playground",
+      "path": "/workspace/dbt-playground--feat-learning-playground",
       "branch": "feat/learning-playground",
       "commit_hash": "afc3eb7d9c2b3f55a8bd5d32539a04da68fe31d4",
       "commit_short": "afc3eb7",
@@ -53,7 +53,7 @@
       "anomalies": []
     },
     {
-      "path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-metrics-dashboard",
+      "path": "/workspace/dbt-playground--feat-metrics-dashboard",
       "branch": "feat/metrics-dashboard",
       "commit_hash": "960ecf601fe9f4d9758601454d767e988e21b136",
       "commit_short": "960ecf6",
@@ -75,7 +75,7 @@
           "type": "DIRTY_WORKTREE",
           "severity": "LOW",
           "message": "Uncommitted changes (8 files)",
-          "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-metrics-dashboard",
+          "worktree_path": "/workspace/dbt-playground--feat-metrics-dashboard",
           "branch": "feat/metrics-dashboard"
         }
       ]
@@ -126,21 +126,21 @@
       "type": "DIRTY_WORKTREE",
       "severity": "LOW",
       "message": "Uncommitted changes (19 files)",
-      "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground",
+      "worktree_path": "/workspace/dbt-playground",
       "branch": "main"
     },
     {
       "type": "DIRTY_WORKTREE",
       "severity": "LOW",
       "message": "Uncommitted changes (8 files)",
-      "worktree_path": "/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground--feat-metrics-dashboard",
+      "worktree_path": "/workspace/dbt-playground--feat-metrics-dashboard",
       "branch": "feat/metrics-dashboard"
     }
   ],
   "errors": [
     {
       "component": "HeartbeatMonitor",
-      "message": "Failed to parse heartbeat file: /Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground/temp/WORKFLOW_STATE.md. Reason: Invalid JSON: Expecting value: line 1 column 1 (char 0) | Details: {'path': '/Users/cmbays/Documents/claude/parent-dbt-playground/dbt-playground/temp/WORKFLOW_STATE.md', 'reason': 'Invalid JSON: Expecting value: line 1 column 1 (char 0)'}",
+      "message": "Failed to parse heartbeat file: /workspace/dbt-playground/temp/WORKFLOW_STATE.md. Reason: Invalid JSON: Expecting value: line 1 column 1 (char 0) | Details: {'path': '/workspace/dbt-playground/temp/WORKFLOW_STATE.md', 'reason': 'Invalid JSON: Expecting value: line 1 column 1 (char 0)'}",
       "timestamp": "2026-02-04T06:04:14.738437+00:00"
     }
   ]
