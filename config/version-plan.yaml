@@ -13,29 +13,29 @@ phases:
         epic: 0
         description: "Worktree Monitor v2.0 orchestration dashboard"
         branches:
-          - pattern: "feat/monitor-*"
-          - pattern: "feat/worktree-*"
+          - "feat/monitor-*"
+          - "feat/worktree-*"
         status: IN_PROGRESS
       - id: ws-metrics
         name: "FS5 Metrics Dashboard"
         epic: 146
         description: "Metrics and dashboard system"
         branches:
-          - pattern: "feat/metrics-*"
+          - "feat/metrics-*"
         status: IN_PROGRESS
       - id: ws-learning
         name: "Learning Playground"
         epic: 0
         description: "Learning and exploration features"
         branches:
-          - pattern: "feat/learning-*"
+          - "feat/learning-*"
         status: IN_PROGRESS
       - id: ws-default
         name: "General Development"
         epic: 0
         description: "General features and fixes"
         branches:
-          - pattern: "feat/*"
-          - pattern: "fix/*"
-          - pattern: "refactor/*"
+          - "feat/*"
+          - "fix/*"
+          - "refactor/*"
         status: IN_PROGRESS

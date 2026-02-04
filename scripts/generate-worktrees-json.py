@@ -70,11 +70,12 @@ def create_default_config() -> Path:
                         {
                             "id": "ws-default",
                             "name": "Development",
+                            "epic": 0,
                             "description": "Active development work",
                             "branches": [
-                                {"pattern": "feat/*"},
-                                {"pattern": "fix/*"},
-                                {"pattern": "refactor/*"},
+                                "feat/*",
+                                "fix/*",
+                                "refactor/*",
                             ],
                             "status": "IN_PROGRESS",
                         }
