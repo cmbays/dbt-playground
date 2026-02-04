@@ -97,13 +97,15 @@ When this command is invoked:
 
    **Error Handling Summary:**
 
-   | Condition | Behavior |
-   |-----------|----------|
-   | File missing | Advisory message, skip gracefully |
-   | File empty | Advisory message, skip gracefully |
-   | Section missing | Advisory message listing missing sections, skip |
-   | Parse error | Silent fallback to no-memory behavior |
-   | No relevant patterns | Skip display (no message needed) |
+   | Condition | User-Facing Behavior | Event Emitted |
+   |-----------|---------------------|---------------|
+   | File missing | Advisory message, skip gracefully | `memory_bootstrap_skip` (reason: "file_missing") |
+   | File empty | Advisory message, skip gracefully | `memory_bootstrap_skip` (reason: "file_empty") |
+   | Section missing | Advisory message listing missing sections, skip | `memory_bootstrap_skip` (reason: "section_missing", missing_sections[]) |
+   | Parse error | Silent fallback to no-memory behavior (no user message) | `memory_bootstrap_error` (error_message, error_code?) |
+   | No relevant patterns | Skip display (no message needed) | `memory_bootstrap_skip` (reason: "no_relevant_patterns") |
+
+   All conditions emit events to `events.jsonl` for operator visibility, even when user-facing behavior is silent.
 
    **Metrics Instrumentation:**
 
