@@ -138,8 +138,9 @@ def connect(db_path: Optional[Path] = None) -> duckdb.DuckDBPyConnection:
             try:
                 shutil.copy(backup_path, db_path)
                 return duckdb.connect(str(db_path))
-            except OSError:
-                pass
+            except OSError as backup_error:
+                import logging
+                logging.error(f'Failed to restore backup during recovery: {backup_error}')
         raise DatabaseConnectionError(f'Database corrupted and no backup: {e}') from e
 
 
@@ -407,7 +408,11 @@ def generate_session_id(conn: Optional[duckdb.DuckDBPyConnection] = None) -> str
 
         if close_conn:
             conn.close()
-    except Exception:
+    except (duckdb.CatalogException, duckdb.IOException, ValueError):
+        # Expected errors when querying non-existent tables or invalid queries
+        counter = 1
+    except OSError:
+        # File system errors during database operations
         counter = 1
 
     return f'DBG-{today}-{counter:03d}'

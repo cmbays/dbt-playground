@@ -956,16 +956,18 @@
           minute: '2-digit',
           hour12: false
         });
+        const commitType = escapeHtml(commit.commit_type || 'other');
         const typeClass = `type-${commit.commit_type || 'other'}`;
         const hasAgent = commit.co_authored_by && commit.co_authored_by.length > 0;
+        const agentNames = hasAgent ? commit.co_authored_by.map(escapeHtml).join(', ') : '';
 
         html += `
           <div class="commit-row" role="listitem">
             <span class="commit-time">${time}</span>
-            <span class="commit-type ${typeClass}">${commit.commit_type || 'other'}</span>
+            <span class="commit-type ${typeClass}">${commitType}</span>
             <span class="commit-message">${escapeHtml(commit.message)}</span>
-            <span class="commit-sha">${commit.short_sha}</span>
-            ${hasAgent ? `<span class="commit-agent" aria-label="Agent assisted">${commit.co_authored_by.join(', ')}</span>` : ''}
+            <span class="commit-sha">${escapeHtml(commit.short_sha)}</span>
+            ${hasAgent ? `<span class="commit-agent" aria-label="Agent assisted">${agentNames}</span>` : ''}
             <span class="commit-stats">
               <span class="stat-add">+${commit.insertions || 0}</span>
               <span class="stat-del">-${commit.deletions || 0}</span>
@@ -1023,7 +1025,8 @@
       decisions.forEach(decision => {
         const answerClass = decision.answer === 'NO' ? 'no' : 'not-yet';
         const cardClass = decision.answer === 'NO' ? 'answer-no' : 'answer-not-yet';
-        const confidenceClass = `confidence-${decision.confidence.toLowerCase()}`;
+        const confidenceValue = (decision.confidence || 'MEDIUM').toString().toLowerCase();
+        const confidenceClass = `confidence-${confidenceValue}`;
 
         html += `
           <article class="decision-card ${cardClass}" role="listitem">

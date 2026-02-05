@@ -213,8 +213,13 @@ def cluster_root_causes(
         first_seen = min(dates)
         last_seen = max(dates)
 
-        # Calculate score
-        days_since_last = (sessions[0].start_time - last_seen).days if sessions else 0
+        # Calculate score (use current time for recency, not first session)
+        from datetime import datetime
+        from datetime import timezone as tz
+        now = datetime.now(tz.utc)
+        # Convert naive datetime to UTC if needed
+        last_seen_utc = last_seen if last_seen.tzinfo else last_seen.replace(tzinfo=tz.utc)
+        days_since_last = (now - last_seen_utc).days
         score = calculate_score(len(cluster), days_since_last, cluster)
         status = classify_pattern(score, len(cluster))
 
