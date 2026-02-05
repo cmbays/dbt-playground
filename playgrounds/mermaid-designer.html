@@ -1653,7 +1653,8 @@ ${code}
 
     // Handle keyboard activation for template cards
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.target.classList.contains('template-card')) {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('template-card')) {
+        e.preventDefault();
         e.target.click();
       }
     });

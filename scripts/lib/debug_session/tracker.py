@@ -361,5 +361,9 @@ class DebugSessionTracker:
             },
         }
 
-        with open(events_file, 'a', encoding='utf-8') as f:
-            f.write(json.dumps(event) + '\n')
+        try:
+            with open(events_file, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(event) + '\n')
+        except OSError as e:
+            import logging
+            logging.warning(f'Failed to emit event to {events_file}: {e}')

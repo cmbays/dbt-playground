@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-02-05
+
+### Added
+
+- **Wave 3 P1: Backend Maturation - Protocol Enhancements** (#229-#238)
+  - **WAVE3-010**: BACKEND_STRUCTURE_TEMPLATE.md - Canonical template for backend architecture documentation
+  - **WAVE3-011**: API Contract Validation spec (1,500+ words) - Validation rules, breaking changes, versioning strategy
+  - **WAVE3-012**: LESSONS.md Trigger Patterns (2,000+ words) - 15 patterns across 8 categories for automated extraction
+  - **WAVE3-013**: Observability Integration spec (2,500+ words) - Jaeger spans, Prometheus metrics, error taxonomy, debug_startup hooks
+  - **WAVE3-014**: Schema versioning patterns design
+  - **WAVE3-015**: DEPLOYMENT_VALIDATION_CHECKLIST.md - Tier 1→2 and Tier 2→3 promotion gates
+  - **WAVE3-016**: OBSERVABILITY.md template (1,800+ words) - Monitoring stack, metrics, alerting, dashboards, Gate T2-1 checklist
+  - **WAVE3-017**: INCIDENT_TEMPLATE.md - 7-section RCA structure for pattern extraction
+  - **WAVE3-020**: Debug Session Tracker CLI
+    - Commands: start, log, end, query, status
+    - DuckDB persistence (debug_sessions, debug_steps tables, 2 views)
+    - Session ID format: DBG-YYYY-MM-DD-NNN
+    - FS1 integration via memory/events.jsonl
+    - 110 tests, 77% coverage
+  - **WAVE3-021**: LESSONS.md Analyzer CLI
+    - Commands: extract, review, generate, stats
+    - Multi-factor scoring: (Frequency*0.4) + (Recency*0.3) + (Consistency*0.3)
+    - 4-tier classification: PROMOTE/CANDIDATE/REVIEW/IGNORE
+    - Keyword clustering (0.5 threshold)
+    - LESSONS.md entry generation
+    - 110 tests, 77% coverage
+  - **Integration Reports** (Days 5-6)
+    - ARCH_INTEGRATION_REPORT.md - Observability verification, API validation design
+    - PLANNER_INTEGRATION_REPORT.md - Deployment gates validation, incident workflow
+    - DEV_E2E_REPORT.md - E2E test results, performance benchmarks
+
+### Fixed
+
+- **CodeRabbit Critical Issues** (c5ed0aa)
+  - Backup recovery OSError logging (database.py:141)
+  - Event emission I/O failure handling (tracker.py:365)
+  - Recency scoring calculation using current time (clustering.py:217)
+  - Timezone handling for aware/naive datetime comparison (models.py:59-66)
+  - XSS vulnerability in Workflow Chronicle (commit metadata escaping)
+  - Null guard for decision.confidence (workflow-chronicle.html:1026)
+- **CodeRabbit Minor Issues** (c5ed0aa)
+  - Replaced broad 'except Exception' with specific types (database.py:411)
+  - Added SessionState.from_dict validation for required fields
+  - Division-by-zero guard in recency_weight function
+  - Space key support for template card activation (mermaid-designer.html)
+
+### Changed
+
+- Multi-agent orchestration pattern: Parallel execution across 3 tracks (architect, planner, developer)
+- Agent reports now written to `temp/AGENT_REPORTS/[feature]/` for tracked features
+- Integration testing phase added to sprint workflow (Days 5-6)
+
 ### Added
 
 - **FS5 Metrics & Dashboard System** (#146)

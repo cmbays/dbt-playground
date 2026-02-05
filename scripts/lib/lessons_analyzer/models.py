@@ -56,13 +56,14 @@ class Pattern:
     @property
     def days_since_last(self) -> int:
         """Days since pattern was last seen."""
-        now = datetime.now()
+        from datetime import timezone as tz
+        now = datetime.now(tz.utc)
         last = self.last_seen
-        # Handle timezone-aware vs naive datetime comparison
-        if last.tzinfo is not None and now.tzinfo is None:
-            now = now.replace(tzinfo=last.tzinfo)
-        elif last.tzinfo is None and now.tzinfo is not None:
-            last = last.replace(tzinfo=now.tzinfo)
+        # Ensure both are timezone-aware (convert naive to UTC)
+        if last.tzinfo is None:
+            last = last.replace(tzinfo=tz.utc)
+        else:
+            last = last.astimezone(tz.utc)
         return (now - last).days
 
 

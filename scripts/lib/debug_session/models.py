@@ -91,6 +91,8 @@ class SessionState:
     @classmethod
     def from_dict(cls, data: dict) -> 'SessionState':
         """Create from dictionary."""
+        if 'session_id' not in data or 'start_time' not in data:
+            raise ValueError('Missing required fields: session_id and start_time')
         return cls(
             session_id=data['session_id'],
             start_time=datetime.fromisoformat(data['start_time']),

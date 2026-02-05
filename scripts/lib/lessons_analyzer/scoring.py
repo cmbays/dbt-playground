@@ -58,6 +58,9 @@ def recency_weight(days_since_last: int, decay_period: int = 30) -> float:
     if days_since_last <= 0:
         return 1.0
 
+    if decay_period <= 0:
+        return 0.0
+
     return max(0.0, 1.0 - (days_since_last / decay_period))
 
 
