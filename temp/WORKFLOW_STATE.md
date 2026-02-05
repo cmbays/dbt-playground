@@ -1,12 +1,124 @@
 # Workflow State
 
-**Last Updated**: 2026-02-05T12:30:00Z
-**Active Session**: Wave 3 Backend Maturation - P1 Sprint
-**Current Status**: v0.10 Complete | Wave 3 P1 Sprint IN PROGRESS (Days 1-2 ✅ | Days 3-7 📋)
+**Last Updated**: 2026-02-05T05:15:00Z
+**Active Session**: Wave 3 P2 Sprint Complete
+**Current Status**: v0.11.3 Released | Wave 3 P2 Complete ✅ | Agent Memory v2.0 Epic Planned
 
 ---
 
 ## Quick Resume
+
+**To resume Agent Memory v2.0**: Start with VS1 (#252) - foundation slice
+**To continue Wave 3**: P3 sprint for additional backend maturation (v0.11.4+)
+**UX Maturation**: #243 queued for post-Memory v2
+
+---
+
+## Wave 3 P2 Sprint: COMPLETE ✅ (v0.11.3)
+
+**Completed**: 2026-02-05
+**Tag**: v0.11.3
+**Commits**: a93d118 (P2 Sprint), 5ce397a (CodeRabbit fixes)
+
+### Deliverables
+
+**Track D - Developer UX Commands**:
+- `/debug` command (start/step/end/status/history)
+- `/dbt-debug` command (model/test/freshness/lineage/schema)
+- 48 tests, Session Tracker integration
+
+**Track E - Integration Completion**:
+- Observability module: `scripts/lib/observability/` (tracing, metrics, logging, hooks)
+- API validation module: `scripts/lib/api_validation/` (contracts, validator)
+- 80 tests, three-tier configuration
+
+**Track F - Tier 2 Preparation**:
+- `docs/reference/OBSERVABILITY.md` - populated documentation
+- `grafana/dashboards/debug-protocol.json` - Grafana dashboard
+- `scripts/validate-deployment.py` - automated T1/T2 gate checks
+- `playgrounds/debug-protocol.html` - interactive 7-step playground
+- 19 tests
+
+### Issues Closed
+
+- #244: WAVE3-022 - /debug command ✅
+- #245: WAVE3-023 - /dbt-debug command ✅
+- #246: WAVE3-024 - API contract validation ✅
+- #247: WAVE3-025 - Observability hooks ✅
+- #248: WAVE3-026 - OBSERVABILITY.md ✅
+- #249: WAVE3-027 - Deployment validation ✅
+- #250: WAVE3-028 - Debug playground ✅
+
+### Test Results
+
+- 157 tests passing (P2 scope)
+- CodeRabbit review: All high/medium issues addressed
+
+---
+
+## Agent Memory v2.0 Epic Planning (2026-02-05)
+
+**Epic**: #251 (Agent Memory System v2.0 - Multi-Bank Architecture)
+**Status**: PLANNED ✅ - Ready for implementation (target v0.12+)
+**Planning Complete**: 2026-02-05T04:50:00Z
+
+### Vertical Slices Created
+
+| Slice | Issue | Phase | Scope |
+|-------|-------|-------|-------|
+| **VS1** | #252 | MVP | Agent Expertise Foundation (3 pilots: architect, developer, sage) |
+| **VS2** | #253 | MVP | Types & Confidence (8 types, approve/reject workflow) |
+| **VS3** | #254 | Phase 2 | Shared Relationship Memory (infrastructure) |
+| **VS7** | #255 | Parallel | New Agents (product-designer, design-reviewer) |
+
+### Separate Epic
+
+- **#256**: Human Learning Lab (feature tutorials, best practices, project history)
+
+### Key Decisions
+
+| Decision | Choice |
+|----------|--------|
+| Agent scope | 3 pilot agents (architect, developer, sage) |
+| Memory types | All 8 types from start |
+| Confidence scoring | Heuristic rules |
+| Cross-agent reading | Start isolated, decide later |
+| Consolidation (VS4) | Deferred - implement when token limits hit |
+| Conflict resolution (VS5) | Deferred - implement when conflicts frequent |
+| Learning Lab (VS6) | Separate epic (#256) |
+
+### Key Learning Captured
+
+**Vertical slice framing**: Maintenance features (consolidation, conflict resolution) are separate user journeys - they only trigger after significant system usage. They're not "missing parts" of core functionality, they're distinct workflows. Ship core value first, add maintenance when problem exists.
+
+### Planning Artifacts
+
+| File | Purpose |
+|------|---------|
+| `temp/EPIC_AGENT_MEMORY_V2.md` | Full specification (schema, user stories, technical design) |
+| `temp/AGENT_REPORTS/memory-v2-planning/ARCH_REPORT.md` | Technical analysis (dependencies, risks, infrastructure) |
+| `temp/AGENT_REPORTS/memory-v2-planning/PM_REPORT.md` | Scope/value analysis (MVP definition, phasing) |
+
+### Implementation Order
+
+1. **VS1** (#252) - Foundation (directory structure, APIs, basic console)
+2. **VS7** (#255) - New agents (can run parallel with VS1)
+3. **VS2** (#253) - Types & confidence (after VS1)
+4. **VS3** (#254) - Relationship memory (after VS1+VS2)
+
+### To Start Implementation
+
+```bash
+# Review VS1 scope
+gh issue view 252
+
+# Create feature branch
+git: create branch feat/memory-v2-foundation
+
+# Begin with directory structure and schema
+```
+
+---
 
 ## Compaction Summary
 
@@ -23,6 +135,7 @@
 - Days 3-4: Core work execution (WAVE3-011, 013, 016, 020/021 implementation)
 - Days 5-6: Integration & testing
 - Day 7: Sprint completion & merge to main
+- **Post Wave 3 P1**: v0.12 UX Maturation Epic (#243) - Workflow Hub reorganization (queued)
 
 **To Resume Tomorrow**: `/supervisor resume`
 
@@ -370,6 +483,62 @@ WAVE3-002 (#224) ────────────┘ (independent)
 **Epic**: #192
 **Issues**: #193-197
 **Status**: QUEUED
+
+### v0.12 UX Maturation - Workflow Hub Reorganization
+
+**Epic**: #243
+**Status**: QUEUED (for future work, post Wave 3 P1)
+**Effort**: 32-42 hours (4-5 weeks)
+**Created**: 2026-02-05
+**Priority**: High (addresses #1 UX pain point)
+
+**Context**: Comprehensive UX research session (2026-02-05) identified critical gaps in Workflow Hub:
+- User quote: "Too much information, unclear actions, stale data, no clear user journey"
+- Current: Widget soup with no intent organization
+- Solution: Tab-based reorganization (Dashboard, Tasks, Development, Insights)
+
+**Key Features**:
+- **Tab 1 (Dashboard)**: Hero section, primary action, suggestions, progressive disclosure, auto-refresh
+- **Tab 2 (Tasks)**: Backlog (GitHub issues), PM Sessions (fix loading, Claude integration), Kanban placeholder
+- **Tab 3 (Development)**: Active sessions, worktrees (drag-drop JSON), quick resume
+- **Tab 4 (Insights)**: Agent Visualizer, activity timeline, health pulse placeholder
+
+**PM Session Strategy**:
+- Keep PM sessions (fix, don't remove) ✅
+- Proper home: Tab 2 (Tasks) - task management section
+- Fix approach: Embed in WORKFLOW_STATE.md (no separate server needed)
+- Claude auto-registers PM session on task claim
+
+**UX Research Documents**:
+- `docs/reference/UX_USER_RESEARCH.md` - Interview findings (12 questions)
+- `docs/reference/UX_TASK_FLOWS.md` - Ideal user journeys for 6 playgrounds
+- `docs/reference/UX_HEURISTICS.md` - 10-point quality checklist
+- `temp/v0.12_HUB_REORGANIZATION.md` - Tab structure design
+- `temp/v0.12_IMPLEMENTATION_PLAN.md` - 5-phase execution plan
+
+**Success Criteria**:
+- Dashboard orientation: 30s → <5s
+- Task selection from Hub: 0% → >50%
+- UX Heuristic score: 0.5/10 → >7/10
+- User satisfaction: Tolerating → Love
+
+**Implementation Phases**:
+- Phase 0: Pre-work (PM investigation, design approval) - 2-4h
+- Phase 1: Tab shell + Dashboard migration - 8-10h
+- Phase 2: Tasks tab + PM session fix - 10-12h
+- Phase 3: Development tab - 6-8h
+- Phase 4: Insights tab - 4-6h
+- Phase 5: Polish (help modals, audit, UAT) - 4-6h
+
+**Keyboard Shortcuts**:
+- `1` - Dashboard, `2` - Tasks, `3` - Development, `4` - Insights
+- `R` - Refresh, `?` - Help (context-aware)
+
+**Dependencies**:
+- Wave 3 P1 Sprint completion (in progress)
+- v0.11 Architecture Review (if prioritized first)
+
+**Related Issues**: Sub-issues will be created during Phase 0 planning
 
 ---
 
