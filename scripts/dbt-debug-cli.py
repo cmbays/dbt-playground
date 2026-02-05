@@ -58,6 +58,9 @@ try:
 except ImportError:
     YAML_AVAILABLE = False
 
+# Configurable timeout (default 5 minutes, can be set via DBT_DEBUG_TIMEOUT env var)
+DBT_COMMAND_TIMEOUT = int(os.environ.get('DBT_DEBUG_TIMEOUT', '300'))
+
 
 @dataclass
 class ModelInfo:
@@ -179,11 +182,11 @@ def run_dbt_command(cmd: list, capture: bool = True) -> tuple[int, str, str]:
             cwd=project_root,
             capture_output=capture,
             text=True,
-            timeout=300,
+            timeout=DBT_COMMAND_TIMEOUT,
         )
         return result.returncode, result.stdout, result.stderr
     except subprocess.TimeoutExpired:
-        return 1, '', 'Command timed out after 5 minutes'
+        return 1, '', f'Command timed out after {DBT_COMMAND_TIMEOUT} seconds'
     except FileNotFoundError:
         return 1, '', 'dbt command not found. Is dbt installed?'
 
@@ -227,7 +230,8 @@ def analyze_column_error(model_name: str, error_message: str) -> dict:
         import re
         match = re.search(r"column ['\"]?(\w+)['\"]?", error_lower)
         if match:
-            analysis['column_name'] = match.group(1)
+            # Limit extracted value to prevent resource exhaustion
+            analysis['column_name'] = match.group(1)[:100]
             analysis['likely_cause'] = 'Column reference issue'
 
             # Get model info to check columns
@@ -401,11 +405,11 @@ def cmd_test(args) -> int:
 
         # Parse failure details
         if 'got' in stdout.lower() or 'failures' in stdout.lower():
-            # Extract failure count
+            # Extract failure count (limit to reasonable length)
             import re
             match = re.search(r'got (\d+)', stdout.lower())
             if match:
-                failure_count = match.group(1)
+                failure_count = match.group(1)[:20]  # Limit for safety
                 print(f"Failed Rows: {failure_count}")
 
         if store_failures:

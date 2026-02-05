@@ -516,14 +516,14 @@ def _store_trace_id(session_id: str, trace_id: str) -> None:
     data = {}
     if trace_file.exists():
         try:
-            data = json.loads(trace_file.read_text())
+            data = json.loads(trace_file.read_text(encoding='utf-8'))
         except (json.JSONDecodeError, OSError):
             data = {}
 
     data[session_id] = trace_id
 
     try:
-        trace_file.write_text(json.dumps(data))
+        trace_file.write_text(json.dumps(data), encoding='utf-8')
     except OSError:
         pass
 
@@ -535,7 +535,7 @@ def _load_trace_id(session_id: str) -> Optional[str]:
         return None
 
     try:
-        data = json.loads(trace_file.read_text())
+        data = json.loads(trace_file.read_text(encoding='utf-8'))
         return data.get(session_id)
     except (json.JSONDecodeError, OSError):
         return None
@@ -548,9 +548,9 @@ def _clear_trace_id(session_id: str) -> None:
         return
 
     try:
-        data = json.loads(trace_file.read_text())
+        data = json.loads(trace_file.read_text(encoding='utf-8'))
         data.pop(session_id, None)
-        trace_file.write_text(json.dumps(data))
+        trace_file.write_text(json.dumps(data), encoding='utf-8')
     except (json.JSONDecodeError, OSError):
         pass
 

@@ -11,9 +11,14 @@ Part of Wave 3 P2: Integration Completion (WAVE3-024)
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any, Optional
+
+
+def _utc_now() -> datetime:
+    """Return current UTC time (timezone-aware)."""
+    return datetime.now(UTC)
 
 
 class ContractType(Enum):
@@ -101,8 +106,8 @@ class ApiContract:
     contract_type: ContractType
     owner: str
     description: str = ''
-    created_at: datetime = field(default_factory=datetime.now)
-    updated_at: datetime = field(default_factory=datetime.now)
+    created_at: datetime = field(default_factory=_utc_now)
+    updated_at: datetime = field(default_factory=_utc_now)
     deprecated: bool = False
     deprecation_date: Optional[datetime] = None
     consumers: list[str] = field(default_factory=list)

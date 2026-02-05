@@ -222,7 +222,13 @@ class StructuredLogger:
         **kwargs: Any,
     ) -> None:
         """Internal log method with extra field support."""
+        import sys
+
         record_extra = extra or {}
+
+        # Get actual exception info if exc_info=True
+        # makeRecord expects tuple from sys.exc_info(), not boolean
+        exc_info_value = sys.exc_info() if exc_info else None
 
         # Create LogRecord manually to inject extra
         record = self._logger.makeRecord(
@@ -232,7 +238,7 @@ class StructuredLogger:
             0,
             msg,
             args,
-            exc_info=exc_info if exc_info else None,
+            exc_info=exc_info_value,
             extra=None,
         )
         record.extra = record_extra
