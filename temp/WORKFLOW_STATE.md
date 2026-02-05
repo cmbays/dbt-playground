@@ -1,15 +1,16 @@
 # Workflow State
 
-**Last Updated**: 2026-02-05T05:15:00Z
-**Active Session**: Wave 3 P2 Sprint Complete
-**Current Status**: v0.11.3 Released | Wave 3 P2 Complete ✅ | Agent Memory v2.0 Epic Planned
+**Last Updated**: 2026-02-05T05:30:00Z
+**Active Session**: Workflow Hub v2 Epic Planning Complete
+**Current Status**: v0.11.3 Released | 3 Epics Planned (Memory v2, Workflow Hub v2, UX Maturation)
 
 ---
 
 ## Quick Resume
 
-**To resume Agent Memory v2.0**: Start with VS1 (#252) - foundation slice
-**To continue Wave 3**: P3 sprint for additional backend maturation (v0.11.4+)
+**To start Wave 3 P3 (v0.11.4)**: `/supervisor resume wave3 p3` - 7 tasks (#266-#272), 55h
+**To start Workflow Hub v2 (v0.13)**: Begin with Slice 1 (#258) - Single-Worktree Task Management
+**To resume Agent Memory v2.0 (v0.12)**: Start with VS1 (#252) - foundation slice
 **UX Maturation**: #243 queued for post-Memory v2
 
 ---
@@ -56,6 +57,62 @@
 
 ---
 
+## Wave 3 P3 Sprint: PLANNED (v0.11.4)
+
+**Status**: PLANNED - Ready for execution
+**Target**: v0.11.4
+**Effort**: ~55 hours
+**Focus**: Multi-agent scale, compound learning, production readiness
+
+### P3 Tasks (Priority Order)
+
+| ID | Issue | Task | Owner | Effort | Track |
+|----|-------|------|-------|--------|-------|
+| **WAVE3-030** | #266 | Multi-agent debugging coordination | @architect | 12h | Multi-Agent Scale |
+| **WAVE3-031** | #267 | Automated pattern detection | @developer | 10h | Compound Learning |
+| **WAVE3-032** | #268 | Chaos engineering integration | @architect | 8h | Production Readiness |
+| **WAVE3-033** | #269 | Cross-service tracing (Jaeger) | @developer | 6h | Production Readiness |
+| **WAVE3-034** | #270 | Sage auto-learning trigger | @developer | 5h | Compound Learning |
+| **WAVE3-035** | #271 | Blast Radius Mapper | @developer | 6h | Production Readiness |
+| **WAVE3-036** | #272 | Build Agent real-time warnings | @developer | 8h | Compound Learning |
+
+### Recommended Execution Tracks
+
+**Track G: Multi-Agent Scale** (12h)
+- WAVE3-030: Multi-agent debugging coordination
+
+**Track H: Compound Learning** (23h)
+- WAVE3-031: Automated pattern detection
+- WAVE3-034: Sage auto-learning trigger
+- WAVE3-036: Build Agent real-time warnings
+
+**Track I: Production Readiness** (20h)
+- WAVE3-032: Chaos engineering integration
+- WAVE3-033: Cross-service tracing
+- WAVE3-035: Blast Radius Mapper
+
+### Dependencies
+
+```
+WAVE3-030 (Multi-Agent) ─────────────> standalone (uses DEBUG_REPORTS, Session Tracker)
+
+WAVE3-031 (Pattern Detection) ───────> WAVE3-034 (Sage Trigger) ───> WAVE3-036 (Warnings)
+
+WAVE3-033 (Tracing) ─────────────────> WAVE3-032 (Chaos) ───> WAVE3-035 (Blast Radius)
+```
+
+### To Start P3
+
+```bash
+# Review P3 scope
+gh issue view 266 267 268 269 270 271 272
+
+# Recommend starting with Track H (Compound Learning) - builds on P2 LESSONS Analyzer
+/supervisor resume wave3 p3
+```
+
+---
+
 ## Agent Memory v2.0 Epic Planning (2026-02-05)
 
 **Epic**: #251 (Agent Memory System v2.0 - Multi-Bank Architecture)
@@ -74,6 +131,88 @@
 ### Separate Epic
 
 - **#256**: Human Learning Lab (feature tutorials, best practices, project history)
+
+---
+
+## Workflow Hub v2 Epic Planning (2026-02-05)
+
+**Epic**: #257 (Workflow Hub v2 - Task Management Upgrade)
+**Milestone**: v0.13
+**Status**: PLANNED ✅ - Ready for implementation
+**Planning Complete**: 2026-02-05T05:00:00Z
+**Timeline**: ~8 weeks (Feb-April 2026)
+
+### Vision
+
+Upgrade Workflow Hub from static playgrounds to production-grade task management system with:
+- Unified task tracking across worktrees
+- GitHub issue integration
+- Historical analytics via dbt
+- Agent insights surfaced in planning docs
+
+### Three-Layer Architecture
+
+- **Strategic Layer** (Git-versioned): Backlog.md, temp/EPICS/*.md, temp/AGENT_REPORTS/
+- **Tactical Layer** (Shared DB): workflow.duckdb with tasks, epics, worktrees tables
+- **Analytical Layer** (dbt): dbt_projects/workflow_analytics/ for historical metrics
+
+### Vertical Slices (8 total)
+
+| Phase | Slice | Issue | Scope |
+|-------|-------|-------|-------|
+| **v0.13.1 Foundation** | #1 | #258 | Single-Worktree Task Management |
+| **v0.13.1 Foundation** | #2 | #259 | Multi-Worktree Coordination |
+| **v0.13.2 Integration** | #3 | #260 | GitHub Issue Sync |
+| **v0.13.2 Integration** | #4 | #261 | Epic Organization + MD Files |
+| **v0.13.3 Analytics** | #5 | #262 | dbt Historical Tracking |
+| **v0.13.3 Analytics** | #6 | #263 | Agent Report Insights |
+| **v0.13.4 Polish** | #7 | #264 | Claude Task Bridge |
+| **v0.13.4 Polish** | #8 | #265 | Advanced UI Features |
+
+### Planning Artifacts
+
+| File | Purpose |
+|------|---------|
+| `temp/EPICS/workflow-hub-v2-upgrade.md` | Full epic specification (vision, architecture, risks) |
+| `temp/v0.13_PLAN.md` | Detailed implementation plan (tasks, acceptance criteria, schemas) |
+
+### Implementation Order
+
+**Phase 1 (v0.13.1)**: Foundation - Weeks 1-2
+- #258: Database + basic UI
+- #259: Worktree coordination
+
+**Phase 2 (v0.13.2)**: Integration - Weeks 3-4
+- #260: GitHub issue sync
+- #261: Epic organization + MD files
+
+**Phase 3 (v0.13.3)**: Analytics - Weeks 5-6
+- #262: dbt historical tracking (separate project: dbt_projects/workflow_analytics/)
+- #263: Backlog.md augmentation with agent insights
+
+**Phase 4 (v0.13.4)**: Polish - Weeks 7-8
+- #264: Claude task primitives bridge (Supervisor sync)
+- #265: Advanced UI (filter, sort, workload widget)
+
+### Key Technical Decisions
+
+- **Database**: DuckDB (workflow.duckdb) for ACID transactions, fast queries
+- **dbt Structure**: Rename dbt_project/ → dbt_projects/healthcare_analytics/, create dbt_projects/workflow_analytics/
+- **Worktree Coordination**: JSON heartbeat files (temp/.worktree-session.json) + sync script → shared DB
+- **GitHub Integration**: Issues = product backlog, tasks = execution decomposition
+- **Claude Integration**: Supervisor syncs DuckDB ↔ Claude task primitives
+
+### To Start Implementation
+
+```bash
+# Review v0.13.1 Slice 1 scope
+gh issue view 258
+
+# Create feature branch
+git: create branch feat/workflow-hub-v2-foundation
+
+# Begin with database schema and migration
+```
 
 ### Key Decisions
 
@@ -401,6 +540,68 @@ WAVE3-020 (#237) ──────────> WAVE3-021 (#238)
 ---
 
 ## Queued Work
+
+### v0.11.4: Vibe Coding Skills Integration (PLANNED)
+
+**Epic**: Vibe Coding Gap Analysis (continued from #198)
+**Status**: PLANNED (ready for execution after Wave 3 P2 or v0.12)
+**Priority**: P1 (Foundation for all future work)
+**Effort**: 22-31 hours (11 tasks across 4 phases)
+**Plan**: `.claude/plans/staged-pondering-candle.md`
+**Created**: 2026-02-05
+
+**Phase Breakdown**:
+- **Phase 0**: File renaming + Wave 3 integration (2-3h, 2 tasks)
+- **Phase 1**: 5 agent skills (12-16h, 5 tasks)
+- **Phase 2**: Protection enforcement (4-6h, 2 tasks)
+- **Phase 3**: Testing & validation (4-6h, 2 tasks)
+
+**Key Deliverables**:
+1. **4 File Renames** (to match x_post conventions):
+   - APP_FLOW_STANDARD.md → APP_FLOW.md
+   - DESIGN_PRINCIPLES.md → DESIGN_SYSTEM.md
+   - WORKFLOW_STATE.md → progress.txt
+   - LEARNINGS.md → LESSONS.md
+
+2. **1 New Agent**: product-strategist (strategist:)
+
+3. **5 Agent Skills**:
+   - Interrogator skill → /plan --interrogate (PM)
+   - Builder skill → Developer persona
+   - Debugger skill → Code Reviewer persona
+   - Product Strategist skill → New agent persona
+   - Documentor skill → PM persona
+
+4. **2 New Docs**:
+   - WAVE3_INTEGRATION.md (links x_posts with Wave 3 deliverables)
+   - PROTECTION_RULES.md (10 protection mechanisms)
+
+5. **Updated Commands/Personas**:
+   - /plan (--interrogate flag)
+   - /orchestrate (protection gates)
+   - product-manager.md (Documentor skill)
+   - developer.md (Builder skill)
+   - code-reviewer.md (Debugger skill)
+
+**Integration with Wave 3**:
+- Debugger skill uses BACKEND_STRUCTURE_TEMPLATE.md (blast radius)
+- Builder skill references OBSERVABILITY_INTEGRATION.md
+- Both use debug_sessions DB (WAVE3-020)
+- Comprehensive integration documented in WAVE3_INTEGRATION.md
+
+**Source Documents** (temp/vibe_coding/):
+- x_post_interrogator_1.txt
+- x_post_documentor_2.txt
+- x_post_builder_3.txt
+- x_post_debugger_4.txt
+- x_post_product_strategist.txt
+
+**Dependencies**:
+- Can start after Wave 3 P2 Sprint OR v0.12 UX Maturation (user choice)
+
+**Related Issues**: TBD (will create GitHub issues during Phase 0)
+
+---
 
 ### Track: Worktree Monitor v2.0 (DEPLOYED ✅)
 
