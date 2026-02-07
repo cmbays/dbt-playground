@@ -8,7 +8,7 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 ## Project Status
 
-Read the @temp/WORKFLOW_STATE.md to see check status of project and recent notes. Maintain milestone updates and the multi-phase workflow status in temp/WORKFLOW_STATE.md (source of truth).
+Read temp/WORKFLOW_STATE.md to check the status of project and recent notes. Maintain milestone updates and the multi-phase workflow status in temp/WORKFLOW_STATE.md (source of truth).
 
 ## Git/GitHub Protocol
 

@@ -81,7 +81,30 @@ def merge_findings(
         unresolved_conflicts = conflicts
 
     # Step 3: Build consensus findings
-    consensus = _build_consensus(all_findings, resolved_conflicts)
+    # Exclude findings that are part of unresolved conflicts
+    unresolved_descriptions: set[str] = set()
+    for conflict in unresolved_conflicts:
+        unresolved_descriptions.add(conflict.finding_a.description)
+        unresolved_descriptions.add(conflict.finding_b.description)
+
+    # Filter out findings from unresolved conflicts
+    filtered_findings = []
+    for agent_findings in all_findings:
+        filtered = AgentFindings(
+            agent_name=agent_findings.agent_name,
+            session_id=agent_findings.session_id,
+            zone=agent_findings.zone,
+            findings=[
+                f for f in agent_findings.findings
+                if f.description not in unresolved_descriptions
+            ],
+            cross_scope_observations=agent_findings.cross_scope_observations,
+            blockers=agent_findings.blockers,
+            investigation_time_minutes=agent_findings.investigation_time_minutes,
+        )
+        filtered_findings.append(filtered)
+
+    consensus = _build_consensus(filtered_findings, resolved_conflicts)
 
     # Step 4: Extract deployment order
     deployment_order = _extract_deployment_order(consensus, all_findings)
