@@ -91,7 +91,7 @@ def merge_findings(
 
     # Step 6: Extract lessons
     lessons = _extract_lessons(
-        session_id, all_findings, resolved_conflicts,
+        session_id, consensus, resolved_conflicts,
     )
 
     # Calculate resolution time
@@ -495,19 +495,18 @@ def _extract_agreed_fixes(
 
 def _extract_lessons(
     session_id: str,
-    all_findings: list[AgentFindings],
+    consensus_findings: list[Finding],
     resolved_conflicts: list[Conflict],
 ) -> list[LessonCandidate]:
     """Extract potential lessons from the merge process.
 
     Lessons come from:
     - Resolved conflicts (debate produced insight)
-    - Cross-scope observations from agents
-    - High-confidence root cause findings
+    - Consensus findings (high-confidence root causes that survived merge)
 
     Args:
         session_id: Session ID
-        all_findings: All agent findings
+        consensus_findings: Consensus findings from merge resolution
         resolved_conflicts: Resolved conflicts
 
     Returns:
@@ -537,25 +536,28 @@ def _extract_lessons(
                 tags=extract_tags(finding),
             ))
 
-    # From high-confidence root causes
+    # From high-confidence consensus root causes
     # Note: Using 0.8 threshold (stricter than lessons.py's 0.7)
     # because merge resolution extracts lessons only from consensus findings
     # that have survived conflict resolution and agent agreement.
-    for agent_findings in all_findings:
-        for finding in agent_findings.root_cause_findings:
-            if finding.confidence >= 0.8 and finding.proposed_fix:
-                pattern = generate_pattern_name(finding)
-                # Avoid duplicates from conflicts
-                if not any(l.pattern_name == pattern for l in lessons):
-                    lessons.append(LessonCandidate(
-                        pattern_name=pattern,
-                        context=f'Agent {agent_findings.agent_name} investigation',
-                        problem=finding.description,
-                        solution=finding.proposed_fix,
-                        detection='High-confidence root cause finding',
-                        source_session=session_id,
-                        confidence=finding.confidence,
-                        tags=extract_tags(finding),
-                    ))
+    for finding in consensus_findings:
+        if (
+            finding.classification == 'root_cause'
+            and finding.confidence >= 0.8
+            and finding.proposed_fix
+        ):
+            pattern = generate_pattern_name(finding)
+            # Avoid duplicates from conflicts
+            if not any(l.pattern_name == pattern for l in lessons):
+                lessons.append(LessonCandidate(
+                    pattern_name=pattern,
+                    context=f'Consensus finding from multi-agent session',
+                    problem=finding.description,
+                    solution=finding.proposed_fix,
+                    detection='High-confidence consensus root cause',
+                    source_session=session_id,
+                    confidence=finding.confidence,
+                    tags=extract_tags(finding),
+                ))
 
     return lessons

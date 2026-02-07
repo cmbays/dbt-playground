@@ -192,21 +192,28 @@ class SessionOrchestrator:
             SessionNotFoundError: If session not found
             InvalidSessionStateError: If not in INVESTIGATING state
         """
+        # Validate session and state
         session = self._get_session(session_id)
         self._require_state(
             session, SessionStatus.INVESTIGATING, 'submit findings',
         )
 
-        # Store findings
-        session.agent_findings.append(findings)
+        # Validate session ID match if present in findings
+        if hasattr(findings, 'session_id') and findings.session_id != session_id:
+            raise ValueError(
+                f"Findings session_id '{findings.session_id}' does not match "
+                f"session '{session_id}'"
+            )
 
-        # Mark agent as complete - require valid assignment
+        # Validate agent assignment before mutating state
         assignment = session.get_assignment(findings.agent_name)
         if not assignment:
             raise AgentNotFoundError(
                 f"Agent '{findings.agent_name}' not assigned to session '{session_id}'"
             )
 
+        # All validations passed - now mutate state
+        session.agent_findings.append(findings)
         assignment.status = AgentStatus.COMPLETE
         assignment.completed_at = datetime.now(UTC)
         self._registry.update_agent_status(

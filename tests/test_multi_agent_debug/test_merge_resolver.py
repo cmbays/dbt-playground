@@ -688,45 +688,31 @@ class TestExtractLessons:
 
     def test_high_confidence_root_cause_generates_lesson(self):
         """High-confidence root causes generate lessons."""
-        zone = WorkZone(name='test', description='test')
-        findings = [
-            AgentFindings(
-                agent_name='alpha',
-                session_id='MA-001',
-                zone=zone,
-                findings=[
-                    Finding(
-                        description='Database pool undersized',
-                        classification='root_cause',
-                        confidence=0.9,
-                        proposed_fix='Increase pool size',
-                    ),
-                ],
+        # Consensus findings (list[Finding])
+        consensus = [
+            Finding(
+                description='Database pool undersized',
+                classification='root_cause',
+                confidence=0.9,
+                proposed_fix='Increase pool size',
             ),
         ]
-        lessons = _extract_lessons('MA-001', findings, [])
+        lessons = _extract_lessons('MA-001', consensus, [])
         assert len(lessons) >= 1
         assert lessons[0].confidence >= 0.8
 
     def test_low_confidence_no_lesson(self):
         """Low-confidence findings do not generate lessons."""
-        zone = WorkZone(name='test', description='test')
-        findings = [
-            AgentFindings(
-                agent_name='alpha',
-                session_id='MA-001',
-                zone=zone,
-                findings=[
-                    Finding(
-                        description='Maybe something',
-                        classification='root_cause',
-                        confidence=0.3,
-                        proposed_fix='Try something',
-                    ),
-                ],
+        # Consensus findings (list[Finding])
+        consensus = [
+            Finding(
+                description='Maybe something',
+                classification='root_cause',
+                confidence=0.3,
+                proposed_fix='Try something',
             ),
         ]
-        lessons = _extract_lessons('MA-001', findings, [])
+        lessons = _extract_lessons('MA-001', consensus, [])
         assert len(lessons) == 0
 
     def test_resolved_conflict_generates_lesson(self):
