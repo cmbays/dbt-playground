@@ -1,14 +1,16 @@
 # Workflow State
 
-**Last Updated**: 2026-02-05T05:30:00Z
-**Active Session**: Workflow Hub v2 Epic Planning Complete
-**Current Status**: v0.11.3 Released | 3 Epics Planned (Memory v2, Workflow Hub v2, UX Maturation)
+**Last Updated**: 2026-02-06T12:00:00Z
+**Active Session**: WAVE3-030 Multi-Agent Debug Coordination
+**Current Status**: v0.11.3 Released | WAVE3-030 Day 1 IN PROGRESS
 
 ---
 
 ## Quick Resume
 
-**To start Wave 3 P3 (v0.11.4)**: `/supervisor resume wave3 p3` - 7 tasks (#266-#272), 55h
+**To resume WAVE3-030**: `/supervisor resume wave3 p3` - Day 1 of 5 complete
+**Branch**: `feat/wave3-030-multi-agent-debug`
+**Sprint Plan**: `temp/WAVE3-030_SPRINT_PLAN.md`
 **To start Workflow Hub v2 (v0.13)**: Begin with Slice 1 (#258) - Single-Worktree Task Management
 **To resume Agent Memory v2.0 (v0.12)**: Start with VS1 (#252) - foundation slice
 **UX Maturation**: #243 queued for post-Memory v2
@@ -523,7 +525,7 @@ WAVE3-020 (#237) ──────────> WAVE3-021 (#238)
 - `scripts/debug-tracker.py` + `scripts/lessons-analyzer.py` (2 CLIs)
 - `scripts/lib/debug_session/` + `scripts/lib/lessons_analyzer/` (13 modules)
 - `temp/vibe_coding/OBSERVABILITY_INTEGRATION.md` (2,500+ words)
-- `temp/vibe_coding/DEBUG_REPORTS/*.md` (4 templates)
+- `temp/DEBUG_REPORTS/*.md` (4 templates)
 - `temp/AGENT_REPORTS/wave3-p1-days5-6/*.md` (3 integration reports)
 - `temp/WAVE3_P2_SPRINT_PLAN.md` (35+ hours, 7 tasks)
 - `temp/WAVE3_P1_SPRINT_SUMMARY.md` (comprehensive retrospective)
@@ -645,7 +647,7 @@ WAVE3-020 (#237) ──────────> WAVE3-021 (#238)
 
 | Task ID | Issue | Title | Owner | Effort | Status | Deliverables |
 |---------|-------|-------|-------|--------|--------|--------------|
-| WAVE3-001 | #223 | DEBUG_REPORTS folder structure | @architect | 2h | ✅ DONE | temp/vibe_coding/DEBUG_REPORTS/ + README + templates + example |
+| WAVE3-001 | #223 | DEBUG_REPORTS folder structure | @architect | 2h | ✅ DONE | temp/DEBUG_REPORTS/ + README + templates + example |
 | WAVE3-002 | #224 | Expedited path for trivial bugs | @planner | 1.5h | ✅ DONE | temp/vibe_coding/EXPEDITED_PATH.md (10 categories, 3-step protocol) |
 | WAVE3-003 | #225 | Distributed systems section | @architect | 3h | ✅ DONE | temp/vibe_coding/DISTRIBUTED_SYSTEMS.md (3,800 words) + updated x_post_backend.txt |
 | WAVE3-004 | #226 | Create ADRs | @planner | 1h | ✅ READY | ADR-019, ADR-020, ADR-021, ADR-022 (files ready to commit) |
@@ -796,7 +798,7 @@ WAVE3-002 (#224) ────────────┘ (independent)
 - @developer: 10h (Track C lead)
 
 **Key Files Created**:
-- `temp/vibe_coding/DEBUG_REPORTS/*.md` (4 files: templates + README)
+- `temp/DEBUG_REPORTS/*.md` (4 files: templates + README)
 - `temp/WAVE3_DESIGN_DOCS/*.md` (2 files: WAVE3-020/021 designs)
 - `memory/wave3-p1-planning-2026-02-04.md` (planning reference)
 - `temp/WORKFLOW_STATE.md` (this file, updated)
