@@ -340,6 +340,7 @@ class TestCreateSessionConfig:
             agents=simple_agents,
             zones=simple_zones,
             session_folder='temp/DEBUG_REPORTS/session-2026-02-15',
+            session_id='test-session',
             debug_session_id='DBG-2026-02-15-001',
         )
         assert config.lead_agent == 'backend'
@@ -355,6 +356,7 @@ class TestCreateSessionConfig:
             agents=simple_agents,
             zones=simple_zones,
             session_folder='temp/sessions/test',
+            session_id='test-session',
             debug_session_id='DBG-001',
         )
         assert len(config.agent_names) == 2
@@ -367,6 +369,7 @@ class TestCreateSessionConfig:
             agents=simple_agents,
             zones=simple_zones,
             session_folder='temp/sessions/test',
+            session_id='test-session',
             debug_session_id='DBG-001',
             context='Kubernetes microservice with race condition',
         )

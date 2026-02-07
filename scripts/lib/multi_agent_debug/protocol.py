@@ -194,6 +194,7 @@ def get_required_capabilities(
 def partition_blast_radius(
     zones: list[WorkZone],
     agents: list[AgentProfile],
+    session_id: str = "unknown-session",
 ) -> list[WorkAssignment]:
     """Partition blast radius into non-overlapping work assignments.
 
@@ -203,6 +204,7 @@ def partition_blast_radius(
     Args:
         zones: Work zones to assign (pre-defined by lead agent)
         agents: Available agents to assign
+        session_id: Multi-agent session ID for tracking
 
     Returns:
         List of work assignments
@@ -243,6 +245,7 @@ def partition_blast_radius(
         if best_agent is not None:
             assignments.append(WorkAssignment(
                 agent_name=best_agent.name,
+                session_id=session_id,
                 zone=zone,
             ))
             assigned_agents.add(best_agent.name)
@@ -312,6 +315,7 @@ def create_session_config(
     agents: list[AgentProfile],
     zones: list[WorkZone],
     session_folder: str,
+    session_id: str,
     debug_session_id: str,
     context: Optional[str] = None,
 ) -> SessionConfig:
@@ -326,6 +330,7 @@ def create_session_config(
         agents: Available agents
         zones: Work zones to partition
         session_folder: Path for session artifacts
+        session_id: Multi-agent session ID
         debug_session_id: Link to parent debug session
         context: Additional context
 
@@ -348,7 +353,7 @@ def create_session_config(
     )
 
     # Partition work
-    assignments = partition_blast_radius(zones, agents)
+    assignments = partition_blast_radius(zones, agents, session_id)
 
     return SessionConfig(
         bug_description=bug_description,

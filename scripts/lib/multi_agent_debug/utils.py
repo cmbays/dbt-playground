@@ -50,4 +50,8 @@ def extract_tags(finding: Finding) -> list[str]:
         if any(kw in text for kw in keywords):
             tags.append(tag)
 
+    # If no tags matched from keywords, use classification as fallback
+    if not tags and finding.classification:
+        tags.append(finding.classification)
+
     return tags

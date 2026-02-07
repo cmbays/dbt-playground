@@ -708,6 +708,7 @@ class TestE2EComplexityAssessment:
             agents=registry.get_all_agents(),
             zones=zones,
             session_folder='/tmp/test',
+            session_id='test-session',
             debug_session_id='DBG-TEST',
             context='concurrent transactions database deadlock',
         )

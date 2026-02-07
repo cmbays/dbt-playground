@@ -106,6 +106,7 @@ class SessionOrchestrator:
             agents=available,
             zones=zones,
             session_folder=session_folder,
+            session_id=session_id,
             debug_session_id=debug_session_id,
             context=context,
         )

@@ -71,7 +71,7 @@ def merge_findings(
             resolved = resolve_conflict_by_evidence(conflict)
             if resolved.is_resolved:
                 # Human-escalated conflicts go to unresolved even if marked resolved
-                if resolved.resolution_type == ConflictResolution.HUMAN_ESCALATED:
+                if resolved.resolution == ConflictResolution.HUMAN_ESCALATED:
                     unresolved_conflicts.append(resolved)
                 else:
                     resolved_conflicts.append(resolved)
