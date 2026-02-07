@@ -26,9 +26,18 @@ from math import log
 from pathlib import Path
 
 # Add scripts directory to path for lib imports
-sys.path.insert(0, str(Path(__file__).parent))
+# Support both direct execution and importlib.util.spec_from_file_location
+scripts_dir = Path(__file__).resolve().parent
+if str(scripts_dir) not in sys.path:
+    sys.path.insert(0, str(scripts_dir))
 
-from lib.memory_utils import get_memory_dir
+# Try importing - handle both test and direct execution contexts
+try:
+    from lib.memory_utils import get_memory_dir
+except ModuleNotFoundError:
+    # When run via pytest, conftest may have already added parent/scripts
+    # Try importing from scripts.lib instead
+    from scripts.lib.memory_utils import get_memory_dir
 
 # Stop words to ignore in keyword extraction
 STOP_WORDS = {

@@ -20,7 +20,9 @@ from unittest.mock import patch
 import pytest
 
 # Import the module under test
-sys.path.insert(0, str(Path(__file__).parent.parent / 'scripts'))
+scripts_path = Path(__file__).parent.parent / 'scripts'
+if str(scripts_path) not in sys.path:
+    sys.path.insert(0, str(scripts_path))
 
 # We need to handle the import carefully since the script uses dashes
 import importlib.util

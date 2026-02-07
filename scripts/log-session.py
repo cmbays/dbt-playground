@@ -34,9 +34,18 @@ from typing import NamedTuple
 logger = logging.getLogger(__name__)
 
 # Add scripts directory to path for lib imports
-sys.path.insert(0, str(Path(__file__).parent))  # noqa: E402
+# Support both direct execution and importlib.util.spec_from_file_location
+scripts_dir = Path(__file__).resolve().parent
+if str(scripts_dir) not in sys.path:
+    sys.path.insert(0, str(scripts_dir))  # noqa: E402
 
-from lib.memory_utils import get_memory_dir  # noqa: E402
+# Try importing - handle both test and direct execution contexts
+try:
+    from lib.memory_utils import get_memory_dir  # noqa: E402
+except ModuleNotFoundError:
+    # When run via pytest, conftest may have already added parent/scripts
+    # Try importing from scripts.lib instead
+    from scripts.lib.memory_utils import get_memory_dir  # noqa: E402
 
 
 class SessionEntry(NamedTuple):
