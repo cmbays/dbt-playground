@@ -11,6 +11,7 @@ from datetime import UTC, datetime
 from typing import Optional
 
 from scripts.lib.multi_agent_debug.exceptions import (
+    AgentNotFoundError,
     InvalidSessionStateError,
     SessionAlreadyExistsError,
     SessionNotFoundError,
@@ -202,7 +203,6 @@ class SessionOrchestrator:
         # Mark agent as complete - require valid assignment
         assignment = session.get_assignment(findings.agent_name)
         if not assignment:
-            from scripts.lib.multi_agent_debug.exceptions import AgentNotFoundError
             raise AgentNotFoundError(
                 f"Agent '{findings.agent_name}' not assigned to session '{session_id}'"
             )
@@ -251,12 +251,12 @@ class SessionOrchestrator:
 
         assignment = session.get_assignment(agent_name)
         if not assignment:
-            from scripts.lib.multi_agent_debug.exceptions import AgentNotFoundError
             raise AgentNotFoundError(
                 f"Agent '{agent_name}' not assigned to session '{session_id}'"
             )
 
         assignment.status = AgentStatus.BLOCKED
+        assignment.blockers = blockers
         self._registry.update_agent_status(
             agent_name=agent_name,
             session_id=session_id,
@@ -332,6 +332,7 @@ class SessionOrchestrator:
             )
 
         session.status = SessionStatus.ESCALATED
+        session.escalation_reason = reason
         session.updated_at = datetime.now(UTC)
 
         # Release all agents

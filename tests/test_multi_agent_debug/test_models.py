@@ -279,8 +279,8 @@ class TestMultiAgentSession:
             bug_description='Test bug',
             lead_agent='alpha',
             assignments=[
-                WorkAssignment(agent_name='alpha', session_id="test-session", zone=sample_zone),
-                WorkAssignment(agent_name='beta', session_id="test-session", zone=sample_zone),
+                WorkAssignment(agent_name='alpha', session_id="MA-001", zone=sample_zone),
+                WorkAssignment(agent_name='beta', session_id="MA-001", zone=sample_zone),
             ],
         )
         assert session.agent_count == 2
@@ -297,13 +297,13 @@ class TestMultiAgentSession:
             assignments=[
                 WorkAssignment(
                     agent_name='alpha',
-            session_id="test-session",
+            session_id="MA-001",
             zone=zone_a,
                     status=AgentStatus.COMPLETE,
                 ),
                 WorkAssignment(
                     agent_name='beta',
-            session_id="test-session",
+            session_id="MA-001",
             zone=zone_b,
                     status=AgentStatus.INVESTIGATING,
                 ),
@@ -324,7 +324,7 @@ class TestMultiAgentSession:
             bug_description='Test bug',
             lead_agent='alpha',
             assignments=[
-                WorkAssignment(agent_name='alpha', session_id="test-session", zone=sample_zone),
+                WorkAssignment(agent_name='alpha', session_id="MA-001", zone=sample_zone),
             ],
         )
         assert session.get_assignment('alpha') is not None

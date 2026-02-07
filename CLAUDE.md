@@ -6,27 +6,17 @@ This is a dbt learning project for data transformation best practices, agent orc
 
 **Key Philosophy**: Leave the codebase better than you found it. Fight entropy.
 
-## Current Phase
+## Project Status
 
-**Status**: v0.10.0 - Agent Orchestration & Dashboard System (2026-02-04)
+Read the @temp/WORKFLOW_STATE.md to see check status of project and recent notes. Always write milestone updates here.
 
-- dbt 1.11.2 + duckdb-adapter 1.10.0 working
-- 31 models total (staging, intermediate, dimensional, analytics, quarantine)
-- 425 dbt tests passing + 211 Python unit tests + 17 Playwright E2E tests
-- **v0.10 Agent Orchestration Features**:
-  - **FS1 Agent Memory**: Daily session logs, weekly consolidation, compound learning loop
-  - **FS2 Kanban Workflow**: Checklist schema, transition guards, WIP tracking
-  - **FS3 QA Enforcement**: qa-reviewer persona, QA_REPORT.md template, /qa command
-  - **FS5 Metrics Dashboard**: Agent Visualizer integration, DuckDB metrics (ADR-015)
-  - **FS7 GitHub Integration**: CODEOWNERS, task file sync, issue-ID naming
-  - **Worktree Monitor v2.0**: E2E tests, protocol-based DI, YAML config
-- Interactive playgrounds: Workflow Hub (v0.10.0), Learning Playground, Worktree Monitor
-- Security hardening: XSS prevention, Mermaid strict mode, ARIA accessibility
-- Agent context management with inter-agent reports
-- uv workflow fully implemented (pyproject.toml, uv.lock, PEP 723 scripts)
-- GitHub Actions automation: PR validation, issue linking, auto-labeling, dbt CI tests
-- Self-hosted GitHub Actions runner for CI
-- ADR tracking: 15 ADRs indexed (ADR-015: DuckDB for metrics)
+## Git/GitHub Protocol
+
+- ALWAYS commit changes on a new branch
+- Never commit directly to main
+- Use the commit-commands plugin for running git
+- Use the **GitHub MCP** app for ALL Pull Requests and Issue management.
+- DO NOT use Bash commands for git operations unless both MCP servers fail.
 
 **Next**: v0.11 - Architecture Review & Documentation Level-Up
 

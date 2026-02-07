@@ -88,13 +88,13 @@ def basic_session(backend_zone, frontend_zone):
         assignments=[
             WorkAssignment(
                 agent_name='alpha',
-            session_id="test-session",
+            session_id="MA-TEST-001",
             zone=backend_zone,
                 status=AgentStatus.ASSIGNED,
             ),
             WorkAssignment(
                 agent_name='beta',
-            session_id="test-session",
+            session_id="MA-TEST-001",
             zone=frontend_zone,
                 status=AgentStatus.ASSIGNED,
             ),

@@ -538,6 +538,9 @@ def _extract_lessons(
             ))
 
     # From high-confidence root causes
+    # Note: Using 0.8 threshold (stricter than lessons.py's 0.7)
+    # because merge resolution extracts lessons only from consensus findings
+    # that have survived conflict resolution and agent agreement.
     for agent_findings in all_findings:
         for finding in agent_findings.root_cause_findings:
             if finding.confidence >= 0.8 and finding.proposed_fix:

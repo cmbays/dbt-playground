@@ -187,6 +187,7 @@ class WorkAssignment:
     findings_path: Optional[str] = None
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    blockers: list[str] = field(default_factory=list)
 
 
 # --- Findings Models ---
@@ -217,6 +218,11 @@ class Finding:
     confidence: float = 0.5  # 0.0 to 1.0
     files_involved: list[str] = field(default_factory=list)
     proposed_fix: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        """Validate confidence is within valid range."""
+        if not (0.0 <= self.confidence <= 1.0):
+            raise ValueError(f'Finding confidence must be 0.0-1.0, got {self.confidence}')
 
     @property
     def evidence_weight(self) -> float:
@@ -320,6 +326,7 @@ class MultiAgentSession:
     assignments: list[WorkAssignment] = field(default_factory=list)
     agent_findings: list[AgentFindings] = field(default_factory=list)
     resolution: Optional[MergeResolution] = None
+    escalation_reason: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
