@@ -274,9 +274,6 @@ def _calculate_agent_zone_score(
             matching_caps += 1
             total_proficiency += agent.get_proficiency(required)
 
-    if not zone.required_capabilities:
-        return 0.5
-
     match_ratio = matching_caps / len(zone.required_capabilities)
     avg_proficiency = (
         total_proficiency / matching_caps if matching_caps > 0 else 0.0

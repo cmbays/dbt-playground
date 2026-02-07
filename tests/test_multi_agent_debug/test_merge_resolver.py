@@ -15,8 +15,10 @@ from scripts.lib.multi_agent_debug.merge_resolver import (
     _extract_deployment_order,
     _extract_agreed_fixes,
     _extract_lessons,
-    _generate_pattern_name,
-    _extract_tags,
+)
+from scripts.lib.multi_agent_debug.utils import (
+    generate_pattern_name,
+    extract_tags,
 )
 from scripts.lib.multi_agent_debug.models import (
     AgentFindings,
@@ -763,7 +765,7 @@ class TestPatternName:
             description='pool size wrong',
             classification='root_cause',
         )
-        name = _generate_pattern_name(finding)
+        name = generate_pattern_name(finding)
         assert name == 'Pool Size Wrong'
 
     def test_long_description_truncated(self):
@@ -772,7 +774,7 @@ class TestPatternName:
             description='A' * 100,
             classification='root_cause',
         )
-        name = _generate_pattern_name(finding)
+        name = generate_pattern_name(finding)
         assert len(name) <= 60
         assert name.endswith('...')
 
@@ -786,7 +788,7 @@ class TestExtractTags:
             description='Database pool connection issue',
             classification='root_cause',
         )
-        tags = _extract_tags(finding)
+        tags = extract_tags(finding)
         assert 'database' in tags
 
     def test_performance_tags(self):
@@ -795,7 +797,7 @@ class TestExtractTags:
             description='Timeout causing latency',
             classification='root_cause',
         )
-        tags = _extract_tags(finding)
+        tags = extract_tags(finding)
         assert 'performance' in tags
 
     def test_no_keywords_uses_classification(self):
@@ -804,7 +806,7 @@ class TestExtractTags:
             description='Something unusual happened',
             classification='root_cause',
         )
-        tags = _extract_tags(finding)
+        tags = extract_tags(finding)
         assert 'root_cause' in tags
 
     def test_multiple_tags(self):
@@ -813,7 +815,7 @@ class TestExtractTags:
             description='Database timeout in api endpoint',
             classification='root_cause',
         )
-        tags = _extract_tags(finding)
+        tags = extract_tags(finding)
         assert 'database' in tags
         assert 'performance' in tags
         assert 'api' in tags

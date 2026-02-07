@@ -16,6 +16,7 @@ from scripts.lib.multi_agent_debug.conflict_detector import (
     resolve_conflict_by_evidence,
     get_conflict_summary,
 )
+from scripts.lib.multi_agent_debug.manifest import _findings_filename
 from scripts.lib.multi_agent_debug.models import (
     AgentFindings,
     Conflict,
@@ -23,6 +24,10 @@ from scripts.lib.multi_agent_debug.models import (
     Finding,
     LessonCandidate,
     MergeResolution,
+)
+from scripts.lib.multi_agent_debug.utils import (
+    generate_pattern_name,
+    extract_tags,
 )
 
 
@@ -65,7 +70,11 @@ def merge_findings(
         for conflict in conflicts:
             resolved = resolve_conflict_by_evidence(conflict)
             if resolved.is_resolved:
-                resolved_conflicts.append(resolved)
+                # Human-escalated conflicts go to unresolved even if marked resolved
+                if resolved.resolution_type == ConflictResolution.HUMAN_ESCALATED:
+                    unresolved_conflicts.append(resolved)
+                else:
+                    resolved_conflicts.append(resolved)
             else:
                 unresolved_conflicts.append(resolved)
     else:
@@ -147,7 +156,7 @@ def generate_resolution_document(
         primary = agent_findings.primary_finding
         key_finding = primary.description if primary else 'No findings'
         status = 'COMPLETE'
-        filename = f'agent_{agent_findings.agent_name}_findings.md'
+        filename = _findings_filename(agent_findings.agent_name)
         lines.append(
             f'| {agent_findings.agent_name} '
             f'| {filename} '
@@ -514,7 +523,7 @@ def _extract_lessons(
         ):
             finding = conflict.resolved_finding
             lessons.append(LessonCandidate(
-                pattern_name=_generate_pattern_name(finding),
+                pattern_name=generate_pattern_name(finding),
                 context=f'Multi-agent debug session: {session_id}',
                 problem=finding.description,
                 solution=finding.proposed_fix or 'Investigation finding',
@@ -525,14 +534,14 @@ def _extract_lessons(
                 source_session=session_id,
                 source_conflict=conflict.conflict_id,
                 confidence=finding.confidence,
-                tags=_extract_tags(finding),
+                tags=extract_tags(finding),
             ))
 
     # From high-confidence root causes
     for agent_findings in all_findings:
         for finding in agent_findings.root_cause_findings:
             if finding.confidence >= 0.8 and finding.proposed_fix:
-                pattern = _generate_pattern_name(finding)
+                pattern = generate_pattern_name(finding)
                 # Avoid duplicates from conflicts
                 if not any(l.pattern_name == pattern for l in lessons):
                     lessons.append(LessonCandidate(
@@ -543,55 +552,7 @@ def _extract_lessons(
                         detection='High-confidence root cause finding',
                         source_session=session_id,
                         confidence=finding.confidence,
-                        tags=_extract_tags(finding),
+                        tags=extract_tags(finding),
                     ))
 
     return lessons
-
-
-def _generate_pattern_name(finding: Finding) -> str:
-    """Generate a human-readable pattern name from a finding.
-
-    Args:
-        finding: The finding
-
-    Returns:
-        Pattern name string
-    """
-    desc = finding.description
-    # Capitalize first letter, truncate if long
-    if len(desc) > 60:
-        desc = desc[:57] + '...'
-    return desc.title()
-
-
-def _extract_tags(finding: Finding) -> list[str]:
-    """Extract tags from a finding based on keywords.
-
-    Args:
-        finding: The finding
-
-    Returns:
-        List of tags
-    """
-    tags: list[str] = []
-    text = (finding.description + ' ' + (finding.proposed_fix or '')).lower()
-
-    tag_keywords = {
-        'database': ['database', 'db', 'sql', 'query', 'pool', 'connection'],
-        'performance': ['slow', 'timeout', 'latency', 'bottleneck', 'memory'],
-        'concurrency': ['race', 'concurrent', 'thread', 'lock', 'deadlock'],
-        'configuration': ['config', 'setting', 'parameter', 'env'],
-        'frontend': ['ui', 'component', 'render', 'dom', 'css'],
-        'api': ['api', 'endpoint', 'request', 'response', 'http'],
-        'security': ['auth', 'token', 'permission', 'credential'],
-    }
-
-    for tag, keywords in tag_keywords.items():
-        if any(kw in text for kw in keywords):
-            tags.append(tag)
-
-    if not tags:
-        tags.append(finding.classification)
-
-    return tags

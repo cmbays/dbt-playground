@@ -28,6 +28,10 @@ from scripts.lib.multi_agent_debug.models import (
     LessonCandidate,
     MergeResolution,
 )
+from scripts.lib.multi_agent_debug.utils import (
+    generate_pattern_name,
+    extract_tags,
+)
 
 
 def extract_debate_patterns(
@@ -87,6 +91,9 @@ def emit_lesson_events(
 
     events_path = _resolve_events_path(events_file)
     emitted = 0
+
+    # Ensure parent directory exists
+    events_path.parent.mkdir(parents=True, exist_ok=True)
 
     with events_path.open('a', encoding='utf-8') as f:
         for lesson in lessons:
@@ -207,7 +214,7 @@ def _extract_from_conflict(
         return None
 
     return LessonCandidate(
-        pattern_name=_generate_pattern_name(finding),
+        pattern_name=generate_pattern_name(finding),
         context=f'Multi-agent debate in session {session_id}',
         problem=finding.description,
         solution=finding.proposed_fix or 'Investigation finding (no fix proposed)',
@@ -218,7 +225,7 @@ def _extract_from_conflict(
         source_session=session_id,
         source_conflict=conflict.conflict_id,
         confidence=finding.confidence,
-        tags=_extract_tags(finding),
+        tags=extract_tags(finding),
     )
 
 
@@ -248,14 +255,14 @@ def _extract_from_finding(
         return None
 
     return LessonCandidate(
-        pattern_name=_generate_pattern_name(finding),
+        pattern_name=generate_pattern_name(finding),
         context=f'Multi-agent consensus in session {session_id}',
         problem=finding.description,
         solution=finding.proposed_fix,
         detection='High-confidence root cause from multi-agent investigation',
         source_session=session_id,
         confidence=finding.confidence,
-        tags=_extract_tags(finding),
+        tags=extract_tags(finding),
     )
 
 
@@ -313,7 +320,7 @@ def _resolve_events_path(events_file: Optional[str] = None) -> Path:
     return Path('memory') / 'events.jsonl'
 
 
-def _generate_pattern_name(finding: Finding) -> str:
+def generate_pattern_name(finding: Finding) -> str:
     """Generate a human-readable pattern name from a finding.
 
     Args:
@@ -328,7 +335,7 @@ def _generate_pattern_name(finding: Finding) -> str:
     return desc.title()
 
 
-def _extract_tags(finding: Finding) -> list[str]:
+def extract_tags(finding: Finding) -> list[str]:
     """Extract tags from a finding based on keyword matching.
 
     Args:

@@ -198,17 +198,22 @@ class SessionOrchestrator:
         # Store findings
         session.agent_findings.append(findings)
 
-        # Mark agent as complete
+        # Mark agent as complete - require valid assignment
         assignment = session.get_assignment(findings.agent_name)
-        if assignment:
-            assignment.status = AgentStatus.COMPLETE
-            assignment.completed_at = datetime.now(UTC)
-            self._registry.update_agent_status(
-                agent_name=findings.agent_name,
-                session_id=session_id,
-                status=AgentStatus.COMPLETE,
-                findings_path=assignment.findings_path,
+        if not assignment:
+            from scripts.lib.multi_agent_debug.exceptions import AgentNotFoundError
+            raise AgentNotFoundError(
+                f"Agent '{findings.agent_name}' not assigned to session '{session_id}'"
             )
+
+        assignment.status = AgentStatus.COMPLETE
+        assignment.completed_at = datetime.now(UTC)
+        self._registry.update_agent_status(
+            agent_name=findings.agent_name,
+            session_id=session_id,
+            status=AgentStatus.COMPLETE,
+            findings_path=assignment.findings_path,
+        )
 
         session.updated_at = datetime.now(UTC)
 
@@ -244,13 +249,18 @@ class SessionOrchestrator:
         )
 
         assignment = session.get_assignment(agent_name)
-        if assignment:
-            assignment.status = AgentStatus.BLOCKED
-            self._registry.update_agent_status(
-                agent_name=agent_name,
-                session_id=session_id,
-                status=AgentStatus.BLOCKED,
+        if not assignment:
+            from scripts.lib.multi_agent_debug.exceptions import AgentNotFoundError
+            raise AgentNotFoundError(
+                f"Agent '{agent_name}' not assigned to session '{session_id}'"
             )
+
+        assignment.status = AgentStatus.BLOCKED
+        self._registry.update_agent_status(
+            agent_name=agent_name,
+            session_id=session_id,
+            status=AgentStatus.BLOCKED,
+        )
 
         session.updated_at = datetime.now(UTC)
         return session
@@ -275,9 +285,6 @@ class SessionOrchestrator:
             SessionNotFoundError: If session not found
             InvalidSessionStateError: If not in MERGING state
         """
-        # Import here to avoid circular imports
-        from scripts.lib.multi_agent_debug.models import MergeResolution
-
         session = self._get_session(session_id)
         self._require_state(
             session, SessionStatus.MERGING, 'complete session',

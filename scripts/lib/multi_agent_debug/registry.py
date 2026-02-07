@@ -220,13 +220,14 @@ class AgentRegistry:
 
         agent = self._agents[agent_name]
 
-        # Check if already assigned to this session
+        # Check if already assigned to this zone in this session
         for existing in self._assignments[agent_name]:
-            if existing.zone.name == zone.name:
+            if existing.session_id == session_id and existing.zone.name == zone.name:
                 raise AgentAlreadyAssignedError(agent_name, session_id)
 
         assignment = WorkAssignment(
             agent_name=agent_name,
+            session_id=session_id,
             zone=zone,
             status=AgentStatus.ASSIGNED,
             started_at=datetime.now(UTC),
@@ -267,8 +268,18 @@ class AgentRegistry:
                 f"No assignments found for agent '{agent_name}'"
             )
 
-        # Update the most recent assignment
-        assignment = assignments[-1]
+        # Find the assignment for this specific session
+        assignment = None
+        for a in assignments:
+            if a.session_id == session_id:
+                assignment = a
+                break
+
+        if not assignment:
+            raise AgentNotFoundError(
+                f"No assignment found for agent '{agent_name}' in session '{session_id}'"
+            )
+
         assignment.status = status
 
         if findings_path:
@@ -293,8 +304,19 @@ class AgentRegistry:
             raise AgentNotFoundError(agent_name)
 
         agent = self._agents[agent_name]
-        if agent.current_sessions > 0:
-            agent.current_sessions -= 1
+        assignments = self._assignments[agent_name]
+
+        # Find and remove the assignment for this session
+        assignment_to_remove = None
+        for assignment in assignments:
+            if assignment.session_id == session_id:
+                assignment_to_remove = assignment
+                break
+
+        if assignment_to_remove:
+            assignments.remove(assignment_to_remove)
+            if agent.current_sessions > 0:
+                agent.current_sessions -= 1
 
     def get_agent_assignments(self, agent_name: str) -> list[WorkAssignment]:
         """Get all assignments for an agent.
@@ -313,21 +335,21 @@ class AgentRegistry:
         return list(self._assignments[agent_name])
 
     def get_session_agents(self, session_id: str) -> list[AgentProfile]:
-        """Get all agents assigned to a session.
-
-        Note: Since assignments don't track session_id directly,
-        this returns agents with active assignments.
+        """Get all agents assigned to a specific session.
 
         Args:
             session_id: Session ID
 
         Returns:
-            List of agent profiles with active assignments
+            List of agent profiles with assignments in this session
         """
         agents_in_session = []
         for agent_name, assignments in self._assignments.items():
-            if assignments:  # Has active assignments
-                agents_in_session.append(self._agents[agent_name])
+            # Check if any assignments match this session
+            for assignment in assignments:
+                if assignment.session_id == session_id:
+                    agents_in_session.append(self._agents[agent_name])
+                    break  # Don't add same agent twice
         return agents_in_session
 
     def get_utilization(self) -> dict[str, dict]:

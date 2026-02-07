@@ -84,6 +84,13 @@ class ComplexityFactor:
     score: float       # 0.0 to 1.0
     description: str
 
+    def __post_init__(self):
+        """Validate score is in valid range."""
+        if not 0.0 <= self.score <= 1.0:
+            raise ValueError(
+                f"ComplexityFactor.score must be 0.0-1.0, got {self.score}"
+            )
+
 
 @dataclass
 class ComplexityAssessment:
@@ -115,6 +122,13 @@ class AgentCapability:
 
     name: str                # e.g., 'backend', 'frontend', 'data', 'infra'
     proficiency: float = 1.0  # 0.0 to 1.0
+
+    def __post_init__(self):
+        """Validate proficiency is in valid range."""
+        if not 0.0 <= self.proficiency <= 1.0:
+            raise ValueError(
+                f"AgentCapability.proficiency must be 0.0-1.0, got {self.proficiency}"
+            )
 
 
 @dataclass
@@ -167,6 +181,7 @@ class WorkAssignment:
     """Assignment of an agent to a work zone."""
 
     agent_name: str
+    session_id: str
     zone: WorkZone
     status: AgentStatus = AgentStatus.ASSIGNED
     findings_path: Optional[str] = None

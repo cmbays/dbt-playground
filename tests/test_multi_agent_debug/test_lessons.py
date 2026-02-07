@@ -17,8 +17,10 @@ from scripts.lib.multi_agent_debug.lessons import (
     _extract_from_finding,
     _build_lesson_event,
     _resolve_events_path,
-    _generate_pattern_name,
-    _extract_tags,
+)
+from scripts.lib.multi_agent_debug.utils import (
+    generate_pattern_name,
+    extract_tags,
 )
 from scripts.lib.multi_agent_debug.models import (
     Conflict,
@@ -627,7 +629,7 @@ class TestGeneratePatternName:
             description='pool size wrong',
             classification='root_cause',
         )
-        name = _generate_pattern_name(finding)
+        name = generate_pattern_name(finding)
         assert name == 'Pool Size Wrong'
 
     def test_long_name_truncated(self):
@@ -636,7 +638,7 @@ class TestGeneratePatternName:
             description='A' * 100,
             classification='root_cause',
         )
-        name = _generate_pattern_name(finding)
+        name = generate_pattern_name(finding)
         assert len(name) <= 60
         assert name.endswith('...')
 
@@ -650,7 +652,7 @@ class TestExtractTags:
             description='Database pool connection issue',
             classification='root_cause',
         )
-        tags = _extract_tags(finding)
+        tags = extract_tags(finding)
         assert 'database' in tags
 
     def test_no_keywords_uses_classification(self):
@@ -659,7 +661,7 @@ class TestExtractTags:
             description='Something unusual happened',
             classification='root_cause',
         )
-        tags = _extract_tags(finding)
+        tags = extract_tags(finding)
         assert 'root_cause' in tags
 
     def test_includes_fix_text(self):
@@ -669,5 +671,5 @@ class TestExtractTags:
             classification='root_cause',
             proposed_fix='Fix the database connection pool',
         )
-        tags = _extract_tags(finding)
+        tags = extract_tags(finding)
         assert 'database' in tags
