@@ -14,11 +14,17 @@ Test IDs reference FS1_TEST_SUITE_BETA.md specifications.
 # Import the modules under test
 import importlib.util
 import json
+import sys
 import threading
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
+
+# Add scripts directory to path for lib imports
+scripts_path = Path(__file__).parent.parent / 'scripts'
+if str(scripts_path) not in sys.path:
+    sys.path.insert(0, str(scripts_path))
 
 log_session_path = Path(__file__).parent.parent / 'scripts' / 'log-session.py'
 spec = importlib.util.spec_from_file_location('log_session', log_session_path)

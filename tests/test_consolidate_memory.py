@@ -15,10 +15,16 @@ Test IDs reference FS1_TEST_SUITE_ALPHA.md and FS1_TEST_SUITE_BETA.md specificat
 # Import the module under test
 import importlib.util
 import json
+import sys
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pytest
+
+# Add scripts directory to path for lib imports
+scripts_path = Path(__file__).parent.parent / 'scripts'
+if str(scripts_path) not in sys.path:
+    sys.path.insert(0, str(scripts_path))
 
 script_path = Path(__file__).parent.parent / 'scripts' / 'consolidate-memory.py'
 spec = importlib.util.spec_from_file_location('consolidate_memory', script_path)
