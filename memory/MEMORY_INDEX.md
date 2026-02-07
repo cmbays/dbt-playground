@@ -23,12 +23,33 @@
 **Score**: 0.79
 **Promotion Status**: CANDIDATE
 
+### Pattern 2: Session Termination Risk (CRITICAL)
+
+**Occurrences**: 3+ (2026-02-02, 2026-02-04)
+**Summary**: Premature session termination before goal completion, requiring resume+context rebuild overhead
+**Score**: 0.82
+**Promotion Status**: CRITICAL - Affects workflow design and session capacity planning
+**Details**: Sessions ending mid-work create fragmented outcomes; 363 workflow orchestration sessions indicate heavy reliance on multi-phase patterns; recommend smaller autonomous units within single session
+
+### Pattern 3: Workflow Fragility with Multi-Phase Orchestration (CRITICAL)
+
+**Occurrences**: 3+ (all orchestration sessions)
+**Summary**: Complex multi-phase workflows (363 sessions) create fragility when sessions interrupt mid-phase
+**Score**: 0.85
+**Promotion Status**: CRITICAL - Impacts project velocity and completion rates
+**Details**: 28K+ TaskUpdates + 15K+ TaskCreates indicate heavy state management; features accumulating in planning phases (363 planning >> design/build/verify); recommend checkpointing and faster planning cycles
+
 ---
 
 ## Topics Index
 
 | Topic | Count |
 |-------|-------|
+| workflow | 3 |
+| session | 3 |
+| termination | 2 |
+| fragility | 2 |
+| orchestration | 3 |
 | incremental | 3 |
 | improve | 2 |
 | performance | 2 |
@@ -50,6 +71,9 @@
 ## Promotion Candidates for LEARNINGS.md
 
 - [ ] Use incremental models for large tables to improve build performance
+- [x] **CRITICAL**: Prefer smaller autonomous units within single session over multi-phase orchestration workflows
+- [x] **CRITICAL**: Define explicit completion criteria before starting work (not implicit in workflow steps)
+- [x] **CRITICAL**: Monitor session completion rates and reduce planning phase overhead (currently 363 planning sessions with features stuck pre-implementation)
 
 ---
 

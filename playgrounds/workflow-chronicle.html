@@ -4,47 +4,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Workflow Chronicle - dbt-playground</title>
+
+  <!-- Google Fonts: Inter + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
-    /* CSS Variables */
+    /* ==================== Design System Tokens ====================
+       Philosophy: "Linear calm + Raycast polish + Neobrutalist delight"
+       - Base layer: Monochrome, opacity hierarchy, extreme restraint
+       - Attention layer: Bold borders, vibrant status colors, springy animations
+       ==================== */
     :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f5f5f5;
-      --bg-tertiary: #e8e8e8;
-      --bg-card: #ffffff;
-      --text-primary: #1a1a1a;
-      --text-secondary: #666666;
-      --text-muted: #999999;
-      --accent-primary: #2563eb;
-      --accent-success: #16a34a;
-      --accent-warning: #ca8a04;
-      --accent-danger: #dc2626;
-      --accent-purple: #7c3aed;
-      --accent-feat: #16a34a;
-      --accent-fix: #dc2626;
-      --accent-docs: #2563eb;
-      --accent-chore: #737373;
-      --accent-test: #7c3aed;
-      --accent-refactor: #ca8a04;
-      --border-color: #e5e5e5;
-      --shadow: 0 1px 3px rgba(0,0,0,0.1);
-      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
+      /* === BASE LAYER (Monochrome) === */
+
+      /* Background - Near-black foundation */
+      --color-bg-primary: #09090b;
+      --color-bg-secondary: #0f0f11;
+      --color-bg-elevated: #18181b;
+      --color-bg-surface: #1c1c1f;
+
+      /* Text - Opacity-based hierarchy */
+      --color-text-primary: rgba(255, 255, 255, 0.87);
+      --color-text-secondary: rgba(255, 255, 255, 0.60);
+      --color-text-muted: rgba(255, 255, 255, 0.38);
+      --color-text-disabled: rgba(255, 255, 255, 0.20);
+      --color-text-inverse: #000; /* For text on vibrant backgrounds */
+
+      /* Borders - Subtle definition */
+      --color-border-subtle: rgba(255, 255, 255, 0.08);
+      --color-border-default: rgba(255, 255, 255, 0.12);
+      --color-border-strong: rgba(255, 255, 255, 0.20);
+
+      /* === ATTENTION LAYER (Status-Driven) === */
+
+      /* Action - Cyan (primary CTAs, interactive focus) */
+      --color-action: #22d3ee;
+      --color-action-hover: #06b6d4;
+      --color-action-bold: #00e5ff;
+
+      /* Success - Green (completions, confirmations) */
+      --color-success: #34d399;
+      --color-success-hover: #10b981;
+      --color-success-bold: #00ff88;
+
+      /* Error - Red (failures, destructive actions) */
+      --color-error: #f87171;
+      --color-error-hover: #ef4444;
+      --color-error-bold: #ff4444;
+
+      /* Warning - Amber (cautions, pending states) */
+      --color-warning: #fbbf24;
+      --color-warning-hover: #f59e0b;
+      --color-warning-bold: #ffcc00;
+
+      /* Purple - for agent/feature highlighting */
+      --color-purple: #a78bfa;
+      --color-purple-hover: #8b5cf6;
+      --color-purple-bold: #c084fc;
+
+      /* === EFFECTS === */
+
+      /* Glassmorphism (Raycast-inspired) */
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-bg-subtle: rgba(255, 255, 255, 0.03);
+      --glass-blur: blur(12px);
+      --glass-border: rgba(255, 255, 255, 0.1);
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+
+      /* Neobrutalist Effects */
+      --border-bold: 2px solid;
+      --border-brutal: 3px solid;
+      --shadow-brutal: 4px 4px 0px;
+      --shadow-brutal-sm: 2px 2px 0px;
+
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-normal: 200ms ease;
+      --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      --transition-smooth: 200ms ease-out;
+
+      /* Radii */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+
+      /* === TYPOGRAPHY === */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+
+      /* Type Scale */
+      --text-2xs: 0.625rem;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+
+      /* Spacing */
+      --space-px: 0.125rem;
+      --space-1: 0.25rem;
+      --space-1-5: 0.375rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-12: 3rem;
+
+      /* === COMMIT TYPE COLORS === */
+      --color-type-feat: var(--color-success);
+      --color-type-fix: var(--color-error);
+      --color-type-docs: var(--color-action);
+      --color-type-chore: var(--color-text-muted);
+      --color-type-test: var(--color-purple);
+      --color-type-refactor: var(--color-warning);
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #262626;
-        --bg-tertiary: #333333;
-        --bg-card: #262626;
-        --text-primary: #f5f5f5;
-        --text-secondary: #a3a3a3;
-        --text-muted: #737373;
-        --border-color: #404040;
-        --shadow: 0 1px 3px rgba(0,0,0,0.3);
-      }
-    }
-
+    /* ==================== Base Styles ==================== */
     * {
       margin: 0;
       padding: 0;
@@ -52,125 +137,174 @@
     }
 
     body {
-      font-family: var(--font-family);
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
       line-height: 1.5;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Header */
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ==================== Focus States ==================== */
+    :focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: 2px;
+    }
+
+    /* ==================== Header ==================== */
     .header {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--color-bg-secondary);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border-default);
+      padding: var(--space-3) var(--space-6);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-2);
     }
 
     .header h1 {
-      font-size: 1.25rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
+      letter-spacing: -0.02em;
     }
 
     .version-badge {
-      background: var(--accent-primary);
-      color: white;
-      padding: 0.125rem 0.5rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
+      background: var(--color-action);
+      color: var(--color-text-inverse);
+      padding: var(--space-px) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
       font-weight: 500;
     }
 
     .header-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
+    /* ==================== Buttons ==================== */
     .btn {
-      padding: 0.4rem 0.75rem;
-      border: 1px solid var(--border-color);
-      border-radius: 0.375rem;
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-size: 0.875rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text-primary);
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all var(--transition-fast);
+      text-decoration: none;
     }
 
     .btn:hover {
-      background: var(--bg-tertiary);
+      background: var(--color-bg-surface);
+      border-color: var(--color-border-strong);
     }
 
+    /* Primary button - Neobrutalist attention-grabbing */
     .btn-primary {
-      background: var(--accent-primary);
-      color: white;
-      border-color: var(--accent-primary);
+      background: var(--color-action);
+      color: var(--color-text-inverse);
+      border: var(--border-bold) currentColor;
+      font-weight: 600;
+      box-shadow: var(--shadow-brutal) var(--color-action-bold);
+      transition: all var(--transition-spring);
     }
 
     .btn-primary:hover {
-      opacity: 0.9;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--color-action-bold);
     }
 
-    /* Glance Panel */
+    .btn-primary:active {
+      transform: translate(0, 0);
+      box-shadow: 2px 2px 0px var(--color-action-bold);
+    }
+
+    /* ==================== Glance Panel (Glass) ==================== */
     .glance-panel {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 1.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--glass-border);
+      padding: var(--space-4) var(--space-6);
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
+      gap: var(--space-4);
     }
 
     .glance-item {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: var(--space-1);
     }
 
     .glance-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
     .glance-value {
-      font-size: 1.25rem;
+      font-size: var(--text-xl);
       font-weight: 600;
     }
 
     .glance-value.health {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .health-bar {
       width: 100px;
       height: 8px;
-      background: var(--bg-tertiary);
-      border-radius: 4px;
+      background: var(--color-bg-elevated);
+      border-radius: var(--radius-sm);
       overflow: hidden;
     }
 
     .health-fill {
       height: 100%;
-      border-radius: 4px;
-      transition: width 0.3s ease;
+      border-radius: var(--radius-sm);
+      transition: width var(--transition-spring);
     }
 
-    .health-good { background: var(--accent-success); }
-    .health-fair { background: var(--accent-warning); }
-    .health-poor { background: var(--accent-danger); }
+    .health-good { background: var(--color-success); }
+    .health-fair { background: var(--color-warning); }
+    .health-poor { background: var(--color-error); }
 
-    /* Main Content */
+    /* ==================== Main Content ==================== */
     .main-content {
       flex: 1;
       display: flex;
@@ -178,41 +312,43 @@
       overflow: hidden;
     }
 
-    /* Layer Tabs */
+    /* ==================== Layer Tabs ==================== */
     .layer-tabs {
       display: flex;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-6);
+      background: var(--color-bg-secondary);
+      border-bottom: 1px solid var(--color-border-default);
     }
 
     .layer-tab {
-      padding: 0.4rem 0.75rem;
+      padding: var(--space-2) var(--space-3);
       border: 1px solid transparent;
-      border-radius: 0.375rem;
+      border-radius: var(--radius-md);
       background: transparent;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all var(--transition-fast);
     }
 
     .layer-tab:hover {
-      background: var(--bg-tertiary);
+      background: var(--color-bg-elevated);
     }
 
     .layer-tab.active {
-      background: var(--accent-primary);
-      color: white;
+      background: var(--color-action);
+      color: var(--color-text-inverse);
+      font-weight: 500;
     }
 
-    /* Timeline Container */
+    /* ==================== Timeline Container ==================== */
     .timeline-container {
       flex: 1;
       overflow-x: auto;
       overflow-y: auto;
-      padding: 1.5rem;
+      padding: var(--space-6);
     }
 
     .timeline {
@@ -220,117 +356,121 @@
       position: relative;
     }
 
-    /* Time Axis */
+    /* ==================== Time Axis ==================== */
     .time-axis {
       display: flex;
       gap: 1px;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border-color);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border-default);
     }
 
     .time-marker {
       flex: 1;
       min-width: 100px;
       text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
 
-    /* Commit Layer */
+    /* ==================== Commit Layer ==================== */
     .commit-layer {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .commit-row {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 0.5rem;
-      transition: all 0.15s ease;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
     }
 
     .commit-row:hover {
-      box-shadow: var(--shadow);
-      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-action);
     }
 
     .commit-time {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       min-width: 50px;
       font-family: var(--font-mono);
     }
 
     .commit-type {
-      padding: 0.125rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.75rem;
+      padding: var(--space-px) var(--space-2);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-xs);
       font-weight: 500;
       min-width: 60px;
       text-align: center;
     }
 
-    .type-feat { background: rgba(22, 163, 74, 0.1); color: var(--accent-feat); }
-    .type-fix { background: rgba(220, 38, 38, 0.1); color: var(--accent-fix); }
-    .type-docs { background: rgba(37, 99, 235, 0.1); color: var(--accent-docs); }
-    .type-chore { background: rgba(115, 115, 115, 0.1); color: var(--accent-chore); }
-    .type-test { background: rgba(124, 58, 237, 0.1); color: var(--accent-test); }
-    .type-refactor { background: rgba(202, 138, 4, 0.1); color: var(--accent-refactor); }
-    .type-other { background: var(--bg-tertiary); color: var(--text-secondary); }
+    .type-feat { background: rgba(52, 211, 153, 0.15); color: var(--color-type-feat); }
+    .type-fix { background: rgba(248, 113, 113, 0.15); color: var(--color-type-fix); }
+    .type-docs { background: rgba(34, 211, 238, 0.15); color: var(--color-type-docs); }
+    .type-chore { background: rgba(255, 255, 255, 0.08); color: var(--color-type-chore); }
+    .type-test { background: rgba(167, 139, 250, 0.15); color: var(--color-type-test); }
+    .type-refactor { background: rgba(251, 191, 36, 0.15); color: var(--color-type-refactor); }
+    .type-other { background: var(--color-bg-elevated); color: var(--color-text-secondary); }
 
     .commit-message {
       flex: 1;
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .commit-sha {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       font-family: var(--font-mono);
-      color: var(--text-muted);
+      color: var(--color-text-muted);
     }
 
     .commit-agent {
-      font-size: 0.75rem;
-      color: var(--accent-purple);
+      font-size: var(--text-xs);
+      color: var(--color-purple);
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: var(--space-1);
     }
 
     .commit-stats {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
-    .stat-add { color: var(--accent-success); }
-    .stat-del { color: var(--accent-danger); }
+    .stat-add { color: var(--color-success); }
+    .stat-del { color: var(--color-error); }
 
-    /* Branch Layer */
+    /* ==================== Branch Layer ==================== */
     .branch-layer {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .branch-row {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 0.5rem;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
     }
 
     .branch-name {
@@ -341,27 +481,29 @@
     .branch-bar {
       flex: 1;
       height: 8px;
-      background: var(--accent-primary);
-      border-radius: 4px;
+      background: var(--color-action);
+      border-radius: var(--radius-sm);
       opacity: 0.6;
     }
 
     .branch-stats {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
 
-    /* Insights Panel */
+    /* ==================== Insights Panel (Glass) ==================== */
     .insights-panel {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border-color);
-      padding: 1rem 1.5rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-top: 1px solid var(--glass-border);
+      padding: var(--space-4) var(--space-6);
     }
 
     .insights-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
+      gap: var(--space-4);
     }
 
     .insight-item {
@@ -369,34 +511,34 @@
     }
 
     .insight-value {
-      font-size: 1.5rem;
+      font-size: var(--text-2xl);
       font-weight: 700;
-      color: var(--accent-primary);
+      color: var(--color-action);
     }
 
     .insight-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
 
-    /* Loading State */
+    /* ==================== Loading State ==================== */
     .loading {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 3rem;
-      color: var(--text-muted);
+      padding: var(--space-12);
+      color: var(--color-text-muted);
     }
 
-    /* Empty State */
+    /* ==================== Empty State ==================== */
     .empty-state {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 3rem;
-      color: var(--text-muted);
-      gap: 1rem;
+      padding: var(--space-12);
+      color: var(--color-text-muted);
+      gap: var(--space-4);
     }
 
     .empty-state p {
@@ -404,136 +546,140 @@
       text-align: center;
     }
 
-    /* Decision Layer */
+    /* ==================== Decision Layer ==================== */
     .decision-layer {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: var(--space-4);
     }
 
     .decision-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 0.5rem;
-      padding: 1rem;
-      transition: all 0.15s ease;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      transition: all var(--transition-fast);
     }
 
     .decision-card:hover {
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-md);
     }
 
     .decision-card.answer-no {
-      border-left: 4px solid var(--accent-danger);
+      border-left: var(--border-brutal) var(--color-error);
+      box-shadow: var(--shadow-brutal-sm) var(--color-error-bold);
     }
 
     .decision-card.answer-not-yet {
-      border-left: 4px solid var(--accent-warning);
+      border-left: var(--border-brutal) var(--color-warning);
+      box-shadow: var(--shadow-brutal-sm) var(--color-warning-bold);
     }
 
     .decision-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
+      gap: var(--space-4);
+      margin-bottom: var(--space-3);
     }
 
     .decision-id {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       font-family: var(--font-mono);
-      color: var(--text-muted);
+      color: var(--color-text-muted);
     }
 
     .decision-answer {
-      padding: 0.125rem 0.5rem;
-      border-radius: 0.25rem;
-      font-size: 0.75rem;
+      padding: var(--space-px) var(--space-2);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-xs);
       font-weight: 600;
       text-transform: uppercase;
     }
 
     .decision-answer.no {
-      background: rgba(220, 38, 38, 0.1);
-      color: var(--accent-danger);
+      background: rgba(248, 113, 113, 0.15);
+      color: var(--color-error);
     }
 
     .decision-answer.not-yet {
-      background: rgba(202, 138, 4, 0.1);
-      color: var(--accent-warning);
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--color-warning);
     }
 
     .decision-question {
-      font-size: 1rem;
+      font-size: var(--text-base);
       font-weight: 500;
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--space-2);
     }
 
     .decision-rationale {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.75rem;
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
       white-space: pre-line;
       line-height: 1.6;
     }
 
     .decision-trigger {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      padding: 0.5rem;
-      background: var(--bg-secondary);
-      border-radius: 0.25rem;
-      margin-bottom: 0.5rem;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      padding: var(--space-2);
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-2);
     }
 
     .decision-trigger strong {
-      color: var(--text-secondary);
+      color: var(--color-text-secondary);
     }
 
     .decision-meta {
       display: flex;
-      gap: 1rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      gap: var(--space-4);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       flex-wrap: wrap;
     }
 
     .decision-meta-item {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: var(--space-1);
     }
 
     .confidence-badge {
-      padding: 0.125rem 0.375rem;
-      border-radius: 0.25rem;
-      font-size: 0.625rem;
+      padding: var(--space-px) var(--space-1-5);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-2xs);
       font-weight: 500;
       text-transform: uppercase;
     }
 
     .confidence-high {
-      background: rgba(22, 163, 74, 0.1);
-      color: var(--accent-success);
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--color-success);
     }
 
     .confidence-medium {
-      background: rgba(202, 138, 4, 0.1);
-      color: var(--accent-warning);
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--color-warning);
     }
 
     .confidence-low {
-      background: rgba(220, 38, 38, 0.1);
-      color: var(--accent-danger);
+      background: rgba(248, 113, 113, 0.15);
+      color: var(--color-error);
     }
 
-    /* Footer */
+    /* ==================== Footer ==================== */
     .footer {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border-color);
-      padding: 0.5rem 1.5rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      background: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border-default);
+      padding: var(--space-2) var(--space-6);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       display: flex;
       justify-content: space-between;
     }
@@ -546,12 +692,12 @@
       <span class="version-badge">v1.0</span>
     </h1>
     <div class="header-actions">
-      <button class="btn" onclick="loadData()">Refresh</button>
-      <button class="btn btn-primary" onclick="exportJSON()">Export JSON</button>
+      <button class="btn" onclick="loadData()" aria-label="Refresh chronicle data">Refresh</button>
+      <button class="btn btn-primary" onclick="exportJSON()" aria-label="Export chronicle data as JSON">Export JSON</button>
     </div>
   </header>
 
-  <section class="glance-panel" id="glance-panel">
+  <section class="glance-panel" id="glance-panel" aria-label="At-a-glance metrics">
     <div class="glance-item">
       <span class="glance-label">Branch</span>
       <span class="glance-value" id="glance-branch">--</span>
@@ -564,7 +710,7 @@
       <span class="glance-label">Health</span>
       <div class="glance-value health">
         <span id="glance-health">--</span>
-        <div class="health-bar">
+        <div class="health-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Health score: 0 out of 100">
           <div class="health-fill health-good" id="health-fill" style="width: 0%"></div>
         </div>
       </div>
@@ -580,19 +726,19 @@
   </section>
 
   <main class="main-content">
-    <nav class="layer-tabs">
-      <button class="layer-tab active" data-layer="surface">Surface (Commits)</button>
-      <button class="layer-tab" data-layer="features">Features (Branches)</button>
-      <button class="layer-tab" data-layer="decisions">Decisions</button>
-      <button class="layer-tab" data-layer="bedrock">Bedrock</button>
+    <nav class="layer-tabs" role="tablist" aria-label="Chronicle layers">
+      <button class="layer-tab active" data-layer="surface" role="tab" aria-selected="true" aria-controls="timeline-container">Surface (Commits)</button>
+      <button class="layer-tab" data-layer="features" role="tab" aria-selected="false" aria-controls="timeline-container">Features (Branches)</button>
+      <button class="layer-tab" data-layer="decisions" role="tab" aria-selected="false" aria-controls="timeline-container">Decisions</button>
+      <button class="layer-tab" data-layer="bedrock" role="tab" aria-selected="false" aria-controls="timeline-container">Bedrock</button>
     </nav>
 
-    <div class="timeline-container" id="timeline-container">
+    <div class="timeline-container" id="timeline-container" role="tabpanel" aria-label="Timeline content" aria-live="polite">
       <div class="loading" id="loading">Loading chronicle data...</div>
     </div>
   </main>
 
-  <section class="insights-panel" id="insights-panel">
+  <section class="insights-panel" id="insights-panel" aria-label="Insights summary">
     <div class="insights-grid">
       <div class="insight-item">
         <div class="insight-value" id="insight-total">0</div>
@@ -693,8 +839,12 @@
       // Set up tab switching
       document.querySelectorAll('.layer-tab').forEach(tab => {
         tab.addEventListener('click', () => {
-          document.querySelectorAll('.layer-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.layer-tab').forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+          });
           tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
           currentLayer = tab.dataset.layer;
           renderLayer();
         });
@@ -798,7 +948,7 @@
         return;
       }
 
-      let html = '<div class="commit-layer">';
+      let html = '<div class="commit-layer" role="list">';
 
       commits.forEach(commit => {
         const time = new Date(commit.timestamp).toLocaleTimeString('en-US', {
@@ -806,16 +956,18 @@
           minute: '2-digit',
           hour12: false
         });
+        const commitType = escapeHtml(commit.commit_type || 'other');
         const typeClass = `type-${commit.commit_type || 'other'}`;
         const hasAgent = commit.co_authored_by && commit.co_authored_by.length > 0;
+        const agentNames = hasAgent ? commit.co_authored_by.map(escapeHtml).join(', ') : '';
 
         html += `
-          <div class="commit-row">
+          <div class="commit-row" role="listitem">
             <span class="commit-time">${time}</span>
-            <span class="commit-type ${typeClass}">${commit.commit_type || 'other'}</span>
+            <span class="commit-type ${typeClass}">${commitType}</span>
             <span class="commit-message">${escapeHtml(commit.message)}</span>
-            <span class="commit-sha">${commit.short_sha}</span>
-            ${hasAgent ? `<span class="commit-agent">🤖 ${commit.co_authored_by.join(', ')}</span>` : ''}
+            <span class="commit-sha">${escapeHtml(commit.short_sha)}</span>
+            ${hasAgent ? `<span class="commit-agent" aria-label="Agent assisted">${agentNames}</span>` : ''}
             <span class="commit-stats">
               <span class="stat-add">+${commit.insertions || 0}</span>
               <span class="stat-del">-${commit.deletions || 0}</span>
@@ -839,13 +991,13 @@
         return;
       }
 
-      let html = '<div class="branch-layer">';
+      let html = '<div class="branch-layer" role="list">';
 
       branches.forEach(branch => {
         html += `
-          <div class="branch-row">
+          <div class="branch-row" role="listitem">
             <span class="branch-name">${escapeHtml(branch.name)}</span>
-            <div class="branch-bar" style="max-width: ${Math.min(branch.commit_count * 10, 300)}px"></div>
+            <div class="branch-bar" style="max-width: ${Math.min(branch.commit_count * 10, 300)}px" role="presentation"></div>
             <span class="branch-stats">${branch.commit_count} commits</span>
           </div>`;
       });
@@ -868,15 +1020,16 @@
         return;
       }
 
-      let html = '<div class="decision-layer">';
+      let html = '<div class="decision-layer" role="list">';
 
       decisions.forEach(decision => {
         const answerClass = decision.answer === 'NO' ? 'no' : 'not-yet';
         const cardClass = decision.answer === 'NO' ? 'answer-no' : 'answer-not-yet';
-        const confidenceClass = `confidence-${decision.confidence.toLowerCase()}`;
+        const confidenceValue = (decision.confidence || 'MEDIUM').toString().toLowerCase();
+        const confidenceClass = `confidence-${confidenceValue}`;
 
         html += `
-          <div class="decision-card ${cardClass}">
+          <article class="decision-card ${cardClass}" role="listitem">
             <div class="decision-header">
               <span class="decision-id">${escapeHtml(decision.id)}</span>
               <span class="decision-answer ${answerClass}">${escapeHtml(decision.answer.replace('_', ' '))}</span>
@@ -901,7 +1054,7 @@
                 <span>Feature:</span> ${escapeHtml(decision.related_feature)}
               </span>` : ''}
             </div>
-          </div>`;
+          </article>`;
       });
 
       html += '</div>';
@@ -912,11 +1065,11 @@
     function renderBedrockLayer(container) {
       const bedrock = chronicleData.layers.bedrock.data;
 
-      let html = '<div class="branch-layer">';
+      let html = '<div class="branch-layer" role="list">';
 
       Object.entries(bedrock).forEach(([key, value]) => {
         html += `
-          <div class="branch-row">
+          <div class="branch-row" role="listitem">
             <span class="branch-name" style="text-transform: capitalize">${key.replace(/_/g, ' ')}</span>
             <span style="flex: 1; font-family: var(--font-mono)">${escapeHtml(String(value))}</span>
           </div>`;

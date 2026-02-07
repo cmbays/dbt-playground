@@ -58,6 +58,68 @@ The canonical 5-stage workflow for all development work. See [WORKFLOW_STAGES.md
 
 Quality gates are enforced by the Supervisor agent at each stage transition.
 
+## Workflow Management
+
+Guidelines for managing complex, multi-phase workflows and ensuring smooth execution across sessions.
+
+### Resuming Multi-Phase Workflows
+
+**Always use `/supervisor resume`** when continuing work from a previous session:
+
+```bash
+/supervisor resume
+# or
+super: Resume where we left off
+```
+
+The supervisor will:
+1. Read `temp/WORKFLOW_STATE.md` for current state
+2. Report active track, current phase, artifacts completed, and blockers
+3. Ask for confirmation before proceeding: "Continue with [track] or switch?"
+4. Register PM session and claim tasks automatically
+5. Resume from the exact phase where work stopped
+
+**Manual resume (not recommended):**
+- If you resume with ad-hoc prompts like "continue with feature X", the supervisor lacks context
+- Risk of missing phase gates, skipping verification, or losing task tracking
+
+**When resuming:**
+- Always confirm the current phase status and pending tasks before proceeding with execution
+- Review the context from previous sessions to ensure continuity
+- Verify any dependencies or blockers before launching the next phase
+
+### Long-Running Phased Projects
+
+**Maintain status artifacts:**
+- Primary: `temp/WORKFLOW_STATE.md` (owned by Supervisor)
+- Feature-specific: `temp/AGENT_REPORTS/[feature]/` (inter-agent reports)
+- Task tracking: Backlog.md API (via Supervisor)
+
+**Status artifacts track:**
+- Current phase (UNDERSTAND → PLAN → BUILD → VERIFY → DEPLOY)
+- Completed tasks and artifacts
+- Pending tasks and next steps
+- Blockers and dependencies
+- Session metrics (failures, rejections)
+
+**Update artifacts after:**
+- Each phase transition
+- Significant milestone completion
+- When blockers are encountered or resolved
+
+## Planning & Strategy
+
+Guidelines for planning and research tasks to ensure structured, complete outcomes.
+
+**For UX/design planning tasks:**
+- Always outline research methodology, user research needs, and deliverables before diving into implementation details
+- Start with a structured framework:
+  - Key questions to answer
+  - Research methods needed
+  - Expected deliverables
+  - Success criteria
+- This ensures planning sessions survive interruptions and provide clear direction
+
 ## Critical Rules
 
 ### Never
@@ -164,7 +226,8 @@ temp/AGENT_REPORTS/[feature-name]/
 ├── ARCH_REPORT.md        # Architect design and trade-offs
 ├── TEST_SPEC.md          # Tester coverage and test plan
 ├── DEV_REPORT.md         # Developer implementation notes
-├── CODE_REVIEW.md        # Code reviewer findings
+├── CODE_REVIEW.md        # Code reviewer findings (manual review)
+├── CODERABBIT_REVIEW.md  # CodeRabbit AI findings (patterns, quality)
 └── SECURITY_REVIEW.md    # Security reviewer assessment
 ```
 
@@ -203,6 +266,7 @@ Task(subagent_type="security-reviewer", prompt="Review for vulnerabilities")
 | dbt Developer | `dbt-dev:` | SQL models, macros |
 | Data Modeler | `dbt-model:` | Model design |
 | dbt Tester | `dbt-test:` | Testing |
+| CodeRabbit AI | `coderabbit:` | Automated code review (pattern detection, security, quality) |
 
 ### Commands
 
@@ -213,6 +277,8 @@ Task(subagent_type="security-reviewer", prompt="Review for vulnerabilities")
 | `/plan` | Structured planning |
 | `/dbt-run` | Execute dbt commands |
 | `/readiness-check` | Assess capability gaps before new work |
+| `/code-review:code-review` | CodeRabbit AI code review on changes |
+| `coderabbit:review` | Run CodeRabbit on specific PR/branch |
 
 ## Session Memory (v0.10+)
 
@@ -393,6 +459,79 @@ gh run rerun <run-id> --failed
 - `docs/reference/GITHUB_ACTIONS.md` - Quick reference
 - `docs/for_chris/GITHUB_ACTIONS_GUIDE.md` - Setup and testing guide
 
+## Automated Code Review (CodeRabbit AI)
+
+CodeRabbit provides continuous AI-powered code review, detecting patterns, anti-patterns, and quality issues across commits and PRs.
+
+### Review Triggers
+
+| Trigger | Scope | Context | Purpose |
+|---------|-------|---------|---------|
+| **Auto in Orchestrate** | Full changeset | Phase 4.5 (BUILD→VERIFY) | Pre-review gate: patterns, security, tests |
+| `/code-review:code-review` | Recent changes | Manual during development | Quick feedback on uncommitted changes |
+| `coderabbit:review [PR#]` | Specific PR | GitHub PR | Deep analysis of any PR |
+
+### Orchestrated Workflow (Teams)
+
+When using `/orchestrate [feature]`, CodeRabbit automatically runs as a **pre-review gate** (Phase 4.5):
+
+**Developer Phase Complete → CodeRabbit Runs → Manual Review**
+
+```
+1. Developer completes implementation
+   └─ All tests pass locally
+
+2. Orchestrate triggers CodeRabbit (automatic)
+   └─ Analyzes all code changes
+   └─ Findings saved to CODERABBIT_REVIEW.md
+
+3. Developer iterates on findings
+   └─ Fixes patterns, tests, security issues
+   └─ Can re-trigger CodeRabbit if desired
+
+4. Developer signals ready for manual review
+   └─ Manual reviewers (review: + design:) focus on architecture
+```
+
+**Optional**: Skip CodeRabbit for urgent fixes with `--skip-coderabbit`
+
+### Manual Review (Non-Orchestrated)
+
+**During VERIFY phase**:
+
+1. After test pass, run: `/code-review:code-review`
+2. CodeRabbit analyzes changes and generates feedback
+3. Findings saved to `temp/AGENT_REPORTS/[feature]/CODERABBIT_REVIEW.md`
+4. Address findings before PR creation
+
+**During PR process**:
+
+1. CodeRabbit auto-reviews on PR open (GitHub)
+2. Comments appear inline on changed lines
+3. Can request additional review with `coderabbit:review [PR#]`
+4. Address comments in follow-up commits
+
+### Key Capabilities
+
+- **Pattern Detection**: Identifies common anti-patterns and code smells
+- **Quality Checks**: Tests coverage gaps, refactoring opportunities
+- **Security Scanning**: Potential vulnerabilities, injection risks
+- **dbt-Specific**: Model naming, test coverage, documentation completeness
+
+### Division of Labor
+
+**CodeRabbit focuses on** (automated):
+- Code patterns, naming conventions, dbt standards
+- Test coverage analysis and gaps
+- Security scanning (injection risks, input validation)
+- Performance issues (inefficient queries, unnecessary complexity)
+
+**Manual reviewers focus on** (human):
+- Architecture & design decisions
+- Business logic & requirements fit
+- PR strategy & modularity
+- Cross-cutting concerns
+
 ## Self-Hosted GitHub Actions Runner
 
 This project uses a self-hosted runner for CI to avoid consuming GitHub Actions minutes on the private repository.
@@ -475,8 +614,14 @@ gh api repos/{owner}/{repo}/milestones --jq '.[] | "\(.title): \(.open_issues) o
 - Default to simpler solutions
 - Explain technical decisions
 - Use agents for complex work, manual for simple tasks
-- Address CodeRabbit feedback in batches by category (tests, exceptions, formatting)
+- **CodeRabbit in Orchestrate**: Automatically runs at BUILD→VERIFY transition as pre-review gate (Phase 4.5)
+  - Teams don't need to manually trigger `/code-review:code-review`
+  - Developers iterate on CODERABBIT_REVIEW.md findings before manual review
+  - Skip with `--skip-coderabbit` only for urgent fixes
+- **CodeRabbit Manual**: Use `/code-review:code-review` during development for quick feedback on uncommitted changes
+- Address CodeRabbit feedback in batches by category (tests, exceptions, formatting, security)
 - When user corrects you, those corrections reveal gaps in best practices
 - Pre-existing linting failures ≠ new failures - document the distinction
 - Include ADRs in the same PR as the feature they document
 - Group related fixes into themed commits for easier review
+- CodeRabbit handles patterns/security/tests; manual reviewers handle architecture/design

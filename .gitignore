@@ -64,6 +64,10 @@ dbt_project/data/synthea/*.csv
 logs/
 dev.duckdb
 
+# Database files
+database/**/*.duckdb
+database/**/*.duckdb.wal
+
 # Playwright test artifacts
 test-results/
 playwright-report/

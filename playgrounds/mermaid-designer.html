@@ -4,40 +4,119 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mermaid Diagram Designer - dbt-playground</title>
+
+  <!-- Google Fonts: Inter + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
-    /* CSS Variables */
+    /* ==================== Design System Tokens ====================
+       Philosophy: "Linear calm + Raycast polish + Neobrutalist delight"
+       - Base layer: Monochrome, opacity hierarchy, extreme restraint
+       - Attention layer: Bold borders, vibrant status colors, springy animations
+       ==================== */
     :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f5f5f5;
-      --bg-tertiary: #e8e8e8;
-      --bg-card: #ffffff;
-      --text-primary: #1a1a1a;
-      --text-secondary: #666666;
-      --text-muted: #999999;
-      --accent-primary: #2563eb;
-      --accent-success: #16a34a;
-      --accent-warning: #ca8a04;
-      --accent-danger: #dc2626;
-      --border-color: #e5e5e5;
-      --shadow: 0 1px 3px rgba(0,0,0,0.1);
-      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'SF Mono', Monaco, 'Cascadia Code', Consolas, monospace;
+      /* === BASE LAYER (Monochrome) === */
+
+      /* Background - Near-black foundation */
+      --color-bg-primary: #09090b;
+      --color-bg-secondary: #0f0f11;
+      --color-bg-elevated: #18181b;
+      --color-bg-surface: #1c1c1f;
+
+      /* Text - Opacity-based hierarchy */
+      --color-text-primary: rgba(255, 255, 255, 0.87);
+      --color-text-secondary: rgba(255, 255, 255, 0.60);
+      --color-text-muted: rgba(255, 255, 255, 0.38);
+      --color-text-disabled: rgba(255, 255, 255, 0.20);
+      --color-text-inverse: #000; /* For text on vibrant backgrounds */
+
+      /* Borders - Subtle definition */
+      --color-border-subtle: rgba(255, 255, 255, 0.08);
+      --color-border-default: rgba(255, 255, 255, 0.12);
+      --color-border-strong: rgba(255, 255, 255, 0.20);
+
+      /* === ATTENTION LAYER (Status-Driven) === */
+
+      /* Action - Cyan (primary CTAs, interactive focus) */
+      --color-action: #22d3ee;
+      --color-action-hover: #06b6d4;
+      --color-action-bold: #00e5ff;
+
+      /* Success - Green (completions, confirmations) */
+      --color-success: #34d399;
+      --color-success-hover: #10b981;
+      --color-success-bold: #00ff88;
+
+      /* Error - Red (failures, destructive actions) */
+      --color-error: #f87171;
+      --color-error-hover: #ef4444;
+      --color-error-bold: #ff4444;
+
+      /* Warning - Amber (cautions, pending states) */
+      --color-warning: #fbbf24;
+      --color-warning-hover: #f59e0b;
+      --color-warning-bold: #ffcc00;
+
+      /* === EFFECTS === */
+
+      /* Glassmorphism (Raycast-inspired) */
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-bg-subtle: rgba(255, 255, 255, 0.03);
+      --glass-blur: blur(12px);
+      --glass-border: rgba(255, 255, 255, 0.1);
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+
+      /* Neobrutalist Effects */
+      --border-bold: 2px solid;
+      --border-brutal: 3px solid;
+      --shadow-brutal: 4px 4px 0px;
+      --shadow-brutal-sm: 2px 2px 0px;
+
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-normal: 200ms ease;
+      --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      --transition-smooth: 200ms ease-out;
+
+      /* Radii */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+
+      /* === TYPOGRAPHY === */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+
+      /* Type Scale */
+      --text-2xs: 0.625rem;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+
+      /* Spacing */
+      --space-px: 0.125rem;
+      --space-1: 0.25rem;
+      --space-1-5: 0.375rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-12: 3rem;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-primary: #1a1a1a;
-        --bg-secondary: #262626;
-        --bg-tertiary: #333333;
-        --bg-card: #262626;
-        --text-primary: #f5f5f5;
-        --text-secondary: #a3a3a3;
-        --text-muted: #737373;
-        --border-color: #404040;
-        --shadow: 0 1px 3px rgba(0,0,0,0.3);
-      }
-    }
-
+    /* ==================== Base Styles ==================== */
     * {
       margin: 0;
       padding: 0;
@@ -45,21 +124,43 @@
     }
 
     body {
-      font-family: var(--font-family);
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
       line-height: 1.5;
       height: 100vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Header */
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ==================== Focus States ==================== */
+    :focus-visible {
+      outline: 2px solid var(--color-action);
+      outline-offset: 2px;
+    }
+
+    /* ==================== Header ==================== */
     .header {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
-      padding: 0.75rem 1rem;
+      background: var(--color-bg-secondary);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border-default);
+      padding: var(--space-3) var(--space-4);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -67,62 +168,79 @@
     }
 
     .header h1 {
-      font-size: 1.125rem;
+      font-size: var(--text-lg);
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
+      letter-spacing: -0.02em;
     }
 
     .header-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
+    /* ==================== Buttons ==================== */
     .btn {
-      padding: 0.4rem 0.75rem;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-size: 0.8125rem;
-      cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 0.375rem;
-      transition: all 150ms ease;
+      justify-content: center;
+      gap: var(--space-1-5);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text-primary);
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-decoration: none;
       white-space: nowrap;
     }
 
     .btn:hover {
-      background: var(--bg-tertiary);
+      background: var(--color-bg-surface);
+      border-color: var(--color-border-strong);
     }
 
+    /* Primary button - Neobrutalist attention-grabbing */
     .btn-primary {
-      background: var(--accent-primary);
-      border-color: var(--accent-primary);
-      color: white;
+      background: var(--color-action);
+      color: var(--color-text-inverse);
+      border: var(--border-bold) currentColor;
+      font-weight: 600;
+      box-shadow: var(--shadow-brutal) var(--color-action-bold);
+      transition: all var(--transition-spring);
     }
 
     .btn-primary:hover {
-      opacity: 0.9;
+      transform: translate(-2px, -2px);
+      box-shadow: 6px 6px 0px var(--color-action-bold);
     }
 
-    /* Main Layout */
+    .btn-primary:active {
+      transform: translate(0, 0);
+      box-shadow: 2px 2px 0px var(--color-action-bold);
+    }
+
+    /* ==================== Main Layout ==================== */
     .main {
       flex: 1;
       display: flex;
       overflow: hidden;
     }
 
-    /* Editor Panel */
+    /* ==================== Editor Panel (Glass) ==================== */
     .editor-panel {
       width: 30%;
       min-width: 250px;
       display: flex;
       flex-direction: column;
-      border-right: 1px solid var(--border-color);
-      transition: width 200ms ease, min-width 200ms ease;
+      border-right: 1px solid var(--color-border-default);
+      transition: width var(--transition-normal), min-width var(--transition-normal);
     }
 
     .editor-panel.collapsed {
@@ -136,8 +254,8 @@
 
     .editor-panel.collapsed .panel-header {
       flex-direction: column;
-      padding: 0.75rem 0.5rem;
-      gap: 0.5rem;
+      padding: var(--space-3) var(--space-2);
+      gap: var(--space-2);
     }
 
     .editor-panel.collapsed .panel-header-title,
@@ -147,35 +265,37 @@
     }
 
     .panel-header {
-      padding: 0.75rem 1rem;
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border-color);
+      padding: var(--space-3) var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--color-border-default);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       font-weight: 600;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .panel-header-left {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .collapse-toggle {
       cursor: pointer;
-      padding: 0.25rem;
-      border-radius: 4px;
+      padding: var(--space-1);
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 150ms ease, transform 200ms ease;
+      transition: background var(--transition-fast), transform var(--transition-normal);
     }
 
     .collapse-toggle:hover {
-      background: var(--bg-tertiary);
+      background: var(--color-bg-elevated);
     }
 
     .editor-panel.collapsed .collapse-toggle {
@@ -190,22 +310,26 @@
     #code-editor {
       width: 100%;
       height: 100%;
-      padding: 1rem;
+      padding: var(--space-4);
       border: none;
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
       font-family: var(--font-mono);
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
       line-height: 1.6;
       resize: none;
       outline: none;
     }
 
     #code-editor::placeholder {
-      color: var(--text-muted);
+      color: var(--color-text-muted);
     }
 
-    /* Preview Panel */
+    #code-editor:focus {
+      outline: none;
+    }
+
+    /* ==================== Preview Panel ==================== */
     .preview-panel {
       flex: 1;
       display: flex;
@@ -216,79 +340,84 @@
     .preview-wrapper {
       flex: 1;
       overflow: auto;
-      padding: 1.5rem;
+      padding: var(--space-6);
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      /* Containment to prevent orphaned elements from rendering outside */
       position: relative;
       contain: layout;
+      background: var(--color-bg-primary);
     }
 
     #preview-container {
       max-width: 100%;
+      cursor: grab;
+    }
+
+    #preview-container:active {
+      cursor: grabbing;
     }
 
     #preview-container svg {
-      max-width: 100%;
+      max-width: none;
       height: auto;
+      display: block;
     }
 
     .preview-error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 6px;
-      padding: 1rem;
-      color: #b91c1c;
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid var(--color-error);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      color: var(--color-error);
       font-family: var(--font-mono);
-      font-size: 0.8125rem;
+      font-size: var(--text-sm);
       white-space: pre-wrap;
     }
 
-    @media (prefers-color-scheme: dark) {
-      .preview-error {
-        background: #450a0a;
-        border-color: #7f1d1d;
-        color: #fca5a5;
-      }
-    }
-
-    /* Footer */
+    /* ==================== Footer ==================== */
     .footer {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border-color);
-      padding: 0.5rem 1rem;
+      background: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border-default);
+      padding: var(--space-2) var(--space-4);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       flex-shrink: 0;
     }
 
     .footer-status {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .footer-status.success {
-      color: var(--accent-success);
+      color: var(--color-success);
+      font-weight: 500;
     }
 
     .footer-status.error {
-      color: var(--accent-danger);
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    .keyboard-hints {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
     }
 
     .keyboard-hints kbd {
-      background: var(--bg-tertiary);
-      padding: 0.125rem 0.375rem;
-      border-radius: 3px;
-      margin-right: 0.25rem;
-      font-family: var(--font-mono);
+      background: var(--color-bg-elevated);
+      padding: var(--space-px) var(--space-1-5);
+      border-radius: var(--radius-sm);
+      margin-right: var(--space-1);
+      border: 1px solid var(--color-border-subtle);
     }
 
-    /* Dropdown Menu */
+    /* ==================== Dropdown Menu (Glass) ==================== */
     .dropdown {
       position: relative;
     }
@@ -298,11 +427,13 @@
       position: absolute;
       top: 100%;
       right: 0;
-      margin-top: 4px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      margin-top: var(--space-1);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
       min-width: 200px;
       z-index: 50;
       overflow: hidden;
@@ -315,32 +446,35 @@
     .dropdown-item {
       display: block;
       width: 100%;
-      padding: 0.625rem 1rem;
+      padding: var(--space-2-5) var(--space-4);
       border: none;
       background: none;
-      color: var(--text-primary);
-      font-size: 0.8125rem;
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
       text-align: left;
       cursor: pointer;
-      transition: background 150ms ease;
+      transition: background var(--transition-fast);
     }
 
     .dropdown-item:hover {
-      background: var(--bg-secondary);
+      background: var(--color-bg-elevated);
     }
 
     .dropdown-divider {
       height: 1px;
-      background: var(--border-color);
-      margin: 0.25rem 0;
+      background: var(--color-border-subtle);
+      margin: var(--space-1) 0;
     }
 
-    /* Modal */
+    /* ==================== Modal (Glass) ==================== */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -351,140 +485,176 @@
     }
 
     .modal {
-      background: var(--bg-card);
-      border-radius: 12px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
       max-width: 700px;
       width: 90%;
       max-height: 80vh;
       overflow: auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      box-shadow: var(--shadow-lg);
+      animation: modal-in var(--transition-spring);
+    }
+
+    @keyframes modal-in {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .modal-header {
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--border-color);
+      padding: var(--space-4) var(--space-6);
+      border-bottom: 1px solid var(--color-border-subtle);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: var(--glass-bg-subtle);
     }
 
     .modal-header h2 {
-      font-size: 1rem;
+      font-size: var(--text-base);
+      font-weight: 600;
     }
 
     .modal-close {
       background: none;
       border: none;
-      font-size: 1.5rem;
+      font-size: var(--text-2xl);
       cursor: pointer;
-      color: var(--text-muted);
+      color: var(--color-text-muted);
       line-height: 1;
+      padding: var(--space-1);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
     }
 
     .modal-close:hover {
-      color: var(--text-primary);
+      color: var(--color-text-primary);
+      background: var(--color-bg-elevated);
     }
 
     .modal-body {
-      padding: 1.25rem;
+      padding: var(--space-6);
     }
 
-    /* Template Grid */
+    /* ==================== Template Grid ==================== */
     .template-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
+      gap: var(--space-4);
     }
 
     .template-card {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 1rem;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
       cursor: pointer;
-      transition: all 150ms ease;
+      transition: all var(--transition-fast);
     }
 
     .template-card:hover {
-      border-color: var(--accent-primary);
+      border-color: var(--color-action);
       transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
 
     .template-card h4 {
-      font-size: 0.875rem;
-      margin-bottom: 0.25rem;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      margin-bottom: var(--space-1);
     }
 
     .template-card p {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
 
-    /* Library List */
+    /* ==================== Library List ==================== */
     .library-list {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .library-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.75rem 1rem;
-      background: var(--bg-secondary);
-      border-radius: 6px;
+      padding: var(--space-3) var(--space-4);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
     }
 
     .library-item-name {
       font-weight: 500;
-      font-size: 0.875rem;
+      font-size: var(--text-sm);
     }
 
     .library-item-date {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
 
     .library-item-actions {
       display: flex;
-      gap: 0.375rem;
+      gap: var(--space-1-5);
     }
 
     .library-empty {
       text-align: center;
-      padding: 2rem;
-      color: var(--text-muted);
+      padding: var(--space-8);
+      color: var(--color-text-muted);
     }
 
-    /* Save Dialog */
+    /* ==================== Save Dialog ==================== */
     .save-dialog input {
       width: 100%;
-      padding: 0.625rem;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      margin-bottom: 1rem;
+      padding: var(--space-2-5);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-4);
+      transition: border-color var(--transition-fast);
+    }
+
+    .save-dialog input::placeholder {
+      color: var(--color-text-muted);
     }
 
     .save-dialog input:focus {
       outline: none;
-      border-color: var(--accent-primary);
+      border-color: var(--color-action);
     }
 
     .save-dialog-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
-    /* Help Content */
+    /* ==================== Help Content ==================== */
     .help-content h3 {
-      font-size: 0.875rem;
-      margin-top: 1.25rem;
-      margin-bottom: 0.5rem;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      margin-top: var(--space-6);
+      margin-bottom: var(--space-2);
+      color: var(--color-text-primary);
     }
 
     .help-content h3:first-child {
@@ -492,64 +662,70 @@
     }
 
     .help-content p, .help-content ul {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.75rem;
+      font-size: var(--text-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-3);
     }
 
     .help-content ul {
-      padding-left: 1.25rem;
+      padding-left: var(--space-6);
+    }
+
+    .help-content li {
+      margin-bottom: var(--space-1);
     }
 
     .help-content code {
-      background: var(--bg-tertiary);
-      padding: 0.125rem 0.375rem;
-      border-radius: 3px;
+      background: var(--color-bg-elevated);
+      padding: var(--space-px) var(--space-1-5);
+      border-radius: var(--radius-sm);
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
+      border: 1px solid var(--color-border-subtle);
     }
 
-    /* Zoom Controls */
+    .help-content a {
+      color: var(--color-action);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .help-content a:hover {
+      color: var(--color-action-hover);
+      text-decoration: underline;
+    }
+
+    /* ==================== Zoom Controls ==================== */
     .zoom-controls {
       display: flex;
-      gap: 0.25rem;
+      gap: var(--space-1);
       align-items: center;
     }
 
     .zoom-controls .btn {
-      padding: 0.25rem 0.5rem;
+      padding: var(--space-1) var(--space-2);
       min-width: 32px;
       justify-content: center;
     }
 
     .zoom-controls .zoom-level {
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
       min-width: 45px;
       text-align: center;
+      font-family: var(--font-mono);
     }
 
-    /* Preview container for panzoom */
-    #preview-container {
-      max-width: 100%;
-      cursor: grab;
-    }
-
-    #preview-container:active {
-      cursor: grabbing;
-    }
-
-    #preview-container svg {
-      max-width: none; /* Allow zoom beyond container */
-      height: auto;
-      display: block;
+    /* Custom spacing token */
+    :root {
+      --space-2-5: 0.625rem;
     }
   </style>
 </head>
 <body>
   <header class="header">
     <h1>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
         <polyline points="2 17 12 22 22 17"></polyline>
         <polyline points="2 12 12 17 22 12"></polyline>
@@ -557,15 +733,15 @@
       Mermaid Diagram Designer
     </h1>
     <div class="header-actions">
-      <a href="workflow-hub.html" class="btn" title="Return to Workflow Hub">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <a href="workflow-hub.html" class="btn" title="Return to Workflow Hub" aria-label="Return to Workflow Hub">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
           <polyline points="9 22 9 12 15 12 15 22"></polyline>
         </svg>
         Hub
       </a>
-      <button class="btn" onclick="showTemplates()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button class="btn" onclick="showTemplates()" aria-label="Browse diagram templates">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7"></rect>
           <rect x="14" y="3" width="7" height="7"></rect>
           <rect x="14" y="14" width="7" height="7"></rect>
@@ -573,39 +749,39 @@
         </svg>
         Templates
       </button>
-      <button class="btn" onclick="showLibrary()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button class="btn" onclick="showLibrary()" aria-label="Open saved diagrams library">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
         </svg>
         Library
       </button>
       <div class="dropdown">
-        <button class="btn" onclick="toggleExportMenu()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="btn" onclick="toggleExportMenu()" aria-label="Export diagram options" aria-haspopup="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
           Export
         </button>
-        <div class="dropdown-menu" id="export-menu">
-          <button class="dropdown-item" onclick="exportMarkdown()">Copy as Markdown</button>
-          <button class="dropdown-item" onclick="exportSVG()">Download SVG</button>
-          <button class="dropdown-item" onclick="exportPNG()">Download PNG</button>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item" onclick="exportHTML()">Download Standalone HTML</button>
+        <div class="dropdown-menu" id="export-menu" role="menu">
+          <button class="dropdown-item" onclick="exportMarkdown()" role="menuitem">Copy as Markdown</button>
+          <button class="dropdown-item" onclick="exportSVG()" role="menuitem">Download SVG</button>
+          <button class="dropdown-item" onclick="exportPNG()" role="menuitem">Download PNG</button>
+          <div class="dropdown-divider" role="separator"></div>
+          <button class="dropdown-item" onclick="exportHTML()" role="menuitem">Download Standalone HTML</button>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="showSaveDialog()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <button class="btn btn-primary" onclick="showSaveDialog()" aria-label="Save current diagram">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
           <polyline points="17 21 17 13 7 13 7 21"></polyline>
           <polyline points="7 3 7 8 15 8"></polyline>
         </svg>
         Save
       </button>
-      <button class="btn" onclick="showHelp()">?</button>
+      <button class="btn" onclick="showHelp()" aria-label="Show help and keyboard shortcuts">?</button>
     </div>
   </header>
 
@@ -614,14 +790,14 @@
     <div class="editor-panel" id="editor-panel">
       <div class="panel-header">
         <div class="panel-header-left">
-          <span class="collapse-toggle" onclick="toggleEditor()" title="Toggle Editor (Ctrl+B)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <span class="collapse-toggle" onclick="toggleEditor()" title="Toggle Editor (Ctrl+B)" role="button" tabindex="0" aria-label="Toggle editor panel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </span>
           <span class="panel-header-title">Code Editor</span>
         </div>
-        <span id="diagram-type" style="color: var(--text-muted); font-weight: normal;">flowchart</span>
+        <span id="diagram-type" style="color: var(--color-text-muted); font-weight: normal;">flowchart</span>
       </div>
       <div class="editor-wrapper">
         <textarea id="code-editor" placeholder="Enter your Mermaid diagram code here...
@@ -629,7 +805,7 @@
 Example:
 flowchart TD
     A[Start] --> B[Process]
-    B --> C[End]"></textarea>
+    B --> C[End]" aria-label="Mermaid diagram code editor"></textarea>
       </div>
     </div>
 
@@ -638,21 +814,21 @@ flowchart TD
       <div class="panel-header">
         <span>Live Preview</span>
         <div class="zoom-controls">
-          <button class="btn" onclick="zoomOut()" title="Zoom Out">-</button>
-          <span class="zoom-level" id="zoom-level">100%</span>
-          <button class="btn" onclick="zoomIn()" title="Zoom In">+</button>
-          <button class="btn" onclick="fitToView()" title="Fit to View">Fit</button>
-          <button class="btn" onclick="resetZoom()" title="Reset to 100%">1:1</button>
+          <button class="btn" onclick="zoomOut()" title="Zoom Out" aria-label="Zoom out">-</button>
+          <span class="zoom-level" id="zoom-level" aria-live="polite">100%</span>
+          <button class="btn" onclick="zoomIn()" title="Zoom In" aria-label="Zoom in">+</button>
+          <button class="btn" onclick="fitToView()" title="Fit to View" aria-label="Fit diagram to view">Fit</button>
+          <button class="btn" onclick="resetZoom()" title="Reset to 100%" aria-label="Reset zoom to 100%">1:1</button>
         </div>
       </div>
       <div class="preview-wrapper">
-        <div id="preview-container"></div>
+        <div id="preview-container" role="img" aria-label="Mermaid diagram preview"></div>
       </div>
     </div>
   </main>
 
   <footer class="footer">
-    <div class="footer-status" id="status">Ready</div>
+    <div class="footer-status" id="status" role="status" aria-live="polite">Ready</div>
     <div class="keyboard-hints">
       <kbd>Ctrl+B</kbd> Toggle Editor
       <kbd>Ctrl+Enter</kbd> Render
@@ -662,11 +838,11 @@ flowchart TD
   </footer>
 
   <!-- Templates Modal -->
-  <div class="modal-overlay" id="templates-modal">
+  <div class="modal-overlay" id="templates-modal" role="dialog" aria-modal="true" aria-labelledby="templates-modal-title">
     <div class="modal">
       <div class="modal-header">
-        <h2>Diagram Templates</h2>
-        <button class="modal-close" onclick="hideTemplates()">&times;</button>
+        <h2 id="templates-modal-title">Diagram Templates</h2>
+        <button class="modal-close" onclick="hideTemplates()" aria-label="Close templates">&times;</button>
       </div>
       <div class="modal-body">
         <div class="template-grid" id="template-grid"></div>
@@ -675,11 +851,11 @@ flowchart TD
   </div>
 
   <!-- Library Modal -->
-  <div class="modal-overlay" id="library-modal">
+  <div class="modal-overlay" id="library-modal" role="dialog" aria-modal="true" aria-labelledby="library-modal-title">
     <div class="modal">
       <div class="modal-header">
-        <h2>Saved Diagrams</h2>
-        <button class="modal-close" onclick="hideLibrary()">&times;</button>
+        <h2 id="library-modal-title">Saved Diagrams</h2>
+        <button class="modal-close" onclick="hideLibrary()" aria-label="Close library">&times;</button>
       </div>
       <div class="modal-body">
         <div class="library-list" id="library-list"></div>
@@ -688,14 +864,15 @@ flowchart TD
   </div>
 
   <!-- Save Dialog -->
-  <div class="modal-overlay" id="save-modal">
+  <div class="modal-overlay" id="save-modal" role="dialog" aria-modal="true" aria-labelledby="save-modal-title">
     <div class="modal" style="max-width: 400px;">
       <div class="modal-header">
-        <h2>Save Diagram</h2>
-        <button class="modal-close" onclick="hideSaveDialog()">&times;</button>
+        <h2 id="save-modal-title">Save Diagram</h2>
+        <button class="modal-close" onclick="hideSaveDialog()" aria-label="Close save dialog">&times;</button>
       </div>
       <div class="modal-body save-dialog">
-        <input type="text" id="diagram-name" placeholder="Diagram name (e.g., dbt-layers)">
+        <label for="diagram-name" class="visually-hidden">Diagram name</label>
+        <input type="text" id="diagram-name" placeholder="Diagram name (e.g., dbt-layers)" aria-describedby="diagram-name-hint">
         <div class="save-dialog-actions">
           <button class="btn" onclick="hideSaveDialog()">Cancel</button>
           <button class="btn btn-primary" onclick="saveDiagram()">Save</button>
@@ -705,11 +882,11 @@ flowchart TD
   </div>
 
   <!-- Help Modal -->
-  <div class="modal-overlay" id="help-modal">
+  <div class="modal-overlay" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
     <div class="modal">
       <div class="modal-header">
-        <h2>Help</h2>
-        <button class="modal-close" onclick="hideHelp()">&times;</button>
+        <h2 id="help-modal-title">Help</h2>
+        <button class="modal-close" onclick="hideHelp()" aria-label="Close help">&times;</button>
       </div>
       <div class="modal-body help-content">
         <h3>About Mermaid Diagrams</h3>
@@ -764,10 +941,25 @@ flowchart TD
         </ul>
 
         <h3>More Information</h3>
-        <p>See the full <a href="https://mermaid.js.org/intro/" target="_blank" style="color: var(--accent-primary);">Mermaid documentation</a> for complete syntax reference.</p>
+        <p>See the full <a href="https://mermaid.js.org/intro/" target="_blank" rel="noopener noreferrer">Mermaid documentation</a> for complete syntax reference.</p>
       </div>
     </div>
   </div>
+
+  <!-- Visually hidden class for accessibility -->
+  <style>
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
 
   <!-- Load Mermaid and Panzoom from CDN -->
   <!-- NOTE: Using different CDNs to avoid esm.sh bundler conflicts between mermaid/d3 and panzoom -->
@@ -1094,13 +1286,13 @@ flowchart TD
 
       const code = codeEditor.value.trim();
       if (!code) {
-        previewContainer.innerHTML = '<p style="color: var(--text-muted);">Enter diagram code to see preview</p>';
+        previewContainer.innerHTML = '<p style="color: var(--color-text-muted);">Enter diagram code to see preview</p>';
         setStatus('Ready');
         return;
       }
 
       if (!window.mermaidLib) {
-        previewContainer.innerHTML = '<p style="color: var(--text-muted);">Loading Mermaid...</p>';
+        previewContainer.innerHTML = '<p style="color: var(--color-text-muted);">Loading Mermaid...</p>';
         return;
       }
 
@@ -1161,12 +1353,15 @@ flowchart TD
     function showTemplates() {
       const grid = document.getElementById('template-grid');
       grid.innerHTML = Object.entries(templates).map(([key, tpl]) => `
-        <div class="template-card" onclick="loadTemplate('${key}')">
-          <h4>${tpl.name}</h4>
-          <p>${tpl.description}</p>
+        <div class="template-card" onclick="loadTemplate('${key}')" role="button" tabindex="0" aria-label="Load ${escapeHtml(tpl.name)} template">
+          <h4>${escapeHtml(tpl.name)}</h4>
+          <p>${escapeHtml(tpl.description)}</p>
         </div>
       `).join('');
       document.getElementById('templates-modal').classList.add('active');
+      // Focus the first template card
+      const firstCard = grid.querySelector('.template-card');
+      if (firstCard) firstCard.focus();
     }
 
     function hideTemplates() {
@@ -1211,8 +1406,8 @@ flowchart TD
               <div class="library-item-date">${new Date(item.modified).toLocaleDateString()}</div>
             </div>
             <div class="library-item-actions">
-              <button class="btn" onclick="loadFromLibrary(${idx})">Load</button>
-              <button class="btn" onclick="deleteFromLibrary(${idx})">Delete</button>
+              <button class="btn" onclick="loadFromLibrary(${idx})" aria-label="Load ${escapeHtml(item.name)}">Load</button>
+              <button class="btn" onclick="deleteFromLibrary(${idx})" aria-label="Delete ${escapeHtml(item.name)}">Delete</button>
             </div>
           </div>
         `).join('');
@@ -1399,6 +1594,9 @@ ${code}
     // Help
     function showHelp() {
       document.getElementById('help-modal').classList.add('active');
+      // Focus the close button for accessibility
+      const closeBtn = document.querySelector('#help-modal .modal-close');
+      if (closeBtn) closeBtn.focus();
     }
 
     function hideHelp() {
@@ -1451,6 +1649,22 @@ ${code}
           overlay.classList.remove('active');
         }
       });
+    });
+
+    // Handle keyboard activation for template cards
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('template-card')) {
+        e.preventDefault();
+        e.target.click();
+      }
+    });
+
+    // Handle keyboard activation for collapse toggle
+    document.querySelector('.collapse-toggle').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        window.toggleEditor();
+      }
     });
 
     // Load default template
