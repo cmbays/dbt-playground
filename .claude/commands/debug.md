@@ -1,20 +1,44 @@
 # Debug Command
 
-Start, track, and complete debug sessions following the 7-step Debug Protocol with automatic session tracking.
+Start, track, and complete debug sessions following the 7-step Debug Protocol with automatic session tracking. Supports single-agent and multi-agent team debugging.
+
+## Quick Decision: Single vs Team Debug
+
+```
+Is the bug complex? (multi-service, concurrency, >10 files affected)
+  |
+  +-- No  --> /debug start "bug"                    (single agent, fast)
+  |
+  +-- Yes --> /debug start "bug" --team              (multi-agent team)
+  |           /debug start "bug" --agents 3          (fixed agent count)
+  |
+  +-- Unsure --> /debug start "bug" --assess         (run complexity analyzer)
+```
+
+**Token cost estimate**: Team debug spawns 2-5 agents. Each agent session uses ~2k-10k tokens depending on investigation depth. The `--assess` flag shows cost estimate before spawning.
 
 ## Usage
 
 ```
 /debug start "Bug description" [--severity high|medium|low] [--tags tag1,tag2]
+/debug start "Bug description" --team [--lead backend|frontend|data|infra]
+/debug start "Bug description" --agents N [--lead backend]
+/debug start "Bug description" --assess
 /debug step <phase> "findings" [--evidence path]
 /debug end "root cause" --time 45m [--outcome resolved|escalated|inconclusive]
-/debug status
+/debug status [--team]
 /debug history [--since date] [--pattern text]
+/debug assign <agent> <zone>
+/debug findings <agent>
+/debug merge
+/debug conflicts
 ```
 
 ## Commands
 
 ### Start a Debug Session
+
+#### Single Agent (Default)
 
 ```
 /debug start "Race condition in queue processing"
@@ -46,6 +70,81 @@ Protocol Phases:
   7-prevent      - Add tests/docs to prevent recurrence
 
 Next: Use '/debug step 1-reproduce "findings"' to log progress
+```
+
+#### Multi-Agent Team Debug
+
+```
+/debug start "Distributed timeout across payment and notification services" --team
+/debug start "Data inconsistency in user cache" --agents 3 --lead data
+/debug start "Intermittent API failures" --assess
+```
+
+**--team**: Runs complexity analyzer, spawns optimal number of agents (2-5).
+
+**--agents N**: Skip complexity analysis, spawn exactly N agents.
+
+**--lead**: Designate lead agent focus area (backend, frontend, data, infra, security).
+
+**--assess**: Run complexity analysis only (no agent spawn), show assessment and cost estimate.
+
+Output (--team):
+
+```
+Multi-Agent Debug Session Started
+------
+Session ID: MA-2026-02-06-001
+Bug: Distributed timeout across payment and notification services
+Mode: TEAM (3 agents)
+Lead: backend
+
+Complexity Assessment:
+  Score: 0.72 (3 agents suggested)
+  Factors: multi_service (0.67), performance (0.33)
+  Estimated token cost: ~6k-15k tokens
+
+Agent Assignments:
+  Agent     | Zone                | Capabilities    | Status
+  ----------|---------------------|-----------------|--------
+  backend   | payment-service     | backend, data   | assigned
+  infra     | notification-svc    | infra, perf     | assigned
+  data      | cache-layer         | data, backend   | assigned
+
+Session Folder: temp/DEBUG_REPORTS/session-20260206-001/
+
+Phase: SETUP -> Use '/debug step 1-reproduce "findings"' to begin
+       All agents investigate in parallel during phases 1-3.
+
+Team Commands:
+  /debug assign <agent> <zone>    - Reassign agent to zone
+  /debug findings <agent>         - View agent's findings
+  /debug merge                    - Trigger merge resolution
+  /debug conflicts                - Show detected conflicts
+  /debug status --team            - Show all agents' status
+```
+
+Output (--assess):
+
+```
+Complexity Assessment
+------
+Bug: Distributed timeout across payment and notification services
+
+Score: 0.72 / 1.0
+Suggested Agents: 3
+Factors:
+  - multi_service (0.67): Detected: distributed, microservice
+  - performance (0.33): Detected: timeout
+
+Required Capabilities: backend, infra, performance
+Estimated Token Cost: ~6k-15k tokens
+
+Recommendation: Use --team for automated spawning, or --agents 3 for manual control.
+
+Commands:
+  /debug start "..." --team           # Accept recommendation
+  /debug start "..." --agents 2       # Override agent count
+  /debug start "..."                  # Single agent (simpler)
 ```
 
 ### Log Debug Steps
@@ -110,6 +209,7 @@ Tip: Run 'lessons-analyzer.py extract' to check for patterns
 
 ```
 /debug status
+/debug status --team
 ```
 
 Shows active session or recent history:
@@ -131,6 +231,99 @@ Commands:
   /debug step 4-fix_design "Design the fix"
   /debug end "root cause" --time 45m
 ```
+
+Team status (--team flag):
+
+```
+Multi-Agent Session: MA-2026-02-06-001
+------
+Bug: Distributed timeout across services
+Status: INVESTIGATING
+Lead: backend
+
+Agent Status:
+  Agent     | Zone              | Status        | Findings | Primary Finding
+  ----------|-------------------|---------------|----------|----------------
+  backend   | payment-service   | investigating | 0        | -
+  infra     | notification-svc  | complete      | 2        | Pool exhaustion
+  data      | cache-layer       | investigating | 1        | Stale cache TTL
+
+Progress: 1/3 agents complete
+Conflicts: 0 detected
+
+Commands:
+  /debug findings infra              # View completed agent's findings
+  /debug merge                       # Trigger merge (when all complete)
+```
+
+### Team Commands (Multi-Agent Only)
+
+#### Assign Agent to Zone
+
+```
+/debug assign data cache-layer
+/debug assign security auth-module
+```
+
+Reassigns an agent to a different investigation zone.
+
+#### View Agent Findings
+
+```
+/debug findings backend
+/debug findings infra
+```
+
+Shows the detailed findings submitted by a specific agent.
+
+#### Trigger Merge Resolution
+
+```
+/debug merge
+```
+
+Runs the merge resolution engine:
+1. Collects all agent findings
+2. Detects conflicts between findings (root cause disagreements, evidence contradictions)
+3. Resolves conflicts via evidence weighting (reproducible > log > code analysis > theory)
+4. Generates consensus findings and deployment order
+5. Extracts lesson candidates for LESSONS.md
+
+Output:
+
+```
+Merge Resolution Complete
+------
+Session: MA-2026-02-06-001
+
+Consensus:
+  ROOT CAUSE: Connection pool size = 1 (confidence: 0.95)
+  SYMPTOM: Frontend spinner on data load (confidence: 0.70)
+
+Conflicts: 1 detected, 1 resolved
+  C-001: root_cause_disagreement
+    backend says "pool undersized" vs data says "memory leak"
+    Resolution: evidence_weighted (backend: 0.80, data: 0.22)
+
+Deployment Order:
+  1. Increase pool size to 10 (P0 - critical)
+  2. Add 5s timeout to fetch calls (P2 - optional)
+
+Lessons Extracted: 1
+  - "Connection Pool Size = 1 Causing Serialization"
+
+Files:
+  merge_resolution.md -> temp/DEBUG_REPORTS/session-20260206-001/
+  Events -> memory/events.jsonl (debug_lesson)
+```
+
+#### Show Conflicts
+
+```
+/debug conflicts
+```
+
+Shows detected conflicts between agent findings without triggering merge.
 
 ### Query History
 
@@ -247,6 +440,8 @@ LEARNINGS.md <- Recurring patterns promoted
 
 ## Flags Reference
 
+### Session Flags
+
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--severity` | Bug severity (high, medium, low) | medium |
@@ -259,6 +454,15 @@ LEARNINGS.md <- Recurring patterns promoted
 | `--pattern` | Text pattern to search | none |
 | `--format` | Output format (table, json) | table |
 | `--force` | Force start (ends active session) | false |
+
+### Multi-Agent Flags (WAVE3-030)
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--team` | Start multi-agent session (complexity-assessed) | false |
+| `--agents N` | Start multi-agent session with N agents (1-5) | auto |
+| `--lead` | Lead agent focus (backend, frontend, data, infra, security) | backend |
+| `--assess` | Run complexity analysis only (no agent spawn) | false |
 
 ## Examples
 
@@ -300,6 +504,101 @@ LEARNINGS.md <- Recurring patterns promoted
 /debug end "Vendor API outage" --time 30m --outcome escalated
 ```
 
+### Multi-Agent Team Debug
+
+```
+# Assess complexity first
+/debug start "Distributed timeout across payment and notification services" --assess
+# -> Score: 0.72, suggests 3 agents
+
+# Start team debug
+/debug start "Distributed timeout across payment and notification services" --team --tags distributed,timeout
+
+# All agents investigate in parallel during phases 1-3
+/debug step 1-reproduce "Reproduced under load: payment-service responds >5s"
+/debug step 2-blast_radius "payment-service, notification-service, cache-layer"
+
+# View agent findings as they complete
+/debug findings backend
+/debug findings infra
+
+# Check for conflicts
+/debug conflicts
+
+# When all agents complete, trigger merge
+/debug merge
+
+# Review merge resolution, then close
+/debug end "Connection pool exhaustion" --time 2h --outcome resolved
+```
+
+### Quick Team Debug (Fixed Agent Count)
+
+```
+# Skip complexity analysis, spawn 2 agents directly
+/debug start "Race condition in order processing" --agents 2 --lead backend
+
+# Agents investigate in parallel
+/debug status --team
+
+# Merge and close
+/debug merge
+/debug end "Missing lock on order consumer" --time 45m
+```
+
+## Multi-Agent Coordination Protocol
+
+The multi-agent debug mode uses the WAVE3-030 coordination protocol:
+
+```
+Bug Report -> Complexity Assessment -> Agent Spawning
+                                            |
+                                   +--------+--------+
+                                   |        |        |
+                               Agent A  Agent B  Agent C
+                               (zone 1) (zone 2) (zone 3)
+                                   |        |        |
+                                   +--------+--------+
+                                            |
+                                   Conflict Detection
+                                            |
+                                   Evidence Weighting
+                                            |
+                                   Merge Resolution
+                                            |
+                                   +--------+--------+
+                                   |                  |
+                              LESSONS.md          merge_resolution.md
+                              Integration         (in DEBUG_REPORTS/)
+```
+
+### Coordination Model
+
+- **Hub-and-spoke**: Lead agent orchestrates, specialists investigate
+- **Non-overlapping zones**: Blast radius partitioned to avoid duplicate work
+- **Evidence-weighted resolution**: Reproducible > logs > code analysis > theory > unsubstantiated
+- **Human escalation**: When evidence weights are too close (diff < 0.2), humans decide
+
+### LESSONS.md Integration
+
+Multi-agent debates produce lesson candidates automatically:
+- High-confidence root causes (>=0.7) extracted as patterns
+- Resolved conflict debates (evidence-weighted winner) recorded
+- Events emitted to `memory/events.jsonl` with `event_type="debug_lesson"`
+- Fed to existing `scripts/consolidate-memory.py` pipeline for pattern detection
+
+### Module Reference
+
+| Module | Purpose |
+|--------|---------|
+| `scripts/lib/multi_agent_debug/protocol.py` | Complexity assessment, blast radius partitioning |
+| `scripts/lib/multi_agent_debug/registry.py` | Agent capabilities, availability, assignments |
+| `scripts/lib/multi_agent_debug/orchestrator.py` | Session lifecycle management |
+| `scripts/lib/multi_agent_debug/manifest.py` | Session manifest generation |
+| `scripts/lib/multi_agent_debug/conflict_detector.py` | Conflict detection, evidence weighting |
+| `scripts/lib/multi_agent_debug/merge_resolver.py` | Merge resolution engine |
+| `scripts/lib/multi_agent_debug/lessons.py` | LESSONS.md pattern extraction from debates |
+
 ## Related
 
 - [[../agents/debug-agent.md]] - Debug Agent persona
@@ -307,4 +606,6 @@ LEARNINGS.md <- Recurring patterns promoted
 - [[qa.md]] - QA gate integration
 - `scripts/debug-tracker.py` - Session Tracker CLI
 - `scripts/lessons-analyzer.py` - Pattern extraction
+- `scripts/lib/multi_agent_debug/` - Multi-agent coordination library (WAVE3-030)
 - `temp/vibe_coding/OBSERVABILITY_INTEGRATION.md` - Observability setup
+- `temp/WAVE3-030_SPRINT_PLAN.md` - Sprint plan and design decisions

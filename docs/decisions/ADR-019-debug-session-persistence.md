@@ -42,7 +42,7 @@ We need a persistence strategy that enables multi-agent coordination while remai
 ### Directory Structure
 
 ```
-temp/vibe_coding/DEBUG_REPORTS/
+temp/DEBUG_REPORTS/
 ├── 2026-02-04_14-30_null-pointer-exception/
 │   ├── session_manifest.md          # Session ID, agents, timestamps
 │   ├── agent_1_findings.md          # First agent's debug findings

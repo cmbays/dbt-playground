@@ -19,7 +19,7 @@ Completed two observability-focused tasks for the Wave 3 P1 Sprint. WAVE3-013 de
 | Task | Status | Deliverable | Size |
 |------|--------|-------------|------|
 | WAVE3-013 | ✅ Complete | `temp/vibe_coding/OBSERVABILITY_INTEGRATION.md` | 2,500+ words |
-| WAVE3-016 | ✅ Complete | `temp/vibe_coding/DEBUG_REPORTS/OBSERVABILITY.md` | 1,800+ words |
+| WAVE3-016 | ✅ Complete | `temp/DEBUG_REPORTS/OBSERVABILITY.md` | 1,800+ words |
 
 ---
 
@@ -169,7 +169,7 @@ Completed two observability-focused tasks for the Wave 3 P1 Sprint. WAVE3-013 de
 2. **OBSERVABILITY.md** (1,800+ words)
    - Reusable template for any backend service
    - Sections: Stack Overview, Metrics, Alerting, Dashboards, Runbooks, Tracing, Logging, Costs, Verification
-   - Location: `temp/vibe_coding/DEBUG_REPORTS/OBSERVABILITY.md`
+   - Location: `temp/DEBUG_REPORTS/OBSERVABILITY.md`
 
 3. **ARCH_REPORT.md** (this file)
    - Architecture report for Days 3-4 work

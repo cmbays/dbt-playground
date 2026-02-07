@@ -463,7 +463,7 @@ ORDER BY 1 DESC;
 
 ## Related Documentation
 
-- [DEPLOYMENT_VALIDATION_CHECKLIST.md](../../temp/vibe_coding/DEBUG_REPORTS/DEPLOYMENT_VALIDATION_CHECKLIST.md) - Gate T2-1 requirement
+- [DEPLOYMENT_VALIDATION_CHECKLIST.md](../../temp/DEBUG_REPORTS/DEPLOYMENT_VALIDATION_CHECKLIST.md) - Gate T2-1 requirement
 - [OBSERVABILITY_INTEGRATION.md](../../temp/vibe_coding/OBSERVABILITY_INTEGRATION.md) - Debug protocol integration design
 - [ADR-015](../../docs/decisions/ADR-015-duckdb-for-metrics.md) - DuckDB for metrics storage
 
