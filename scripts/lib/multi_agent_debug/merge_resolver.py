@@ -107,10 +107,10 @@ def merge_findings(
     consensus = _build_consensus(filtered_findings, resolved_conflicts)
 
     # Step 4: Extract deployment order
-    deployment_order = _extract_deployment_order(consensus, all_findings)
+    deployment_order = _extract_deployment_order(consensus)
 
     # Step 5: Build agreed fixes
-    agreed_fixes = _extract_agreed_fixes(consensus, all_findings)
+    agreed_fixes = _extract_agreed_fixes(consensus)
 
     # Step 6: Extract lessons
     lessons = _extract_lessons(
@@ -454,7 +454,6 @@ def _build_consensus(
 
 def _extract_deployment_order(
     consensus: list[Finding],
-    all_findings: list[AgentFindings],
 ) -> list[str]:
     """Extract deployment order from consensus findings.
 
@@ -462,7 +461,6 @@ def _extract_deployment_order(
 
     Args:
         consensus: Consensus findings
-        all_findings: All agent findings (for agent context)
 
     Returns:
         Ordered list of deployment steps
@@ -480,13 +478,11 @@ def _extract_deployment_order(
 
 def _extract_agreed_fixes(
     consensus: list[Finding],
-    all_findings: list[AgentFindings],
 ) -> list[dict]:
     """Extract agreed fixes from consensus findings.
 
     Args:
         consensus: Consensus findings
-        all_findings: All agent findings
 
     Returns:
         List of fix dicts with file, change, priority

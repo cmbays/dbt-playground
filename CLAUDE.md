@@ -14,9 +14,9 @@ Read temp/WORKFLOW_STATE.md to check the status of project and recent notes. Mai
 
 - ALWAYS commit changes on a new branch
 - Never commit directly to main
-- Use the commit-commands plugin for running git
-- Use the **GitHub MCP** app for ALL Pull Requests and Issue management.
-- DO NOT use Bash commands for git operations unless both MCP servers fail.
+- Use Git-Master (`/commit`, `/branch`) for running git operations
+- Use the **GitHub MCP** app for ALL Pull Requests and Issue management
+- DO NOT use Bash commands for git operations unless MCP servers fail
 
 **Next**: v0.11 - Architecture Review & Documentation Level-Up
 
@@ -33,6 +33,7 @@ dbt-playground/
 See `docs/reference/PROJECT_STRUCTURE.md` for complete structure.
 
 **Key Reference Docs**:
+
 - [TECH_STACK.md](docs/reference/TECH_STACK.md) - All technology versions and rationale
 - [ARCHITECTURE.md](docs/reference/ARCHITECTURE.md) - System design
 
@@ -63,6 +64,7 @@ super: Resume where we left off
 ```
 
 The supervisor will:
+
 1. Read `temp/WORKFLOW_STATE.md` for current state
 2. Report active track, current phase, artifacts completed, and blockers
 3. Ask for confirmation before proceeding: "Continue with [track] or switch?"
@@ -70,10 +72,12 @@ The supervisor will:
 5. Resume from the exact phase where work stopped
 
 **Manual resume (not recommended):**
+
 - If you resume with ad-hoc prompts like "continue with feature X", the supervisor lacks context
 - Risk of missing phase gates, skipping verification, or losing task tracking
 
 **When resuming:**
+
 - Always confirm the current phase status and pending tasks before proceeding with execution
 - Review the context from previous sessions to ensure continuity
 - Verify any dependencies or blockers before launching the next phase
@@ -81,11 +85,13 @@ The supervisor will:
 ### Long-Running Phased Projects
 
 **Maintain status artifacts:**
+
 - Primary: `temp/WORKFLOW_STATE.md` (owned by Supervisor)
 - Feature-specific: `temp/AGENT_REPORTS/[feature]/` (inter-agent reports)
 - Task tracking: Backlog.md API (via Supervisor)
 
 **Status artifacts track:**
+
 - Current phase (UNDERSTAND → PLAN → BUILD → VERIFY → DEPLOY)
 - Completed tasks and artifacts
 - Pending tasks and next steps
@@ -93,6 +99,7 @@ The supervisor will:
 - Session metrics (failures, rejections)
 
 **Update artifacts after:**
+
 - Each phase transition
 - Significant milestone completion
 - When blockers are encountered or resolved
@@ -102,6 +109,7 @@ The supervisor will:
 Guidelines for planning and research tasks to ensure structured, complete outcomes.
 
 **For UX/design planning tasks:**
+
 - Always outline research methodology, user research needs, and deliverables before diving into implementation details
 - Start with a structured framework:
   - Key questions to answer
@@ -241,11 +249,13 @@ Task(subagent_type="security-reviewer", prompt="Review for vulnerabilities")
 4. **Convergence Phase**: Review both solutions and create hybrid/best-of-breed
 
 **Benefits**:
+
 - Reduces single-point-of-failure in design decisions
 - Surfaces alternative approaches
 - Higher quality through competitive pressure
 
 **Example workflow** (FS1 Agent Memory):
+
 - Planning team → Review team → Gap analysis → Competing implementation → Final convergence
 
 ### Key Personas
@@ -309,6 +319,7 @@ uv run scripts/log-session.py -t "Task description" -i TASK-42
 ### Pattern Detection
 
 Weekly consolidation scans logs for recurring patterns:
+
 - Patterns with 2+ occurrences are identified (appeared at least twice)
 - Multi-factor scoring: frequency (40%), recency (30%), consistency (30%)
 - Promotion candidates can be added to LEARNINGS.md
@@ -511,12 +522,14 @@ When using `/orchestrate [feature]`, CodeRabbit automatically runs as a **pre-re
 ### Division of Labor
 
 **CodeRabbit focuses on** (automated):
+
 - Code patterns, naming conventions, dbt standards
 - Test coverage analysis and gaps
 - Security scanning (injection risks, input validation)
 - Performance issues (inefficient queries, unnecessary complexity)
 
 **Manual reviewers focus on** (human):
+
 - Architecture & design decisions
 - Business logic & requirements fit
 - PR strategy & modularity

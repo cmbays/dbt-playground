@@ -607,7 +607,7 @@ class TestExtractDeploymentOrder:
                 proposed_fix='Fix symptom',
             ),
         ]
-        order = _extract_deployment_order(consensus, [])
+        order = _extract_deployment_order(consensus)
         assert order[0] == 'Fix root cause'
         assert order[1] == 'Fix symptom'
 
@@ -619,7 +619,7 @@ class TestExtractDeploymentOrder:
                 classification='root_cause',
             ),
         ]
-        order = _extract_deployment_order(consensus, [])
+        order = _extract_deployment_order(consensus)
         assert len(order) == 0
 
     def test_duplicate_fixes_deduplicated(self):
@@ -636,7 +636,7 @@ class TestExtractDeploymentOrder:
                 proposed_fix='Same fix',
             ),
         ]
-        order = _extract_deployment_order(consensus, [])
+        order = _extract_deployment_order(consensus)
         assert len(order) == 1
 
 
@@ -653,7 +653,7 @@ class TestExtractAgreedFixes:
                 files_involved=['config/db.py'],
             ),
         ]
-        fixes = _extract_agreed_fixes(consensus, [])
+        fixes = _extract_agreed_fixes(consensus)
         assert len(fixes) == 1
         assert fixes[0]['priority'] == 'P0 (critical)'
         assert fixes[0]['file'] == 'config/db.py'
@@ -667,7 +667,7 @@ class TestExtractAgreedFixes:
                 proposed_fix='Fix UI',
             ),
         ]
-        fixes = _extract_agreed_fixes(consensus, [])
+        fixes = _extract_agreed_fixes(consensus)
         assert fixes[0]['priority'] == 'P2 (optional)'
 
     def test_contributing_medium_priority(self):
@@ -679,7 +679,7 @@ class TestExtractAgreedFixes:
                 proposed_fix='Improve it',
             ),
         ]
-        fixes = _extract_agreed_fixes(consensus, [])
+        fixes = _extract_agreed_fixes(consensus)
         assert fixes[0]['priority'] == 'P1 (recommended)'
 
 
