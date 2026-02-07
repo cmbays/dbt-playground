@@ -58,6 +58,68 @@ The canonical 5-stage workflow for all development work. See [WORKFLOW_STAGES.md
 
 Quality gates are enforced by the Supervisor agent at each stage transition.
 
+## Workflow Management
+
+Guidelines for managing complex, multi-phase workflows and ensuring smooth execution across sessions.
+
+### Resuming Multi-Phase Workflows
+
+**Always use `/supervisor resume`** when continuing work from a previous session:
+
+```bash
+/supervisor resume
+# or
+super: Resume where we left off
+```
+
+The supervisor will:
+1. Read `temp/WORKFLOW_STATE.md` for current state
+2. Report active track, current phase, artifacts completed, and blockers
+3. Ask for confirmation before proceeding: "Continue with [track] or switch?"
+4. Register PM session and claim tasks automatically
+5. Resume from the exact phase where work stopped
+
+**Manual resume (not recommended):**
+- If you resume with ad-hoc prompts like "continue with feature X", the supervisor lacks context
+- Risk of missing phase gates, skipping verification, or losing task tracking
+
+**When resuming:**
+- Always confirm the current phase status and pending tasks before proceeding with execution
+- Review the context from previous sessions to ensure continuity
+- Verify any dependencies or blockers before launching the next phase
+
+### Long-Running Phased Projects
+
+**Maintain status artifacts:**
+- Primary: `temp/WORKFLOW_STATE.md` (owned by Supervisor)
+- Feature-specific: `temp/AGENT_REPORTS/[feature]/` (inter-agent reports)
+- Task tracking: Backlog.md API (via Supervisor)
+
+**Status artifacts track:**
+- Current phase (UNDERSTAND → PLAN → BUILD → VERIFY → DEPLOY)
+- Completed tasks and artifacts
+- Pending tasks and next steps
+- Blockers and dependencies
+- Session metrics (failures, rejections)
+
+**Update artifacts after:**
+- Each phase transition
+- Significant milestone completion
+- When blockers are encountered or resolved
+
+## Planning & Strategy
+
+Guidelines for planning and research tasks to ensure structured, complete outcomes.
+
+**For UX/design planning tasks:**
+- Always outline research methodology, user research needs, and deliverables before diving into implementation details
+- Start with a structured framework:
+  - Key questions to answer
+  - Research methods needed
+  - Expected deliverables
+  - Success criteria
+- This ensures planning sessions survive interruptions and provide clear direction
+
 ## Critical Rules
 
 ### Never
