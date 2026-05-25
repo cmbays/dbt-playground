@@ -1287,3 +1287,101 @@ models:
 
       - name: _generated_at
         description: "Timestamp when summary was generated"
+
+
+# ============================================================================
+# UNIT TESTS
+# ============================================================================
+# These unit_tests are authored to exercise the cute-dbt unit-test explorer
+# (https://github.com/breezy-bays-labs/cute-dbt) against this playground's
+# UNION-bearing analytics mart. They intentionally vary EXPECT formats
+# (csv + dict) to demonstrate cute-dbt's renderer against dbt's three
+# unit_test fixture formats (dict, csv, sql) — given uses sql format
+# universally so the tests pass standalone without seeded Synthea data.
+
+unit_tests:
+  - name: test_mart_dq_summary_combines_encounter_and_medication_metrics
+    description: |
+      mart_dq_summary UNION-ALLs metrics from stg_synthea__encounters
+      and stg_synthea__medications. This test mocks two encounter rows
+      (one invalid) and two medication rows (both invalid), then asserts
+      the per-entity counts + quarantine rate. Uses sql format for the
+      GIVEN mocks (no upstream introspection required → passes
+      standalone without seeded Synthea data) and csv format for the
+      EXPECT — demonstrates the compact tabular form for assertions.
+    model: mart_dq_summary
+    given:
+      - input: ref('stg_synthea__encounters')
+        format: sql
+        rows: |
+          select cast(false as boolean) as is_dq_valid
+            , cast(false as boolean) as valid_encounter_timestamps
+            , cast(true  as boolean) as no_future_encounter_dates
+            , cast(true  as boolean) as end_after_1900
+            , cast(true  as boolean) as start_after_1900
+          union all
+          select cast(true  as boolean) as is_dq_valid
+            , cast(true  as boolean) as valid_encounter_timestamps
+            , cast(true  as boolean) as no_future_encounter_dates
+            , cast(true  as boolean) as end_after_1900
+            , cast(true  as boolean) as start_after_1900
+      - input: ref('stg_synthea__medications')
+        format: sql
+        rows: |
+          select cast(false as boolean) as is_dq_valid
+            , cast(false as boolean) as valid_medication_dates
+            , cast(true  as boolean) as no_future_medication_dates
+            , cast(true  as boolean) as start_after_1900
+            , cast(true  as boolean) as end_after_1900_if_present
+          union all
+          select cast(false as boolean) as is_dq_valid
+            , cast(true  as boolean) as valid_medication_dates
+            , cast(false as boolean) as no_future_medication_dates
+            , cast(true  as boolean) as start_after_1900
+            , cast(true  as boolean) as end_after_1900_if_present
+    expect:
+      format: csv
+      rows: |
+        entity_type,quarantined_count,total_count,quarantine_rate_pct,failed_timestamp_validations
+        encounters,1,2,50.00,1
+        medications,2,2,100.00,1
+
+  - name: test_mart_dq_summary_zero_quarantined_when_all_valid
+    description: |
+      mart_dq_summary should report zero quarantined_count and 0.00
+      quarantine_rate_pct when every upstream row passes data-quality
+      validations. Uses sql format for the GIVEN mocks and dict format
+      for the EXPECT — dict expects only compare listed columns, so
+      non-deterministic outputs (`_generated_at` from
+      `current_timestamp`) are excluded from comparison.
+    model: mart_dq_summary
+    given:
+      - input: ref('stg_synthea__encounters')
+        format: sql
+        rows: |
+          select
+            true as is_dq_valid
+            , true as valid_encounter_timestamps
+            , true as no_future_encounter_dates
+            , true as end_after_1900
+            , true as start_after_1900
+      - input: ref('stg_synthea__medications')
+        format: sql
+        rows: |
+          select
+            true as is_dq_valid
+            , true as valid_medication_dates
+            , true as no_future_medication_dates
+            , true as start_after_1900
+            , true as end_after_1900_if_present
+    expect:
+      format: dict
+      rows:
+        - entity_type: 'encounters'
+          quarantined_count: 0
+          total_count: 1
+          quarantine_rate_pct: 0.00
+        - entity_type: 'medications'
+          quarantined_count: 0
+          total_count: 1
+          quarantine_rate_pct: 0.00

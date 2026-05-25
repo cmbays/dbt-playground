@@ -1144,3 +1144,59 @@ models:
 
       - name: _loaded_at
         description: Timestamp when record was loaded
+
+
+# ============================================================================
+# UNIT TESTS
+# ============================================================================
+# These unit_tests are authored to exercise the cute-dbt unit-test explorer
+# (https://github.com/breezy-bays-labs/cute-dbt) against this playground's
+# UNION-bearing mart models. Each test mocks a small set of upstream rows
+# and asserts the SQL transformation produces the expected shape.
+
+unit_tests:
+  - name: test_dim_payers_injects_unknown_sentinel
+    description: |
+      dim_payers UNION-ALLs an unknown-member sentinel row (payer_key = -1)
+      with the sequenced source rows. This test verifies the sentinel
+      survives the union and the sequenced rows are surrogate-keyed
+      starting at 1. Uses sql format for the GIVEN mock (a single inline
+      SELECT) so the test passes standalone without seeded Synthea data,
+      and dict format for EXPECT — dict expects only compare listed
+      columns, so non-deterministic outputs (`_loaded_at`) are skipped.
+    model: dim_payers
+    given:
+      - input: ref('stg_synthea__payers')
+        format: sql
+        rows: |
+          select
+            cast('a00000aa-0000-0000-0000-000000000001' as varchar) as payer_id
+            , cast('Acme Health' as varchar) as payer_name
+            , cast('1 Acme Way' as varchar) as address
+            , cast('Boston' as varchar) as city
+            , cast('MA' as varchar) as state
+            , cast('02101' as varchar) as zip_code
+            , cast('555-0100' as varchar) as phone
+            , cast(1000.0 as double) as amount_covered
+            , cast(250.0 as double) as amount_uncovered
+            , cast(1250.0 as double) as revenue
+            , cast(10 as bigint) as covered_encounters
+            , cast(2 as bigint) as uncovered_encounters
+            , cast(5 as bigint) as covered_medications
+            , cast(1 as bigint) as uncovered_medications
+            , cast(3 as bigint) as covered_procedures
+            , cast(0 as bigint) as uncovered_procedures
+            , cast(4 as bigint) as covered_immunizations
+            , cast(0 as bigint) as uncovered_immunizations
+            , cast(8 as bigint) as unique_customers
+            , cast(0.85 as double) as average_quality_of_life_score
+            , cast(96 as bigint) as member_months
+    expect:
+      format: dict
+      rows:
+        - payer_key: -1
+          payer_id: 'UNKNOWN'
+          payer_name: 'Unknown Payer'
+        - payer_key: 1
+          payer_id: 'a00000aa-0000-0000-0000-000000000001'
+          payer_name: 'Acme Health'
