@@ -1294,10 +1294,18 @@ models:
 # ============================================================================
 # These unit_tests are authored to exercise the cute-dbt unit-test explorer
 # (https://github.com/breezy-bays-labs/cute-dbt) against this playground's
-# UNION-bearing analytics mart. They intentionally vary EXPECT formats
-# (csv + dict) to demonstrate cute-dbt's renderer against dbt's three
-# unit_test fixture formats (dict, csv, sql) — given uses sql format
-# universally so the tests pass standalone without seeded Synthea data.
+# UNION-bearing analytics mart. They intentionally exercise different
+# fixture formats for `given` (and `expect` where relevant): one csv,
+# one sql. dim_payers (_core__models.yml) covers the dict format.
+# Together the three tests pin cute-dbt's renderer against every dbt
+# 1.8+ unit_test fixture format. See `_core__models.yml` for the third
+# test (test_dim_payers_injects_unknown_sentinel).
+#
+# **Test-execution prerequisite**: dict and csv given formats introspect
+# the upstream model's schema (to NULL-fill unspecified columns). Run
+# `dbt run-operation load_synthea_sources` against a persistent DuckDB
+# target (see `playground README.md`) before `dbt test --select
+# test_type:unit`.
 
 unit_tests:
   - name: test_mart_dq_summary_combines_encounter_and_medication_metrics
@@ -1305,40 +1313,23 @@ unit_tests:
       mart_dq_summary UNION-ALLs metrics from stg_synthea__encounters
       and stg_synthea__medications. This test mocks two encounter rows
       (one invalid) and two medication rows (both invalid), then asserts
-      the per-entity counts + quarantine rate. Uses sql format for the
-      GIVEN mocks (no upstream introspection required → passes
-      standalone without seeded Synthea data) and csv format for the
-      EXPECT — demonstrates the compact tabular form for assertions.
+      the per-entity counts + quarantine rate. Uses csv format for both
+      GIVEN and EXPECT — compact tabular form across many boolean
+      dq-flag columns.
     model: mart_dq_summary
     given:
       - input: ref('stg_synthea__encounters')
-        format: sql
+        format: csv
         rows: |
-          select cast(false as boolean) as is_dq_valid
-            , cast(false as boolean) as valid_encounter_timestamps
-            , cast(true  as boolean) as no_future_encounter_dates
-            , cast(true  as boolean) as end_after_1900
-            , cast(true  as boolean) as start_after_1900
-          union all
-          select cast(true  as boolean) as is_dq_valid
-            , cast(true  as boolean) as valid_encounter_timestamps
-            , cast(true  as boolean) as no_future_encounter_dates
-            , cast(true  as boolean) as end_after_1900
-            , cast(true  as boolean) as start_after_1900
+          is_dq_valid,valid_encounter_timestamps,no_future_encounter_dates,end_after_1900,start_after_1900
+          false,false,true,true,true
+          true,true,true,true,true
       - input: ref('stg_synthea__medications')
-        format: sql
+        format: csv
         rows: |
-          select cast(false as boolean) as is_dq_valid
-            , cast(false as boolean) as valid_medication_dates
-            , cast(true  as boolean) as no_future_medication_dates
-            , cast(true  as boolean) as start_after_1900
-            , cast(true  as boolean) as end_after_1900_if_present
-          union all
-          select cast(false as boolean) as is_dq_valid
-            , cast(true  as boolean) as valid_medication_dates
-            , cast(false as boolean) as no_future_medication_dates
-            , cast(true  as boolean) as start_after_1900
-            , cast(true  as boolean) as end_after_1900_if_present
+          is_dq_valid,valid_medication_dates,no_future_medication_dates,start_after_1900,end_after_1900_if_present
+          false,false,true,true,true
+          false,true,false,true,true
     expect:
       format: csv
       rows: |
