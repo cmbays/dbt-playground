@@ -78,6 +78,57 @@ dbt_project/
 | `dbt docs generate` | Generate documentation |
 | `dbt docs serve` | Serve docs at localhost:8080 |
 
+## Unit tests (cute-dbt format coverage)
+
+Three unit_tests on `dim_payers` + `mart_dq_summary` exercise dbt's
+three fixture formats (`dict`, `csv`, `sql`) for the cute-dbt
+unit-test explorer ([breezy-bays-labs/cute-dbt#39 + #66](https://github.com/breezy-bays-labs/cute-dbt/issues/66)).
+
+**Format coverage:**
+
+| Test | Given format | Expect format | Demonstrates |
+|---|---|---|---|
+| `test_dim_payers_injects_unknown_sentinel` | dict | dict | Compact key-value mock for many columns |
+| `test_mart_dq_summary_combines_encounter_and_medication_metrics` | csv | csv | Tabular form for repeated boolean columns |
+| `test_mart_dq_summary_zero_quarantined_when_all_valid` | sql | dict | Inline SELECT mock when fine-grained casts matter |
+
+**Execution prerequisite — dict and csv given formats**: dbt's
+unit-test framework introspects the upstream relation's schema to
+NULL-fill columns not provided in the mock. The introspection requires
+the upstream model to **exist** in the warehouse. With the default
+`:memory:` DuckDB profile, the upstream relations vanish between
+`run-operation` and `test` invocations, so `dbt test --select
+test_type:unit` fails. Two paths:
+
+1. **Persistent DuckDB target** (recommended for local dev). Add to
+   `~/.dbt/profiles.yml`:
+
+   ```yaml
+   healthcare_analytics:
+     outputs:
+       unit_test:
+         type: duckdb
+         path: 'target/playground-unit-test.duckdb'
+         threads: 4
+   ```
+
+   Then:
+
+   ```bash
+   uv run dbt run-operation load_synthea_sources --target unit_test
+   uv run dbt build --empty --select "+mart_dq_summary +dim_payers" --target unit_test
+   uv run dbt test --select "test_type:unit" --target unit_test
+   ```
+
+2. **Inline mock with `sql` format** for the `given` block (no
+   introspection required, passes standalone against `:memory:`). The
+   `test_mart_dq_summary_zero_quarantined_when_all_valid` test
+   demonstrates this pattern.
+
+The persistent-target approach is preferred when authoring new
+unit_tests because dict and csv given are more readable for
+multi-column mocks.
+
 ## Resources
 
 - [dbt Documentation](https://docs.getdbt.com/)
