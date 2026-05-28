@@ -1,0 +1,98 @@
+name: cute-dbt PR review
+
+# Dogfood of the cute-dbt Phase-1 PR-review recipe (variant 2A — Pages preview).
+# Renders an HTML report scoped to the dbt models + unit tests this PR changed,
+# publishes it to a per-PR GitHub Pages subdirectory, and posts a sticky comment
+# with a single-click link. Recipe:
+# https://breezy-bays-labs.github.io/cute-dbt/recipes/github-actions-pr-review.html
+
+on:
+  pull_request:
+    paths:
+      - 'dbt_project/**'
+      - '**/*.sql'
+      - '**/*.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cute-dbt-pr-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write        # peaceiris/actions-gh-pages pushes to the gh-pages branch
+      pull-requests: write   # sticky comment
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0           # base + head SHAs must be present for the diff
+          persist-credentials: false
+
+      # --- Compile the dbt project (DuckDB :memory:, no warehouse credentials).
+      #     Uses the project's own uv toolchain. `dbt compile` (not `dbt parse`)
+      #     so compiled_code is populated — cute-dbt fail-closes on an in-scope
+      #     model whose compiled_code is null. ---
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "latest"
+      - run: uv python install 3.11
+      - run: uv sync
+      - name: Write DuckDB CI profile
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<'PROFILE'
+          healthcare_analytics:
+            target: ci
+            outputs:
+              ci:
+                type: duckdb
+                path: ':memory:'
+                threads: 4
+          PROFILE
+      - run: uv run dbt deps --project-dir dbt_project
+      - run: uv run dbt compile --project-dir dbt_project
+
+      # --- Install cute-dbt from source (public repo; pin a trusted main SHA
+      #     until v0.1.0 is on crates.io). ubuntu-latest ships cargo. ---
+      - name: Install cute-dbt
+        run: cargo install --locked --git https://github.com/breezy-bays-labs/cute-dbt --rev 89383f546f0f92ba4435d8ffec3be746aecc687c
+
+      # --- Diff (SHA-based: deterministic + fork-safe) + render scoped report. ---
+      - name: Render diff-scoped report
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          git diff --name-only \
+            "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+            > changed_files.txt
+          echo "changed files in scope:"; cat changed_files.txt
+          cute-dbt \
+            --manifest dbt_project/target/manifest.json \
+            --scope-from-pr-diff @changed_files.txt \
+            --project-root dbt_project \
+            --out _site/report.html
+
+      # --- Publish ONLY the report dir to a per-PR Pages subdirectory.
+      #     (Scoped publish_dir avoids pushing the whole checkout to gh-pages.) ---
+      - uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          keep_files: true
+          destination_dir: pr-${{ github.event.pull_request.number }}
+
+      # --- Sticky comment with the single-click report link (one per PR). ---
+      - uses: marocchino/sticky-pull-request-comment@0ea0beb66eb9baf113663a64ec522f60e49231c0 # v3.0.4
+        with:
+          header: cute-dbt-pr-review
+          message: |
+            ## 📊 cute-dbt review ready
+
+            [**Open the diff-scoped report ↗**](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-${{ github.event.pull_request.number }}/report.html)
+
+            Scoped to the dbt models + unit tests this PR changed.
