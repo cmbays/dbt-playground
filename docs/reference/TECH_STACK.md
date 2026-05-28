@@ -67,33 +67,15 @@ From `uv.lock` (production):
 
 ---
 
-## JavaScript/Frontend Stack
+## Node.js Tooling
 
-### Node.js Dependencies
-
-From `package.json`:
+From `package.json` (lint tooling only):
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| @playwright/test | ^1.58.1 | E2E testing |
 | husky | ^9.0.0 | Git hooks |
-| lint-staged | ^15.0.0 | Pre-commit linting |
+| lint-staged | ^16.2.7 | Pre-commit linting |
 | markdownlint-cli2 | ^0.17.0 | Markdown linting |
-| serve | ^14.2.5 | Static file server |
-| ajv | ^8.17.1 | JSON schema validation |
-| commander | ^14.0.3 | CLI for Node scripts |
-
-### CDN Dependencies (Playgrounds)
-
-All playgrounds use CDN-hosted libraries. **Lock to exact versions** to prevent breaking changes.
-
-| Library | Locked Version | CDN URL | Used In |
-|---------|----------------|---------|---------|
-| Mermaid | 10.9.0 | `https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js` | workflow-hub, mermaid-designer, agent-visualizer, learning-playground |
-| Reveal.js | 4.6.0 | `https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js` | learning-playground |
-| Panzoom | 9.4.3 | `https://cdn.jsdelivr.net/npm/panzoom@9.4.3/+esm` | mermaid-designer |
-
-**Note**: Some playgrounds currently use `@10` (major only). Standardize to exact minor versions (e.g., `@10.9.0`) when updating.
 
 ---
 
@@ -230,17 +212,6 @@ templater = dbt
 | PEP 723 scripts | No | No | Yes |
 
 **Decision**: uv provides faster, more reproducible dependency management with integrated Python version management.
-
-### Why Vanilla JS over React (Playgrounds)
-
-| Factor | React | Vanilla JS |
-|--------|-------|------------|
-| Build step | Required | None |
-| File count | Multiple | Single HTML |
-| Dependencies | npm ecosystem | CDN only |
-| Learning curve | Framework | Native browser |
-
-**Decision**: Single-file HTML playgrounds are self-contained, portable, and require no build tools. Appropriate for developer tools, not production apps.
 
 ---
 

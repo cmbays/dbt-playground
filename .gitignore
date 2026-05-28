@@ -21,10 +21,6 @@
 .claude/memories/
 .claude/chats/
 
-# ----------------------------------------
-# Work in progress
-temp/
-
 # Project-specific documentation (for review only)
 FOR_CHRIS.md
 
@@ -63,11 +59,3 @@ dbt_project/*.duckdb.wal
 dbt_project/data/synthea/*.csv
 logs/
 dev.duckdb
-
-# Database files
-database/**/*.duckdb
-database/**/*.duckdb.wal
-
-# Playwright test artifacts
-test-results/
-playwright-report/

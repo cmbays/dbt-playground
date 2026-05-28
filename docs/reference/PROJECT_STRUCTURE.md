@@ -16,10 +16,9 @@ tags: [reference, structure, organization]
 
 ```text
 dbt-playground/
-├── CLAUDE.md                  # Project context for Claude (auto-loaded)
+├── CLAUDE.md                  # Project context for Claude
 ├── README.md                  # Public readme
 ├── CHANGELOG.md               # Version history
-├── DOCUMENTATION_INDEX.md     # Documentation navigation
 │
 ├── pyproject.toml             # Python project config (uv)
 ├── uv.lock                    # Locked dependency versions
@@ -27,21 +26,20 @@ dbt-playground/
 │
 ├── .github/                   # GitHub Configuration
 │   └── workflows/             # GitHub Actions
-│       ├── pr-validation.yml      # Conventional commit enforcement
-│       ├── issue-linker.yml       # Issue reference checking
-│       ├── pr-labeler.yml         # Auto-labeling PRs
-│       └── dbt-test.yml           # dbt CI tests
+│       ├── dbt-test.yml             # dbt CI tests
+│       ├── claude.yml               # @claude mention handler
+│       └── claude-code-review.yml   # Claude PR review
 │
 ├── dbt_project/               # dbt Project
 │   ├── dbt_project.yml           # dbt configuration
 │   ├── packages.yml              # dbt packages
 │   ├── models/                   # dbt models
-│   │   ├── staging/              # Source transformations
-│   │   ├── intermediate/         # Business logic
-│   │   └── marts/                # Analytics-ready tables
+│   │   ├── staging/              # Source transformations (Synthea)
+│   │   ├── intermediate/         # Business logic + quarantine
+│   │   └── marts/                # core/ + analytics/
 │   ├── seeds/                    # Static data
-│   ├── macros/                   # Reusable SQL
-│   ├── tests/                    # Data tests
+│   ├── macros/                   # Reusable SQL (incl. data quality)
+│   ├── tests/                    # Singular data tests
 │   ├── snapshots/                # SCD tracking
 │   └── analyses/                 # Ad-hoc queries
 │
@@ -49,51 +47,24 @@ dbt-playground/
 │   ├── reference/            # Technical reference docs
 │   │   ├── PROJECT_STRUCTURE.md  # This file
 │   │   ├── ARCHITECTURE.md
-│   │   ├── UV_MIGRATION.md       # uv workflow guide
-│   │   ├── GITHUB_ENFORCEMENT.md # GitHub Actions strategy
-│   │   ├── GITHUB_ACTIONS.md     # GitHub Actions reference
-│   │   └── LEARNINGS.md
-│   ├── guides/               # How-to guides
-│   ├── standards/            # Rules and conventions
-│   ├── specs/                # PRDs
-│   └── tdd/                  # Technical Design Documents
+│   │   ├── TECH_STACK.md
+│   │   ├── DBT_CODING_STANDARDS.md
+│   │   ├── DBT_TESTING_STANDARDS.md
+│   │   ├── DATA_QUALITY_QUARANTINE.md
+│   │   └── UV_MIGRATION.md       # uv workflow guide
+│   ├── specs/                # PRDs + TDDs (per layer)
+│   ├── decisions/            # dbt ADRs
+│   └── for_chris/            # Kimball + uv references
 │
-├── temp/                      # Working Files (development)
-│   ├── v[X.Y]_PLAN.md
-│   ├── v[X.Y]_TESTING.md
-│   └── [prototype files]
+├── scripts/                   # Lint wrappers
+│   ├── lint-sql.sh              # sqlfluff lint
+│   ├── lint-yaml.sh             # yamllint
+│   └── fix-sql.sh               # sqlfluff fix
 │
-├── scripts/                   # Build & Utility Scripts
-│
-├── playgrounds/               # Interactive Visual Tools
-│   ├── worktree-coordinator.html  # Git worktree management
-│   ├── agent-visualizer.html      # Agent workflow visualization
-│   ├── schema-explorer.html       # Healthcare data browser
-│   ├── lineage-explorer.html      # dbt DAG explorer
-│   └── dashboard-builder.html     # Analytics mockup tool
-│
-└── .claude/                   # Agent Configuration
-    ├── agents/               # Persona definitions
-    │   ├── AGENTS.md             # Orchestration guide
-    │   ├── git-master.md         # Git operations agent
-    │   ├── documenter.md         # Documentation agent
-    │   └── [other personas]
-    ├── commands/             # Slash commands
-    │   ├── commit.md             # /commit - validated commits
-    │   ├── branch.md             # /branch - validated branches
-    │   ├── deploy.md             # /deploy - version deployment
-    │   └── [other commands]
-    ├── hooks/                # Pre/post tool hooks
-    │   └── pre-bash-check.js     # Git enforcement, safety gates
-    ├── rules/                # Coding standards
-    │   ├── git-workflow.md       # Git conventions + Agent Git Governance
-    │   ├── coding-style.md
-    │   └── [other rules]
-    └── skills/               # Workflow definitions
-        ├── git-operations.md         # Git workflow steps
-        ├── worktree-orchestration.md # Parallel development
-        ├── deployment-workflow.md
-        └── [other skills]
+└── .claude/                   # Claude Code config (dbt-focused)
+    ├── agents/               # dbt-* + data-modeler, healthcare/semantic analyst
+    ├── commands/             # /dbt-run, /dbt-test, /dbt-model, ...
+    └── skills/               # dbt model dev, testing, deployment, ...
 ```
 
 ---
@@ -105,8 +76,8 @@ dbt-playground/
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | Project context - READ FIRST |
-| `.claude/agents/AGENTS.md` | Agent orchestration guide |
 | `docs/reference/ARCHITECTURE.md` | System architecture |
+| `docs/reference/TECH_STACK.md` | Technology versions |
 | `docs/reference/UV_MIGRATION.md` | Python/uv workflow guide |
 
 ### Key Files
@@ -130,33 +101,11 @@ dbt-playground/
 
 ## Development Workflow
 
-### Standard Process
-
-The canonical 5-stage workflow. See [WORKFLOW_STAGES.md](./WORKFLOW_STAGES.md) for complete reference with entry/exit criteria and quality gates.
-
-```
-1. UNDERSTAND → Read CLAUDE.md, docs/
-2. PLAN       → Create temp/v[X.Y]_PLAN.md
-3. BUILD      → Create implementation
-4. VERIFY     → Test, document in temp/v[X.Y]_TESTING.md
-5. DEPLOY     → Finalize, tag version
-```
-
-Quality gates are enforced by the Supervisor agent at each stage transition.
-
-### File Protection Rules
-
-**NEVER**:
-
-- Overwrite files without backup
-- Skip prototype step for new features
-- Deploy without testing
-
-**ALWAYS**:
-
-- Work in temp/ first
-- Test changes
-- Update documentation
+1. Branch + PR for everything; never push directly to `main`.
+2. Build and test models with `uv run dbt build` from `dbt_project/`.
+3. Lint before pushing (`npm run lint`); the pre-push hook runs
+   `dbt compile` and rejects hardcoded `database.schema.table` refs.
+4. Update `CHANGELOG.md` for feat/fix PRs.
 
 ---
 

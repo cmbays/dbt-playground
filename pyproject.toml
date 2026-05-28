@@ -1,7 +1,7 @@
 [project]
 name = "dbt-playground"
 version = "0.7.0"
-description = "dbt learning project for data transformation best practices, agent orchestration, and dbt-mcp integration"
+description = "Synthetic Synthea healthcare dbt project (DuckDB) — public fixture source and dogfood target for the cute-dbt tool"
 requires-python = ">=3.11"
 dependencies = [
     "dbt-duckdb>=1.10.0",
@@ -16,39 +16,8 @@ dev = [
     "sqlfluff>=3.0.0",
     "sqlfluff-templater-dbt>=3.0.0",
     "pre-commit>=3.7.0",
-    "flask>=3.1.2",
-    "flask-cors>=6.0.2",
-    "pytest>=9.0.2",
-    "pytest-cov>=7.0.0",
     "ruff>=0.4.0",
 ]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_functions = ["test_*"]
-addopts = "-v --tb=short"
-pythonpath = ["."]
-markers = [
-    "unit: Unit tests for individual functions",
-    "integration: Integration tests across components",
-    "slow: Tests that take longer to run",
-    "smoke: Critical path tests for quick validation",
-]
-
-[tool.coverage.run]
-branch = true
-omit = ["tests/*", "*/__pycache__/*"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "if __name__ == .__main__.:",
-    "raise NotImplementedError",
-]
-show_missing = true
-# Note: Coverage for FS1 scripts (log-session.py, consolidate-memory.py)
-# is measured separately with --cov-fail-under flag
 
 [tool.ruff]
 line-length = 100

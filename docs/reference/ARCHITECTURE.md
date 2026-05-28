@@ -142,10 +142,9 @@ For complete directory structure, see **[PROJECT_STRUCTURE.md](PROJECT_STRUCTURE
 
 Key organizational principles:
 
-- **Documentation hierarchy** (docs/, temp/)
-- **Agent configuration** (.claude/)
-- **Work-in-progress isolation** (temp/)
-- **Version control** via git tags (no separate archive needed)
+- **Documentation hierarchy** (docs/)
+- **Claude Code configuration** (.claude/)
+- **Version control** via git tags
 
 ---
 
@@ -188,8 +187,7 @@ dbt_project/
 
 - [[PROJECT_STRUCTURE.md]] - Detailed file organization
 - [[../CLAUDE.md]] - Project context and workflow
-- [[../.claude/agents/AGENTS.md]] - Agent orchestration guide
-- [[../.claude/rules/git-workflow.md]] - Git standards
+- [[TECH_STACK.md]] - Technology versions and rationale
 
 ---
 

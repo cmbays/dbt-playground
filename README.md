@@ -1,215 +1,72 @@
----
-audience: [human, multi-agent]
-priority: low
-size: small
-last_updated: 2026-01-29
-status: active
-tags: [overview, readme, introduction]
----
-
 # dbt-playground
 
-A learning project for dbt (data build tool) and data analytics development using Claude Code's agent orchestration system.
+A synthetic **Synthea healthcare dbt project** running on **DuckDB**.
 
-**Purpose**: Learn dbt, data modeling, and analytics engineering while leveraging multi-agent workflows for development.
+This repo is a public, self-contained dbt project built on
+[Synthea](https://github.com/synthetichealth/synthea) synthetic
+(non-real) healthcare data. It exists for two purposes:
 
-**Status**: v0.5.0 Analytics Complete - 7 specialized analytics models with comprehensive testing
+1. **Public fixture source** for the
+   [`breezy-bays-labs/cute-dbt`](https://github.com/breezy-bays-labs/cute-dbt)
+   tool — its compiled `manifest.json` and unit-test shapes are used as
+   demo/test fixtures.
+2. **Dogfood target** for a cute-dbt GitHub-Pages PR-review workflow.
 
----
+All data here is synthetic. No real patient data is present.
 
-## Latest Release: v0.5.0 - Analytics Enhancements
+## Stack
 
-The v0.5 release extends v0.4's dimensional foundation with 7 specialized analytics models for healthcare.
+- **dbt** with **DuckDB** (`dbt-duckdb`)
+- **uv** for Python environment management
+- **sqlfluff** (SQL) + **yamllint** (YAML) + **markdownlint** linting
 
-### New Models
-
-| Model | Description | Rows |
-|-------|-------------|------|
-| dim_conditions | Master condition dimension | 130 |
-| fct_patient_summary | Annual patient aggregations | 21,343 |
-| fct_provider_metrics | Monthly provider metrics | 33,463 |
-| fct_condition_cohorts | Patient-condition relationships | 7,165 |
-| fct_cost_analysis | Detailed cost breakdown | 53,346 |
-| v_patient_current_conditions | Active conditions view | 3,811 |
-| v_provider_active_patients | Provider panels view | 5,855 |
-
-### Testing and Quality
-
-- 91 tests (100% pass rate)
-- Schema validation, grain validation, data quality checks
-- 5 custom singular tests for business rules
-- Complete test documentation in `temp/v0.5_TESTING.md`
-
-### Documentation
-
-- Full YAML documentation with example queries (3+ per model)
-- BI integration guide: `docs/guides/BI_INTEGRATION_GUIDE.md`
-- Comprehensive test coverage report
-
-See [CHANGELOG.md](CHANGELOG.md) for complete details.
-
----
-
-## Quick Start
-
-### Prerequisites
-
-- [uv](https://docs.astral.sh/uv/) - Python package manager
-
-### Setup
+## Quick start
 
 ```bash
-# Install uv (if not already installed)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Clone and setup
-git clone <repo-url>
-cd dbt-playground
+# Install uv if needed: https://docs.astral.sh/uv/
 uv sync
 
-# Verify installation
-uv run dbt --version   # Should show dbt 1.11.2
-uv run dbt debug       # Should connect to dev.duckdb
-```
-
-### Run dbt
-
-```bash
-# From dbt_project/ directory
 cd dbt_project
-uv run dbt compile     # Compile models
-uv run dbt build       # Build and test
-uv run dbt docs generate && uv run dbt docs serve  # Documentation
+uv run dbt deps        # install dbt packages
+uv run dbt build       # build models + run tests
+uv run dbt docs generate && uv run dbt docs serve
 ```
 
-### For Developers
+The dbt project (`healthcare_analytics` profile) uses a `:memory:` /
+local DuckDB target. See `dbt_project/README.md` for project-specific
+detail.
 
-1. **Start here**: Read `CLAUDE.md` for complete project context
-2. **uv Guide**: See `docs/reference/UV_MIGRATION.md` for Python workflow
-3. **Agent guide**: See `.claude/agents/AGENTS.md` for orchestration workflows
-4. **Documentation**: Browse `docs/` for standards and references
-
----
-
-## Project Overview
-
-### What This Is
-
-A dbt project scaffold with comprehensive agent orchestration infrastructure for:
-
-- **dbt development**: Data transformations, models, tests
-- **Data analytics**: SQL-based analytics and reporting
-- **Agent workflows**: Multi-persona development methodology
-
-### Technology Stack
-
-- **Python**: Managed by uv (pyproject.toml, uv.lock)
-- **dbt**: Data transformation framework (1.11.2)
-- **DuckDB**: Analytical database (1.10.0)
-- **SQL**: Data modeling and analytics
-- **MCP servers**: dbt-mcp for AI-assisted development
-- **Claude Code**: Agent orchestration system
-
----
-
-## Project Structure
+## Project layout
 
 ```text
 dbt-playground/
-├── README.md              # This file
-├── CLAUDE.md              # Project context for Claude
-├── CHANGELOG.md           # Version history
-│
-├── pyproject.toml         # Python project config (uv)
-├── uv.lock                # Locked dependency versions
-├── .python-version        # Python version (3.11)
-│
-├── dbt_project/           # dbt project
-│   ├── dbt_project.yml       # dbt configuration
-│   ├── models/               # staging/, intermediate/, marts/
-│   └── ...                   # seeds, macros, tests, etc.
-│
-├── docs/                  # Documentation
-│   ├── reference/         # Architecture, UV_MIGRATION.md
-│   ├── guides/            # How-to workflows
-│   ├── standards/         # Rules and conventions
-│   ├── specs/             # PRDs
-│   └── tdd/               # Technical design docs
-│
-├── scripts/               # Utility scripts (uv run compatible)
-│
-├── temp/                  # Working files (development)
-│
-└── .claude/               # Agent configuration
-    ├── agents/            # Persona definitions
-    ├── commands/          # Slash commands
-    ├── skills/            # Reusable workflows
-    ├── rules/             # Coding standards
-    └── hooks/             # Pre/post tool hooks
+├── dbt_project/        # the dbt project (staging → intermediate → marts/analytics)
+│   ├── models/         # staging/synthea, intermediate, marts/core, marts/analytics
+│   ├── macros/         # incl. data-quality / quarantine helpers
+│   ├── tests/          # singular data-quality tests
+│   ├── seeds/  snapshots/  analyses/
+│   └── dbt_project.yml  packages.yml
+├── docs/               # dbt-domain reference, PRDs/TDDs, ADRs
+├── scripts/            # lint wrappers (sqlfluff / yamllint)
+├── .claude/            # dbt-focused Claude Code agents, commands, skills
+└── .github/workflows/  # dbt-test CI + Claude review
 ```
-
----
-
-## Agent Orchestration
-
-This project includes a full agent orchestration system with specialized personas:
-
-| Persona           | Prefix      | Purpose              |
-| ----------------- | ----------- | -------------------- |
-| Product Manager   | `pm:`       | Requirements, PRDs   |
-| Architect         | `arch:`     | System design, TDDs  |
-| Developer         | `dev:`      | Implementation       |
-| Code Reviewer     | `review:`   | Code quality         |
-| Tester            | `test:`     | Testing, verification|
-| Documenter        | `docs:`     | Documentation        |
-| Security Reviewer | `security:` | Security audit       |
-| Git-Master        | `git:`      | Git operations       |
-| Sage              | `sage:`     | Learning curation    |
-
-See `.claude/agents/AGENTS.md` for detailed orchestration guide.
-
----
 
 ## Documentation
 
-| Document                                                               | Purpose                   |
-| ---------------------------------------------------------------------- | ------------------------- |
-| **[CLAUDE.md](CLAUDE.md)**                                             | Project context for Claude|
-| **[.claude/agents/AGENTS.md](.claude/agents/AGENTS.md)**               | Agent orchestration guide |
-| **[docs/reference/ARCHITECTURE.md](docs/reference/ARCHITECTURE.md)**   | System architecture       |
-| **[docs/reference/PROJECT_STRUCTURE.md](docs/reference/PROJECT_STRUCTURE.md)** | File organization |
+| Doc | Purpose |
+|-----|---------|
+| [docs/reference/ARCHITECTURE.md](docs/reference/ARCHITECTURE.md) | System / layering architecture |
+| [docs/reference/PROJECT_STRUCTURE.md](docs/reference/PROJECT_STRUCTURE.md) | File organization |
+| [docs/reference/TECH_STACK.md](docs/reference/TECH_STACK.md) | Technology versions and rationale |
+| [docs/reference/DBT_CODING_STANDARDS.md](docs/reference/DBT_CODING_STANDARDS.md) | dbt modeling conventions |
+| [docs/reference/DBT_TESTING_STANDARDS.md](docs/reference/DBT_TESTING_STANDARDS.md) | Testing conventions |
+| [docs/reference/DATA_QUALITY_QUARANTINE.md](docs/reference/DATA_QUALITY_QUARANTINE.md) | DQ / quarantine pattern |
+| [docs/reference/UV_MIGRATION.md](docs/reference/UV_MIGRATION.md) | uv Python workflow |
+| [docs/for_chris/KIMBALL_DIMENSIONAL_MODELING.md](docs/for_chris/KIMBALL_DIMENSIONAL_MODELING.md) | Dimensional modeling primer |
 
----
-
-## Getting Started with dbt
-
-The dbt project is fully configured with:
-
-- **Project**: `healthcare_analytics` using DuckDB
-- **Data Source**: Synthea (synthetic healthcare data) - 16 tables
-- **Layers**: staging (views), intermediate (views), marts (tables)
-
-### Common Commands
-
-Run from `dbt_project/` directory:
-
-| Task | Command |
-|------|---------|
-| Install dependencies | `uv sync` (from repo root) |
-| Run all models | `uv run dbt build` |
-| Compile SQL | `uv run dbt compile` |
-| Run tests | `uv run dbt test` |
-| Generate docs | `uv run dbt docs generate` |
-| Serve docs | `uv run dbt docs serve` |
-
-See `docs/reference/UV_MIGRATION.md` for complete uv workflow guide
-
----
+PRDs and TDDs for each layer live under `docs/specs/`.
 
 ## License
 
 To be determined.
-
----
-
-**Ready to develop?** Read `CLAUDE.md` for complete context.

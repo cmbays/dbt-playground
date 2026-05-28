@@ -17,6 +17,3 @@ env/
 
 # Ignore node modules
 node_modules/
-
-# Ignore temp directory
-temp/

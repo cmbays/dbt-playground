@@ -11,9 +11,3 @@ dbt_project/dbt_packages/
 
 # dbt target directory (compiled)
 dbt_project/target/
-
-# Archive directory
-archive/
-
-# Temp files we don't want to lint
-temp/
