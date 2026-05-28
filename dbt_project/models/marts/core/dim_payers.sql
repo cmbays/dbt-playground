@@ -94,3 +94,9 @@ final as (
 )
 
 select * from final
+
+-- ---------------------------------------------------------------------------
+-- cute-dbt dogfood (no-op): this trailing comment is the ONLY model change in
+-- the demo PR. It places dim_payers.sql in the PR diff so cute-dbt scopes the
+-- report to dim_payers + its unit test (test_dim_payers_injects_unknown_sentinel).
+-- ---------------------------------------------------------------------------
