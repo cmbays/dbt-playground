@@ -1,7 +1,7 @@
 {
   "name": "dbt-playground",
   "version": "0.1.0",
-  "description": "A dbt learning project with Claude Code agent orchestration for data analytics development",
+  "description": "Synthetic Synthea healthcare dbt project (DuckDB) — public fixture source and dogfood target for the cute-dbt tool",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -22,9 +22,9 @@
   },
   "keywords": [
     "dbt",
-    "data-analytics",
-    "agent-orchestration",
-    "claude-code"
+    "duckdb",
+    "synthea",
+    "healthcare-analytics"
   ],
   "author": "",
   "license": "ISC",
@@ -34,11 +34,9 @@
   },
   "homepage": "https://github.com/cmbays/dbt-playground#readme",
   "devDependencies": {
-    "@playwright/test": "^1.58.1",
     "husky": "^9.0.0",
     "lint-staged": "^16.2.7",
-    "markdownlint-cli2": "^0.17.0",
-    "serve": "^14.2.5"
+    "markdownlint-cli2": "^0.17.0"
   },
   "lint-staged": {
     "*.md": "markdownlint-cli2 --fix",
@@ -49,11 +47,5 @@
     "dbt_project/macros/**/*.sql": "./scripts/lint-sql.sh",
     "dbt_project/tests/**/*.sql": "./scripts/lint-sql.sh",
     "dbt_project/analyses/**/*.sql": "./scripts/lint-sql.sh"
-  },
-  "dependencies": {
-    "ajv": "^8.17.1",
-    "ajv-formats": "^3.0.1",
-    "commander": "^14.0.3",
-    "proper-lockfile": "^4.1.2"
   }
 }

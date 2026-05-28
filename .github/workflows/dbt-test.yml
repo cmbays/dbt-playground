@@ -10,20 +10,25 @@ on:
     paths:
       - 'dbt_project/**'
 
+permissions:
+  contents: read
+
 jobs:
   dbt-test:
-    runs-on: [self-hosted, macOS, ARM64]
-    timeout-minutes: 30
+    runs-on: ubuntu-latest   # was [self-hosted, macOS, ARM64] — DuckDB :memory: needs no warehouse, so GitHub-hosted is free + safe on a public repo
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: dbt_project
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
         with:
           version: "latest"
 
@@ -38,7 +43,7 @@ jobs:
       - name: Setup dbt profile
         run: |
           mkdir -p ~/.dbt
-          cat > ~/.dbt/profiles.yml << EOF
+          cat > ~/.dbt/profiles.yml << 'EOF'
           healthcare_analytics:
             target: ci
             outputs:
@@ -55,12 +60,11 @@ jobs:
         id: dbt_validate
         run: |
           uv run dbt parse 2>&1 | tee dbt_output.log
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
-
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Upload dbt artifacts
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: dbt-artifacts
           path: |

@@ -44,12 +44,6 @@ dbt_project/seeds/** @cmbays
 # GitHub Actions and automation
 .github/** @cmbays
 
-# Claude agent configuration
-.claude/** @cmbays
-
-# Python scripts
-scripts/** @cmbays
-
 # =============================================================================
 # DOCUMENTATION
 # =============================================================================
@@ -63,9 +57,3 @@ pyproject.toml @cmbays
 uv.lock @cmbays
 .python-version @cmbays
 .gitignore @cmbays
-
-# =============================================================================
-# BACKLOG AND PLANNING
-# =============================================================================
-backlog/** @cmbays
-playgrounds/** @cmbays

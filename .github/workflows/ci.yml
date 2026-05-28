@@ -1,0 +1,88 @@
+name: CI
+
+# Standard CI gates for the public dbt demo repo:
+#   actionlint  — workflow YAML correctness
+#   zizmor      — GitHub Actions security audit (injection, broad token perms, unpinned actions)
+#   gitleaks    — secret scanning on every PR (public-repo hygiene)
+#   sqlfluff    — SQL lint of the dbt project (dbt templater + DuckDB dialect)
+# All run on GitHub-hosted ubuntu-latest (free for public repos); third-party actions SHA-pinned.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    name: actionlint (workflow lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1
+        with:
+          fail_level: error
+
+  zizmor:
+    name: zizmor (workflow security)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "latest"
+      - name: Audit workflows
+        run: uvx --from 'zizmor>=1,<2' zizmor .
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  gitleaks:
+    name: gitleaks (secret scan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  sqlfluff:
+    name: sqlfluff lint
+    runs-on: ubuntu-latest
+    # Non-blocking: the dbt models carry a pre-existing sqlfluff backlog
+    # (RF02/RF03 unqualified single-table refs, AL01 aliasing, RF04 keyword identifiers).
+    # tracked: cmbays/dbt-playground#297 — re-enable blocking once `sqlfluff lint` passes clean.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: "latest"
+      - run: uv python install 3.11
+      - run: uv sync
+      - name: Write DuckDB profile
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<'PROFILE'
+          healthcare_analytics:
+            target: ci
+            outputs:
+              ci:
+                type: duckdb
+                path: ':memory:'
+                threads: 4
+          PROFILE
+      - name: Install dbt packages (sqlfluff dbt templater compiles models)
+        run: uv run dbt deps --project-dir dbt_project
+      - name: sqlfluff lint
+        run: bash scripts/lint-sql.sh dbt_project/models/ dbt_project/macros/ dbt_project/tests/ dbt_project/analyses/
