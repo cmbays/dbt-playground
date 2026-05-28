@@ -4,7 +4,7 @@ version = "0.7.0"
 description = "Synthetic Synthea healthcare dbt project (DuckDB) — public fixture source and dogfood target for the cute-dbt tool"
 requires-python = ">=3.11"
 dependencies = [
-    "dbt-duckdb>=1.10.0",
+    "dbt-duckdb>=1.10.1",
     "click>=8.0.0",
     "pyyaml>=6.0.0",
     "jsonschema>=4.0.0",
