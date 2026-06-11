@@ -859,3 +859,45 @@ models:
 
       - name: _loaded_at
         description: Timestamp when record was loaded into staging
+
+
+# ============================================================================
+# UNIT TESTS
+# ============================================================================
+# Source-given fixture (cute-dbt#57): unlike the ref()-given unit_tests
+# in the marts YAML files, this test mocks a dbt SOURCE input —
+# `source('synthea_raw', 'patients')` — giving cute-dbt a real
+# wire-shape fixture for source() given binding.
+
+unit_tests:
+  - name: test_stg_synthea__patients_renames_and_hashes_source_columns
+    description: |
+      stg_synthea__patients renames the raw Synthea UPPERCASE columns to
+      snake_case and hashes the SSN with md5. The given mocks the
+      synthea_raw.patients SOURCE directly (inline dict rows) — the only
+      unit test in this project whose input is a source() rather than a
+      ref() (cute-dbt#57). Dict expect compares listed columns only, so
+      the non-deterministic _loaded_at (current_timestamp) is excluded
+      from assertion automatically.
+    model: stg_synthea__patients
+    given:
+      - input: source('synthea_raw', 'patients')
+        format: dict
+        rows:
+          - Id: 'c0000000-0000-0000-0000-000000000001'
+            FIRST: 'Ada'
+            LAST: 'Lovelace'
+            GENDER: 'F'
+            CITY: 'Boston'
+            STATE: 'Massachusetts'
+            SSN: '999-99-9999'
+    expect:
+      format: dict
+      rows:
+        - patient_id: 'c0000000-0000-0000-0000-000000000001'
+          first_name: 'Ada'
+          last_name: 'Lovelace'
+          gender: 'F'
+          city: 'Boston'
+          state: 'Massachusetts'
+          ssn_hash: '257cf696294931925796925d89aa0afb'
